@@ -774,7 +774,7 @@ static bool transcode(THREAD_DATA *thread_data, Cache_Entry *cache_entry, FFmpeg
     int syserror = 0;
     bool success = true;
 
-    std::unique_lock<std::recursive_mutex> lock(cache_entry->m_active_mutex);
+    std::unique_lock<std::recursive_mutex> active_mutex(cache_entry->m_active_mutex);
 
     // Clear cache to remove any older remains
     cache_entry->clear();

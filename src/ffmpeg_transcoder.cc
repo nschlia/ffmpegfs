@@ -1107,7 +1107,7 @@ int FFmpeg_Transcoder::open_output_frame_set(Buffer *buffer)
 
     m_buffer            = buffer;
     {
-        std::lock_guard<std::recursive_mutex> lck (m_seek_to_fifo_mutex);
+        std::lock_guard<std::recursive_mutex> lock_seek_to_fifo_mutex(m_seek_to_fifo_mutex);
         while (m_seek_to_fifo.size())
         {
             m_seek_to_fifo.pop();
@@ -6685,7 +6685,7 @@ int FFmpeg_Transcoder::stack_seek_frame(uint32_t frame_no)
 {
     if (frame_no > 0 && frame_no <= video_frame_count())
     {
-        std::lock_guard<std::recursive_mutex> lck (m_seek_to_fifo_mutex);
+        std::lock_guard<std::recursive_mutex> lock_seek_to_fifo_mutex(m_seek_to_fifo_mutex);
         m_seek_to_fifo.push(frame_no);  // Seek to this frame next decoding operation
         return 0;
     }
@@ -6701,7 +6701,7 @@ int FFmpeg_Transcoder::stack_seek_segment(uint32_t segment_no)
 {
     if (segment_no > 0 && segment_no <= segment_count())
     {
-        std::lock_guard<std::recursive_mutex> lck (m_seek_to_fifo_mutex);
+        std::lock_guard<std::recursive_mutex> lock_seek_to_fifo_mutex(m_seek_to_fifo_mutex);
         m_seek_to_fifo.push(segment_no);  // Seek to this segment next decoding operation
         return 0;
     }

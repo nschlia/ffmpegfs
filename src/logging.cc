@@ -108,7 +108,7 @@ Logging::Logging(const std::string &logfile, LOGLEVEL max_level, bool to_stderr,
 
 Logging::Logger::~Logger()
 {
-    std::lock_guard<std::recursive_mutex> lck (m_mutex);
+    std::lock_guard<std::recursive_mutex> lock_mutex(m_mutex);
 
     // Construct string containing time
     struct timeval tv;

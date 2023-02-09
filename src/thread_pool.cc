@@ -86,7 +86,7 @@ bool thread_pool::schedule_thread(int (*thread_func)(void *), void *opaque)
         Logging::trace(nullptr, "Queuing up a new thread. There are %1 threads in the pool.", m_thread_pool.size());
 
         {
-            std::lock_guard<std::mutex> lock(m_queue_mutex);
+            std::lock_guard<std::mutex> lock_queue_mutex(m_queue_mutex);
 
             THREADINFO info;
 
@@ -112,7 +112,7 @@ unsigned int thread_pool::current_running() const
 
 unsigned int thread_pool::current_queued()
 {
-    std::lock_guard<std::mutex> lock(m_queue_mutex);
+    std::lock_guard<std::mutex> lock_queue_mutex(m_queue_mutex);
 
     return static_cast<unsigned int>(m_thread_queue.size());
 }

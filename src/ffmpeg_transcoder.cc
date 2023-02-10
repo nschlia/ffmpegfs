@@ -5491,7 +5491,7 @@ int FFmpeg_Transcoder::start_new_segment()
             continue;
         }
 
-        if (!m_buffer->segment_exists(segment_no) || !m_buffer->tell(segment_no)) // NOT EXISTS or NO DATA YET
+        if (!m_buffer->segment_exists(segment_no) || !m_buffer->tell(segment_no)) // NOT EXIST or NO DATA YET
         {
             int ret = 0;
 

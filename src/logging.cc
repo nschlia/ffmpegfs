@@ -130,7 +130,8 @@ Logging::Logger::~Logger()
 
     strsprintf(&fmt, "%%F %%T.%03d", millisec);
 
-    time_string.resize(strftime(&time_string[0], time_string.size(), fmt.c_str(), localtime(&tv.tv_sec)));  // Mind the blank at the end
+    struct tm buf;
+    time_string.resize(strftime(&time_string[0], time_string.size(), fmt.c_str(), localtime_r(&tv.tv_sec, &buf)));  // Mind the blank at the end
 
     loglevel = m_level_name_map.at(m_loglevel) + ":";
 

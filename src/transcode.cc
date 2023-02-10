@@ -1065,6 +1065,8 @@ static int transcoder_thread(void *arg)
         }
     }
 
+    int _errno = cache_entry->m_cache_info.m_errno;
+
     if (cache != nullptr)
     {
         cache->closeio(&cache_entry, timeout ? CACHE_CLOSE_DELETE : CACHE_CLOSE_NOOPT);
@@ -1072,7 +1074,7 @@ static int transcoder_thread(void *arg)
 
     delete thread_data;
 
-    errno = cache_entry->m_cache_info.m_errno;
+    errno = _errno;
 
     return errno;
 }

@@ -906,7 +906,7 @@ static bool transcode(THREAD_DATA *thread_data, Cache_Entry *cache_entry, FFmpeg
                 throw (static_cast<int>(errno));
             }
             else if (status == DECODER_EOF)
-			{
+            {
                 averror = transcode_finish(cache_entry, transcoder);
 
                 if (averror < 0)

@@ -7,13 +7,13 @@ ADDOPT=""
 check_filesize_frameset() {
 	if [ "${FILEEXT}" == "png" ];
 	then
-		check_filesize "${1}" 38625 139606 "${TMPPATH}"
+                check_filesize "${1}" 38625 139606 "${TMPPATH}" 1
 	elif [ "${FILEEXT}" == "jpg" ];
 	then
-		check_filesize "${1}" 26287 70678 "${TMPPATH}"
+                check_filesize "${1}" 26287 70678 "${TMPPATH}" 1
 	elif [ "${FILEEXT}" == "bmp" ];
 	then
-		check_filesize "${1}" 7372854 7372854 "${TMPPATH}"
+                check_filesize "${1}" 7372854 7372854 "${TMPPATH}" 1
 	fi
 }
 
@@ -28,6 +28,7 @@ echo "Checking access with full name"
 for i in 000204 000004 000104 000207 000007 000107
 do
 	FILE="${DIRNAME}"/frame_test_pal.mp4/${i}.${FILEEXT}
+        printf "> %s -> " ${FILE##*/}
         cp -vpf "${FILE}" "${TMPPATH}" > /dev/null
         #cp -vpf "${FILE}" "${TMPPATH}" > /dev/null
 	check_filesize_frameset "${i}"
@@ -40,6 +41,7 @@ do
         for FILE in "${DIRNAME}"/frame_test_pal.mp4/${i}.*
 	do
 		FILENAME="${FILE##*/}"
+                printf "> %s -> " ${FILE##*/}
                 cp -vpf "${FILE}" "${TMPPATH}" > /dev/null
                 #cp -vpf "${FILE}" "${TMPPATH}" > /dev/null
 		check_filesize_frameset "${FILENAME%.*}"

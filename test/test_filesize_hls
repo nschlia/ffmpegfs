@@ -10,8 +10,9 @@ XDIRNAME="${DIRNAME}"/snowboard.mp4
 
 for FILE in "${XDIRNAME}"/*.ts
 do
-   cp -vpf $FILE "${TMPPATH}" > /dev/null
-   cp -vpf $FILE "${TMPPATH}" > /dev/null
+   printf "> TRANSCODING %s\n" ${FILE##*/}
+   cp -vpf ${FILE} "${TMPPATH}" > /dev/null
+   cp -vpf ${FILE} "${TMPPATH}" > /dev/null
 done 2>/dev/null
 
 echo "File sizes"

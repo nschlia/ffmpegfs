@@ -32,6 +32,7 @@ ffmpegfserr () {
 check_filesize() {
     MIN="$2"
     MAX="$3"
+    SHORT="$5"
 
     if [ "${FILEEXT}" != "hls" ]
     then
@@ -61,17 +62,27 @@ check_filesize() {
         RETURN=1
     fi
 
+    if [ -z "${SHORT}" ]
+    then
+        if [ ${MIN} -eq ${MAX} ]
+        then
+            printf "> %s -> File: %-20s Size: %8i (expected %8i)\n" ${RESULT} ${FILE} ${SIZE} ${MIN}
+        else
+            printf "> %s -> File: %-20s Size: %8i (expected %8i...%8i)\n" ${RESULT} ${FILE} ${SIZE} ${MIN} ${MAX}
+        fi
+    else
     if [ ${MIN} -eq ${MAX} ]
     then
-        printf "%s -> File: %-20s Size: %8i (expected %8i)\n" ${RESULT} ${FILE} ${SIZE} ${MIN}
+        printf "%s -> Size: %8i (expected %8i)\n" ${RESULT} ${SIZE} ${MIN}
     else
-        printf "%s -> File: %-20s Size: %8i (expected %8i...%8i)\n" ${RESULT} ${FILE} ${SIZE} ${MIN} ${MAX}
+        printf "%s -> Size: %8i (expected %8i...%8i)\n" ${RESULT} ${SIZE} ${MIN} ${MAX}
+    fi
     fi
 
-	if [ ${RETURN} != 0 ];
-	then
-		exit ${RETURN}
-	fi
+    if [ ${RETURN} != 0 ];
+    then
+            exit ${RETURN}
+    fi
 }
 
 set -e

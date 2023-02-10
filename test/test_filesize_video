@@ -33,6 +33,7 @@ check_filesize() {
 }
 
 # Ensure log contains file sizes, predicted and actual
+printf "> TRANSCODING %s\n" snowboard.mp4.${FILEEXT}
 cp -vpf "${DIRNAME}/snowboard.mp4.${FILEEXT}" "${TMPPATH}" > /dev/null
 #cp -vpf "${DIRNAME}/snowboard.mp4.${FILEEXT}" "${TMPPATH}" > /dev/null
 

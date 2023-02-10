@@ -80,6 +80,8 @@ public:
             , m_buffer_idx(nullptr)
             , m_buffer_size_idx(0)
             , m_flags(0)
+            , m_buffer_write_size(0)
+            , m_buffer_writes(0)
         {
         }
 

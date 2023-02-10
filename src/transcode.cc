@@ -801,7 +801,7 @@ static bool transcode(THREAD_DATA *thread_data, Cache_Entry *cache_entry, FFmpeg
 
         if (!cache_entry->m_cache_info.m_duration)
         {
-            cache_entry->m_cache_info.m_duration = transcoder.duration();
+            cache_entry->m_cache_info.m_duration            = transcoder.duration();
         }
 
         if (!cache_entry->m_cache_info.m_predicted_filesize)
@@ -816,7 +816,7 @@ static bool transcode(THREAD_DATA *thread_data, Cache_Entry *cache_entry, FFmpeg
 
         if (!cache_entry->m_cache_info.m_segment_count)
         {
-            cache_entry->m_cache_info.m_segment_count   = transcoder.segment_count();
+            cache_entry->m_cache_info.m_segment_count       = transcoder.segment_count();
         }
 
         if (!cache_entry->m_cache_info.m_duration)
@@ -1012,7 +1012,6 @@ static int transcoder_thread(void *arg)
 
         if (!transcoder.have_seeked())
         {
-            //cache_entry->m_cache_info.m_finished    = RESULTCODE_FINISHED_ERROR;
             cache_entry->m_cache_info.m_error       = true;
             cache_entry->m_cache_info.m_errno       = EIO;      // Report I/O error
 
@@ -1032,7 +1031,6 @@ static int transcoder_thread(void *arg)
         else
         {
             // Must restart from scratch, but this is not an error.
-            //cache_entry->m_cache_info.m_finished    = RESULTCODE_FINISHED_INCOMPLETE;
             cache_entry->m_cache_info.m_error       = false;
             cache_entry->m_cache_info.m_errno       = 0;
             cache_entry->m_cache_info.m_averror     = 0;

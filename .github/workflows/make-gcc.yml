@@ -43,16 +43,16 @@ jobs:
     - name: configure
       run: CC=gcc  CXX="g++" ./configure
     - name: make
-      run: make -j `nproc`
+      run: make -s -j `nproc`
     - name: make check
-      run: make -j `nproc` check
+      run: make -s -j `nproc` check
     - name: make cppcheck
-      run: make -j `nproc` cppcheck
+      run: make -s -j `nproc` cppcheck
     - name: Archive GCC Build Logs
       if: always()
       uses: actions/upload-artifact@v3
       with:
-        name: Archived build logs
+        name: Collected build logs
         path: |
            *.log
            config.status
@@ -61,7 +61,7 @@ jobs:
       if: always()
       uses: actions/upload-artifact@v3
       with:
-        name: Archived test results
+        name: Collected test results
         path: |
            test/*.log
            test/*.trs

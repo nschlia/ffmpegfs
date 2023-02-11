@@ -45,9 +45,9 @@
 #include <unistd.h>
 #include <atomic>
 
-#define GRANULARITY     250         /**< @brief Image frame conversion: ms between checks if a picture frame is available */
-#define FRAME_TIMEOUT   10          /**< @brief Image frame conversion: timoute seconds to wait if a picture frame is available */
-
+const int GRANULARITY = 250;                                /**< @brief Image frame conversion: ms between checks if a picture frame is available */
+const int FRAME_TIMEOUT = 60;                               /**< @brief Image frame conversion: timout seconds to wait if a picture frame is available */
+const int TOTAL_RETRIES = FRAME_TIMEOUT*1000/GRANULARITY;   /**< @brief Number of retries */
 /**
   * @brief THREAD_DATA struct to pass data from parent to child thread
   */
@@ -629,7 +629,7 @@ bool transcoder_read_frame(Cache_Entry* cache_entry, char* buff, size_t offset, 
 
                 cache_entry->m_seek_to_no = frame_no;
 
-                int retries = FRAME_TIMEOUT * 1000 / GRANULARITY;
+                int retries = TOTAL_RETRIES;
                 while (!cache_entry->m_buffer->read_frame(&data, frame_no) && !thread_exit)
                 {
                     if (errno != EAGAIN)

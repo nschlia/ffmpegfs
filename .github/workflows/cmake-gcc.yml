@@ -31,7 +31,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
     - name: Prerequisites
       run: |
         sudo apt-get update
@@ -48,7 +48,7 @@ jobs:
 #      run: cmake --build . --target cppcheck
     - name: Archive Build Logs
       if: always()
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       with:
         name: Collected build logs
         path: |
@@ -57,7 +57,7 @@ jobs:
            doxyfile.inc
     - name: Archive Test Results
       if: always()
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       with:
         name: Collected test results
         path: |

@@ -67,8 +67,8 @@ This version has been tested with VAAPI (Debian) and OpenMAX (Raspberry). It may
 To enable hardware support, use these parameters respectively (of course, use only one):
 
 ```
--hwaccel_enc=VAAPI
--hwaccel_enc=OMX
+--hwaccel_enc=VAAPI
+--hwaccel_enc=OMX
 ```
 
 If your system supports VAAPI:
@@ -99,8 +99,8 @@ This version has been tested with VAAPI (Debian) and MMAL (Raspberry). It may be
 To enable hardware support, use these parameters respectively (of course, use only one):
 
 ```
--hwaccel_dec=VAAPI
--hwaccel_dec=MMAL
+--hwaccel_dec=VAAPI
+--hwaccel_dec=MMAL
 ```
 
 If your system supports VAAPI:

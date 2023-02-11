@@ -62,7 +62,7 @@ Cache_Entry::Cache_Entry(Cache *owner, LPVIRTUALFILE virtualfile)
 
 Cache_Entry::~Cache_Entry()
 {
-    std::unique_lock<std::recursive_mutex> lock(m_active_mutex);
+    std::unique_lock<std::recursive_mutex> lock_active_mutex(m_active_mutex);
 
     delete m_buffer;
 
@@ -78,10 +78,7 @@ Cache_Entry * Cache_Entry::create(Cache *owner, LPVIRTUALFILE virtualfile)
 
 bool Cache_Entry::destroy()
 {
-    //Logging::info(filename(), "TEST: Cache_Entry deleted.");
-
     delete this;    /** @todo Implement delete later mechanism */
-
     return true;    /** @todo Return true when deleted, false if kept for delete later */
 }
 
@@ -168,8 +165,9 @@ bool Cache_Entry::openio(bool create_cache /*= true*/)
         return false;
     }
 
-    if (__sync_fetch_and_add(&m_ref_count, 1) > 0)
+    if (m_ref_count++ > 0)	// fetch_and_add
     {
+        // Already open
         return true;
     }
 
@@ -233,7 +231,7 @@ bool Cache_Entry::closeio(int flags)
         return true;
     }
 
-    if (__sync_sub_and_fetch(&m_ref_count, 1) > 0)
+    if (--m_ref_count > 0)	// sub_and_fetch
     {
         // Just flush to disk
         flush();
@@ -342,12 +340,12 @@ int Cache_Entry::ref_count() const
 
 int Cache_Entry::inc_refcount()
 {
-    return __sync_fetch_and_add(&m_ref_count, 1);
+    return m_ref_count++;	// fetch_and_add
 }
 
 int Cache_Entry::decr_refcount()
 {
-    return __sync_sub_and_fetch(&m_ref_count, 1);
+    return --m_ref_count;	// sub_and_fetch
 }
 
 bool Cache_Entry::outdated() const

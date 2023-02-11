@@ -33,8 +33,9 @@ check_filesize() {
 }
 
 # Ensure log contains file sizes, predicted and actual
-cp "${DIRNAME}/snowboard.mp4.${FILEEXT}" /dev/null
-cp "${DIRNAME}/snowboard.mp4.${FILEEXT}" /dev/null
+printf "> TRANSCODING %s\n" snowboard.mp4.${FILEEXT}
+cp -vpf "${DIRNAME}/snowboard.mp4.${FILEEXT}" "${TMPPATH}" > /dev/null
+#cp -vpf "${DIRNAME}/snowboard.mp4.${FILEEXT}" "${TMPPATH}" > /dev/null
 
 if [ "${DESTTYPE}" == "mp4" ];
 then

@@ -768,7 +768,7 @@ bool Cache::read_info(LPCACHE_INFO cache_info)
         return false;
     }
 
-    std::lock_guard<std::recursive_mutex> lck (m_mutex);
+    std::lock_guard<std::recursive_mutex> lock_mutex(m_mutex);
 
     try
     {
@@ -864,7 +864,7 @@ bool Cache::write_info(LPCCACHE_INFO cache_info)
         return false;
     }
 
-    std::lock_guard<std::recursive_mutex> lck (m_mutex);
+    std::lock_guard<std::recursive_mutex> lock_mutex(m_mutex);
 
     try
     {
@@ -930,7 +930,7 @@ bool Cache::delete_info(const std::string & filename, const std::string & destty
         return false;
     }
 
-    std::lock_guard<std::recursive_mutex> lck (m_mutex);
+    std::lock_guard<std::recursive_mutex> lock_mutex(m_mutex);
 
     try
     {
@@ -1049,7 +1049,7 @@ Cache_Entry *Cache::openio(LPVIRTUALFILE virtualfile)
 
 bool Cache::closeio(Cache_Entry **cache_entry, int flags /*= CACHE_CLOSE_NOOPT*/)
 {
-    if ((*cache_entry) == nullptr)
+    if (*cache_entry == nullptr)
     {
         return true;
     }
@@ -1088,7 +1088,7 @@ bool Cache::prune_expired()
 
     strsprintf(&sql, "SELECT filename, desttype, strftime('%%s', access_time) FROM cache_entry WHERE strftime('%%s', access_time) + %" FFMPEGFS_FORMAT_TIME_T " < %" FFMPEGFS_FORMAT_TIME_T ";\n", params.m_expiry_time, now);
 
-    std::lock_guard<std::recursive_mutex> lck (m_mutex);
+    std::lock_guard<std::recursive_mutex> lock_mutex(m_mutex);
 
     sqlite3_prepare(m_cacheidx_db, sql.c_str(), -1, &stmt, nullptr);
 
@@ -1150,7 +1150,7 @@ bool Cache::prune_cache_size()
 
     sql = "SELECT filename, desttype, encoded_filesize FROM cache_entry ORDER BY access_time ASC;\n";
 
-    std::lock_guard<std::recursive_mutex> lck (m_mutex);
+    std::lock_guard<std::recursive_mutex> lock_mutex(m_mutex);
 
     sqlite3_prepare(m_cacheidx_db, sql, -1, &stmt, nullptr);
 
@@ -1221,6 +1221,12 @@ bool Cache::prune_disk_space(size_t predicted_filesize)
 
     if (!free_bytes && errno)
     {
+        if (errno == ENOENT)
+        {
+            // Cache path does not exist. Strange problem, but not error. Ignore silently.
+            return true;
+        }
+
         Logging::error(cachepath, "prune_disk_space() cannot determine free disk space: (%1) %2", errno, strerror(errno));
         return false;
     }
@@ -1232,7 +1238,7 @@ bool Cache::prune_disk_space(size_t predicted_filesize)
         return false;
     }
 
-    std::lock_guard<std::recursive_mutex> lck (m_mutex);
+    std::lock_guard<std::recursive_mutex> lock_mutex(m_mutex);
 
     Logging::trace(cachepath, "%1 disk space before prune.", format_size(free_bytes).c_str());
     if (free_bytes < params.m_min_diskspace + predicted_filesize)
@@ -1317,7 +1323,7 @@ bool Cache::clear()
 {
     bool success = true;
 
-    std::lock_guard<std::recursive_mutex> lck (m_mutex);
+    std::lock_guard<std::recursive_mutex> lock_mutex(m_mutex);
 
     std::vector<cache_key_t> keys;
     sqlite3_stmt * stmt;

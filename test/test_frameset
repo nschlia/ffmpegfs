@@ -4,6 +4,20 @@ ADDOPT=""
 
 . "${BASH_SOURCE%/*}/funcs.sh" "$1"
 
+check_filesize_frameset() {
+	if [ "${FILEEXT}" == "png" ];
+	then
+                check_filesize "${1}" 38625 139606 "${TMPPATH}" 1
+	elif [ "${FILEEXT}" == "jpg" ];
+	then
+                check_filesize "${1}" 26287 70679 "${TMPPATH}" 1
+	elif [ "${FILEEXT}" == "bmp" ];
+	then
+                check_filesize "${1}" 7372854 7372854 "${TMPPATH}" 1
+	fi
+}
+
+# Should be 250 files for 250 frames in source
 FILES=250
 
 echo "Checking number of files is ${FILES}"
@@ -13,18 +27,24 @@ echo "Number of files OK"
 echo "Checking access with full name"
 for i in 000204 000004 000104 000207 000007 000107
 do
-        #echo ">> Checking ${i}.${FILEEXT}"
-        cp -v "${DIRNAME}"/frame_test_pal.mp4/${i}.${FILEEXT} /dev/null
+	FILE="${DIRNAME}"/frame_test_pal.mp4/${i}.${FILEEXT}
+        printf "> %s -> " ${FILE##*/}
+        cp -vpf "${FILE}" "${TMPPATH}" > /dev/null
+        #cp -vpf "${FILE}" "${TMPPATH}" > /dev/null
+	check_filesize_frameset "${i}"
 done
-echo "Access OK"
 
 echo "Checking access with regular expression"
 for i in 00024[4-79] 00008[4-79] 00018[4-79]
 do
-        echo ">> Checking ${i}.*"
+        echo ">> Expression ${i}.*"
         for FILE in "${DIRNAME}"/frame_test_pal.mp4/${i}.*
 	do
-   		cp -v $FILE /dev/null
+		FILENAME="${FILE##*/}"
+                printf "> %s -> " ${FILE##*/}
+                cp -vpf "${FILE}" "${TMPPATH}" > /dev/null
+                #cp -vpf "${FILE}" "${TMPPATH}" > /dev/null
+		check_filesize_frameset "${FILENAME%.*}"
 	done 2>/dev/null
 done
 echo "Access OK"

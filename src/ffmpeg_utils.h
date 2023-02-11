@@ -1114,6 +1114,22 @@ void save_delete(T **p)
  */
 void save_free(void **p);
 
+/**
+ * @brief Sleep for specified time
+ * @param milliseconds - Milliseconds to sleep
+ */
+void mssleep(int milliseconds);
+/**
+ * @brief Sleep for specified time
+ * @param microseconds - Microseconds to sleep
+ */
+void ussleep(int microseconds);
+/**
+ * @brief Sleep for specified time
+ * @param milliseconds - Nanoseconds to sleep
+ */
+void nssleep(int nanoseconds);
+
 #ifdef __CYGWIN__
 
 /**

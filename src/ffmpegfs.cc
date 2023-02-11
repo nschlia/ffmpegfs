@@ -650,6 +650,8 @@ static bool         set_defaults();
 static void         build_device_type_list();
 static void         print_params();
 static void         usage();
+static void         ffmpeg_log(void *ptr, int level, const char *fmt, va_list vl);
+static bool         init_logging(const std::string &logfile, const std::string & max_level, bool to_stderr, bool to_syslog);
 
 /**
  * @brief Print program usage info.
@@ -2148,6 +2150,197 @@ static void print_params()
     Logging::trace(nullptr, "Old Name Scheme   : %1", params.m_oldnamescheme ? "yes" : "no");
     Logging::trace(nullptr, "--------- Experimental Options ---------");
     Logging::trace(nullptr, "Windows 10 Fix    : %1", params.m_win_smb_fix ? "SMB Lockup Fix Active" : "inactive");
+}
+
+/**
+ * @brief Custom FFmpeg log function. Used with av_log_set_callback().
+ * @param[in] ptr - See av_log_set_callback() in FFmpeg API.
+ * @param[in] level - See av_log_set_callback() in FFmpeg API.
+ * @param[in] fmt - See av_log_set_callback() in FFmpeg API.
+ * @param[in] vl - See av_log_set_callback() in FFmpeg API.
+ */
+static void ffmpeg_log(void *ptr, int level, const char *fmt, va_list vl)
+{
+    Logging::LOGLEVEL ffmpegfs_level;
+
+    // Map log level
+    // AV_LOG_PANIC     0
+    // AV_LOG_FATAL     8
+    // AV_LOG_ERROR    16
+    if (level <= AV_LOG_ERROR)
+    {
+        ffmpegfs_level = LOGERROR;
+    }
+    // AV_LOG_WARNING  24
+    else if (level <= AV_LOG_WARNING)
+    {
+        ffmpegfs_level = LOGWARN;
+    }
+#ifdef AV_LOG_TRACE
+    // AV_LOG_INFO     32
+    //else if (level <= AV_LOG_INFO)
+    //{
+    //    ffmpegfs_level = LOGINFO;
+    //}
+    // AV_LOG_VERBOSE  40
+    // AV_LOG_DEBUG    48
+    else if (level < AV_LOG_DEBUG)
+    {
+        ffmpegfs_level = LOGDEBUG;
+    }
+    // AV_LOG_TRACE    56
+    else   // if (level <= AV_LOG_TRACE)
+    {
+        ffmpegfs_level = LOGTRACE;
+    }
+#else
+    // AV_LOG_INFO     32
+    else   // if (level <= AV_LOG_INFO)
+    {
+        ffmpegfs_level = DEBUG;
+    }
+#endif
+
+    if (!Logging::show(ffmpegfs_level))
+    {
+        return;
+    }
+
+    va_list vl2;
+    static int print_prefix = 1;
+
+#if (LIBAVUTIL_VERSION_INT >= AV_VERSION_INT(55, 23, 0))
+    char * line;
+    int line_size;
+    std::string category;
+
+    if (ptr != nullptr)
+    {
+        AVClass* avc = *(AVClass **)ptr;
+
+        switch (avc->category)
+        {
+        case AV_CLASS_CATEGORY_NA:
+        {
+            break;
+        }
+        case AV_CLASS_CATEGORY_INPUT:
+        {
+            category = "INPUT   ";
+            break;
+        }
+        case AV_CLASS_CATEGORY_OUTPUT:
+        {
+            category = "OUTPUT  ";
+            break;
+        }
+        case AV_CLASS_CATEGORY_MUXER:
+        {
+            category = "MUXER   ";
+            break;
+        }
+        case AV_CLASS_CATEGORY_DEMUXER:
+        {
+            category = "DEMUXER ";
+            break;
+        }
+        case AV_CLASS_CATEGORY_ENCODER:
+        {
+            category = "ENCODER ";
+            break;
+        }
+        case AV_CLASS_CATEGORY_DECODER:
+        {
+            category = "DECODER ";
+            break;
+        }
+        case AV_CLASS_CATEGORY_FILTER:
+        {
+            category = "FILTER  ";
+            break;
+        }
+        case AV_CLASS_CATEGORY_BITSTREAM_FILTER:
+        {
+            category = "BITFILT ";
+            break;
+        }
+        case AV_CLASS_CATEGORY_SWSCALER:
+        {
+            category = "SWSCALE ";
+            break;
+        }
+        case AV_CLASS_CATEGORY_SWRESAMPLER:
+        {
+            category = "SWRESAM ";
+            break;
+        }
+        default:
+        {
+            strsprintf(&category, "CAT %3i ", static_cast<int>(avc->category));
+            break;
+        }
+        }
+    }
+
+    va_copy(vl2, vl);
+    av_log_default_callback(ptr, level, fmt, vl);
+    line_size = av_log_format_line2(ptr, level, fmt, vl2, nullptr, 0, &print_prefix);
+    if (line_size < 0)
+    {
+        va_end(vl2);
+        return;
+    }
+    line = static_cast<char *>(av_malloc(static_cast<size_t>(line_size)));
+    if (line == nullptr)
+    {
+        return;
+    }
+    av_log_format_line2(ptr, level, fmt, vl2, line, line_size, &print_prefix);
+    va_end(vl2);
+#else
+    char line[1024];
+
+    va_copy(vl2, vl);
+    av_log_default_callback(ptr, level, fmt, vl);
+    av_log_format_line(ptr, level, fmt, vl2, line, sizeof(line), &print_prefix);
+    va_end(vl2);
+#endif
+
+    Logging::log_with_level(ffmpegfs_level, "", category + line);
+
+#if (LIBAVUTIL_VERSION_INT >= AV_VERSION_INT(55, 23, 0))
+    av_free(line);
+#endif
+}
+
+/**
+ * @brief Inititalise logging facility
+ * @param[in] logfile - Name of log file if file writing is selected.
+ * @param[in] max_level - Maximum level to log.
+ * @param[in] to_stderr - If true, log to stderr.
+ * @param[in] to_syslog - If true, log to syslog.
+ * @return Returns true on success; false on error.
+ */
+static bool init_logging(const std::string &logfile, const std::string & max_level, bool to_stderr, bool to_syslog)
+{
+    static const std::map<const std::string, const Logging::LOGLEVEL, comp> level_map =
+    {
+        { "ERROR",      LOGERROR },
+        { "WARNING",    LOGWARN },
+        { "INFO",       LOGINFO },
+        { "DEBUG",      LOGDEBUG },
+        { "TRACE",      LOGTRACE },
+    };
+
+    std::map<const std::string, const Logging::LOGLEVEL, comp>::const_iterator it = level_map.find(max_level);
+
+    if (it == level_map.cend())
+    {
+        std::fprintf(stderr, "Invalid logging level string: %s\n", max_level.c_str());
+        return false;
+    }
+
+    return Logging::init_logging(logfile, it->second, to_stderr, to_syslog);
 }
 
 /**

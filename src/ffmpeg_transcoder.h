@@ -38,7 +38,6 @@
 #include "ffmpeg_frame.h"
 #include "ffmpeg_subtitle.h"
 #include "id3v1tag.h"
-#include "ffmpegfs.h"
 #include "fileio.h"
 #include "ffmpeg_profiles.h"
 
@@ -47,6 +46,7 @@
 #include <variant>
 #include <functional>
 #include <optional>
+#include <atomic>
 
 class Buffer;
 struct SwrContext;
@@ -56,6 +56,14 @@ struct AVFilterGraph;
 struct AVAudioFifo;
 struct AVCodecContext;
 struct AVSubtitle;
+
+typedef enum DECODER_STATUS
+{
+    DECODER_ERROR = -1,                                         /**< @brief Decoder error, see return code */
+    DECODER_SUCCESS = 0,                                        /**< @brief Frame decoded successfully */
+    DECODER_EOF = 1                                             /**< @brief Read to end of file */
+} DECODER_STATUS, *LPDECODER_STATUS;                            /**< @brief Pointer version of DECODER_STATUS */
+typedef DECODER_STATUS const * LPCDECODER_STATUS;               /**< @brief Pointer to const version of DECODER_STATUS */
 
 /**
  * @brief The #FFmpeg_Transcoder class
@@ -215,10 +223,10 @@ public:
      * Process a single frame of audio data. The encode_pcm_data() method
      * of the Encoder will be used to process the resulting audio data, with the
      * result going into the given Buffer.
-     * @param[out] status - On success, returns 0; if at EOF, returns 1; on error, returns -1
+     * @param[out] status - On success, returns DECODER_SUCCESS; if at EOF, returns DECODER_EOF; on error, returns DECODER_ERROR
      * @return On success, returns 0; on error, a negative AVERROR value. If EOF is reached, it returns 1.
      */
-    int                         process_single_fr(int & status);
+    int                         process_single_fr(DECODER_STATUS *status);
     /**
      * Encode any remaining PCM data to the given buffer. This should be called
      * after all input data has already been passed to encode_pcm_data().
@@ -1198,7 +1206,7 @@ private:
     time_t                      m_mtime;                        /**< @brief Modified time of input file */
     std::recursive_mutex        m_seek_to_fifo_mutex;           /**< @brief Access mutex for seek FIFO */
     std::queue<uint32_t>        m_seek_to_fifo;                 /**< @brief Stack of seek requests. Will be processed FIFO */
-    volatile uint32_t           m_last_seek_frame_no;           /**< @brief If not 0, this is the last frame that we seeked to. Video sources only. */
+    std::atomic_uint32_t        m_last_seek_frame_no;           /**< @brief If not 0, this is the last frame that we seeked to. Video sources only. */
     bool                        m_have_seeked;                  /**< @brief After seek operations this is set to make sure the trancoding result is marked RESULTCODE_INCOMPLETE to start transcoding over next access to fill the gaps. */
     bool                        m_skip_next_frame;              /**< @brief After seek, skip next video frame */
     bool                        m_is_video;                     /**< @brief true if input is a video file */

@@ -45,29 +45,28 @@
 #include <unistd.h>
 #include <atomic>
 
-
-#define MS              *1000000L   /**< @brief 1 millisecond = 1,000,000 Nanoseconds */
-#define GRANULARITY     250         /**< @brief Image frame conversion: ms between checks if a picture frame is available */
-#define FRAME_TIMEOUT   10          /**< @brief Image frame conversion: timoute seconds to wait if a picture frame is available */
-
+const int GRANULARITY = 250;                                /**< @brief Image frame conversion: ms between checks if a picture frame is available */
+const int FRAME_TIMEOUT = 60;                               /**< @brief Image frame conversion: timout seconds to wait if a picture frame is available */
+const int TOTAL_RETRIES = FRAME_TIMEOUT*1000/GRANULARITY;   /**< @brief Number of retries */
 /**
   * @brief THREAD_DATA struct to pass data from parent to child thread
   */
 typedef struct THREAD_DATA
 {
-    std::mutex              m_mutex;            /**< @brief Mutex when thread is running */
-    std::condition_variable m_cond;             /**< @brief Condition when thread is running */
-    std::atomic_bool        m_lock_guard;       /**< @brief Lock guard to avoid spurious or missed unlocks */
-    bool                    m_initialised;      /**< @brief True when this object is completely initialised */
-    void *                  m_arg;              /**< @brief Opaque argument pointer. Will not be freed by child thread. */
+    std::mutex              m_thread_running_mutex;         /**< @brief Mutex when thread is running */
+    std::condition_variable m_thread_running_cond;          /**< @brief Condition when thread is running */
+    std::atomic_bool        m_thread_running_lock_guard;    /**< @brief Lock guard to avoid spurious or missed unlocks */
+    bool                    m_initialised;                  /**< @brief True when this object is completely initialised */
+    void *                  m_arg;                          /**< @brief Opaque argument pointer. Will not be freed by child thread. */
 } THREAD_DATA;
 
-static Cache *cache;                            /**< @brief Global cache manager object */
-static volatile bool thread_exit;               /**< @brief Used for shutdown: if true, forcibly exit all threads */
+static Cache *              cache;                          /**< @brief Global cache manager object */
+static std::atomic_bool     thread_exit;                    /**< @brief Used for shutdown: if true, forcibly exit all threads */
 
-static int transcoder_thread(void *arg);
+static bool transcode(THREAD_DATA *thread_data, Cache_Entry *cache_entry, FFmpeg_Transcoder & transcoder, bool *timeout);
+static int  transcoder_thread(void *arg);
 static bool transcode_until(Cache_Entry* cache_entry, size_t offset, size_t len, uint32_t segment_no);
-static int transcode_finish(Cache_Entry* cache_entry, FFmpeg_Transcoder & transcoder);
+static int  transcode_finish(Cache_Entry* cache_entry, FFmpeg_Transcoder & transcoder);
 
 /**
  * @brief Transcode the buffer until the buffer has enough or until an error occurs.
@@ -121,7 +120,7 @@ static bool transcode_until(Cache_Entry* cache_entry, size_t offset, size_t len,
                     }
                     reported = true;
                 }
-                sleep(0);
+                mssleep(250);
             }
 
             if (reported)
@@ -404,23 +403,23 @@ Cache_Entry* transcoder_new(LPVIRTUALFILE virtualfile, bool begin_transcode)
                 cache_entry->clear();
 
                 // Must decode the file, otherwise simply use cache
-                cache_entry->m_is_decoding  = true;
+                cache_entry->m_is_decoding                  = true;
 
-                THREAD_DATA* thread_data    = new(std::nothrow) THREAD_DATA;
+                THREAD_DATA* thread_data                    = new(std::nothrow) THREAD_DATA;
 
-                thread_data->m_initialised  = false;
-                thread_data->m_arg          = cache_entry;
-                thread_data->m_lock_guard   = false;
+                thread_data->m_initialised                  = false;
+                thread_data->m_arg                          = cache_entry;
+                thread_data->m_thread_running_lock_guard    = false;
 
                 {
-                    std::unique_lock<std::mutex> lock(thread_data->m_mutex);
+                    std::unique_lock<std::mutex> lock_thread_running_mutex(thread_data->m_thread_running_mutex);
 
                     tp->schedule_thread(&transcoder_thread, thread_data);
 
                     // Let decoder get into gear before returning from open
-                    while (!thread_data->m_lock_guard)
+                    while (!thread_data->m_thread_running_lock_guard)
                     {
-                        thread_data->m_cond.wait(lock);
+                        thread_data->m_thread_running_cond.wait(lock_thread_running_mutex);
                     }
                 }
 
@@ -473,11 +472,11 @@ bool transcoder_read(Cache_Entry* cache_entry, char* buff, size_t offset, size_t
 
     if (!segment_no)
     {
-        Logging::trace(cache_entry->virtname(), "Reading %1 bytes from offset %2.", len, offset);
+        Logging::trace(cache_entry->virtname(), "Reading %1 bytes from offset %2 to %3.", len, offset, len + offset);
     }
     else
     {
-        Logging::trace(cache_entry->virtname(), "Reading %1 bytes from offset %2 for segment no. %3.", len, offset, segment_no);
+        Logging::trace(cache_entry->virtname(), "Reading %1 bytes from offset %2 to %3 for segment no. %4.", len, offset, len + offset, segment_no);
     }
 
     // Store access time
@@ -602,7 +601,7 @@ bool transcoder_read_frame(Cache_Entry* cache_entry, char* buff, size_t offset, 
 {
     bool success = false;
 
-    Logging::trace(cache_entry->virtname(), "Reading %1 bytes from offset %2 for frame no. %3.", len, offset, frame_no);
+    Logging::trace(cache_entry->virtname(), "Reading %1 bytes from offset %2 to %3 for frame no. %4.", len, offset, len + offset, frame_no);
 
     // Store access time
     cache_entry->update_access();
@@ -621,7 +620,7 @@ bool transcoder_read_frame(Cache_Entry* cache_entry, char* buff, size_t offset, 
         std::vector<uint8_t> data;
 
         // Wait until decoder thread has the requested frame available
-        if (cache_entry->m_is_decoding)
+        if (cache_entry->m_is_decoding || cache_entry->m_suspend_timeout)
         {
             // Try to read requested frame, stack a seek to if if this fails.
             if (!cache_entry->m_buffer->read_frame(&data, frame_no))
@@ -630,7 +629,7 @@ bool transcoder_read_frame(Cache_Entry* cache_entry, char* buff, size_t offset, 
 
                 cache_entry->m_seek_to_no = frame_no;
 
-                int retries = FRAME_TIMEOUT * 1000 / GRANULARITY;
+                int retries = TOTAL_RETRIES;
                 while (!cache_entry->m_buffer->read_frame(&data, frame_no) && !thread_exit)
                 {
                     if (errno != EAGAIN)
@@ -639,11 +638,18 @@ bool transcoder_read_frame(Cache_Entry* cache_entry, char* buff, size_t offset, 
                         throw false;
                     }
 
-                    if (errno == EAGAIN && !--retries)
+                    if (!cache_entry->m_suspend_timeout)
                     {
-                        errno = ETIMEDOUT;
-                        Logging::error(cache_entry->virtname(), "Timeout reading image frame no. %1: (%2) %3", frame_no, errno, strerror(errno));
-                        throw false;
+                        if (errno == EAGAIN && !--retries)
+                        {
+                            errno = ETIMEDOUT;
+                            Logging::error(cache_entry->virtname(), "Timeout reading image frame no. %1: (%2) %3", frame_no, errno, strerror(errno));
+                            throw false;
+                        }
+                    }
+                    else
+                    {
+                        retries = TOTAL_RETRIES;
                     }
 
                     if (fuse_interrupted())
@@ -664,8 +670,7 @@ bool transcoder_read_frame(Cache_Entry* cache_entry, char* buff, size_t offset, 
                         reported = true;
                     }
 
-                    const struct timespec ts = { 0, GRANULARITY MS };
-                    nanosleep(&ts, nullptr);
+                    mssleep(GRANULARITY);
                 }
             }
             else
@@ -709,6 +714,7 @@ bool transcoder_read_frame(Cache_Entry* cache_entry, char* buff, size_t offset, 
     {
         success = _success;
     }
+
     return success;
 }
 
@@ -762,21 +768,18 @@ bool transcoder_cache_clear()
 }
 
 /**
- * @brief Transcoding thread
- * @param[in] arg - Corresponding Cache_Entry object.
- * @returns Returns 0 on success; or errno code on error.
+ * @brief Actually transcode file
+ * @param[inout] thread_data - Thread data with lock objects
+ * @param[inout] cache_entry - Underlying thread entry
+ * @param[in] transcoder - Transcoder object for transcoding
+ * @param[out] timeout - True if transcoding timed out, false if not
+ * @return On success, returns true; on error, returns false
  */
-static int transcoder_thread(void *arg)
+static bool transcode(THREAD_DATA *thread_data, Cache_Entry *cache_entry, FFmpeg_Transcoder & transcoder, bool *timeout)
 {
-    THREAD_DATA *thread_data = static_cast<THREAD_DATA*>(arg);
-    Cache_Entry *cache_entry = static_cast<Cache_Entry *>(thread_data->m_arg);
-    FFmpeg_Transcoder transcoder;
     int averror = 0;
     int syserror = 0;
-    bool timeout = false;
     bool success = true;
-
-    std::unique_lock<std::recursive_mutex> lock(cache_entry->m_active_mutex);
 
     // Clear cache to remove any older remains
     cache_entry->clear();
@@ -803,7 +806,7 @@ static int transcoder_thread(void *arg)
 
         if (!cache_entry->m_cache_info.m_duration)
         {
-            cache_entry->m_cache_info.m_duration = transcoder.duration();
+            cache_entry->m_cache_info.m_duration            = transcoder.duration();
         }
 
         if (!cache_entry->m_cache_info.m_predicted_filesize)
@@ -818,15 +821,10 @@ static int transcoder_thread(void *arg)
 
         if (!cache_entry->m_cache_info.m_segment_count)
         {
-            cache_entry->m_cache_info.m_segment_count   = transcoder.segment_count();
+            cache_entry->m_cache_info.m_segment_count       = transcoder.segment_count();
         }
 
-        if (!cache_entry->m_cache_info.m_duration)
-        {
-            cache_entry->m_cache_info.m_duration        = transcoder.duration();
-        }
-
-        if (!cache->maintenance(transcoder.predicted_filesize()))
+        if (cache != nullptr && !cache->maintenance(transcoder.predicted_filesize()))
         {
             throw (static_cast<int>(errno));
         }
@@ -846,8 +844,8 @@ static int transcoder_thread(void *arg)
         {
             // Unlock frame set from beginning
             unlocked = true;
-            thread_data->m_lock_guard = true;
-            thread_data->m_cond.notify_all();       // signal that we are running
+            thread_data->m_thread_running_lock_guard = true;
+            thread_data->m_thread_running_cond.notify_all();       // signal that we are running
         }
         else
         {
@@ -861,21 +859,16 @@ static int transcoder_thread(void *arg)
             }
         }
 
-        while (!cache_entry->is_finished() && !(timeout = cache_entry->decode_timeout()) && !thread_exit)
+        cache_entry->m_suspend_timeout = false;
+
+        while (!cache_entry->is_finished() && !(*timeout = cache_entry->decode_timeout()) && !thread_exit)
         {
-            int status = 0;
+            DECODER_STATUS status = DECODER_SUCCESS;
 
             if (cache_entry->ref_count() > 1)
             {
                 // Set last access time
                 cache_entry->update_access(false);
-            }
-
-            averror = transcoder.process_single_fr(status);
-            if (status < 0)
-            {
-                errno = EIO;
-                throw (static_cast<int>(errno));
             }
 
             if (transcoder.is_frameset())
@@ -907,18 +900,33 @@ static int transcoder_thread(void *arg)
                 }
             }
 
-            if (status == 1 && ((averror = transcode_finish(cache_entry, transcoder)) < 0))
+            averror = transcoder.process_single_fr(&status);
+
+            if (status == DECODER_ERROR)
             {
                 errno = EIO;
                 throw (static_cast<int>(errno));
+            }
+            else if (status == DECODER_EOF)
+            {
+                cache_entry->m_suspend_timeout = true; // Suspend read_frame time out until transcoder is reopened.
+
+                averror = transcode_finish(cache_entry, transcoder);
+
+                if (averror < 0)
+                {
+                    errno = EIO;
+                    throw (static_cast<int>(errno));
+                }
             }
 
             if (!unlocked && cache_entry->m_buffer->buffer_watermark() > params.m_prebuffer_size && transcoder.pts() > static_cast<int64_t>(params.m_prebuffer_time) * AV_TIME_BASE)
             {
                 unlocked = true;
                 Logging::debug(cache_entry->virtname(), "Pre-buffer limit reached.");
-                thread_data->m_lock_guard = true;
-                thread_data->m_cond.notify_all();       // signal that we are running
+
+                thread_data->m_thread_running_lock_guard = true;
+                thread_data->m_thread_running_cond.notify_all();       // signal that we are running
             }
 
             if (cache_entry->ref_count() <= 1 && cache_entry->suspend_timeout())
@@ -926,16 +934,15 @@ static int transcoder_thread(void *arg)
                 if (!unlocked && (params.m_prebuffer_size || params.m_prebuffer_time))
                 {
                     unlocked = true;
-                    thread_data->m_lock_guard = true;
-                    thread_data->m_cond.notify_all();  // signal that we are running
+                    thread_data->m_thread_running_lock_guard = true;
+                    thread_data->m_thread_running_cond.notify_all();  // signal that we are running
                 }
 
                 Logging::info(cache_entry->virtname(), "Suspend timeout. Transcoding suspended after %1 seconds inactivity.", params.m_max_inactive_suspend);
 
-                while (cache_entry->suspend_timeout() && !(timeout = cache_entry->decode_timeout()) && !thread_exit)
+                while (cache_entry->suspend_timeout() && !(*timeout = cache_entry->decode_timeout()) && !thread_exit)
                 {
-                    const struct timespec ts = { 0, GRANULARITY MS };
-                    nanosleep(&ts, nullptr);
+                    mssleep(GRANULARITY);
                 }
 
                 if (timeout)
@@ -950,8 +957,8 @@ static int transcoder_thread(void *arg)
         if (!unlocked && (params.m_prebuffer_size || params.m_prebuffer_time))
         {
             Logging::debug(cache_entry->virtname(), "File transcode complete, releasing buffer early: Size %1.", cache_entry->m_buffer->buffer_watermark());
-            thread_data->m_lock_guard = true;
-            thread_data->m_cond.notify_all();       // signal that we are running
+            thread_data->m_thread_running_lock_guard = true;
+            thread_data->m_thread_running_cond.notify_all();       // signal that we are running
         }
     }
     catch (int _syserror)
@@ -966,41 +973,81 @@ static int transcoder_thread(void *arg)
             syserror = AVUNERROR(averror);
         }
 
-        cache_entry->m_is_decoding              = false;
-        cache_entry->m_cache_info.m_error       = true;
-        cache_entry->m_cache_info.m_errno       = syserror ? syserror : EIO;        // Preserve errno
-        cache_entry->m_cache_info.m_averror     = averror;                          // Preserve averror
+        cache_entry->m_cache_info.m_error   = true;
+        if (!syserror)
+        {
+            // If system error is still zero, set to EIO to return at least anything else than success.
+            syserror = EIO;
+        }
 
-        thread_data->m_lock_guard = true;
-        thread_data->m_cond.notify_all();           // unlock main thread
+        thread_data->m_thread_running_lock_guard = true;
+        thread_data->m_thread_running_cond.notify_all();           // unlock main thread
     }
+
+    cache_entry->m_cache_info.m_errno       = syserror;                         // Preserve errno
+    cache_entry->m_cache_info.m_averror     = averror;                          // Preserve averror
 
     transcoder.closeio();
 
+    return success;
+}
+
+/**
+ * @brief Transcoding thread
+ * @param[in] arg - Corresponding Cache_Entry object.
+ * @returns Returns 0 on success; or errno code on error.
+ */
+static int transcoder_thread(void *arg)
+{
+    THREAD_DATA *thread_data = static_cast<THREAD_DATA*>(arg);
+    Cache_Entry *cache_entry = static_cast<Cache_Entry *>(thread_data->m_arg);
+    FFmpeg_Transcoder transcoder;
+    bool timeout = false;
+    bool success = true;
+
+    std::unique_lock<std::recursive_mutex> lock_active_mutex(cache_entry->m_active_mutex);
+    std::unique_lock<std::recursive_mutex> lock_restart_mutex(cache_entry->m_restart_mutex);
+
+    uint32_t seek_frame = 0;
+
+    do
+    {
+        if (seek_frame)
+        {
+            Logging::error(transcoder.virtname(), "Transcoder completed with last seek frame to %1. Transcoder is being restarted.", seek_frame);
+        }
+
+        success = transcode(thread_data, cache_entry, transcoder, &timeout);
+
+        seek_frame = cache_entry->m_seek_to_no != 0 ? cache_entry->m_seek_to_no.load() : transcoder.last_seek_frame_no();
+    }
+    while (success && !thread_exit && cache != nullptr && seek_frame);
+
+    cache_entry->m_is_decoding          = false;
+
     if (timeout || thread_exit || transcoder.have_seeked())
     {
-        cache_entry->m_is_decoding                  = false;
-
         if (!transcoder.have_seeked())
         {
-            //cache_entry->m_cache_info.m_finished    = RESULTCODE_FINISHED_ERROR;
             cache_entry->m_cache_info.m_error       = true;
             cache_entry->m_cache_info.m_errno       = EIO;      // Report I/O error
-            cache_entry->m_cache_info.m_averror     = averror;  // Preserve averror
 
             if (timeout)
             {
                 Logging::warning(cache_entry->virtname(), "Timeout! Transcoding aborted after %1 seconds inactivity.", params.m_max_inactive_abort);
             }
-            else
+            else if (thread_exit)
             {
                 Logging::info(cache_entry->virtname(), "Thread exit! Transcoding aborted.");
+            }
+            else
+            {
+                Logging::info(cache_entry->virtname(), "Transcoding aborted.");
             }
         }
         else
         {
             // Must restart from scratch, but this is not an error.
-            //cache_entry->m_cache_info.m_finished    = RESULTCODE_FINISHED_INCOMPLETE;
             cache_entry->m_cache_info.m_error       = false;
             cache_entry->m_cache_info.m_errno       = 0;
             cache_entry->m_cache_info.m_averror     = 0;
@@ -1008,14 +1055,14 @@ static int transcoder_thread(void *arg)
     }
     else
     {
-        cache_entry->m_is_decoding                  = false;
         cache_entry->m_cache_info.m_error           = !success;
-        cache_entry->m_cache_info.m_errno           = success ? 0 : (syserror ? syserror : EIO);    // Preserve errno
-        cache_entry->m_cache_info.m_averror         = success ? 0 : averror;                        // Preserve averror
 
         if (success)
         {
             Logging::info(cache_entry->virtname(), "Transcoding completed successfully.");
+
+            cache_entry->m_cache_info.m_errno       = 0;
+            cache_entry->m_cache_info.m_averror     = 0;
         }
         else
         {
@@ -1024,6 +1071,7 @@ static int transcoder_thread(void *arg)
             {
                 Logging::error(cache_entry->virtname(), "System error: (%1) %2", cache_entry->m_cache_info.m_errno, strerror(cache_entry->m_cache_info.m_errno));
             }
+
             if (cache_entry->m_cache_info.m_averror)
             {
                 Logging::error(cache_entry->virtname(), "FFMpeg error: (%1) %2", cache_entry->m_cache_info.m_averror, ffmpeg_geterror(cache_entry->m_cache_info.m_averror).c_str());
@@ -1031,187 +1079,16 @@ static int transcoder_thread(void *arg)
         }
     }
 
-    cache->closeio(&cache_entry, timeout ? CACHE_CLOSE_DELETE : CACHE_CLOSE_NOOPT);
+    int _errno = cache_entry->m_cache_info.m_errno;
+
+    if (cache != nullptr)
+    {
+        cache->closeio(&cache_entry, timeout ? CACHE_CLOSE_DELETE : CACHE_CLOSE_NOOPT);
+    }
 
     delete thread_data;
 
-    errno = syserror;
+    errno = _errno;
 
     return errno;
-}
-
-void ffmpeg_log(void *ptr, int level, const char *fmt, va_list vl)
-{
-    Logging::LOGLEVEL ffmpegfs_level;
-
-    // Map log level
-    // AV_LOG_PANIC     0
-    // AV_LOG_FATAL     8
-    // AV_LOG_ERROR    16
-    if (level <= AV_LOG_ERROR)
-    {
-        ffmpegfs_level = LOGERROR;
-    }
-    // AV_LOG_WARNING  24
-    else if (level <= AV_LOG_WARNING)
-    {
-        ffmpegfs_level = LOGWARN;
-    }
-#ifdef AV_LOG_TRACE
-    // AV_LOG_INFO     32
-    //else if (level <= AV_LOG_INFO)
-    //{
-    //    ffmpegfs_level = LOGINFO;
-    //}
-    // AV_LOG_VERBOSE  40
-    // AV_LOG_DEBUG    48
-    else if (level < AV_LOG_DEBUG)
-    {
-        ffmpegfs_level = LOGDEBUG;
-    }
-    // AV_LOG_TRACE    56
-    else   // if (level <= AV_LOG_TRACE)
-    {
-        ffmpegfs_level = LOGTRACE;
-    }
-#else
-    // AV_LOG_INFO     32
-    else   // if (level <= AV_LOG_INFO)
-    {
-        ffmpegfs_level = DEBUG;
-    }
-#endif
-
-    if (!Logging::show(ffmpegfs_level))
-    {
-        return;
-    }
-
-    va_list vl2;
-    static int print_prefix = 1;
-
-#if (LIBAVUTIL_VERSION_INT >= AV_VERSION_INT(55, 23, 0))
-    char * line;
-    int line_size;
-    std::string category;
-
-    if (ptr != nullptr)
-    {
-        AVClass* avc = *(AVClass **)ptr;
-
-        switch (avc->category)
-        {
-        case AV_CLASS_CATEGORY_NA:
-        {
-            break;
-        }
-        case AV_CLASS_CATEGORY_INPUT:
-        {
-            category = "INPUT   ";
-            break;
-        }
-        case AV_CLASS_CATEGORY_OUTPUT:
-        {
-            category = "OUTPUT  ";
-            break;
-        }
-        case AV_CLASS_CATEGORY_MUXER:
-        {
-            category = "MUXER   ";
-            break;
-        }
-        case AV_CLASS_CATEGORY_DEMUXER:
-        {
-            category = "DEMUXER ";
-            break;
-        }
-        case AV_CLASS_CATEGORY_ENCODER:
-        {
-            category = "ENCODER ";
-            break;
-        }
-        case AV_CLASS_CATEGORY_DECODER:
-        {
-            category = "DECODER ";
-            break;
-        }
-        case AV_CLASS_CATEGORY_FILTER:
-        {
-            category = "FILTER  ";
-            break;
-        }
-        case AV_CLASS_CATEGORY_BITSTREAM_FILTER:
-        {
-            category = "BITFILT ";
-            break;
-        }
-        case AV_CLASS_CATEGORY_SWSCALER:
-        {
-            category = "SWSCALE ";
-            break;
-        }
-        case AV_CLASS_CATEGORY_SWRESAMPLER:
-        {
-            category = "SWRESAM ";
-            break;
-        }
-        default:
-        {
-            strsprintf(&category, "CAT %3i ", static_cast<int>(avc->category));
-            break;
-        }
-        }
-    }
-
-    va_copy(vl2, vl);
-    av_log_default_callback(ptr, level, fmt, vl);
-    line_size = av_log_format_line2(ptr, level, fmt, vl2, nullptr, 0, &print_prefix);
-    if (line_size < 0)
-    {
-        va_end(vl2);
-        return;
-    }
-    line = static_cast<char *>(av_malloc(static_cast<size_t>(line_size)));
-    if (line == nullptr)
-    {
-        return;
-    }
-    av_log_format_line2(ptr, level, fmt, vl2, line, line_size, &print_prefix);
-    va_end(vl2);
-#else
-    char line[1024];
-
-    va_copy(vl2, vl);
-    av_log_default_callback(ptr, level, fmt, vl);
-    av_log_format_line(ptr, level, fmt, vl2, line, sizeof(line), &print_prefix);
-    va_end(vl2);
-#endif
-
-    Logging::log_with_level(ffmpegfs_level, "", category + line);
-
-#if (LIBAVUTIL_VERSION_INT >= AV_VERSION_INT(55, 23, 0))
-    av_free(line);
-#endif
-}
-
-bool init_logging(const std::string &logfile, const std::string & max_level, bool to_stderr, bool to_syslog)
-{
-    static const std::map<const std::string, const Logging::LOGLEVEL, comp> level_map =
-    {
-        { "ERROR",      LOGERROR },
-        { "WARNING",    LOGWARN },
-        { "INFO",       LOGINFO },
-        { "DEBUG",      LOGDEBUG },
-        { "TRACE",      LOGTRACE },
-    };
-
-    std::map<const std::string, const Logging::LOGLEVEL, comp>::const_iterator it = level_map.find(max_level);
-
-    if (it == level_map.cend())
-    {
-        std::fprintf(stderr, "Invalid logging level string: %s\n", max_level.c_str());
-        return false;
-    }
-
-    return Logging::init_logging(logfile, it->second, to_stderr, to_syslog);
 }

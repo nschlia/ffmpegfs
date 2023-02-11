@@ -47,33 +47,22 @@ extern "C" {
 #include <libavformat/avformat.h>
 #include <libavformat/avio.h>
 #include <libavutil/file.h>
+#include <libswresample/swresample.h>
 #pragma GCC diagnostic pop
 #ifdef __cplusplus
 }
 #endif
 
 #include "ffmpeg_transcoder.h"
-#include "transcode.h"
 #include "buffer.h"
 #include "wave.h"
 #include "aiff.h"
 #include "logging.h"
+#include "ffmpegfs.h"
 
 #include <unistd.h>
 #include <filesystem>
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-// Disable annoying warnings outside our code
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wconversion"
-#pragma GCC diagnostic ignored "-Wsign-conversion"
-#include <libswresample/swresample.h>
-#pragma GCC diagnostic pop
-#ifdef __cplusplus
-}
-#endif
+#include <thread>
 
 #define FRAME_SEEK_THRESHOLD    25  /**< @brief Ignore seek if target is within the next n frames */
 
@@ -1110,7 +1099,7 @@ int FFmpeg_Transcoder::open_output_frame_set(Buffer *buffer)
 
     m_buffer            = buffer;
     {
-        std::lock_guard<std::recursive_mutex> lck (m_seek_to_fifo_mutex);
+        std::lock_guard<std::recursive_mutex> lock_seek_to_fifo_mutex(m_seek_to_fifo_mutex);
         while (m_seek_to_fifo.size())
         {
             m_seek_to_fifo.pop();
@@ -4099,7 +4088,7 @@ int FFmpeg_Transcoder::read_decode_convert_and_store(int *finished)
             {
                 // If we are the the end of the file, flush the decoder below.
                 *finished = 1;
-                Logging::trace(virtname(), "Read to EOF.");
+                Logging::trace(virtname(), "Read input file to EOF.");
             }
             else
             {
@@ -5016,7 +5005,7 @@ int FFmpeg_Transcoder::do_seek_frame(uint32_t frame_no)
         pts += m_in.m_video.m_stream->start_time;
     }
 
-    return av_seek_frame(m_in.m_format_ctx, m_in.m_video.m_stream_idx, pts, AVSEEK_FLAG_BACKWARD);
+    return av_seek_frame(m_in.m_format_ctx, m_in.m_video.m_stream_idx, pts, AVSEEK_FLAG_BACKWARD|AVSEEK_FLAG_FRAME);
 }
 
 int FFmpeg_Transcoder::skip_decoded_frames(uint32_t frame_no, bool forced_seek)
@@ -5026,7 +5015,7 @@ int FFmpeg_Transcoder::skip_decoded_frames(uint32_t frame_no, bool forced_seek)
     // Seek next undecoded frame
     for (; m_buffer->have_frame(next_frame_no); next_frame_no++)
     {
-        sleep(0);
+        std::this_thread::yield();
     }
 
     if (next_frame_no > m_virtualfile->m_video_frame_count)
@@ -5202,11 +5191,11 @@ int FFmpeg_Transcoder::copy_audio_to_frame_buffer(int *finished)
     return 0;
 }
 
-int FFmpeg_Transcoder::process_single_fr(int &status)
+int FFmpeg_Transcoder::process_single_fr(DECODER_STATUS *status)
 {
     int finished = 0;
 
-    status = 0;
+    *status = DECODER_SUCCESS;
 
     try
     {
@@ -5218,7 +5207,7 @@ int FFmpeg_Transcoder::process_single_fr(int &status)
             ret = seek_frame();
             if (ret == AVERROR_EOF)
             {
-                status = 1; // Report EOF, but return no error
+                *status = DECODER_EOF;  // Report EOF, but return no error
                 throw 0;
             }
 
@@ -5253,7 +5242,7 @@ int FFmpeg_Transcoder::process_single_fr(int &status)
 
             if (finished)
             {
-                status = 1;
+                *status = DECODER_EOF;  // Report EOF
             }
         }
 
@@ -5413,12 +5402,12 @@ int FFmpeg_Transcoder::process_single_fr(int &status)
             flush_delayed_video();
             flush_delayed_subtitles();
 
-            status = 1;
+            *status = DECODER_EOF;  // Report EOF
         }
     }
     catch (int _ret)
     {
-        status = (_ret != AVERROR_EOF ? -1 : 1);   // If _ret == AVERROR_EOF, simply signal EOF
+        *status = (_ret != AVERROR_EOF ? DECODER_ERROR : DECODER_EOF);   // If _ret == AVERROR_EOF, simply signal EOF
         return _ret;
     }
 
@@ -5431,7 +5420,7 @@ int FFmpeg_Transcoder::seek_frame()
     {
         // No current seek frame, check if new seek frame was stacked.
         {
-            std::lock_guard<std::recursive_mutex> lck (m_seek_to_fifo_mutex);
+            std::lock_guard<std::recursive_mutex> lock_seek_to_fifo_mutex(m_seek_to_fifo_mutex);
 
             while (!m_seek_to_fifo.empty())
             {
@@ -5506,7 +5495,7 @@ int FFmpeg_Transcoder::start_new_segment()
             continue;
         }
 
-        if (!m_buffer->segment_exists(segment_no) || !m_buffer->tell(segment_no)) // NOT EXISTS or NO DATA YET
+        if (!m_buffer->segment_exists(segment_no) || !m_buffer->tell(segment_no)) // NOT EXIST or NO DATA YET
         {
             int ret = 0;
 
@@ -6685,7 +6674,7 @@ int FFmpeg_Transcoder::stack_seek_frame(uint32_t frame_no)
 {
     if (frame_no > 0 && frame_no <= video_frame_count())
     {
-        std::lock_guard<std::recursive_mutex> lck (m_seek_to_fifo_mutex);
+        std::lock_guard<std::recursive_mutex> lock_seek_to_fifo_mutex(m_seek_to_fifo_mutex);
         m_seek_to_fifo.push(frame_no);  // Seek to this frame next decoding operation
         return 0;
     }
@@ -6701,7 +6690,7 @@ int FFmpeg_Transcoder::stack_seek_segment(uint32_t segment_no)
 {
     if (segment_no > 0 && segment_no <= segment_count())
     {
-        std::lock_guard<std::recursive_mutex> lck (m_seek_to_fifo_mutex);
+        std::lock_guard<std::recursive_mutex> lock_seek_to_fifo_mutex(m_seek_to_fifo_mutex);
         m_seek_to_fifo.push(segment_no);  // Seek to this segment next decoding operation
         return 0;
     }
@@ -7803,4 +7792,3 @@ uint32_t FFmpeg_Transcoder::last_seek_frame_no() const
 {
     return m_last_seek_frame_no;
 }
-

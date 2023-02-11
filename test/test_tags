@@ -18,7 +18,8 @@ VIDEO=$2
 get_metadata() {
         local -n outvar=$2    # -n makes it a nameref.
         echo Checking $1
-        cp "$1" /dev/null
+        cp -vpf "$1" "${TMPPATH}" > /dev/null
+        #cp -vpf "$1" "${TMPPATH}" > /dev/null
         outvar=`./metadata "$1" | fgrep = | sort -u | sed -r 's/^encoder=.*//I' | sed -r '/^vendor_id=.*$/Id'`
 }
 

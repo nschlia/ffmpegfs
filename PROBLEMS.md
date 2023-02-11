@@ -34,9 +34,11 @@ Some copy tools do not get along very well with dynamically generated files, as 
 
 Under Linux, it is best to use (optionally with the -r parameter)
 
-        cp -uv /path/to/source /path/to/target
+        cp -upv /path/to/source /path/to/target
 
-This will copy all missing or changed files without missing parts. On the Windows side, Windows Explorer or copy/xcopy work. Beyond Compare and similar tools might simply copy the anticipated size and not react to size changes.
+This will copy all missing or changed files without missing parts. On the Windows side, Windows Explorer or copy/xcopy work. Beyond Compare and comparable tools might only duplicate the expected size without responding to changes in size.
+
+Please take note of the "-p" parameter, which means "—preserve=mode,ownership,timestamps." It appears that files may occasionally be copied with zero size if it is absent.
 
 ## Open hls.html from disk to play HLS output.
 

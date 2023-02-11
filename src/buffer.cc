@@ -170,7 +170,7 @@ bool Buffer::close_file(uint32_t segment_no, uint32_t flags)
 
 bool Buffer::init(bool erase_cache)
 {
-    std::lock_guard<std::recursive_mutex> lck (m_mutex);
+    std::lock_guard<std::recursive_mutex> lock_mutex(m_mutex);
 
     if (is_open())
     {
@@ -301,7 +301,7 @@ bool Buffer::init(bool erase_cache)
 
 bool Buffer::set_segment(uint32_t segment_no, size_t size)
 {
-    std::lock_guard<std::recursive_mutex> lck (m_mutex);
+    std::lock_guard<std::recursive_mutex> lock_mutex(m_mutex);
 
     if (!segment_no || segment_no > segment_count())
     {
@@ -327,14 +327,14 @@ bool Buffer::set_segment(uint32_t segment_no, size_t size)
 
 uint32_t Buffer::segment_count()
 {
-    std::lock_guard<std::recursive_mutex> lck (m_mutex);
+    std::lock_guard<std::recursive_mutex> lock_mutex(m_mutex);
 
     return static_cast<uint32_t>(m_ci.size());
 }
 
 uint32_t Buffer::current_segment_no()
 {
-    std::lock_guard<std::recursive_mutex> lck (m_mutex);
+    std::lock_guard<std::recursive_mutex> lock_mutex(m_mutex);
 
     if (!segment_count() || m_cur_ci == nullptr)
     {
@@ -345,7 +345,7 @@ uint32_t Buffer::current_segment_no()
 
 bool Buffer::segment_exists(uint32_t segment_no)
 {
-    std::lock_guard<std::recursive_mutex> lck (m_mutex);
+    std::lock_guard<std::recursive_mutex> lock_mutex(m_mutex);
 
     if (!segment_count() || m_cur_ci == nullptr)
     {
@@ -364,7 +364,7 @@ bool Buffer::map_file(const std::string & filename, int *fd, uint8_t **p, size_t
     }
     else
     {
-        Logging::error(filename, "Mapping cache file. Size %1", defaultsize);
+        Logging::trace(filename, "Mapping cache file with %1.", format_size(defaultsize).c_str());
     }
 
     try
@@ -489,7 +489,7 @@ bool Buffer::unmap_file(const std::string &filename, int * fd, uint8_t **p, size
 
 bool Buffer::release(int flags /*= CACHE_CLOSE_NOOPT*/)
 {
-    std::lock_guard<std::recursive_mutex> lck (m_mutex);
+    std::lock_guard<std::recursive_mutex> lock_mutex(m_mutex);
 
     bool success = true;
 
@@ -554,7 +554,7 @@ bool Buffer::remove_cachefile(uint32_t segment_no) const
 
 bool Buffer::flush()
 {
-    std::lock_guard<std::recursive_mutex> lck (m_mutex);
+    std::lock_guard<std::recursive_mutex> lock_mutex(m_mutex);
 
     if (!segment_count() || m_cur_ci == nullptr || m_cur_ci->m_buffer == nullptr)
     {
@@ -582,7 +582,7 @@ bool Buffer::flush()
 
 bool Buffer::clear()
 {
-    std::lock_guard<std::recursive_mutex> lck (m_mutex);
+    std::lock_guard<std::recursive_mutex> lock_mutex(m_mutex);
 
     bool success = true;
 
@@ -624,7 +624,7 @@ bool Buffer::clear()
 
 bool Buffer::reserve(size_t size)
 {
-    std::lock_guard<std::recursive_mutex> lck (m_mutex);
+    std::lock_guard<std::recursive_mutex> lock_mutex(m_mutex);
 
     if (m_cur_ci == nullptr || m_cur_ci->m_buffer == nullptr)
     {
@@ -689,7 +689,7 @@ bool Buffer::reserve(size_t size)
 
 size_t Buffer::writeio(const uint8_t* data, size_t length)
 {
-    std::lock_guard<std::recursive_mutex> lck (m_mutex);
+    std::lock_guard<std::recursive_mutex> lock_mutex(m_mutex);
 
     if (m_cur_ci == nullptr || m_cur_ci->m_buffer == nullptr)
     {
@@ -716,7 +716,7 @@ size_t Buffer::writeio(const uint8_t* data, size_t length)
 
 size_t Buffer::write_frame(const uint8_t *data, size_t length, uint32_t frame_no)
 {
-    std::lock_guard<std::recursive_mutex> lck (m_mutex);
+    std::lock_guard<std::recursive_mutex> lock_mutex(m_mutex);
 
     if (data == nullptr || m_cur_ci == nullptr || m_cur_ci->m_buffer_idx == nullptr || frame_no < 1 || frame_no > virtualfile()->m_video_frame_count)
     {
@@ -908,7 +908,7 @@ bool Buffer::copy(std::vector<uint8_t> * out_data, size_t offset, uint32_t segme
 
 bool Buffer::copy(uint8_t* out_data, size_t offset, size_t bufsize, uint32_t segment_no)
 {
-    std::lock_guard<std::recursive_mutex> lck (m_mutex);
+    std::lock_guard<std::recursive_mutex> lock_mutex(m_mutex);
 
     LPCCACHEINFO ci = const_cacheinfo(segment_no);
 
@@ -1039,7 +1039,7 @@ size_t Buffer::readio(void * /*data*/, size_t /*size*/)
 
 size_t Buffer::read_frame(std::vector<uint8_t> * data, uint32_t frame_no)
 {
-    std::lock_guard<std::recursive_mutex> lck (m_mutex);
+    std::lock_guard<std::recursive_mutex> lock_mutex(m_mutex);
 
     if (data == nullptr || m_cur_ci->m_buffer_idx == nullptr || frame_no < 1 || frame_no > virtualfile()->m_video_frame_count)
     {
@@ -1086,7 +1086,7 @@ void Buffer::closeio()
 
 bool Buffer::have_frame(uint32_t frame_no)
 {
-    std::lock_guard<std::recursive_mutex> lck (m_mutex);
+    std::lock_guard<std::recursive_mutex> lock_mutex(m_mutex);
 
     if (m_cur_ci->m_buffer_idx == nullptr || frame_no < 1 || frame_no > virtualfile()->m_video_frame_count)
     {
@@ -1105,7 +1105,7 @@ bool Buffer::have_frame(uint32_t frame_no)
 
 bool Buffer::is_open()
 {
-    std::lock_guard<std::recursive_mutex> lck (m_mutex);
+    std::lock_guard<std::recursive_mutex> lock_mutex(m_mutex);
 
     for (uint32_t index = 0; index < segment_count(); index++)
     {

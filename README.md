@@ -27,7 +27,14 @@ News
 - **Bugfix:** Closes [#141](https://github.com/nschlia/ffmpegfs/issues/141): Improved memory management by allocating several times the average size of allocations far. This prevents obtaining tiny portions over and over again.
   Additionally, after the file is opened, grabbing the entire expected memory block rather than doing a tiny allocation initially, followed by a larger allocation.
 - **Bugfix:** Avoid race condition causing the inter-process semaphore creation to fail for second process.
-- **Optimisation:** When reopening after invalidating the cache, the size remained at 0. The original size now is once more reserved in order to prevent reallocations. 
+- **Bugfix:** Issue [#119](https://github.com/nschlia/ffmpegfs/issues/119): If a seek request is still open after EOF, restart transcoding.
+- **Bugfix:** Issue [#119](https://github.com/nschlia/ffmpegfs/issues/119): No matter whatever sequence they are accessed in, always make sure that the same BMP, PNG, and JPG images are produced.
+- **Bugfix:** Issue [#119](https://github.com/nschlia/ffmpegfs/issues/119): To prevent frame/segment creation errors, the frame set and HLS code has been updated.
+- **Bugfix:** Avoid crash during shutdown if cache object had already been closed.
+- **Bugfix:** The AVSEEK_FLAG_FRAME set should be used to seek to frames when building frame sets. Otherwise, output images may vary if searched for or continuously decoded.
+- **Enhancement:** Record milliseconds for every log event.
+- **Enhancement:** make check: Added file size check to frame set tests.
+- **Optimisation:** When reopening after invalidating the cache, the size remained at 0. The original size now is once more reserved in order to prevent reallocations.
 - **Optimisation:** To avoid reallocations, save enough space in the cache buffer to hold the entire frame set.
 - **Optimisation:** Checking folders to see if they can be transcoded is completely pointless. Directories are now immediately skipped.
 
@@ -51,7 +58,7 @@ See [history](HISTORY.md) for details.
 
 | Branch                                                    | Compiler     | FFmpeg | Host OS      | CPU    | Build State                                                  |
 | --------------------------------------------------------- | ------------ | ------ | ------------ | ------ | ------------------------------------------------------------ |
-| [master](https://github.com/nschlia/ffmpegfs/tree/master) | GCC 12.1.0   | 5.0.1  | Debian 12    | AMD/64 | ![Build Status](https://secure.oblivion-software.de/jenkins/buildStatus/icon?job=ffmpegfs+%28github-latest%29) |
+| [master](https://github.com/nschlia/ffmpegfs/tree/master) | GCC 12.2.0   | 5.0.1  | Debian 12    | AMD/64 | ![Build Status](https://secure.oblivion-software.de/jenkins/buildStatus/icon?job=ffmpegfs+%28github-latest%29) |
 | [master](https://github.com/nschlia/ffmpegfs/tree/master) | GCC 10.2.1   | 4.3.2  | Debian 11    | AMD/64 | ![Build Status](https://secure.oblivion-software.de/jenkins/buildStatus/icon?job=ffmpegfs%20(github-ffmpeg)) |
 | [master](https://github.com/nschlia/ffmpegfs/tree/master) | GCC 9.3.0    | 4.2.4  | Ubuntu 20.04 | AMD/64 | [![Build Status](https://github.com/nschlia/ffmpegfs/actions/workflows/make-gcc.yml/badge.svg)](https://github.com/nschlia/ffmpegfs/actions/workflows/make-gcc.yml) |
 | [master](https://github.com/nschlia/ffmpegfs/tree/master) | GCC 10.2.1   | 4.3.4  | Debian 11    | ARM/32 | ![Build Status](https://secure.oblivion-software.de/jenkins/buildStatus/icon?job=ffmpegfs+%28github-arm32%29) |

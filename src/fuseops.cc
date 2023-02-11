@@ -758,7 +758,7 @@ static int ffmpegfs_getattr(const char *path, struct stat *stbuf)
                                 }
                             }
 
-                            make_hls_fileset(nullptr, nullptr, parent_file->m_destfile + "/", parent_file); // TEST
+                            make_hls_fileset(nullptr, nullptr, parent_file->m_destfile + "/", parent_file);
 
                             LPVIRTUALFILE virtualfile2 = find_original(origpath);
                             if (virtualfile2 == nullptr)
@@ -1093,7 +1093,7 @@ static int ffmpegfs_read(const char *path, char *buf, size_t size, off_t offset,
     size_t locoffset = static_cast<size_t>(offset);  // Cast OK: offset can never be < 0.
     int bytes_read = 0;
 
-    Logging::trace(path, "read: Reading %1 bytes from offset %2.", size, locoffset);
+    Logging::trace(path, "read: Reading %1 bytes from offset %2 to %3.", size, locoffset, size + locoffset);
 
     append_basepath(&origpath, path);
 
@@ -1240,6 +1240,15 @@ static int ffmpegfs_read(const char *path, char *buf, size_t size, off_t offset,
 
     if (success)
     {
+        if (bytes_read)
+        {
+            Logging::trace(path, "read: Read %1 bytes from offset %2 to %3.", bytes_read, locoffset, static_cast<size_t>(bytes_read) + locoffset);
+        }
+        else
+        {
+            Logging::trace(path, "read: Read output file to EOF.");
+        }
+
         return bytes_read;
     }
     else

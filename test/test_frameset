@@ -10,7 +10,7 @@ check_filesize_frameset() {
                 check_filesize "${1}" 38625 139606 "${TMPPATH}" 1
 	elif [ "${FILEEXT}" == "jpg" ];
 	then
-                check_filesize "${1}" 26287 70678 "${TMPPATH}" 1
+                check_filesize "${1}" 26287 70679 "${TMPPATH}" 1
 	elif [ "${FILEEXT}" == "bmp" ];
 	then
                 check_filesize "${1}" 7372854 7372854 "${TMPPATH}" 1

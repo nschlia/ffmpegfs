@@ -43,11 +43,11 @@ jobs:
     - name: configure
       run: CC=gcc  CXX="g++" ./configure
     - name: make
-      run: make
+      run: make -j `nproc`
     - name: make check
-      run: make check
+      run: make -j `nproc` check
     - name: make cppcheck
-      run: make cppcheck
+      run: make -j `nproc` cppcheck
     - name: Archive GCC Build Logs
       if: always()
       uses: actions/upload-artifact@v2

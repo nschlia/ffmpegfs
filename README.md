@@ -23,6 +23,9 @@ To get what's been done so far, checkout the [windows](https://github.com/nschli
 - **Bugfix:** Closes [#141](https://github.com/nschlia/ffmpegfs/issues/141): Improved memory management by allocating several times the average size of allocations far. This prevents obtaining tiny portions over and over again.
   Additionally, after the file is opened, grabbing the entire expected memory block rather than doing a tiny allocation initially, followed by a larger allocation.
 - **Bugfix:** Avoid race condition causing the inter-process semaphore creation to fail for second process.
+- **Bugfix:** Issue [#119](https://github.com/nschlia/ffmpegfs/issues/119): If a seek request is still open after EOF, restart transcoding.
+- **Bugfix:** Issue [#119](https://github.com/nschlia/ffmpegfs/issues/119): No matter whatever sequence they are accessed in, always make sure that the same BMP, PNG, and JPG images are produced.
+- **Bugfix:** Issue [#119](https://github.com/nschlia/ffmpegfs/issues/119): To prevent frame/segment creation errors, the frame set and HLS code has been updated.
 - **Bugfix:** Avoid crash during shutdown if cache object had already been closed.
 - **Bugfix:** The AVSEEK_FLAG_FRAME set should be used to seek to frames when building frame sets. Otherwise, output images may vary if searched for or continuously decoded.
 - **Enhancement:** Record milliseconds for every log event.

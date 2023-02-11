@@ -283,26 +283,8 @@ extern thread_pool*     tp;
  * @brief Initialise FUSE operation structure.
  */
 void            init_fuse_ops();
-
-/**
- * @brief Custom FFmpeg log function. Used with av_log_set_callback().
- * @param[in] ptr - See av_log_set_callback() in FFmpeg API.
- * @param[in] level - See av_log_set_callback() in FFmpeg API.
- * @param[in] fmt - See av_log_set_callback() in FFmpeg API.
- * @param[in] vl - See av_log_set_callback() in FFmpeg API.
- */
-void            ffmpeg_log(void *ptr, int level, const char *fmt, va_list vl);
 #endif
 
-/**
- * @brief Inititalise logging facility
- * @param[in] logfile - Name of log file if file writing is selected.
- * @param[in] max_level - Maximum level to log.
- * @param[in] to_stderr - If true, log to stderr.
- * @param[in] to_syslog - If true, log to syslog.
- * @return Returns true on success; false on error.
- */
-bool            init_logging(const std::string &logfile, const std::string & max_level, bool to_stderr, bool to_syslog);
 /**
  * @brief Get transcoder cache path.
  * @param[out] path - Path to transcoder cache.

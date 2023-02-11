@@ -620,7 +620,7 @@ bool transcoder_read_frame(Cache_Entry* cache_entry, char* buff, size_t offset, 
         std::vector<uint8_t> data;
 
         // Wait until decoder thread has the requested frame available
-        if (cache_entry->m_is_decoding)
+        if (cache_entry->m_is_decoding || cache_entry->m_suspend_timeout)
         {
             // Try to read requested frame, stack a seek to if if this fails.
             if (!cache_entry->m_buffer->read_frame(&data, frame_no))
@@ -638,11 +638,18 @@ bool transcoder_read_frame(Cache_Entry* cache_entry, char* buff, size_t offset, 
                         throw false;
                     }
 
-                    if (errno == EAGAIN && !--retries)
+                    if (!cache_entry->m_suspend_timeout)
                     {
-                        errno = ETIMEDOUT;
-                        Logging::error(cache_entry->virtname(), "Timeout reading image frame no. %1: (%2) %3", frame_no, errno, strerror(errno));
-                        throw false;
+                        if (errno == EAGAIN && !--retries)
+                        {
+                            errno = ETIMEDOUT;
+                            Logging::error(cache_entry->virtname(), "Timeout reading image frame no. %1: (%2) %3", frame_no, errno, strerror(errno));
+                            throw false;
+                        }
+                    }
+                    else
+                    {
+                        retries = TOTAL_RETRIES;
                     }
 
                     if (fuse_interrupted())
@@ -774,8 +781,6 @@ static bool transcode(THREAD_DATA *thread_data, Cache_Entry *cache_entry, FFmpeg
     int syserror = 0;
     bool success = true;
 
-    std::unique_lock<std::recursive_mutex> active_mutex(cache_entry->m_active_mutex);
-
     // Clear cache to remove any older remains
     cache_entry->clear();
 
@@ -819,11 +824,6 @@ static bool transcode(THREAD_DATA *thread_data, Cache_Entry *cache_entry, FFmpeg
             cache_entry->m_cache_info.m_segment_count       = transcoder.segment_count();
         }
 
-        if (!cache_entry->m_cache_info.m_duration)
-        {
-            cache_entry->m_cache_info.m_duration        = transcoder.duration();
-        }
-
         if (cache != nullptr && !cache->maintenance(transcoder.predicted_filesize()))
         {
             throw (static_cast<int>(errno));
@@ -858,6 +858,8 @@ static bool transcode(THREAD_DATA *thread_data, Cache_Entry *cache_entry, FFmpeg
                 Logging::debug(cache_entry->virtname(), "Pre-buffering up to %1.", format_size(params.m_prebuffer_size).c_str());
             }
         }
+
+        cache_entry->m_suspend_timeout = false;
 
         while (!cache_entry->is_finished() && !(*timeout = cache_entry->decode_timeout()) && !thread_exit)
         {
@@ -907,6 +909,8 @@ static bool transcode(THREAD_DATA *thread_data, Cache_Entry *cache_entry, FFmpeg
             }
             else if (status == DECODER_EOF)
             {
+                cache_entry->m_suspend_timeout = true; // Suspend read_frame time out until transcoder is reopened.
+
                 averror = transcode_finish(cache_entry, transcoder);
 
                 if (averror < 0)
@@ -969,7 +973,6 @@ static bool transcode(THREAD_DATA *thread_data, Cache_Entry *cache_entry, FFmpeg
             syserror = AVUNERROR(averror);
         }
 
-        cache_entry->m_is_decoding          = false;
         cache_entry->m_cache_info.m_error   = true;
         if (!syserror)
         {
@@ -1003,13 +1006,27 @@ static int transcoder_thread(void *arg)
     bool success = true;
 
     std::unique_lock<std::recursive_mutex> lock_active_mutex(cache_entry->m_active_mutex);
+    std::unique_lock<std::recursive_mutex> lock_restart_mutex(cache_entry->m_restart_mutex);
 
-    success = transcode(thread_data, cache_entry, transcoder, &timeout);
+    uint32_t seek_frame = 0;
+
+    do
+    {
+        if (seek_frame)
+        {
+            Logging::error(transcoder.virtname(), "Transcoder completed with last seek frame to %1. Transcoder is being restarted.", seek_frame);
+        }
+
+        success = transcode(thread_data, cache_entry, transcoder, &timeout);
+
+        seek_frame = cache_entry->m_seek_to_no != 0 ? cache_entry->m_seek_to_no.load() : transcoder.last_seek_frame_no();
+    }
+    while (success && !thread_exit && cache != nullptr && seek_frame);
+
+    cache_entry->m_is_decoding          = false;
 
     if (timeout || thread_exit || transcoder.have_seeked())
     {
-        cache_entry->m_is_decoding                  = false;
-
         if (!transcoder.have_seeked())
         {
             cache_entry->m_cache_info.m_error       = true;
@@ -1038,7 +1055,6 @@ static int transcoder_thread(void *arg)
     }
     else
     {
-        cache_entry->m_is_decoding                  = false;
         cache_entry->m_cache_info.m_error           = !success;
 
         if (success)
@@ -1075,180 +1091,4 @@ static int transcoder_thread(void *arg)
     errno = _errno;
 
     return errno;
-}
-
-void ffmpeg_log(void *ptr, int level, const char *fmt, va_list vl)
-{
-    Logging::LOGLEVEL ffmpegfs_level;
-
-    // Map log level
-    // AV_LOG_PANIC     0
-    // AV_LOG_FATAL     8
-    // AV_LOG_ERROR    16
-    if (level <= AV_LOG_ERROR)
-    {
-        ffmpegfs_level = LOGERROR;
-    }
-    // AV_LOG_WARNING  24
-    else if (level <= AV_LOG_WARNING)
-    {
-        ffmpegfs_level = LOGWARN;
-    }
-#ifdef AV_LOG_TRACE
-    // AV_LOG_INFO     32
-    //else if (level <= AV_LOG_INFO)
-    //{
-    //    ffmpegfs_level = LOGINFO;
-    //}
-    // AV_LOG_VERBOSE  40
-    // AV_LOG_DEBUG    48
-    else if (level < AV_LOG_DEBUG)
-    {
-        ffmpegfs_level = LOGDEBUG;
-    }
-    // AV_LOG_TRACE    56
-    else   // if (level <= AV_LOG_TRACE)
-    {
-        ffmpegfs_level = LOGTRACE;
-    }
-#else
-    // AV_LOG_INFO     32
-    else   // if (level <= AV_LOG_INFO)
-    {
-        ffmpegfs_level = DEBUG;
-    }
-#endif
-
-    if (!Logging::show(ffmpegfs_level))
-    {
-        return;
-    }
-
-    va_list vl2;
-    static int print_prefix = 1;
-
-#if (LIBAVUTIL_VERSION_INT >= AV_VERSION_INT(55, 23, 0))
-    char * line;
-    int line_size;
-    std::string category;
-
-    if (ptr != nullptr)
-    {
-        AVClass* avc = *(AVClass **)ptr;
-
-        switch (avc->category)
-        {
-        case AV_CLASS_CATEGORY_NA:
-        {
-            break;
-        }
-        case AV_CLASS_CATEGORY_INPUT:
-        {
-            category = "INPUT   ";
-            break;
-        }
-        case AV_CLASS_CATEGORY_OUTPUT:
-        {
-            category = "OUTPUT  ";
-            break;
-        }
-        case AV_CLASS_CATEGORY_MUXER:
-        {
-            category = "MUXER   ";
-            break;
-        }
-        case AV_CLASS_CATEGORY_DEMUXER:
-        {
-            category = "DEMUXER ";
-            break;
-        }
-        case AV_CLASS_CATEGORY_ENCODER:
-        {
-            category = "ENCODER ";
-            break;
-        }
-        case AV_CLASS_CATEGORY_DECODER:
-        {
-            category = "DECODER ";
-            break;
-        }
-        case AV_CLASS_CATEGORY_FILTER:
-        {
-            category = "FILTER  ";
-            break;
-        }
-        case AV_CLASS_CATEGORY_BITSTREAM_FILTER:
-        {
-            category = "BITFILT ";
-            break;
-        }
-        case AV_CLASS_CATEGORY_SWSCALER:
-        {
-            category = "SWSCALE ";
-            break;
-        }
-        case AV_CLASS_CATEGORY_SWRESAMPLER:
-        {
-            category = "SWRESAM ";
-            break;
-        }
-        default:
-        {
-            strsprintf(&category, "CAT %3i ", static_cast<int>(avc->category));
-            break;
-        }
-        }
-    }
-
-    va_copy(vl2, vl);
-    av_log_default_callback(ptr, level, fmt, vl);
-    line_size = av_log_format_line2(ptr, level, fmt, vl2, nullptr, 0, &print_prefix);
-    if (line_size < 0)
-    {
-        va_end(vl2);
-        return;
-    }
-    line = static_cast<char *>(av_malloc(static_cast<size_t>(line_size)));
-    if (line == nullptr)
-    {
-        return;
-    }
-    av_log_format_line2(ptr, level, fmt, vl2, line, line_size, &print_prefix);
-    va_end(vl2);
-#else
-    char line[1024];
-
-    va_copy(vl2, vl);
-    av_log_default_callback(ptr, level, fmt, vl);
-    av_log_format_line(ptr, level, fmt, vl2, line, sizeof(line), &print_prefix);
-    va_end(vl2);
-#endif
-
-    Logging::log_with_level(ffmpegfs_level, "", category + line);
-
-#if (LIBAVUTIL_VERSION_INT >= AV_VERSION_INT(55, 23, 0))
-    av_free(line);
-#endif
-}
-
-bool init_logging(const std::string &logfile, const std::string & max_level, bool to_stderr, bool to_syslog)
-{
-    static const std::map<const std::string, const Logging::LOGLEVEL, comp> level_map =
-    {
-        { "ERROR",      LOGERROR },
-        { "WARNING",    LOGWARN },
-        { "INFO",       LOGINFO },
-        { "DEBUG",      LOGDEBUG },
-        { "TRACE",      LOGTRACE },
-    };
-
-    std::map<const std::string, const Logging::LOGLEVEL, comp>::const_iterator it = level_map.find(max_level);
-
-    if (it == level_map.cend())
-    {
-        std::fprintf(stderr, "Invalid logging level string: %s\n", max_level.c_str());
-        return false;
-    }
-
-    return Logging::init_logging(logfile, it->second, to_stderr, to_syslog);
 }

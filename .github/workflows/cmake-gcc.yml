@@ -50,7 +50,7 @@ jobs:
       if: always()
       uses: actions/upload-artifact@v3
       with:
-        name: Collected build logs
+        name: Archived build logs
         path: |
            *.log
            config.status
@@ -59,7 +59,7 @@ jobs:
       if: always()
       uses: actions/upload-artifact@v3
       with:
-        name: Collected test results
+        name: Archived test results
         path: |
            test/*.log
            test/*.trs

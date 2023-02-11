@@ -50,8 +50,17 @@ jobs:
       if: always()
       uses: actions/upload-artifact@v3
       with:
-        name: Collected build logs
+        name: Archived build logs
         path: |
            *.log
            config.status
            doxyfile.inc
+    - name: Archive Test Results
+      if: always()
+      uses: actions/upload-artifact@v3
+      with:
+        name: Archived test results
+        path: |
+           test/*.log
+           test/*.trs
+           test/*.tag

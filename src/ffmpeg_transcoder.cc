@@ -4084,7 +4084,7 @@ int FFmpeg_Transcoder::read_decode_convert_and_store(int *finished)
             {
                 // If we are the the end of the file, flush the decoder below.
                 *finished = 1;
-                Logging::trace(virtname(), "Read to EOF.");
+                Logging::trace(virtname(), "Read input file to EOF.");
             }
             else
             {
@@ -7788,4 +7788,3 @@ uint32_t FFmpeg_Transcoder::last_seek_frame_no() const
 {
     return m_last_seek_frame_no;
 }
-

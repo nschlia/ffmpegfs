@@ -1246,7 +1246,7 @@ static int ffmpegfs_read(const char *path, char *buf, size_t size, off_t offset,
         }
         else
         {
-            Logging::trace(path, "read: Read to EOF.");
+            Logging::trace(path, "read: Read output file to EOF.");
         }
 
         return bytes_read;

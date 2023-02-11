@@ -60,7 +60,7 @@ libchromaprint-devel, bc
 
 #### Install Libraries Missing From Setup
 
-Libchardet is also not part of Cygwin, therefore go to https://github.com/Joungkyun/libchardet/releases to download and build libchardet. When a newer version becomes available, you may use it. V1.0.6 was in use at the time this was written. 
+Libchardet is also not part of Cygwin, therefore go to https://github.com/Joungkyun/libchardet/releases to download and build libchardet. You may use a newer version if one becomes available. At the time of writing, that was V1.0.6.
 
 ```
 $ mkdir install
@@ -87,8 +87,6 @@ Download it, for example, from [Github](https://github.com/BtbN/FFmpeg-Builds/re
 and then unpack it. This will automatically place all files in the appropriate directories.
 
 Should you feel lucky and want to build the binaries yourself, you may also use FFmpeg Windows Build Helpers, which can be obtained [here](https://github.com/rdp/ffmpeg-windows-build-helpers).
-
-Only the corresponding binaries and libraries are required if you only want to build a 64 or 32 bit version of FFmpegfs. 
 
 | Directory                | Bit Width | To Copy There       |
 | ------------------------ | --------- | ------------------- |

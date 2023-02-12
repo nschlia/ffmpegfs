@@ -14,21 +14,26 @@ check_audio() {
     SRCFILE="$1.$2"
     EXPECTED="$3"
 
+    printf "> TRANSCODING %s\n" ${DIRNAME}/${TGTFILE##*/}
     cp -vpf "${DIRNAME}/${TGTFILE}" "${TMPPATH}" > /dev/null
     #cp -vpf "${DIRNAME}/${TGTFILE}" "${TMPPATH}" > /dev/null
 
-    RESULT="$(./fpcompare "${SRCDIR}/${SRCFILE}" "${DIRNAME}/${TGTFILE}")"
+    CMPRESULT="$(./fpcompare "${SRCDIR}/${SRCFILE}" "${DIRNAME}/${TGTFILE}")"
 
-    SIZE=$(stat -c %s "${DIRNAME}/${TGTFILE}")
-    echo "File  : ${TGTFILE}"
-    echo "Result: ${RESULT} (expected ${EXPECTED})"
-
-    if [ $(echo "${RESULT} <= ${EXPECTED}" | bc) -eq 1 ]
+    if [ $(echo "${CMPRESULT} <= ${EXPECTED}" | bc) -eq 1 ]
     then
-        echo "Pass"
+        RESULT="Pass"
+		RETURN=0
     else
-        echo "FAIL!"
-        exit 1
+        RESULT="FAIL"
+        RETURN=1
+    fi
+
+	printf "> %s -> File: %-20s %f (expected %f)\n" ${RESULT} ${TGTFILE} ${CMPRESULT} ${EXPECTED}
+
+    if [ ${RETURN} != 0 ];
+    then
+            exit ${RETURN}
     fi
 }
 

@@ -5,11 +5,11 @@ ADDOPT=""
 . "${BASH_SOURCE%/*}/funcs.sh" "$1"
 
 # Ensure log contains file sizes, predicted and actual
-echo "Transcoding ${DIRNAME}/raven_e.flac.${FILEEXT}"
+echo "TRANSCODING ${DIRNAME}/raven_e.flac.${FILEEXT}"
 cp -vpf "${DIRNAME}/raven_e.flac.${FILEEXT}" "${TMPPATH}" > /dev/null
 cp -vpf "${DIRNAME}/raven_e.flac.${FILEEXT}" "${TMPPATH}" > /dev/null
 
-echo "Transcoding ${DIRNAME}/raven_d.ogg.${FILEEXT}"
+echo "TRANSCODING ${DIRNAME}/raven_d.ogg.${FILEEXT}"
 cp -vpf "${DIRNAME}/raven_d.ogg.${FILEEXT}" "${TMPPATH}" > /dev/null
 cp -vpf "${DIRNAME}/raven_d.ogg.${FILEEXT}" "${TMPPATH}" > /dev/null
 

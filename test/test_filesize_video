@@ -4,34 +4,6 @@ ADDOPT=""
 
 . "${BASH_SOURCE%/*}/funcs.sh" "$1"
 
-check_filesize() {
-    FILE="$1.${FILEEXT}"
-    MIN="$2"
-    MAX="$3"
-
-    if [ -z ${MAX}  ]
-    then
-        MAX=${MIN}
-    fi
-
-    SIZE=$(stat -c %s "${DIRNAME}/${FILE}")
-    echo "File: ${FILE}"
-    if [ ${MIN} -eq ${MAX} ]
-    then
-        echo "Size: ${SIZE} (expected ${MIN})"
-    else
-        echo "Size: ${SIZE} (expected ${MIN}...${MAX})"
-    fi
-
-    if [ ${SIZE} -ge ${MIN} -a ${SIZE} -le ${MAX} ]
-    then
-        echo "Pass"
-    else
-        echo "FAIL!"
-        exit 1
-    fi
-}
-
 # Ensure log contains file sizes, predicted and actual
 printf "> TRANSCODING %s\n" snowboard.mp4.${FILEEXT}
 cp -vpf "${DIRNAME}/snowboard.mp4.${FILEEXT}" "${TMPPATH}" > /dev/null

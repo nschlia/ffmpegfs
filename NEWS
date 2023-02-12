@@ -22,14 +22,12 @@ Important changes in 2.14 (2023-02-XX):
   to fail for second process.
 * Bugfix: Issue #119: If a seek request is still open after EOF, restart
   transcoding.
-* Bugfix: Issue #119: No matter whatever sequence they are accessed in,
-  always make sure that the same BMP, PNG, and JPG images are produced.
 * Bugfix: Issue #119: To prevent frame/segment creation errors, the frame
   set and HLS code has been updated.
 * Bugfix: Avoid crash during shutdown if cache object had already been closed.
-* Bugfix: The AVSEEK_FLAG_FRAME set should be used to seek to frames when
-  building frame sets. Otherwise, output images may vary if searched for or
-  continuously decoded.
+* Bugfix: Issue #119: The AVSEEK_FLAG_FRAME set should be used to seek to
+  frames when building frame sets. Otherwise, output images may vary if
+  searched for or continuously decoded.
 * Enhancement: Record milliseconds for every log event.
 * Enhancement: make check: Added file size check to frame set tests.
 * Optimisation: When reopening after invalidating the cache, the size

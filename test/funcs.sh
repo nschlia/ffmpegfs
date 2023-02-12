@@ -19,12 +19,16 @@ cleanup () {
     echo "Return code: ${EXIT}"
     # Errors are no longer fatal
     set +e
-    # Unmount all
-    hash fusermount 2>&- && fusermount -u "${DIRNAME}" || umount -l "${DIRNAME}"
-    # Remove temporary directories
-    rmdir "${DIRNAME}"
+    if [ "$(expr substr $(uname -s) 1 6)" != "CYGWIN" ]; then
+        # Unmount all
+        hash fusermount 2>&- && fusermount -u "${DIRNAME}" || umount -l "${DIRNAME}"
+        # Remove temporary directories
+    else
+        ps -W | grep ffmpegfs | awk '{print $1}' | xargs kill -f;
+    fi
+	rmdir "${DIRNAME}"
     rm -Rf "${CACHEPATH}"
-	rm -Rf "${TMPPATH}"
+    rm -Rf "${TMPPATH}"
     # Arrividerci
     exit ${EXIT}
 }

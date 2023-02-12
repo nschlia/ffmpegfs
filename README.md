@@ -19,6 +19,7 @@ News
 - Issue [#76](https://github.com/nschlia/ffmpegfs/issues/76): Added Windows support, see [Building For Windows](WINDOWS.md) for information if you wish to build a Windows version. Currently no pre-compiled binaries are available.
 - A "make export" option has been added, which gathers all necessary binaries to run FFmpegfs without needing to install Cygwin. They can be found in the export directory.
 - TODO: Create Windows installer.
+- TODO: Automatically build Windows release binaries and add to release assets.
 
 ### Version 2.14 under development
 

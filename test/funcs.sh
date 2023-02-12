@@ -60,7 +60,7 @@ check_filesize() {
     then
     	SIZE=$(stat -c %s "${DIRNAME}/${FILE}")
     else
-	SIZE=$(stat -c %s "${4}/${FILE}")
+		SIZE=$(stat -c %s "${4}/${FILE}")
     fi
 
     if [ ${SIZE} -ge ${MIN} -a ${SIZE} -le ${MAX} ]

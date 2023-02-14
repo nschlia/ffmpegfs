@@ -1126,7 +1126,7 @@ void mssleep(int milliseconds);
 void ussleep(int microseconds);
 /**
  * @brief Sleep for specified time
- * @param milliseconds - Nanoseconds to sleep
+ * @param nanoseconds - Nanoseconds to sleep
  */
 void nssleep(int nanoseconds);
 

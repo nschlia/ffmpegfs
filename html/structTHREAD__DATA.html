@@ -75,18 +75,18 @@ $(function() {
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
-<tr class="memitem:a03a0a88e17adcf0a612afa4c34facf87"><td class="memItemLeft" align="right" valign="top"><a id="a03a0a88e17adcf0a612afa4c34facf87"></a>
-std::mutex&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structTHREAD__DATA.html#a03a0a88e17adcf0a612afa4c34facf87">m_mutex</a></td></tr>
-<tr class="memdesc:a03a0a88e17adcf0a612afa4c34facf87"><td class="mdescLeft">&#160;</td><td class="mdescRight">Mutex when thread is running. <br /></td></tr>
-<tr class="separator:a03a0a88e17adcf0a612afa4c34facf87"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad46ad4045ecf2d6f5307ad352c0e684e"><td class="memItemLeft" align="right" valign="top"><a id="ad46ad4045ecf2d6f5307ad352c0e684e"></a>
-std::condition_variable&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structTHREAD__DATA.html#ad46ad4045ecf2d6f5307ad352c0e684e">m_cond</a></td></tr>
-<tr class="memdesc:ad46ad4045ecf2d6f5307ad352c0e684e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Condition when thread is running. <br /></td></tr>
-<tr class="separator:ad46ad4045ecf2d6f5307ad352c0e684e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aeef7177997cf5586e6ee413c95a226b5"><td class="memItemLeft" align="right" valign="top"><a id="aeef7177997cf5586e6ee413c95a226b5"></a>
-std::atomic_bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structTHREAD__DATA.html#aeef7177997cf5586e6ee413c95a226b5">m_lock_guard</a></td></tr>
-<tr class="memdesc:aeef7177997cf5586e6ee413c95a226b5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Lock guard to avoid spurious or missed unlocks. <br /></td></tr>
-<tr class="separator:aeef7177997cf5586e6ee413c95a226b5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a434f98582a11daac8ca0691087f8359f"><td class="memItemLeft" align="right" valign="top"><a id="a434f98582a11daac8ca0691087f8359f"></a>
+std::mutex&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structTHREAD__DATA.html#a434f98582a11daac8ca0691087f8359f">m_thread_running_mutex</a></td></tr>
+<tr class="memdesc:a434f98582a11daac8ca0691087f8359f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Mutex when thread is running. <br /></td></tr>
+<tr class="separator:a434f98582a11daac8ca0691087f8359f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acc8d867e01fedce0c22c7d2c0f5e5ae7"><td class="memItemLeft" align="right" valign="top"><a id="acc8d867e01fedce0c22c7d2c0f5e5ae7"></a>
+std::condition_variable&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structTHREAD__DATA.html#acc8d867e01fedce0c22c7d2c0f5e5ae7">m_thread_running_cond</a></td></tr>
+<tr class="memdesc:acc8d867e01fedce0c22c7d2c0f5e5ae7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Condition when thread is running. <br /></td></tr>
+<tr class="separator:acc8d867e01fedce0c22c7d2c0f5e5ae7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8f27453d9b9784c76226b7d7bbd51ee3"><td class="memItemLeft" align="right" valign="top"><a id="a8f27453d9b9784c76226b7d7bbd51ee3"></a>
+std::atomic_bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structTHREAD__DATA.html#a8f27453d9b9784c76226b7d7bbd51ee3">m_thread_running_lock_guard</a></td></tr>
+<tr class="memdesc:a8f27453d9b9784c76226b7d7bbd51ee3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Lock guard to avoid spurious or missed unlocks. <br /></td></tr>
+<tr class="separator:a8f27453d9b9784c76226b7d7bbd51ee3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7cd9b2dc653d3e698e381c02cd70aea2"><td class="memItemLeft" align="right" valign="top"><a id="a7cd9b2dc653d3e698e381c02cd70aea2"></a>
 bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structTHREAD__DATA.html#a7cd9b2dc653d3e698e381c02cd70aea2">m_initialised</a></td></tr>
 <tr class="memdesc:a7cd9b2dc653d3e698e381c02cd70aea2"><td class="mdescLeft">&#160;</td><td class="mdescRight">True when this object is completely initialised. <br /></td></tr>
@@ -99,7 +99,7 @@ void *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="st
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p><a class="el" href="structTHREAD__DATA.html" title="THREAD_DATA struct to pass data from parent to child thread.">THREAD_DATA</a> struct to pass data from parent to child thread. </p>
 
-<p class="definition">Definition at line <a class="el" href="transcode_8cc_source.html#l00056">56</a> of file <a class="el" href="transcode_8cc_source.html">transcode.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="transcode_8cc_source.html#l00054">54</a> of file <a class="el" href="transcode_8cc_source.html">transcode.cc</a>.</p>
 </div><hr/>The documentation for this struct was generated from the following file:<ul>
 <li>src/<a class="el" href="transcode_8cc_source.html">transcode.cc</a></li>
 </ul>

@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['hwaccel_5fcodec_5fmap_2032',['hwaccel_codec_map',['../ffmpegfs_8cc.html#aa523ec2ba31536f8fa9a4479e6362a84',1,'ffmpegfs.cc']]],
-  ['hwaccel_5fmap_2033',['hwaccel_map',['../ffmpegfs_8cc.html#a27a827742798a37575decc5860bed631',1,'ffmpegfs.cc']]]
+  ['granularity_2053',['GRANULARITY',['../transcode_8cc.html#a80b544d9fd59324f5124c9ae0d535941',1,'transcode.cc']]]
 ];

@@ -1,7 +1,6 @@
 var searchData=
 [
-  ['id3v1_5ftag_5flength_2654',['ID3V1_TAG_LENGTH',['../id3v1tag_8h.html#a4c5ca436c60bcf8c0e9c7059e663accf',1,'id3v1tag.h']]],
-  ['if_5fdeclared_5fconst_2655',['IF_DECLARED_CONST',['../ffmpeg__compat_8h.html#aa1f9296f823825cb17205d59fd6dcb5d',1,'ffmpeg_compat.h']]],
-  ['image_5fframe_5ftag_2656',['IMAGE_FRAME_TAG',['../fileio_8h.html#ae7f271d71d1077e451a989e785860cfb',1,'fileio.h']]],
-  ['invalid_5fstream_2657',['INVALID_STREAM',['../ffmpeg__utils_8h.html#af19a790dcacf636767ffc6a1681d43ec',1,'ffmpeg_utils.h']]]
+  ['lavc_5fdep_5fav_5finit_5fpacket_2691',['LAVC_DEP_AV_INIT_PACKET',['../ffmpeg__compat_8h.html#a2f316a56dc8cae3fddabfa478c424f0a',1,'ffmpeg_compat.h']]],
+  ['lavu_5fdep_5fold_5fchannel_5flayout_2692',['LAVU_DEP_OLD_CHANNEL_LAYOUT',['../ffmpeg__compat_8h.html#afea7ecac7e819ef6fb0cac5f19df9867',1,'ffmpeg_compat.h']]],
+  ['lavu_5fdep_5fpkt_5fduration_2693',['LAVU_DEP_PKT_DURATION',['../ffmpeg__compat_8h.html#a3857e6749b0b25b74f9429af2798f4a5',1,'ffmpeg_compat.h']]]
 ];

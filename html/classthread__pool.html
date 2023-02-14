@@ -119,18 +119,18 @@ Protected Attributes</h2></td></tr>
 <tr class="separator:a9f862a5bbdf2d5ebad2976dac59f7061"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a95d0b74a74e87718506a55bd4eaf9430"><td class="memItemLeft" align="right" valign="top">std::mutex&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classthread__pool.html#a95d0b74a74e87718506a55bd4eaf9430">m_queue_mutex</a></td></tr>
 <tr class="separator:a95d0b74a74e87718506a55bd4eaf9430"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad62b11fece1ae9223d00b6361d477bac"><td class="memItemLeft" align="right" valign="top">std::condition_variable&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classthread__pool.html#ad62b11fece1ae9223d00b6361d477bac">m_queue_condition</a></td></tr>
-<tr class="separator:ad62b11fece1ae9223d00b6361d477bac"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a152d3decd8bbd9add757860c7f67dfa5"><td class="memItemLeft" align="right" valign="top">std::condition_variable&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classthread__pool.html#a152d3decd8bbd9add757860c7f67dfa5">m_queue_cond</a></td></tr>
+<tr class="separator:a152d3decd8bbd9add757860c7f67dfa5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0fa480c66e0f5176bcbb889fa5229d7e"><td class="memItemLeft" align="right" valign="top">std::queue&lt; <a class="el" href="structthread__pool_1_1THREADINFO.html">THREADINFO</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classthread__pool.html#a0fa480c66e0f5176bcbb889fa5229d7e">m_thread_queue</a></td></tr>
 <tr class="separator:a0fa480c66e0f5176bcbb889fa5229d7e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a881826551bd22cdae5ef5ce50e0d0925"><td class="memItemLeft" align="right" valign="top">volatile bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classthread__pool.html#a881826551bd22cdae5ef5ce50e0d0925">m_queue_shutdown</a></td></tr>
-<tr class="separator:a881826551bd22cdae5ef5ce50e0d0925"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aebe07795f1fbf2051f8cef3b811ecc3c"><td class="memItemLeft" align="right" valign="top">std::atomic_bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classthread__pool.html#aebe07795f1fbf2051f8cef3b811ecc3c">m_queue_shutdown</a></td></tr>
+<tr class="separator:aebe07795f1fbf2051f8cef3b811ecc3c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a41ca77ce102fc695559ecf7fc36b5e23"><td class="memItemLeft" align="right" valign="top">unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classthread__pool.html#a41ca77ce102fc695559ecf7fc36b5e23">m_num_threads</a></td></tr>
 <tr class="separator:a41ca77ce102fc695559ecf7fc36b5e23"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abc0f0da6f42e13e8aa5d63c67b35feb5"><td class="memItemLeft" align="right" valign="top">unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classthread__pool.html#abc0f0da6f42e13e8aa5d63c67b35feb5">m_cur_threads</a></td></tr>
 <tr class="separator:abc0f0da6f42e13e8aa5d63c67b35feb5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9cd390456307c618db355a80c69d1458"><td class="memItemLeft" align="right" valign="top">volatile unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classthread__pool.html#a9cd390456307c618db355a80c69d1458">m_threads_running</a></td></tr>
-<tr class="separator:a9cd390456307c618db355a80c69d1458"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad4940f6ec3faf6c5850daf2d828fc941"><td class="memItemLeft" align="right" valign="top">std::atomic_uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classthread__pool.html#ad4940f6ec3faf6c5850daf2d828fc941">m_threads_running</a></td></tr>
+<tr class="separator:ad4940f6ec3faf6c5850daf2d828fc941"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-types"></a>
 Private Types</h2></td></tr>
@@ -153,7 +153,7 @@ Static Private Member Functions</h2></td></tr>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>The <a class="el" href="classthread__pool.html" title="The thread_pool class.">thread_pool</a> class. </p>
 
-<p class="definition">Definition at line <a class="el" href="thread__pool_8h_source.html#l00052">52</a> of file <a class="el" href="thread__pool_8h_source.html">thread_pool.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="thread__pool_8h_source.html#l00053">53</a> of file <a class="el" href="thread__pool_8h_source.html">thread_pool.h</a>.</p>
 </div><h2 class="groupheader">Member Typedef Documentation</h2>
 <a id="a2f3da5820ad697c351083924fd3764a8"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a2f3da5820ad697c351083924fd3764a8">&#9670;&nbsp;</a></span>THREADINFO</h2>
@@ -236,7 +236,7 @@ Static Private Member Functions</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="thread__pool_8cc_source.html#l00113">113</a> of file <a class="el" href="thread__pool_8cc_source.html">thread_pool.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="thread__pool_8h_source.html#l00117">m_queue_mutex</a>, and <a class="el" href="thread__pool_8h_source.html#l00119">m_thread_queue</a>.</p>
+<p class="reference">References <a class="el" href="thread__pool_8h_source.html#l00118">m_queue_mutex</a>, and <a class="el" href="thread__pool_8h_source.html#l00120">m_thread_queue</a>.</p>
 
 </div>
 </div>
@@ -260,7 +260,7 @@ Static Private Member Functions</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="thread__pool_8cc_source.html#l00108">108</a> of file <a class="el" href="thread__pool_8cc_source.html">thread_pool.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="thread__pool_8h_source.html#l00123">m_threads_running</a>.</p>
+<p class="reference">References <a class="el" href="thread__pool_8h_source.html#l00124">m_threads_running</a>.</p>
 
 </div>
 </div>
@@ -290,9 +290,9 @@ Static Private Member Functions</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="thread__pool_8cc_source.html#l00125">125</a> of file <a class="el" href="thread__pool_8cc_source.html">thread_pool.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="logging_8h_source.html#l00203">Logging::info()</a>, <a class="el" href="thread__pool_8cc_source.html#l00049">loop_function_starter()</a>, <a class="el" href="thread__pool_8h_source.html#l00121">m_num_threads</a>, and <a class="el" href="thread__pool_8h_source.html#l00116">m_thread_pool</a>.</p>
+<p class="reference">References <a class="el" href="logging_8h_source.html#l00203">Logging::info()</a>, <a class="el" href="thread__pool_8cc_source.html#l00049">loop_function_starter()</a>, <a class="el" href="thread__pool_8h_source.html#l00122">m_num_threads</a>, and <a class="el" href="thread__pool_8h_source.html#l00117">m_thread_pool</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="fuseops_8cc_source.html#l01327">ffmpegfs_init()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="fuseops_8cc_source.html#l01336">ffmpegfs_init()</a>.</p>
 
 </div>
 </div>
@@ -356,7 +356,7 @@ Static Private Member Functions</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="thread__pool_8cc_source.html#l00120">120</a> of file <a class="el" href="thread__pool_8cc_source.html">thread_pool.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="thread__pool_8h_source.html#l00116">m_thread_pool</a>.</p>
+<p class="reference">References <a class="el" href="thread__pool_8h_source.html#l00117">m_thread_pool</a>.</p>
 
 </div>
 </div>
@@ -398,9 +398,9 @@ Static Private Member Functions</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="thread__pool_8cc_source.html#l00082">82</a> of file <a class="el" href="thread__pool_8cc_source.html">thread_pool.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="thread__pool_8h_source.html#l00057">thread_pool::THREADINFO::m_opaque</a>, <a class="el" href="thread__pool_8h_source.html#l00118">m_queue_condition</a>, <a class="el" href="thread__pool_8h_source.html#l00117">m_queue_mutex</a>, <a class="el" href="thread__pool_8h_source.html#l00120">m_queue_shutdown</a>, <a class="el" href="thread__pool_8h_source.html#l00056">thread_pool::THREADINFO::m_thread_func</a>, <a class="el" href="thread__pool_8h_source.html#l00116">m_thread_pool</a>, <a class="el" href="thread__pool_8h_source.html#l00119">m_thread_queue</a>, and <a class="el" href="logging_8h_source.html#l00165">Logging::trace()</a>.</p>
+<p class="reference">References <a class="el" href="thread__pool_8h_source.html#l00058">thread_pool::THREADINFO::m_opaque</a>, <a class="el" href="thread__pool_8h_source.html#l00119">m_queue_cond</a>, <a class="el" href="thread__pool_8h_source.html#l00118">m_queue_mutex</a>, <a class="el" href="thread__pool_8h_source.html#l00121">m_queue_shutdown</a>, <a class="el" href="thread__pool_8h_source.html#l00057">thread_pool::THREADINFO::m_thread_func</a>, <a class="el" href="thread__pool_8h_source.html#l00117">m_thread_pool</a>, <a class="el" href="thread__pool_8h_source.html#l00120">m_thread_queue</a>, and <a class="el" href="logging_8h_source.html#l00165">Logging::trace()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="transcode_8cc_source.html#l00354">transcoder_new()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="transcode_8cc_source.html#l00353">transcoder_new()</a>.</p>
 
 </div>
 </div>
@@ -430,9 +430,9 @@ Static Private Member Functions</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="thread__pool_8cc_source.html#l00140">140</a> of file <a class="el" href="thread__pool_8cc_source.html">thread_pool.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="logging_8h_source.html#l00184">Logging::debug()</a>, <a class="el" href="thread__pool_8h_source.html#l00118">m_queue_condition</a>, <a class="el" href="thread__pool_8h_source.html#l00117">m_queue_mutex</a>, <a class="el" href="thread__pool_8h_source.html#l00120">m_queue_shutdown</a>, <a class="el" href="thread__pool_8h_source.html#l00116">m_thread_pool</a>, and <a class="el" href="thread__pool_8h_source.html#l00119">m_thread_queue</a>.</p>
+<p class="reference">References <a class="el" href="logging_8h_source.html#l00184">Logging::debug()</a>, <a class="el" href="thread__pool_8h_source.html#l00119">m_queue_cond</a>, <a class="el" href="thread__pool_8h_source.html#l00118">m_queue_mutex</a>, <a class="el" href="thread__pool_8h_source.html#l00121">m_queue_shutdown</a>, <a class="el" href="thread__pool_8h_source.html#l00117">m_thread_pool</a>, and <a class="el" href="thread__pool_8h_source.html#l00120">m_thread_queue</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="fuseops_8cc_source.html#l01376">ffmpegfs_destroy()</a>, and <a class="el" href="thread__pool_8cc_source.html#l00044">~thread_pool()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="fuseops_8cc_source.html#l01385">ffmpegfs_destroy()</a>, and <a class="el" href="thread__pool_8cc_source.html#l00044">~thread_pool()</a>.</p>
 
 </div>
 </div>
@@ -458,7 +458,7 @@ Static Private Member Functions</h2></td></tr>
 </div><div class="memdoc">
 <p>Current number of threads. </p>
 
-<p class="definition">Definition at line <a class="el" href="thread__pool_8h_source.html#l00122">122</a> of file <a class="el" href="thread__pool_8h_source.html">thread_pool.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="thread__pool_8h_source.html#l00123">123</a> of file <a class="el" href="thread__pool_8h_source.html">thread_pool.h</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="thread__pool_8cc_source.html#l00054">loop_function()</a>.</p>
 
@@ -485,14 +485,14 @@ Static Private Member Functions</h2></td></tr>
 </div><div class="memdoc">
 <p>Max. number of threads. Defaults to 4x number of CPU cores. </p>
 
-<p class="definition">Definition at line <a class="el" href="thread__pool_8h_source.html#l00121">121</a> of file <a class="el" href="thread__pool_8h_source.html">thread_pool.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="thread__pool_8h_source.html#l00122">122</a> of file <a class="el" href="thread__pool_8h_source.html">thread_pool.h</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="thread__pool_8cc_source.html#l00125">init()</a>.</p>
 
 </div>
 </div>
-<a id="ad62b11fece1ae9223d00b6361d477bac"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad62b11fece1ae9223d00b6361d477bac">&#9670;&nbsp;</a></span>m_queue_condition</h2>
+<a id="a152d3decd8bbd9add757860c7f67dfa5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a152d3decd8bbd9add757860c7f67dfa5">&#9670;&nbsp;</a></span>m_queue_cond</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -501,7 +501,7 @@ Static Private Member Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">std::condition_variable thread_pool::m_queue_condition</td>
+          <td class="memname">std::condition_variable thread_pool::m_queue_cond</td>
         </tr>
       </table>
   </td>
@@ -512,7 +512,7 @@ Static Private Member Functions</h2></td></tr>
 </div><div class="memdoc">
 <p>Condition for critical section </p>
 
-<p class="definition">Definition at line <a class="el" href="thread__pool_8h_source.html#l00118">118</a> of file <a class="el" href="thread__pool_8h_source.html">thread_pool.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="thread__pool_8h_source.html#l00119">119</a> of file <a class="el" href="thread__pool_8h_source.html">thread_pool.h</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="thread__pool_8cc_source.html#l00054">loop_function()</a>, <a class="el" href="thread__pool_8cc_source.html#l00082">schedule_thread()</a>, and <a class="el" href="thread__pool_8cc_source.html#l00140">tear_down()</a>.</p>
 
@@ -539,14 +539,14 @@ Static Private Member Functions</h2></td></tr>
 </div><div class="memdoc">
 <p>Mutex for critical section </p>
 
-<p class="definition">Definition at line <a class="el" href="thread__pool_8h_source.html#l00117">117</a> of file <a class="el" href="thread__pool_8h_source.html">thread_pool.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="thread__pool_8h_source.html#l00118">118</a> of file <a class="el" href="thread__pool_8h_source.html">thread_pool.h</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="thread__pool_8cc_source.html#l00113">current_queued()</a>, <a class="el" href="thread__pool_8cc_source.html#l00054">loop_function()</a>, <a class="el" href="thread__pool_8cc_source.html#l00082">schedule_thread()</a>, and <a class="el" href="thread__pool_8cc_source.html#l00140">tear_down()</a>.</p>
 
 </div>
 </div>
-<a id="a881826551bd22cdae5ef5ce50e0d0925"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a881826551bd22cdae5ef5ce50e0d0925">&#9670;&nbsp;</a></span>m_queue_shutdown</h2>
+<a id="aebe07795f1fbf2051f8cef3b811ecc3c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aebe07795f1fbf2051f8cef3b811ecc3c">&#9670;&nbsp;</a></span>m_queue_shutdown</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -555,7 +555,7 @@ Static Private Member Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">volatile bool thread_pool::m_queue_shutdown</td>
+          <td class="memname">std::atomic_bool thread_pool::m_queue_shutdown</td>
         </tr>
       </table>
   </td>
@@ -566,7 +566,7 @@ Static Private Member Functions</h2></td></tr>
 </div><div class="memdoc">
 <p>If true all threads have been shut down </p>
 
-<p class="definition">Definition at line <a class="el" href="thread__pool_8h_source.html#l00120">120</a> of file <a class="el" href="thread__pool_8h_source.html">thread_pool.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="thread__pool_8h_source.html#l00121">121</a> of file <a class="el" href="thread__pool_8h_source.html">thread_pool.h</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="thread__pool_8cc_source.html#l00054">loop_function()</a>, <a class="el" href="thread__pool_8cc_source.html#l00082">schedule_thread()</a>, and <a class="el" href="thread__pool_8cc_source.html#l00140">tear_down()</a>.</p>
 
@@ -593,7 +593,7 @@ Static Private Member Functions</h2></td></tr>
 </div><div class="memdoc">
 <p>Thread pool </p>
 
-<p class="definition">Definition at line <a class="el" href="thread__pool_8h_source.html#l00116">116</a> of file <a class="el" href="thread__pool_8h_source.html">thread_pool.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="thread__pool_8h_source.html#l00117">117</a> of file <a class="el" href="thread__pool_8h_source.html">thread_pool.h</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="thread__pool_8cc_source.html#l00125">init()</a>, <a class="el" href="thread__pool_8cc_source.html#l00120">pool_size()</a>, <a class="el" href="thread__pool_8cc_source.html#l00082">schedule_thread()</a>, and <a class="el" href="thread__pool_8cc_source.html#l00140">tear_down()</a>.</p>
 
@@ -620,14 +620,14 @@ Static Private Member Functions</h2></td></tr>
 </div><div class="memdoc">
 <p>Thread queue parameters </p>
 
-<p class="definition">Definition at line <a class="el" href="thread__pool_8h_source.html#l00119">119</a> of file <a class="el" href="thread__pool_8h_source.html">thread_pool.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="thread__pool_8h_source.html#l00120">120</a> of file <a class="el" href="thread__pool_8h_source.html">thread_pool.h</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="thread__pool_8cc_source.html#l00113">current_queued()</a>, <a class="el" href="thread__pool_8cc_source.html#l00054">loop_function()</a>, <a class="el" href="thread__pool_8cc_source.html#l00082">schedule_thread()</a>, and <a class="el" href="thread__pool_8cc_source.html#l00140">tear_down()</a>.</p>
 
 </div>
 </div>
-<a id="a9cd390456307c618db355a80c69d1458"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9cd390456307c618db355a80c69d1458">&#9670;&nbsp;</a></span>m_threads_running</h2>
+<a id="ad4940f6ec3faf6c5850daf2d828fc941"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad4940f6ec3faf6c5850daf2d828fc941">&#9670;&nbsp;</a></span>m_threads_running</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -636,7 +636,7 @@ Static Private Member Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">volatile unsigned int thread_pool::m_threads_running</td>
+          <td class="memname">std::atomic_uint32_t thread_pool::m_threads_running</td>
         </tr>
       </table>
   </td>
@@ -647,7 +647,7 @@ Static Private Member Functions</h2></td></tr>
 </div><div class="memdoc">
 <p>Currently running threads. </p>
 
-<p class="definition">Definition at line <a class="el" href="thread__pool_8h_source.html#l00123">123</a> of file <a class="el" href="thread__pool_8h_source.html">thread_pool.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="thread__pool_8h_source.html#l00124">124</a> of file <a class="el" href="thread__pool_8h_source.html">thread_pool.h</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="thread__pool_8cc_source.html#l00108">current_running()</a>.</p>
 

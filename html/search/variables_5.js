@@ -1,10 +1,5 @@
 var searchData=
 [
-  ['level_5fmap_2034',['level_map',['../ffmpegfs_8cc.html#acf6b0f652b4ea12df95a656394b620f6',1,'ffmpegfs.cc']]],
-  ['logdebug_2035',['LOGDEBUG',['../logging_8h.html#a39483ce1507c500d3d0d0470bda871b6',1,'logging.h']]],
-  ['logerror_2036',['LOGERROR',['../logging_8h.html#aeae62a199367aea6e5cf3b321ffb6978',1,'logging.h']]],
-  ['logger_2037',['Logger',['../classLogging.html#a47fe95403f7197a89714548c08ca9001',1,'Logging']]],
-  ['loginfo_2038',['LOGINFO',['../logging_8h.html#af49f5e56e9ec450e12d7c14f535385ee',1,'logging.h']]],
-  ['logtrace_2039',['LOGTRACE',['../logging_8h.html#a7853a188f8ef7e06f015a561ea1ed47e',1,'logging.h']]],
-  ['logwarn_2040',['LOGWARN',['../logging_8h.html#ab6d5320373a7f8c5da694edf85006c5e',1,'logging.h']]]
+  ['hwaccel_5fcodec_5fmap_2054',['hwaccel_codec_map',['../ffmpegfs_8cc.html#aa523ec2ba31536f8fa9a4479e6362a84',1,'ffmpegfs.cc']]],
+  ['hwaccel_5fmap_2055',['hwaccel_map',['../ffmpegfs_8cc.html#a27a827742798a37575decc5860bed631',1,'ffmpegfs.cc']]]
 ];

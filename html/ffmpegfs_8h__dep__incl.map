@@ -1,30 +1,28 @@
 <map id="src/ffmpegfs.h" name="src/ffmpegfs.h">
-<area shape="rect" id="node1" title="Main include for FFmpegfs project." alt="" coords="1491,5,1598,32"/>
-<area shape="rect" id="node2" href="$blurayio_8cc.html" title="BlurayIO class implementation." alt="" coords="345,80,451,107"/>
+<area shape="rect" id="node1" title="Main include for FFmpegfs project." alt="" coords="1285,5,1391,32"/>
+<area shape="rect" id="node2" href="$blurayio_8cc.html" title="BlurayIO class implementation." alt="" coords="171,80,278,107"/>
 <area shape="rect" id="node3" href="$blurayparser_8cc.html" title="Blu&#45;ray disk parser implementation." alt="" coords="5,155,137,181"/>
-<area shape="rect" id="node4" href="$buffer_8cc.html" title="Buffer class implementation." alt="" coords="1060,80,1155,107"/>
-<area shape="rect" id="node5" href="$cache_8cc.html" title="Cache class implementation." alt="" coords="1179,80,1276,107"/>
-<area shape="rect" id="node6" href="$cache__entry_8cc.html" title="Cache_Entry class implementation." alt="" coords="1301,80,1431,107"/>
-<area shape="rect" id="node7" href="$cache__maintenance_8cc.html" title="Cache maintenance implementation" alt="" coords="1455,80,1634,107"/>
+<area shape="rect" id="node4" href="$buffer_8cc.html" title="Buffer class implementation." alt="" coords="692,80,787,107"/>
+<area shape="rect" id="node5" href="$cache_8cc.html" title="Cache class implementation." alt="" coords="811,80,908,107"/>
+<area shape="rect" id="node6" href="$cache__entry_8cc.html" title="Cache_Entry class implementation." alt="" coords="933,80,1063,107"/>
+<area shape="rect" id="node7" href="$cache__maintenance_8cc.html" title="Cache maintenance implementation" alt="" coords="1087,80,1266,107"/>
 <area shape="rect" id="node8" href="$cuesheetparser_8cc.html" title="Cue sheet parser implementation." alt="" coords="161,155,312,181"/>
-<area shape="rect" id="node9" href="$diskio_8cc.html" title="DiskIO class implementation." alt="" coords="1658,80,1754,107"/>
-<area shape="rect" id="node10" href="$dvdio_8cc.html" title="DvdIO class implementation." alt="" coords="1778,80,1871,107"/>
+<area shape="rect" id="node9" href="$diskio_8cc.html" title="DiskIO class implementation." alt="" coords="1290,80,1386,107"/>
+<area shape="rect" id="node10" href="$dvdio_8cc.html" title="DvdIO class implementation." alt="" coords="1410,80,1503,107"/>
 <area shape="rect" id="node11" href="$dvdparser_8cc.html" title="dvdparser class implementation" alt="" coords="336,155,455,181"/>
-<area shape="rect" id="node12" href="$ffmpeg__transcoder_8h.html" title="FFmpeg transcoder." alt="" coords="771,80,934,107"/>
-<area shape="rect" id="node15" href="$transcode_8cc.html" title="File transcoder interface implementation." alt="" coords="1140,155,1259,181"/>
-<area shape="rect" id="node16" href="$ffmpeg__utils_8cc.html" title="FFmpegfs utility set implementation." alt="" coords="1895,80,2029,107"/>
-<area shape="rect" id="node17" href="$ffmpegfs_8cc.html" title="FFmpeg main function and utilities implementation." alt="" coords="2053,80,2167,107"/>
-<area shape="rect" id="node18" href="$fileio_8cc.html" title="FileIO class implementation." alt="" coords="2191,80,2280,107"/>
-<area shape="rect" id="node19" href="$logging_8cc.html" title="Log facilities implementation." alt="" coords="2304,80,2407,107"/>
-<area shape="rect" id="node20" href="$transcode_8h.html" title="File transcoder interface (for use with by FUSE)" alt="" coords="627,80,739,107"/>
-<area shape="rect" id="node23" href="$vcdparser_8cc.html" title="Video/Super Video CD parser implementation." alt="" coords="1283,155,1401,181"/>
-<area shape="rect" id="node24" href="$vcdchapter_8cc.html" title="S/VCD VcdChapter class implementation." alt="" coords="2431,80,2581,107"/>
-<area shape="rect" id="node25" href="$vcdentries_8cc.html" title="S/VCD VcdEntries class implementation." alt="" coords="2606,80,2753,107"/>
-<area shape="rect" id="node26" href="$vcdinfo_8cc.html" title="S/VCD VcdInfo class implementation." alt="" coords="2777,80,2907,107"/>
-<area shape="rect" id="node27" href="$vcdutils_8cc.html" title="S/VCD utility functions implementation." alt="" coords="2931,80,3063,107"/>
-<area shape="rect" id="node28" href="$vcdio_8cc.html" title="VcdIO class implementation." alt="" coords="3087,80,3181,107"/>
-<area shape="rect" id="node13" href="$ffmpeg__profiles_8cc.html" title="Make audience audience specific optimisations." alt="" coords="965,155,1116,181"/>
-<area shape="rect" id="node14" href="$ffmpeg__transcoder_8cc.html" title="FFmpeg_Transcoder class implementation." alt="" coords="772,155,941,181"/>
-<area shape="rect" id="node21" href="$ffmpeg__base_8cc.html" title="FFmpeg_Base class implementation." alt="" coords="611,155,748,181"/>
-<area shape="rect" id="node22" href="$fuseops_8cc.html" title="Fuse operations implementation." alt="" coords="479,155,587,181"/>
+<area shape="rect" id="node12" href="$ffmpeg__transcoder_8cc.html" title="FFmpeg_Transcoder class implementation." alt="" coords="1528,80,1697,107"/>
+<area shape="rect" id="node13" href="$ffmpeg__utils_8cc.html" title="FFmpegfs utility set implementation." alt="" coords="1722,80,1855,107"/>
+<area shape="rect" id="node14" href="$ffmpegfs_8cc.html" title="FFmpeg main function and utilities implementation." alt="" coords="1880,80,1993,107"/>
+<area shape="rect" id="node15" href="$fileio_8cc.html" title="FileIO class implementation." alt="" coords="2017,80,2107,107"/>
+<area shape="rect" id="node16" href="$logging_8cc.html" title="Log facilities implementation." alt="" coords="2131,80,2233,107"/>
+<area shape="rect" id="node17" href="$transcode_8cc.html" title="File transcoder interface implementation." alt="" coords="772,155,891,181"/>
+<area shape="rect" id="node18" href="$transcode_8h.html" title="File transcoder interface (for use with by FUSE)" alt="" coords="454,80,566,107"/>
+<area shape="rect" id="node21" href="$vcdparser_8cc.html" title="Video/Super Video CD parser implementation." alt="" coords="915,155,1033,181"/>
+<area shape="rect" id="node22" href="$vcdchapter_8cc.html" title="S/VCD VcdChapter class implementation." alt="" coords="2257,80,2408,107"/>
+<area shape="rect" id="node23" href="$vcdentries_8cc.html" title="S/VCD VcdEntries class implementation." alt="" coords="2433,80,2579,107"/>
+<area shape="rect" id="node24" href="$vcdinfo_8cc.html" title="S/VCD VcdInfo class implementation." alt="" coords="2604,80,2733,107"/>
+<area shape="rect" id="node25" href="$vcdutils_8cc.html" title="S/VCD utility functions implementation." alt="" coords="2757,80,2889,107"/>
+<area shape="rect" id="node26" href="$vcdio_8cc.html" title="VcdIO class implementation." alt="" coords="2914,80,3007,107"/>
+<area shape="rect" id="node19" href="$ffmpeg__base_8cc.html" title="FFmpeg_Base class implementation." alt="" coords="611,155,748,181"/>
+<area shape="rect" id="node20" href="$fuseops_8cc.html" title="Fuse operations implementation." alt="" coords="479,155,587,181"/>
 </map>

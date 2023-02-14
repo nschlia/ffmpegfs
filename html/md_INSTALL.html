@@ -66,9 +66,9 @@ $(function() {
 <div class="title">Installation Instructions for FFmpegfs </div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><h1><a class="anchor" id="autotoc_md28"></a>
+<div class="textblock"><h1><a class="anchor" id="autotoc_md29"></a>
 Installation from the repository</h1>
-<h2><a class="anchor" id="autotoc_md29"></a>
+<h2><a class="anchor" id="autotoc_md30"></a>
 Debian Bullseye</h2>
 <p>FFmpegfs has been added to Debian 11 Bullseye so it is available as a binary distribution.</p>
 <p><b>On Debian 11 Bullseye, you get V2.2 by simply doing</b> </p><pre class="fragment">apt-get install ffmpegfs
@@ -78,19 +78,19 @@ Debian Bullseye</h2>
  sudo apt-get update
 </pre><p> To install FFmpegfs from backports, run <code>apt-get install ffmpegfs/bullseye-backports</code> or <code>apt-get install -t bullseye-backports ffmpegfs</code>.</p>
 <p><b>For Ubuntu 20.04 or newer and Linux distributions based on it this is</b> </p><pre class="fragment">apt-get install ffmpegfs
-</pre> <h2><a class="anchor" id="autotoc_md30"></a>
+</pre> <h2><a class="anchor" id="autotoc_md31"></a>
 Debian Buster</h2>
 <p>FFmpegfs can be installed on Debian 10 Buster from Buster Backports and sid (which is not recommended and therefore not described here).</p>
 <p>To enable Buster Backports: </p><pre class="fragment"> echo "deb http://deb.debian.org/debian buster-backports main" | sudo tee /etc/apt/sources.list.d/backports.list
 
  sudo apt-get update
 </pre><p> Then install FFmpegfs: </p><pre class="fragment"> sudo apt-get -t buster-backports install ffmpegfs
-</pre> <h2><a class="anchor" id="autotoc_md31"></a>
+</pre> <h2><a class="anchor" id="autotoc_md32"></a>
 Other Distributions</h2>
 <p>For Arch Linux and Manjaro, it can be found in the Arch User Repository (AUR). It is available as either the latest stable version or the latest code from GIT.</p>
-<h1><a class="anchor" id="autotoc_md32"></a>
+<h1><a class="anchor" id="autotoc_md33"></a>
 Building FFmpegfs yourself</h1>
-<h2><a class="anchor" id="autotoc_md33"></a>
+<h2><a class="anchor" id="autotoc_md34"></a>
 Prerequisites</h2>
 <p>For encoding and decoding, FFmpegfs utilises the FFmpeg multi media framework. The following libraries are necessary:</p>
 <ul>
@@ -147,9 +147,9 @@ emerge media-libs/chromaprint
 emerge media-sound/twolame
 emerge media-video/ffmpeg
 </pre><p> to build FFmpeg.</p>
-<h2><a class="anchor" id="autotoc_md34"></a>
+<h2><a class="anchor" id="autotoc_md35"></a>
 Building FFmpegfs from source code</h2>
-<h3><a class="anchor" id="autotoc_md35"></a>
+<h3><a class="anchor" id="autotoc_md36"></a>
 Building from tar ball</h3>
 <p>Get the most recent release archive here: </p><pre class="fragment">wget https://github.com/nschlia/ffmpegfs/releases/download/v2.12/ffmpegfs-2.12.tar.gz
 </pre><p> As I frequently fail to update this URL, you can check <a href="https://github.com/nschlia/ffmpegfs/releases">https://github.com/nschlia/ffmpegfs/releases</a> to see if there are newer releases available.</p>
@@ -164,7 +164,7 @@ make
 make install
 </pre><p> Build and execute the test suite by doing: </p><pre class="fragment">make check
 </pre><p> This will test audio conversion, tagging and size prediction.</p>
-<h3><a class="anchor" id="autotoc_md36"></a>
+<h3><a class="anchor" id="autotoc_md37"></a>
 Building from GIT</h3>
 <p>Clone the most recent version from Github to build from GIT and stay up to date:</p>
 <div class="fragment"><div class="line">git clone https://github.com/nschlia/ffmpegfs.git</div>
@@ -184,7 +184,7 @@ Building from GIT</h3>
 make
 make install
 </pre><p> To build and run the test suite, do: </p><pre class="fragment">make check
-</pre> <h2><a class="anchor" id="autotoc_md37"></a>
+</pre> <h2><a class="anchor" id="autotoc_md38"></a>
 Switching between repository version and source builds</h2>
 <p>It is easy to switch between both worlds. You can do that as many times as you want to, but alas, the cache directory will be cleared every time. But it will be rebuilt in the background, so this will almost go unnoticed.</p>
 <p>To switch from repository to a source build do</p>
@@ -193,14 +193,14 @@ Switching between repository version and source builds</h2>
 <p>To switch from a source build to a repository installation, change to the build directory and do</p>
 <div class="fragment"><div class="line">make uninstall</div>
 </div><!-- fragment --><p>Then follow the steps under "Installation from repository".</p>
-<h2><a class="anchor" id="autotoc_md38"></a>
+<h2><a class="anchor" id="autotoc_md39"></a>
 Building Documentation</h2>
 <p>The help can be created in doc or html format by running </p><pre class="fragment">make help-pdf
 make help-html
 </pre><p> respectively.</p>
-<h1><a class="anchor" id="autotoc_md39"></a>
+<h1><a class="anchor" id="autotoc_md40"></a>
 Building FFmpeg</h1>
-<h2><a class="anchor" id="autotoc_md40"></a>
+<h2><a class="anchor" id="autotoc_md41"></a>
 Building FFmpeg with optimisations</h2>
 <p>The precompiled package of FFmpeg available for Debian, Ubuntu, etc. is built with common options so that it can run on many processors. To leverage its full potential, it may be useful to build it with optimisation options for the target CPU. The resulting binaries may not run on other computers.</p>
 <p>FFmpeg must be built with at least libx264, libfdk_aac, and libmp3lame support. Other libraries, for example, ogg, Windows Media, or FLAC, must be added when these formats should be used as sources.</p>
@@ -227,9 +227,9 @@ Building FFmpeg with optimisations</h2>
 </pre><p> Fix the complaints by configure, i.e., installing the required development packages, then </p><pre class="fragment">make install
 </pre><p> This works for me. Decoding runs much faster with these settings.</p>
 <p><b>NOTE:</b> Depending on the source formats you have, it may be required to add additional libraries.</p>
-<h1><a class="anchor" id="autotoc_md41"></a>
+<h1><a class="anchor" id="autotoc_md42"></a>
 Trouble Shooting</h1>
-<h2><a class="anchor" id="autotoc_md42"></a>
+<h2><a class="anchor" id="autotoc_md43"></a>
 Mounting via /etc/fstab fails</h2>
 <p>An fstab line with fuse.ffmpegfs file system fails with a strange message when attempted to mount with "mount -av". No log entries, no other hints...</p>
 <div class="fragment"><div class="line">   mount: wrong fs type, bad option, bad superblock on /mnt/sdf1/mp3base1,</div>
@@ -238,15 +238,15 @@ Mounting via /etc/fstab fails</h2>
 <div class="line">​      In some cases useful info is found in syslog - try</div>
 <div class="line">​      dmesg | tail or so.</div>
 </div><!-- fragment --><p>Fuse is missing! Do... </p><pre class="fragment">apt-get install fuse
-</pre> <h2><a class="anchor" id="autotoc_md43"></a>
+</pre> <h2><a class="anchor" id="autotoc_md44"></a>
 fuse: failed to exec fusermount: No such file or directory</h2>
 <p>Trying to mount as any other than root, the message </p><pre class="fragment">fuse: failed to exec fusermount: No such file or directory
 </pre><p> is printed.</p>
 <p>Fuse is missing! Do... </p><pre class="fragment">apt-get install fuse
-</pre> <h2><a class="anchor" id="autotoc_md44"></a>
+</pre> <h2><a class="anchor" id="autotoc_md45"></a>
 "ERROR: libmp3lame &gt;= 3.98.3 not found"</h2>
 <p>If you run into this "ERROR: libmp3lame &gt;= 3.98.3 not found" although you have built and installed libmp3lame you may find a solution here: <a href="https://stackoverflow.com/questions/35937403/error-libmp3lame-3-98-3-not-found">https://stackoverflow.com/questions/35937403/error-libmp3lame-3-98-3-not-found</a></p>
-<h2><a class="anchor" id="autotoc_md45"></a>
+<h2><a class="anchor" id="autotoc_md46"></a>
 autogen.sh displays "possibly undefined macro"</h2>
 <pre class="fragment">Running autoreconf --install
 configure.ac:46: error: possibly undefined macro: AC_DEFINE
@@ -254,7 +254,7 @@ configure.ac:46: error: possibly undefined macro: AC_DEFINE
   See the Autoconf documentation.
 autoreconf: /usr/bin/autoconf failed with exit status: 1
 </pre><p> You are probably missing out on pkg-config; either it is not installed or not in path. "apt-get install pkg-config" (on Debian or equivalent on other Linux distributions) should help.</p>
-<h2><a class="anchor" id="autotoc_md46"></a>
+<h2><a class="anchor" id="autotoc_md47"></a>
 If the videotag.php script does not work under PHP7</h2>
 <p>The script runs fine under PHP5, but when upgrading to PHP7 (or using PHP7) it suddenly stops showing the list of files.</p>
 <p>Check the Apache2 error.log, you might see this:</p>
@@ -262,15 +262,15 @@ If the videotag.php script does not work under PHP7</h2>
 <p>This is because, for some reason, utf8_encode() has been moved to the XML library. Just do (or similar): </p><pre class="fragment">apt-get install php7.0-xml
 systemctl restart apache2
 </pre><p> And your troubles should be gone.</p>
-<h2><a class="anchor" id="autotoc_md47"></a>
+<h2><a class="anchor" id="autotoc_md48"></a>
 "make check": all audio checks fail</h2>
 <p>Log files contain "bc: command not found", so the command line communicator is missing.</p>
 <p>Fix it by installing (or similar): </p><pre class="fragment"> apt-get install bc
-</pre> <h2><a class="anchor" id="autotoc_md48"></a>
+</pre> <h2><a class="anchor" id="autotoc_md49"></a>
 Make reports "/bin/sh: a2x: command not found"</h2>
 <p>You are missing out on asciidoc. To install it, do (or similar): </p><pre class="fragment"> apt-get install asciidoc-base
 </pre><p> That should fix it.</p>
-<h2><a class="anchor" id="autotoc_md49"></a>
+<h2><a class="anchor" id="autotoc_md50"></a>
 "make help-pdf" reports "non-zero exit status 127"</h2>
 <p>Running "make help-pdf" fails like this: </p><pre class="fragment">$ make -s help-pdf
   GEN      ffmpegfs.1.pdf
@@ -279,17 +279,17 @@ a2x: ERROR: "fop"   -fo "ffmpegfs.1.fo" -pdf "ffmpegfs.1.pdf" returned non-zero 
 make: *** [Makefile:918: ffmpegfs.1.pdf] Error 1
 </pre><p> This happens when "fop" is missing, a command line wrapper for the Java version of fop. </p><pre class="fragment"> apt-get install fop
 </pre><p> That should do it.</p>
-<h2><a class="anchor" id="autotoc_md50"></a>
+<h2><a class="anchor" id="autotoc_md51"></a>
 Make reports xmllint" --nonet --noout --valid "/home/jenkins/dev/ffmpegfs/ffmpegfs.1.xml" returned non-zero exit</h2>
 <p>To find out more, run "make V=1". If you see something like (sic) "validity error : Validation failed: no DTD found !", this means that xmlint cannot access a DTD file because it is run with the &ndash;nonet option.</p>
 <p>This can be solved by </p><pre class="fragment"> apt-get install docbook-xml
 </pre><p> which will make the required files available offline.</p>
-<h2><a class="anchor" id="autotoc_md51"></a>
+<h2><a class="anchor" id="autotoc_md52"></a>
 libbluray fails to load libbluray.jar</h2>
 <p>When you see this message while accessing blurays: </p><pre class="fragment">bdj.c:340: libbluray-j2se-0.9.3.jar not found.
 bdj.c:466: BD-J check: Failed to load libbluray.jar
 </pre><p> To get rid of this message, simply install "libbluray-bdj". This will make it go away. Though not necessary, as to read the Blu-ray tracks, Java support is not required, so this is simply cosmetical.</p>
-<h1><a class="anchor" id="autotoc_md52"></a>
+<h1><a class="anchor" id="autotoc_md53"></a>
 Copyright</h1>
 <p>This fork with FFmpeg support copyright (C) 2017-2023 Norbert Schlia (<a href="#" onclick="location.href='mai'+'lto:'+'nsc'+'hl'+'ia@'+'ob'+'liv'+'io'+'n-s'+'of'+'twa'+'re'+'.de'; return false;">nschl<span style="display: none;">.nosp@m.</span>ia@o<span style="display: none;">.nosp@m.</span>blivi<span style="display: none;">.nosp@m.</span>on-s<span style="display: none;">.nosp@m.</span>oftwa<span style="display: none;">.nosp@m.</span>re.d<span style="display: none;">.nosp@m.</span>e</a>).</p>
 <p>Based on work Copyright (C) 2006-2008 David Collett, 2008-2013 K. Henriksson.</p>

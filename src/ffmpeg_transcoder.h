@@ -57,6 +57,9 @@ struct AVAudioFifo;
 struct AVCodecContext;
 struct AVSubtitle;
 
+/**
+ * @brief Decoder status codes. Can be error, success or end of file.
+ */
 typedef enum DECODER_STATUS
 {
     DECODER_ERROR = -1,                                         /**< @brief Decoder error, see return code */

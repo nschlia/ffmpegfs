@@ -105,6 +105,7 @@ static bool transcode_until(Cache_Entry* cache_entry, size_t offset, size_t len,
                 if (thread_exit)
                 {
                     Logging::warning(cache_entry->virtname(), "Thread exit was received.");
+                    errno = EINTR;
                     throw false;
                 }
 
@@ -661,6 +662,7 @@ bool transcoder_read_frame(Cache_Entry* cache_entry, char* buff, size_t offset, 
                     if (thread_exit)
                     {
                         Logging::warning(cache_entry->virtname(), "Thread exit was received.");
+                        errno = EINTR;
                         throw false;
                     }
 

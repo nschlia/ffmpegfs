@@ -99,7 +99,8 @@ static bool transcode_until(Cache_Entry* cache_entry, size_t offset, size_t len,
                 if (fuse_interrupted())
                 {
                     Logging::info(cache_entry->virtname(), "The client has gone away.");
-                    throw false;
+                    errno = 0; // No error
+                    break;
                 }
 
                 if (thread_exit)

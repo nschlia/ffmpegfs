@@ -654,12 +654,6 @@ bool transcoder_read_frame(Cache_Entry* cache_entry, char* buff, size_t offset, 
                         retries = TOTAL_RETRIES;
                     }
 
-                    if (fuse_interrupted())
-                    {
-                        Logging::info(cache_entry->virtname(), "The client has gone away.");
-                        throw false;
-                    }
-
                     if (thread_exit)
                     {
                         Logging::warning(cache_entry->virtname(), "Thread exit was received.");

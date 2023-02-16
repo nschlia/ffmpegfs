@@ -18,6 +18,8 @@ Important changes in 2.14 (2023-02-XX):
 * Bugfix: Issue #119: The AVSEEK_FLAG_FRAME set should be used to seek to
   frames when building frame sets. Otherwise, output images may vary if
   searched for or continuously decoded.
+* Bugfix: PTS to frame number and vice versa conversion for frame sets was
+  incorrect if TBR did not equal frames per second.
 * Enhancement: Record milliseconds for every log event.
 * Enhancement: make check: Added file size check to frame set tests.
 * Optimisation: When reopening after invalidating the cache, the size

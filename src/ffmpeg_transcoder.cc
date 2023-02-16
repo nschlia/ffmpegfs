@@ -5008,6 +5008,7 @@ int FFmpeg_Transcoder::skip_decoded_frames(uint32_t frame_no, bool forced_seek)
 {
     int ret = 0;
     uint32_t next_frame_no = frame_no;
+
     // Seek next undecoded frame
     for (; m_buffer->have_frame(next_frame_no); next_frame_no++)
     {
@@ -5928,7 +5929,7 @@ bool FFmpeg_Transcoder::video_size(size_t *filesize, AVCodecID codec_id, BITRATE
     case AV_CODEC_ID_MJPEG:
     {
         // Max. file size = (pixel dimensions x bit depth) / 8 for an uncompressed BMP,
-		// more than sufficient for JPG/PNG as they should never get this large.
+        // more than sufficient for JPG/PNG as they should never get this large.
         *filesize += static_cast<size_t>(width * height * 24 / 8);   // Get the max. size
         break;
     }

@@ -108,6 +108,8 @@ Version 2.14 under development</h2>
 <li><b>Bugfix:</b> Issue <a href="https://github.com/nschlia/ffmpegfs/issues/119">#119</a>: To prevent frame/segment creation errors, the frame set and HLS code has been updated.</li>
 <li><b>Bugfix:</b> Avoid crash during shutdown if cache object had already been closed.</li>
 <li><b>Bugfix:</b> Issue <a href="https://github.com/nschlia/ffmpegfs/issues/119">#119</a>: The AVSEEK_FLAG_FRAME set should be used to seek to frames when building frame sets. Otherwise, output images may vary if searched for or continuously decoded.</li>
+<li><b>Bugfix:</b> PTS to frame number and vice versa conversion for frame sets was incorrect if TBR did not equal frames per second.</li>
+<li><b>Bugfix:</b> Fix seek requests that are being ignored with frame sets.</li>
 <li><b>Enhancement:</b> Record milliseconds for every log event.</li>
 <li><b>Enhancement:</b> make check: Added file size check to frame set tests.</li>
 <li><b>Optimisation:</b> When reopening after invalidating the cache, the size remained at 0. The original size now is once more reserved in order to prevent reallocations.</li>

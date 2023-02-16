@@ -86,6 +86,9 @@ $(function() {
 <div class="line">* Bugfix: Issue #119: The AVSEEK_FLAG_FRAME set should be used to seek to</div>
 <div class="line">  frames when building frame sets. Otherwise, output images may vary if</div>
 <div class="line">  searched for or continuously decoded.</div>
+<div class="line">* Bugfix: PTS to frame number and vice versa conversion for frame sets was</div>
+<div class="line">  incorrect if TBR did not equal frames per second.</div>
+<div class="line">* Bugfix: Fix seek requests that are being ignored with frame sets.</div>
 <div class="line">* Enhancement: Record milliseconds for every log event.</div>
 <div class="line">* Enhancement: make check: Added file size check to frame set tests.</div>
 <div class="line">* Optimisation: When reopening after invalidating the cache, the size</div>

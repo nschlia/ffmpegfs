@@ -5012,6 +5012,7 @@ int FFmpeg_Transcoder::skip_decoded_frames(uint32_t frame_no, bool forced_seek)
 {
     int ret = 0;
     uint32_t next_frame_no = frame_no;
+
     // Seek next undecoded frame
     for (; m_buffer->have_frame(next_frame_no); next_frame_no++)
     {
@@ -5445,8 +5446,8 @@ int FFmpeg_Transcoder::seek_frame()
             // So we position before the frame requested, and simply throw the first away.
 
             //#define PRESCAN_FRAMES  3
+            uint32_t seek_frame_no = m_last_seek_frame_no.exchange(0);
 #ifdef PRESCAN_FRAMES
-            int64_t seek_frame_no = m_last_seek_frame_noX;
             if (seek_frame_no > PRESCAN_FRAMES)
             {
                 seek_frame_no -= PRESCAN_FRAMES;
@@ -5457,11 +5458,8 @@ int FFmpeg_Transcoder::seek_frame()
                 seek_frame_no = 1;
             }
 
-            ret = skip_decoded_frames(seek_frame_no, true);
-#else
-            ret = skip_decoded_frames(m_last_seek_frame_no, true);
 #endif
-
+            ret = skip_decoded_frames(seek_frame_no, true);
             if (ret < 0)
             {
                 return ret;
@@ -5935,7 +5933,7 @@ bool FFmpeg_Transcoder::video_size(size_t *filesize, AVCodecID codec_id, BITRATE
     case AV_CODEC_ID_MJPEG:
     {
         // Max. file size = (pixel dimensions x bit depth) / 8 for an uncompressed BMP,
-		// more than sufficient for JPG/PNG as they should never get this large.
+        // more than sufficient for JPG/PNG as they should never get this large.
         *filesize += static_cast<size_t>(width * height * 24 / 8);   // Get the max. size
         break;
     }

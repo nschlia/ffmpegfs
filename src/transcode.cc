@@ -99,12 +99,14 @@ static bool transcode_until(Cache_Entry* cache_entry, size_t offset, size_t len,
                 if (fuse_interrupted())
                 {
                     Logging::info(cache_entry->virtname(), "The client has gone away.");
-                    throw false;
+                    errno = 0; // No error
+                    break;
                 }
 
                 if (thread_exit)
                 {
                     Logging::warning(cache_entry->virtname(), "Thread exit was received.");
+                    errno = EINTR;
                     throw false;
                 }
 
@@ -652,15 +654,10 @@ bool transcoder_read_frame(Cache_Entry* cache_entry, char* buff, size_t offset, 
                         retries = TOTAL_RETRIES;
                     }
 
-                    if (fuse_interrupted())
-                    {
-                        Logging::info(cache_entry->virtname(), "The client has gone away.");
-                        throw false;
-                    }
-
                     if (thread_exit)
                     {
                         Logging::warning(cache_entry->virtname(), "Thread exit was received.");
+                        errno = EINTR;
                         throw false;
                     }
 

@@ -169,7 +169,6 @@ extern struct FFMPEGFS_PARAMS
     /**
      * @brief Make copy from other FFMPEGFS_PARAMS object.
      * @param[in] other - Reference to source FFmpeg_Frame object.
-     * @return Reference to new FFmpeg_Frame object.
      */
     FFMPEGFS_PARAMS(const FFMPEGFS_PARAMS & other);
     ~FFMPEGFS_PARAMS(); // Do not make virtual, breaks fuse API compatibility!

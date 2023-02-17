@@ -1,23 +1,23 @@
 Building For Windows
 ====================
 
-A Windows version of FFmpegfs has frequently been requested; see Issue [#76](https://github.com/nschlia/ffmpegfs/issues/76) for more information. In essence, this failed because Windows doesn't support Fuse. I attempted to create my own virtual file system solution, but this proved to be a challenging task that required building a system driver using the Windows DDK (Driver Development Kit) and would need buying  a software signing certificate, which is an expensive endeavor. That much time and money is not what I wanted to invest. 
+A Windows version of FFmpegfs has frequently been requested; see Issue [#76](https://github.com/nschlia/ffmpegfs/issues/76) for more information. In essence, this failed because Windows doesn't support Fuse. I attempted to create my own virtual file system solution, but this proved to be a challenging task that required building a system driver using the Windows DDK (Driver Development Kit) and would need buying  a software signing certificate, which is an expensive endeavor. That much time and money is not what I wanted to invest.
 
-Finally, I discovered [WinFSP](https://winfsp.dev/), which offers everything necessary, and for free. It needs Cygwin, which was once merely a crutch but is today extremely powerful. 
+Finally, I discovered [WinFSP](https://winfsp.dev/), which offers everything necessary, and for free. It needs Cygwin, which was once merely a crutch but is today extremely powerful.
 
 FFmpegfs can be built and operated under Windows, however doing so is not recommended. On the same hardware as if transcoding were being done under Linux, the performance is heartbreaking.
 
-However, you may now use it under Windows if you wish to. 
+However, you may now use it under Windows if you wish to.
 
 ## Building with Cygwin
 
 ### Install Windows Prequisites
 
-In order to build FFmpegfs under Windows, various steps must be taken. but it is possible with Cygwin's assistance. 
+In order to build FFmpegfs under Windows, various steps must be taken. but it is possible with Cygwin's assistance.
 
-Download Cygwin from https://www.cygwin.com/ to start with. and install. Later we will add the necessary packages. 
+Download Cygwin from https://www.cygwin.com/ to start with. and install. Later we will add the necessary packages.
 
-From https://winfsp.dev/rel, get Windows File Proxy (WinFSP). Install it after making the recommended selections for all of the development parameters. To make it accessible, the subsequent steps must be carried out in a Cygwin shell. 
+From https://winfsp.dev/rel, get Windows File Proxy (WinFSP). Install it after making the recommended selections for all of the development parameters. To make it accessible, the subsequent steps must be carried out in a Cygwin shell.
 
 ### Update Cygwin
 
@@ -96,7 +96,7 @@ Should you feel lucky and want to build the binaries yourself, you may also use 
 
 #### Build The Binaries For FFmpegfs
 
-After then, all else is just running... 
+After then, all else is just running...
 
 ```
 $ ./configure
@@ -117,7 +117,7 @@ You will be able to run ffmpegfs.exe from the command prompt after running the s
 $ . setenv
 ```
 
-To take advantage of bash's built-in script command, make sure to utilise the "dot space" syntax as demonstrated above; otherwise, the environment will remain untouched. 
+To take advantage of bash's built-in script command, make sure to utilise the "dot space" syntax as demonstrated above; otherwise, the environment will remain untouched.
 
 #### A 32 Bit Version?
 A 32-bit version is probably possible, but Cygwin 32 is no longer supported on Windows 10 and later. As a result, 32-bit builds are not implemented in the make system.

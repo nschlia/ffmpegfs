@@ -8,6 +8,13 @@ Important changes in 2.20 (2023-02-XX):
 * A "make export" option has been added, which gathers all necessary binaries
   to run FFmpegfs without needing to install Cygwin. They can be found in the
   export directory.
+- "make check" is now barely functional under Windows, but not when the "-j"
+  option is used. Performing multiple tests at the same time is difficult
+  under Windows because WinFSP only uses one drive letter per instance. As an
+  example, instance 1 uses A:, instance 2 B:, and so on. This reduces the
+  number of concurrent tests, and locating a free drive letter is not as simple
+  as it seems. Under Windows, performance is also below zero, so the tests can
+  take a long time.
 * TODO: Create Windows installer.
 - TODO: Automatically build Windows release binaries and add to release assets.
 

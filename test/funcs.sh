@@ -5,6 +5,7 @@ if [ "$(expr substr $(uname -s) 1 6)" != "CYGWIN" ]; then
     CYGWIN=0
 else
     CYGWIN=1
+    . ../setenv
 fi
 
 if [ ! -z "$2" ]
@@ -19,16 +20,25 @@ cleanup () {
     echo "Return code: ${EXIT}"
     # Errors are no longer fatal
     set +e
+
     if [ "$(expr substr $(uname -s) 1 6)" != "CYGWIN" ]; then
         # Unmount all
         hash fusermount 2>&- && fusermount -u "${DIRNAME}" || umount -l "${DIRNAME}"
         # Remove temporary directories
-    else
-        ps -W | grep ffmpegfs | awk '{print $1}' | xargs kill -f;
-    fi
 	rmdir "${DIRNAME}"
+    else
+    	# Cygwin: Kill all ffmpegfs processes, sorry, found no better way
+    	PROCESS=`ps -W | grep ffmpegfs`
+    	if [ ! -z "${PROCESS}" ];
+    	then
+    		echo ${PROCESS} | awk '{print $1}' | xargs kill -f;
+    	fi
+    fi
+
+    # Remove temporary directories
     rm -Rf "${CACHEPATH}"
     rm -Rf "${TMPPATH}"
+
     # Arrividerci
     exit ${EXIT}
 }
@@ -125,21 +135,39 @@ then
     EXTRANAME=_$EXTRANAME
 fi
 
-if [ "$CYGWIN" != "1" ]; then
+SRCDIR="$( cd "${BASH_SOURCE%/*}/srcdir" && pwd )"
+if [ "${CYGWIN}" != "1" ]; then
     DIRNAME="$(mktemp -d)"
 else
-    DIRNAME=A:
-    CYGDIR=`cygpath -u "${DIRNAME}"`
-fi
+    # Find first free drive
+    drivelist=`ls /cygdrive/`
+    for windrive in a b c d e f g h i j k l m n o p q r s t u v w x y z
+    do
+       # Just check if drive letter exists, does not need to be accessible
+       if [[ "${drivelist}" != *"${windrive}"* ]];
+       then
+          DIRNAME=${windrive}:
+          break;
+       fi
+    done
 
-SRCDIR="$( cd "${BASH_SOURCE%/*}/srcdir" && pwd )"
+    if [ -z ${DIRNAME} ];
+    then
+    	echo "ERROR: No free Windows drive letter available."
+    	exit 99
+    fi
+
+    CYGDIR=`cygpath -u "${DIRNAME}"`
+
+    echo "Using drive letter ${DIRNAME} (Cygwin path ${CYGDIR})"
+fi
 CACHEPATH="$(mktemp -d)"
 TMPPATH="$(mktemp -d)"
 
 #--disable_cache
 ( ffmpegfs -f "${SRCDIR}" "${DIRNAME}" --logfile=${0##*/}${EXTRANAME}.builtin.log --log_maxlevel=TRACE --cachepath="${CACHEPATH}" --desttype=${DESTTYPE} ${ADDOPT} > /dev/null 2>&1 || kill -USR1 $$ ) &
 
-if [ "$CYGWIN" != "1" ]; then
+if [ "${CYGWIN}" != "1" ]; then
     while ! mount | grep -q "${DIRNAME}" ; do
         sleep 0.1
     done

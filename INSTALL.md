@@ -1,7 +1,7 @@
 Installation Instructions for FFmpegfs
 ======================================
 
-This guide shows how to install or create FFmpegfs on Linux. Please see [Building For Windows](WINDOWS.md) for information if you wish to build a Windows version. 
+This guide shows how to install or create FFmpegfs on Linux. Please see [Building For Windows](WINDOWS.md) for information if you wish to build a Windows version.
 
 Installation from the repository
 --------------------------------

@@ -6,9 +6,9 @@
 #ifndef _SYS_MMAN_H_
 #define _SYS_MMAN_H_
 
-#ifndef _WIN32_WINNT		// Allow use of features specific to Windows XP or later.                   
+#ifndef _WIN32_WINNT		// Allow use of features specific to Windows XP or later.
 #define _WIN32_WINNT 0x0501	// Change this to the appropriate value to target other versions of Windows.
-#endif						
+#endif
 
 /* All the headers include this file. */
 #ifndef _MSC_VER
@@ -16,7 +16,7 @@
 #endif
 
 #if defined(MMAN_LIBRARY_DLL)
-/* Windows shared libraries (DLL) must be declared export when building the lib and import when building the 
+/* Windows shared libraries (DLL) must be declared export when building the lib and import when building the
 application which links against the library. */
 #if defined(MMAN_LIBRARY)
 #define MMANSHARED_EXPORT __declspec(dllexport)

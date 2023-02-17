@@ -66,7 +66,7 @@ BUILT_SOURCES = ../ffmpegfs.1.text ffmpegfshelp.h
 # sed in makefiles is a menace so we use a helper script
 ffmpegfshelp.h: ../ffmpegfs.1.text
 	$(srcdir)/makehelp.sh $@
-	
+
 if WINDOWS
 export:
 	@rm -Rf ../export

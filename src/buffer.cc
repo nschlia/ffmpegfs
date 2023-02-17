@@ -898,6 +898,12 @@ bool Buffer::copy(uint8_t* out_data, size_t offset, size_t bufsize, uint32_t seg
 
     size_t segment_size = size(segment_no);
 
+    if (!segment_size && errno)
+    {
+        Logging::error(m_cur_ci->m_cachefile, "INTERNAL ERROR: size(segment_no) returned error. Segment: %1 (%2) %3", segment_no, errno, strerror(errno));
+        return false;
+    }
+
     if (ci->m_buffer_size != segment_size)
     {
         Logging::error(m_cur_ci->m_cachefile, "INTERNAL ERROR: Buffer::copy()! ci->m_buffer_size != segment_size - Segment: %1 ci->m_buffer_size: %2 segment_size: %3", segment_no, ci->m_buffer_size, segment_size);

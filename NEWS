@@ -9,6 +9,7 @@ Important changes in 2.20 (2023-02-XX):
   to run FFmpegfs without needing to install Cygwin. They can be found in the
   export directory.
 * TODO: Create Windows installer.
+- TODO: Automatically build Windows release binaries and add to release assets.
 
 Important changes in 2.14 (2023-02-XX):
 

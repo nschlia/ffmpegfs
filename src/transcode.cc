@@ -574,17 +574,20 @@ bool transcoder_read(Cache_Entry* cache_entry, char* buff, size_t offset, size_t
             len = cache_entry->m_buffer->buffer_watermark(segment_no) - offset;
         }
 
-        if (!cache_entry->m_buffer->copy(reinterpret_cast<uint8_t*>(buff), offset, len, segment_no))
+        if (len)
         {
-            len = 0;
-            // We already capped len to not overread the buffer, so it is an error if we end here.
-            throw false;
-        }
+            if (!cache_entry->m_buffer->copy(reinterpret_cast<uint8_t*>(buff), offset, len, segment_no))
+            {
+                len = 0;
+                // We already capped len to not overread the buffer, so it is an error if we end here.
+                throw false;
+            }
 
-        if (cache_entry->m_cache_info.m_error)
-        {
-            errno = cache_entry->m_cache_info.m_errno ? cache_entry->m_cache_info.m_errno : EIO;
-            throw false;
+            if (cache_entry->m_cache_info.m_error)
+            {
+                errno = cache_entry->m_cache_info.m_errno ? cache_entry->m_cache_info.m_errno : EIO;
+                throw false;
+            }
         }
 
         errno = 0;

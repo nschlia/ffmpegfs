@@ -674,11 +674,6 @@ bool Buffer::reserve(size_t size)
         return false;
     }
 
-    //if (!isdefaultsize)
-    //{
-    //    m_cur_ci->m_buffer_pos = m_cur_ci->m_buffer_watermark = filesize;
-    //}
-
     m_cur_ci->m_buffer_size       = filesize;
     m_cur_ci->m_buffer            = static_cast<uint8_t*>(p);
 

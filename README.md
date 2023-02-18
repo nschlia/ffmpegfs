@@ -28,9 +28,9 @@ News
 
 ### Windows Version
 
-A Windows version of FFmpegfs has frequently been requested; see Issue [#76](https://github.com/nschlia/ffmpegfs/issues/76) for more information. In essence, this failed because Windows doesn't support Fuse. I discovered [WinFSP](https://winfsp.dev/), which offers everything necessary.
+A Windows version of FFmpegfs has frequently been requested; see issue [#76](https://github.com/nschlia/ffmpegfs/issues/76) for more information. In essence, this failed because Windows doesn't support Fuse. I discovered [WinFSP](https://winfsp.dev/), which offers everything necessary.
 
-To get what's been done so far, checkout the [windows](https://github.com/nschlia/ffmpegfs/tree/windows) branch.
+To see what's been done so far, checkout the [windows](https://github.com/nschlia/ffmpegfs/tree/windows) branch.
 
 ### Version 2.14 under development
 
@@ -65,26 +65,27 @@ The outdated *—extensions* argument was removed without substitution.
 
 ## Full History
 
-See [history](HISTORY.md) for details.
+For more information, see [history](HISTORY.md).
 
 Supported Formats
 -----
 
 ### Input
 
-Making a full list of the formats the FFmpeg API supports would be somewhat pointless.  See [Demuxers](https://ffmpeg.org/ffmpeg-formats.html#Demuxers) on FFmpeg's home pages and [Supported Formats](https://en.wikipedia.org/wiki/FFmpeg#Supported_formats) on Wikipedia to get an idea.
+Making a full list of the formats the FFmpeg API supports would be somewhat pointless. See [Demuxers](https://ffmpeg.org/ffmpeg-formats.html#Demuxers) on FFmpeg's home pages and [Supported Formats](https://en.wikipedia.org/wiki/FFmpeg#Supported_formats) on Wikipedia to get an idea.
 
-Sadly, it also depends on the codecs that have been built into the Linux distribution's library. Some, like openSUSE, only include royalty-free codecs, while others, like Red Hat, completely omit FFmpeg. Use this command to find out:
+Sadly, it also depends on the codecs that have been built into the Linux distribution's library. Some, like openSUSE, only include royalty-free codecs, while others, like Red Hat, completely omit FFmpeg. You can use the following command to find out:
 
 ```
 ffmpeg -formats
 ```
 
-A list of the available codecs will be created as a result.
+A list of the available codecs will be created as a result. In the case of missing codecs or no FFmpeg at all, your only option is to build FFmpeg yourself.
+Big fun... 
 
 ### Output
 
-Only formats that can be read while being written to can be used as output. While MP4 isn't one of them, it can still be supported with the help of some format extensions.
+As output, only formats that can be read while being written to can be used. Whereas MP4 is not one of them, it can be supported through the use of format extensions. 
 
 #### Audio Formats
 | Format | Description | Audio |

@@ -151,10 +151,6 @@ const char *get_media_type_string(enum AVMediaType media_type);
 
 #define SAFE_VALUE(p, v, d)     (((p) != nullptr) ? (p)->v : d)                     /**< @brief Access struct/class pointer safely, return default if nullptr */
 
-#define MS              *1000000L                                                   /**< @brief 1 millisecond = 1,000,000 nanoseconds */
-#define US              *1000L                                                      /**< @brief 1 microsecond = 1,000 nanoseconds */
-#define NS              *1L                                                         /**< @brief 1 nanosecond */
-
 /**
   * File types
   */

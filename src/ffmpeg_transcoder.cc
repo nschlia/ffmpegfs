@@ -254,7 +254,7 @@ FFmpeg_Transcoder::FFmpeg_Transcoder()
 #pragma GCC diagnostic pop
     Logging::trace(nullptr, "The FFmpeg trancoder is ready to initialise.");
 
-    memset(&m_mtime, 0, sizeof(m_mtime));
+    std::memset(&m_mtime, 0, sizeof(m_mtime));
 
 #if LAVU_DEP_OLD_CHANNEL_LAYOUT
     av_channel_layout_default(&m_cur_ch_layout, params.m_audiochannels);
@@ -2280,7 +2280,7 @@ int FFmpeg_Transcoder::add_subtitle_stream(AVCodecID codec_id, StreamRef & input
         {
             return AVERROR(ENOMEM);
         }
-        memcpy(output_codec_ctx->subtitle_header, input_codec_ctx->subtitle_header, static_cast<size_t>(input_codec_ctx->subtitle_header_size));
+        std::memcpy(output_codec_ctx->subtitle_header, input_codec_ctx->subtitle_header, static_cast<size_t>(input_codec_ctx->subtitle_header_size));
         output_codec_ctx->subtitle_header_size = input_codec_ctx->subtitle_header_size;
     }
     else if (output_codec_ctx->codec_id == AV_CODEC_ID_WEBVTT || output_codec_ctx->codec_id == AV_CODEC_ID_SUBRIP)
@@ -3938,7 +3938,7 @@ int FFmpeg_Transcoder::convert_samples(uint8_t **input_data, int in_samples, uin
         {
             // Interleaved format
             int samples = in_samples * av_get_bytes_per_sample(m_out.m_audio.m_codec_ctx->sample_fmt) * get_channels(m_in.m_audio.m_codec_ctx.get());
-            memcpy(converted_data[0], input_data[0], static_cast<size_t>(samples));
+            std::memcpy(converted_data[0], input_data[0], static_cast<size_t>(samples));
         }
         else
         {
@@ -3946,7 +3946,7 @@ int FFmpeg_Transcoder::convert_samples(uint8_t **input_data, int in_samples, uin
             int samples = in_samples * av_get_bytes_per_sample(m_out.m_audio.m_codec_ctx->sample_fmt);
             for (int n = 0; n < get_channels(m_out.m_audio.m_codec_ctx.get()); n++)
             {
-                memcpy(converted_data[n], input_data[n], static_cast<size_t>(samples));
+                std::memcpy(converted_data[n], input_data[n], static_cast<size_t>(samples));
             }
         }
     }
@@ -4626,7 +4626,7 @@ int FFmpeg_Transcoder::encode_subtitle(const AVSubtitle *sub, int out_stream_idx
     AVSubtitle subtmp;
 
     // Make a local copy, we have to modify it
-    memcpy(&subtmp, sub, sizeof(AVSubtitle));
+    std::memcpy(&subtmp, sub, sizeof(AVSubtitle));
 
     try
     {
@@ -4833,8 +4833,8 @@ time_t FFmpeg_Transcoder::mtime() const
 template <size_t size>
 const char * FFmpeg_Transcoder::tagcpy(char (&out) [ size ], const std::string & in) const  // NOLINT(modernize-avoid-c-arrays)
 {
-    memset(out, ' ', size);
-    memcpy(out, in.c_str(), std::min(size, in.size()));
+    std::memset(out, ' ', size);
+    std::memcpy(out, in.c_str(), std::min(size, in.size()));
     return out;
 }
 
@@ -7560,7 +7560,7 @@ int FFmpeg_Transcoder::read_packet(void *opaque, uint8_t *buf, int buf_size)
     }
 
     /* copy internal buffer data to buf */
-    memcpy(buf, bd->ptr, static_cast<size_t>(buf_size));
+    std::memcpy(buf, bd->ptr, static_cast<size_t>(buf_size));
     bd->ptr  += buf_size;
     bd->size -= static_cast<size_t>(buf_size);
 

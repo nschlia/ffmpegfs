@@ -65,8 +65,8 @@ DvdIO::DvdIO()
     , m_duration(AV_NOPTS_VALUE)
     , m_size(0)
 {
-    memset(&m_data, 0, sizeof(m_data));
-    memset(&m_buffer, 0, sizeof(m_buffer));
+    std::memset(&m_data, 0, sizeof(m_data));
+    std::memset(&m_buffer, 0, sizeof(m_buffer));
 }
 
 DvdIO::~DvdIO()
@@ -410,7 +410,7 @@ size_t DvdIO::demux_pes(uint8_t *out, const uint8_t *in, size_t len) const
         }
         case (0x100 | PS_STREAM_ID_PACK_HEADER):    // MPEG-2 Pack Header
         {
-            memcpy(out, in, size);
+            std::memcpy(out, in, size);
             out += size;
             netsize += size;
             break;
@@ -423,7 +423,7 @@ size_t DvdIO::demux_pes(uint8_t *out, const uint8_t *in, size_t len) const
                 // Probably this is sufficient here:
                 // 110x xxxx    0xC0 - 0xDF	MPEG-1 or MPEG-2 audio stream number x xxxx
                 // 1110 xxxx    0xE0 - 0xEF	MPEG-1 or MPEG-2 video stream number xxxx
-                memcpy(out, in, size);
+                std::memcpy(out, in, size);
                 out += size;
                 netsize += size;
             }
@@ -569,7 +569,7 @@ size_t DvdIO::readio(void * data, size_t size)
 
         if (data != nullptr)
         {
-            memcpy(data, &m_data[m_rest_pos], rest_size);
+            std::memcpy(data, &m_data[m_rest_pos], rest_size);
         }
 
         m_rest_size = m_rest_pos = 0;
@@ -657,7 +657,7 @@ size_t DvdIO::readio(void * data, size_t size)
                 {
                     result_len = size;
 
-                    memcpy(data, m_data, result_len);
+                    std::memcpy(data, m_data, result_len);
 
                     m_rest_size = netsize - size;
                     m_rest_pos = size;
@@ -666,7 +666,7 @@ size_t DvdIO::readio(void * data, size_t size)
                 {
                     result_len = netsize;
 
-                    memcpy(data, m_data, result_len);
+                    std::memcpy(data, m_data, result_len);
                 }
             }
             else

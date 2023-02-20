@@ -42,9 +42,11 @@
 #endif
 
 #include <sys/stat.h>
+
 #include <string>
 #include <vector>
 #include <map>
+#include <cstring>
 
 // Disable annoying warnings outside our code
 #ifdef __cplusplus
@@ -134,7 +136,7 @@ typedef struct VIRTUALFILE
         , m_height(0)
         , m_framerate{ 0, 0 }
     {
-        memset(&m_st, 0, sizeof(m_st));
+        std::memset(&m_st, 0, sizeof(m_st));
     }
 
     uint32_t get_segment_count() const;                             /**< @brief Number of HLS segments in set */

@@ -44,7 +44,7 @@ std::string convert_txt2string(const char * txt, int size, bool trimmed)
 
     if (buffer != nullptr)
     {
-        memcpy(buffer, txt, static_cast<size_t>(size));
+        std::memcpy(buffer, txt, static_cast<size_t>(size));
         *(buffer + size) = '\0';
 
         ret_value = buffer;

@@ -102,7 +102,7 @@ int VcdEntries::load_file(const std::string & path)
 
         m_file_date      = stbuf.st_mtime;
 
-        memset(&vcdentry, 0, sizeof(vcdentry));
+        std::memset(&vcdentry, 0, sizeof(vcdentry));
 
         if (fread(reinterpret_cast<char *>(&vcdentry), 1, sizeof(vcdentry), fpi) != sizeof(vcdentry))
         {
@@ -164,7 +164,7 @@ int VcdEntries::scan_chapters()
     std::string fullname;
     struct stat stbuf;
 
-    memset(&stbuf, 0, sizeof(stbuf));
+    std::memset(&stbuf, 0, sizeof(stbuf));
 
     if (!m_chapters.size())
     {

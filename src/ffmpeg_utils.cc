@@ -1476,8 +1476,8 @@ FILETYPE get_filetype_from_list(const std::string & desttypelist)
 void init_id3v1(ID3v1 *id3v1)
 {
     // Initialise ID3v1.1 tag structure
-    memset(id3v1, ' ', sizeof(ID3v1));
-    memcpy(&id3v1->m_tag, "TAG", 3);
+    std::memset(id3v1, ' ', sizeof(ID3v1));
+    std::memcpy(&id3v1->m_tag, "TAG", 3);
     id3v1->m_padding = '\0';
     id3v1->m_title_no = 0;
     id3v1->m_genre = 0;

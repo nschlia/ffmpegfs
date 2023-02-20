@@ -53,7 +53,7 @@ BlurayIO::BlurayIO()
     , m_angle_idx(0)
     , m_duration(AV_NOPTS_VALUE)
 {
-    memset(&m_data, 0, sizeof(m_data));
+    std::memset(&m_data, 0, sizeof(m_data));
 }
 
 BlurayIO::~BlurayIO()
@@ -187,7 +187,7 @@ size_t BlurayIO::readio(void * data, size_t size)
             return 0;
         }
 
-        memcpy(data, &m_data[m_rest_pos], m_rest_size);
+        std::memcpy(data, &m_data[m_rest_pos], m_rest_size);
 
         m_rest_size = m_rest_pos = 0;
 
@@ -218,7 +218,7 @@ size_t BlurayIO::readio(void * data, size_t size)
         if (bytes > size)
         {
             result_len = size;
-            memcpy(data, m_data, result_len);
+            std::memcpy(data, m_data, result_len);
 
             m_rest_size = bytes - size;
             m_rest_pos = size;
@@ -226,7 +226,7 @@ size_t BlurayIO::readio(void * data, size_t size)
         else
         {
             result_len = bytes;
-            memcpy(data, m_data, result_len);
+            std::memcpy(data, m_data, result_len);
         }
     }
 

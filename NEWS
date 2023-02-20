@@ -23,6 +23,9 @@ Important changes in 2.14 (2023-02-XX):
 * Bugfix: Fix seek requests that are being ignored with frame sets.
 * Bugfix: When transferring from cache to Fuse buffer, avoid a possible 1 byte
   overrun.
+* Bugfix: Issue #144: It appears that using memmove instead of memcpy resolves
+  the occasional crash. In fact, no reason could be found (as buffer overruns
+  or illegal memory access). 
 * Enhancement: Record milliseconds for every log event.
 * Enhancement: make check: Added file size check to frame set tests.
 * Optimisation: When reopening after invalidating the cache, the size
@@ -30,8 +33,8 @@ Important changes in 2.14 (2023-02-XX):
   prevent reallocations.
 * Optimisation: To avoid reallocations, save enough space in the cache buffer
   to hold the entire frame set.
-* Optimisation: Checking folders to see if they can be transcoded is completely
-  pointless. Directories are now immediately skipped.
+* Optimisation: Checking folders to see if they can be transcoded is
+  completely pointless. Directories are now immediately skipped.
 
 Important changes in 2.13 (2023-01-15):
 

@@ -31,7 +31,6 @@
 
 #include "cache_maintenance.h"
 #include "ffmpegfs.h"
-#include "ffmpeg_utils.h"
 #include "logging.h"
 
 #include <csignal>

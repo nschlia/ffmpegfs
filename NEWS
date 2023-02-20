@@ -21,6 +21,8 @@ Important changes in 2.14 (2023-02-XX):
 * Bugfix: PTS to frame number and vice versa conversion for frame sets was
   incorrect if TBR did not equal frames per second.
 * Bugfix: Fix seek requests that are being ignored with frame sets.
+* Bugfix: When transferring from cache to Fuse buffer, avoid a possible 1 byte
+  overrun.
 * Enhancement: Record milliseconds for every log event.
 * Enhancement: make check: Added file size check to frame set tests.
 * Optimisation: When reopening after invalidating the cache, the size

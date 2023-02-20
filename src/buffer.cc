@@ -913,7 +913,7 @@ bool Buffer::copy(uint8_t* out_data, size_t offset, size_t bufsize, uint32_t seg
 
     bool success = true;
 
-    if (segment_size >= offset)
+    if (segment_size > offset)
     {
         if (segment_size < offset + bufsize)
         {
@@ -924,7 +924,7 @@ bool Buffer::copy(uint8_t* out_data, size_t offset, size_t bufsize, uint32_t seg
     }
     else
     {
-        Logging::error(m_cur_ci->m_cachefile, "INTERNAL ERROR: Buffer::copy()! size(segment_no) < offset - Segment: %1 Segment Size: %2 Offset: %3", segment_no, segment_size, offset);
+        Logging::error(m_cur_ci->m_cachefile, "INTERNAL ERROR: Buffer::copy()! size(segment_no) > offset - Segment: %1 Segment Size: %2 Offset: %3", segment_no, segment_size, offset);
         errno = ESPIPE;
         success = false;
     }

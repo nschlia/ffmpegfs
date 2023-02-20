@@ -45,6 +45,7 @@ To see what's been done so far, checkout the [windows](https://github.com/nschli
 - **Bugfix:** Issue [#119](https://github.com/nschlia/ffmpegfs/issues/119): The AVSEEK_FLAG_FRAME set should be used to seek to frames when building frame sets. Otherwise, output images may vary if searched for or continuously decoded.
 - **Bugfix:** PTS to frame number and vice versa conversion for frame sets was incorrect if TBR did not equal frames per second.
 - **Bugfix:** Fix seek requests that are being ignored with frame sets.
+- **Bugfix:** When transferring from cache to Fuse buffer, avoid a possible 1 byte overrun.
 - **Enhancement:** Record milliseconds for every log event.
 - **Enhancement:** make check: Added file size check to frame set tests.
 - **Optimisation:** When reopening after invalidating the cache, the size remained at 0. The original size now is once more reserved in order to prevent reallocations.

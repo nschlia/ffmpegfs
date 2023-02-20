@@ -30,7 +30,6 @@
  */
 
 #include "diskio.h"
-#include "ffmpegfs.h"
 #include "logging.h"
 
 #include <cerrno>

@@ -157,7 +157,7 @@ int VcdInfo::load_file(const std::string & path)
 
     m_file_date      = stbuf.st_mtime;
 
-    memset(&vi, 0, sizeof(vi));
+    std::memset(&vi, 0, sizeof(vi));
 
     if (fread(reinterpret_cast<char *>(&vi), 1, sizeof(vi), fpi) == sizeof(vi))
     {

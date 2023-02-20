@@ -91,7 +91,7 @@ int VcdChapter::readio(FILE *fpi, int track_no)
     }
 
     // Read position block
-    memset(&msf, 0, sizeof(msf));
+    std::memset(&msf, 0, sizeof(msf));
 
     if (fread(reinterpret_cast<char *>(&msf), 1, sizeof(msf), fpi) != sizeof(msf))
     {

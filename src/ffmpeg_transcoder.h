@@ -164,7 +164,7 @@ protected:
             m_video_pts(0),
             m_last_mux_dts(AV_NOPTS_VALUE)
         {
-            memset(&m_id3v1, 0, sizeof(m_id3v1));
+            std::memset(&m_id3v1, 0, sizeof(m_id3v1));
         }
 
         int64_t                 m_audio_pts;                        /**< @brief Global timestamp for the audio frames in output audio stream time base units  */

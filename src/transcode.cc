@@ -516,10 +516,10 @@ bool transcoder_read(Cache_Entry* cache_entry, char* buff, size_t offset, size_t
                         (offset + len >= (cache_entry->size() - ID3V1_TAG_LENGTH)))
                 {
                     // Stuff buffer with garbage, apps won't try to play that chunk anyway.
-                    memset(buff, 0xFF, len);
+                    std::memset(buff, 0xFF, len);
                     if (cache_entry->size() - offset == ID3V1_TAG_LENGTH)
                     {
-                        memcpy(buff, &cache_entry->m_id3v1, std::min(len, ID3V1_TAG_LENGTH));
+                        std::memcpy(buff, &cache_entry->m_id3v1, std::min(len, ID3V1_TAG_LENGTH));
                     }
 
                     errno = 0;
@@ -702,7 +702,7 @@ bool transcoder_read_frame(Cache_Entry* cache_entry, char* buff, size_t offset, 
 
             if (len)
             {
-                memcpy(buff, data.data() + offset, len);
+                std::memcpy(buff, data.data() + offset, len);
             }
 
             stat_set_size(&virtualfile->m_st, data.size());
@@ -835,7 +835,7 @@ static bool transcode(THREAD_DATA *thread_data, Cache_Entry *cache_entry, FFmpeg
             throw (static_cast<int>(errno));
         }
 
-        memcpy(&cache_entry->m_id3v1, transcoder.id3v1tag(), sizeof(ID3v1));
+        std::memcpy(&cache_entry->m_id3v1, transcoder.id3v1tag(), sizeof(ID3v1));
 
         thread_data->m_initialised = true;
 

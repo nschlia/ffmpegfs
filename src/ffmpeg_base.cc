@@ -47,7 +47,6 @@ extern "C" {
 #endif
 
 #include "ffmpeg_base.h"
-#include "transcode.h"
 #include "logging.h"
 
 

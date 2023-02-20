@@ -246,7 +246,7 @@ static bool is_passthrough(const std::string & ext)
 
 void init_fuse_ops()
 {
-    memset(&ffmpegfs_ops, 0, sizeof(fuse_operations));
+    std::memset(&ffmpegfs_ops, 0, sizeof(fuse_operations));
     ffmpegfs_ops.getattr  = ffmpegfs_getattr;
     ffmpegfs_ops.fgetattr = ffmpegfs_fgetattr;
     ffmpegfs_ops.readlink = ffmpegfs_readlink;
@@ -1156,7 +1156,7 @@ static int ffmpegfs_read(const char *path, char *buf, size_t size, off_t offset,
 
         if (bytes)
         {
-            memcpy(buf, &virtualfile->m_file_contents[locoffset], bytes);
+            std::memcpy(buf, &virtualfile->m_file_contents[locoffset], bytes);
         }
 
         bytes_read = static_cast<int>(bytes);
@@ -1343,7 +1343,7 @@ static void *ffmpegfs_init(struct fuse_conn_info *conn)
     }
 
     struct sigaction sa;
-    memset(&sa, 0, sizeof(sa));
+    std::memset(&sa, 0, sizeof(sa));
     sigemptyset(&sa.sa_mask);
     sigaddset(&sa.sa_mask, SIGINT);
     sa.sa_handler = sighandler;
@@ -1433,7 +1433,7 @@ static int get_source_properties(const std::string & origpath, LPVIRTUALFILE vir
  */
 static void init_stat(struct stat * stbuf, size_t fsize, time_t ftime, bool directory)
 {
-    memset(stbuf, 0, sizeof(struct stat));
+    std::memset(stbuf, 0, sizeof(struct stat));
 
     stbuf->st_mode = DEFFILEMODE; //S_IFREG | S_IRUSR | S_IRGRP | S_IROTH;
     if (directory)
@@ -1652,7 +1652,7 @@ LPVIRTUALFILE insert_file(VIRTUALTYPE type, const std::string & virtfile, const 
         std::string sanitised_origfile(sanitise_filepath(origfile));
         VIRTUALFILE virtualfile;
 
-        memcpy(&virtualfile.m_st, stbuf, sizeof(struct stat));
+        std::memcpy(&virtualfile.m_st, stbuf, sizeof(struct stat));
 
         virtualfile.m_type              = type;
         virtualfile.m_flags             = flags;
@@ -1813,17 +1813,17 @@ int load_path(const std::string & path, const struct stat *statbuf, void *buf, f
 
                 stat_set_size(&virtualfile->m_st, static_cast<size_t>(stbuf2.st_size));
 
-                memcpy(&stbuf, &virtualfile->m_st, sizeof(struct stat));
+                std::memcpy(&stbuf, &virtualfile->m_st, sizeof(struct stat));
             }
             else
             {
                 if (statbuf == nullptr)
                 {
-                    memcpy(&stbuf, &virtualfile->m_st, sizeof(struct stat));
+                    std::memcpy(&stbuf, &virtualfile->m_st, sizeof(struct stat));
                 }
                 else
                 {
-                    memcpy(&stbuf, statbuf, sizeof(struct stat));
+                    std::memcpy(&stbuf, statbuf, sizeof(struct stat));
 
                     stat_set_size(&stbuf, static_cast<size_t>(virtualfile->m_st.st_size));
                 }
@@ -2319,7 +2319,7 @@ static int parse_file(LPVIRTUALFILE newvirtualfile)
         struct stat stbuf;
         if (lstat(newvirtualfile->m_origfile.c_str(), &stbuf) == 0)
         {
-            memcpy(&newvirtualfile->m_st, &stbuf, sizeof(stbuf));
+            std::memcpy(&newvirtualfile->m_st, &stbuf, sizeof(stbuf));
         }
 
         for (unsigned int stream_idx = 0; stream_idx < format_ctx->nb_streams; stream_idx++)

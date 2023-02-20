@@ -31,12 +31,12 @@
 
 #include "buffer.h"
 #include "ffmpegfs.h"
-#include "ffmpeg_utils.h"
 #include "logging.h"
 
 #include <unistd.h>
 #include <sys/mman.h>
 #include <libgen.h>
+#include <cstring>
 
 // Initially Buffer is empty. It will be allocated as needed.
 Buffer::Buffer()
@@ -615,7 +615,7 @@ bool Buffer::clear()
 
         if (ci->m_fd_idx != -1)
         {
-            memset(ci->m_buffer_idx, 0, ci->m_buffer_size_idx);
+            std::memset(ci->m_buffer_idx, 0, ci->m_buffer_size_idx);
         }
     }
 
@@ -702,7 +702,7 @@ size_t Buffer::writeio(const uint8_t* data, size_t length)
         m_cur_ci->m_buffer_write_size += length;
         m_cur_ci->m_buffer_writes++;
 
-        memcpy(write_ptr, data, length);
+        std::memcpy(write_ptr, data, length);
         increment_pos(length);
     }
 
@@ -743,8 +743,8 @@ size_t Buffer::write_frame(const uint8_t *data, size_t length, uint32_t frame_no
     else
     {
         // Create new frame if not existing or not enough space
-        memset(&new_image_frame, 0xFF, sizeof(new_image_frame));
-        memcpy(new_image_frame.m_tag, IMAGE_FRAME_TAG, sizeof(new_image_frame.m_tag));
+        std::memset(&new_image_frame, 0xFF, sizeof(new_image_frame));
+        std::memcpy(new_image_frame.m_tag, IMAGE_FRAME_TAG, sizeof(new_image_frame.m_tag));
         new_image_frame.m_frame_no      = frame_no;
         new_image_frame.m_offset        = buffer_watermark();
         new_image_frame.m_size          = static_cast<uint32_t>(length);
@@ -757,7 +757,7 @@ size_t Buffer::write_frame(const uint8_t *data, size_t length, uint32_t frame_no
             return 0;
         }
 
-        memcpy(reinterpret_cast<void *>(m_cur_ci->m_buffer_idx + start), &new_image_frame, sizeof(IMAGE_FRAME));
+        std::memcpy(reinterpret_cast<void *>(m_cur_ci->m_buffer_idx + start), &new_image_frame, sizeof(IMAGE_FRAME));
     }
 
     return bytes_written;
@@ -936,18 +936,18 @@ bool Buffer::copy(uint8_t* out_data, size_t offset, size_t bufsize, uint32_t seg
 
     bool success = true;
 
-    if (segment_size >= offset)
+    if (segment_size > offset)
     {
         if (segment_size < offset + bufsize)
         {
             bufsize = segment_size - offset - 1;
         }
 
-        memcpy(out_data, ci->m_buffer + offset, bufsize);
+        std::memmove(out_data, ci->m_buffer + offset, bufsize);
     }
     else
     {
-        Logging::error(m_cur_ci->m_cachefile, "INTERNAL ERROR: Buffer::copy()! size(segment_no) < offset - Segment: %1 Segment Size: %2 Offset: %3", segment_no, segment_size, offset);
+        Logging::error(m_cur_ci->m_cachefile, "INTERNAL ERROR: Buffer::copy()! size(segment_no) > offset - Segment: %1 Segment Size: %2 Offset: %3", segment_no, segment_size, offset);
         errno = ESPIPE;
         success = false;
     }

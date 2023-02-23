@@ -56,7 +56,7 @@
  * @li [**Man Pages**](manpages.html)
  * @li [Features In Detail](FEATURES.md)
  * @li [Revision History](HISTORY.md)
- * @li [Installation instructions](INSTALL.md)
+ * @li [Installation Instructions](INSTALL.md)
  * @li [Fixing Problems](PROBLEMS.md)
  * @li @ref todo
  * @li @ref bug

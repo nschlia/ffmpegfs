@@ -31,6 +31,8 @@ Important changes in 2.14 (2023-02-XX):
   hold the entire frame set.
 * Optimisation: Checking folders to see if they can be transcoded is completely
   pointless. Directories are now immediately skipped.
+* To avoid problems with logfile viewers, renamed built-in logfiles to
+  *_builtin.log (removing the double extension).
 
 Important changes in 2.13 (2023-01-15):
 

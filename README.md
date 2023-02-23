@@ -50,6 +50,7 @@ To see what's been done so far, checkout the [windows](https://github.com/nschli
 - **Optimisation:** When reopening after invalidating the cache, the size remained at 0. The original size is now once again reserved in order to prevent reallocations.
 - **Optimisation:** To avoid reallocations, save enough space in the cache buffer to hold the entire frame set.
 - **Optimisation:** Checking folders to see if they can be transcoded is completely pointless. Directories are now immediately skipped.
+- To avoid problems with logfile viewers, renamed built-in logfiles to *_builtin.log (removing the double extension).
 
 ### Version 2.13 has been released
 

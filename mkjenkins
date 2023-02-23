@@ -6,11 +6,16 @@ set -e
 #TOOLKIT=ffmpeg
 #FFMPEGVER=4.1
 #CONFIGUREOPT=
+CHECK=1
 
 COMPILER=$1
 TOOLKIT=$2
 FFMPEGVER=$3
 CONFIGUREOPT=$4
+if [ ! -z "$5" ];
+then
+	CHECK=$5
+fi
 
 if [ -z "${COMPILER}" ] || [ -z "${TOOLKIT}" ]
 then
@@ -22,12 +27,21 @@ then
 	exit 0
 fi
 
+# -------------------------------------------------------------------------------------------------
+
+if [ "${HOSTNAME}" != "rasppi4dev" ];
+then
+        CPUCOUNT=`nproc`
+else
+        CPUCOUNT=1
+fi
+
 echo "*********************************************************************************************"
 if [ -z "${CONFIGUREOPT}" ];
 then
-    	echo "Building for ${TOOLKIT} ${FFMPEGVER} with ${COMPILER}"
+    	echo "Building for ${TOOLKIT} ${FFMPEGVER} with ${COMPILER} and CPU count ${CPUCOUNT}"
 else
-    	echo "Building for ${TOOLKIT} ${FFMPEGVER} with ${COMPILER} (configure ${CONFIGUREOPT})"
+    	echo "Building for ${TOOLKIT} ${FFMPEGVER} with ${COMPILER} (configure ${CONFIGUREOPT}) and CPU count ${CPUCOUNT}"
 fi
 echo "*********************************************************************************************"
 
@@ -68,49 +82,72 @@ else
 	echo "****** Using native FFmpeg library ******"
 fi
 
-echo "---------------------------------------------------------------------------------------------"
-echo "Rebuilding configure from scratch"
-echo "---------------------------------------------------------------------------------------------"
-
-rm -Rf autom4te.cache config
-./autogen.sh
-if [ ${COMPILER} = "clang" ];
+REBUILD=0
+if [ ! -f configure ];
 then
-    echo "****** Using clang ****** "
-    CC=clang CXX=clang++ ./configure ${CONFIGUREOPT}
-elif [ ${COMPILER} = "gcc" ];
+	REBUILD=1
+	echo "---------------------------------------------------------------------------------------------"
+	echo "configure not present, rebuilding"
+	echo "---------------------------------------------------------------------------------------------"
+elif [ configure.ac -nt configure ];
 then
-    echo "******  Using gcc ****** "
-    CC=gcc  CXX="g++" ./configure ${CONFIGUREOPT}
-else
-    echo "******  Using default compiler ****** "
-    ./configure ${CONFIGUREOPT}
+	REBUILD=1
+	echo "---------------------------------------------------------------------------------------------"
+	echo "configure.ac was modified"
+	echo "---------------------------------------------------------------------------------------------"
 fi
 
-echo "---------------------------------------------------------------------------------------------"
-echo "Running make clean"
-echo "---------------------------------------------------------------------------------------------"
+if [ ${REBUILD} != 0 ];
+then
+	rm -Rf autom4te.cache config
+	./autogen.sh
+	if [ ${COMPILER} = "clang" ];
+	then
+		echo "****** Using clang ****** "
+		CC=clang CXX=clang++ ./configure ${CONFIGUREOPT}
+	elif [ ${COMPILER} = "gcc" ];
+	then
+		echo "******  Using gcc ****** "
+		CC=gcc  CXX="g++" ./configure ${CONFIGUREOPT}
+	else
+		echo "******  Using default compiler ****** "
+		./configure ${CONFIGUREOPT}
+	fi
 
-make -j `nproc` -s clean
+	echo "---------------------------------------------------------------------------------------------"
+	echo "Running make clean"
+	echo "---------------------------------------------------------------------------------------------"
 
-echo "---------------------------------------------------------------------------------------------"
-echo "Running make check"
-echo "---------------------------------------------------------------------------------------------"
+	make -j ${CPUCOUNT} -s clean
+fi
 
-make -j `nproc` -s check
-#runs again with distcheck
+if [ ${CHECK} != 0 ];
+then
+	echo "---------------------------------------------------------------------------------------------"
+	echo "Running make check"
+	echo "---------------------------------------------------------------------------------------------"
+
+	make -j ${CPUCOUNT} -s check
+	#runs again with distcheck
+else
+        echo "---------------------------------------------------------------------------------------------"
+        echo "Running make"
+        echo "---------------------------------------------------------------------------------------------"
+
+        make -j ${CPUCOUNT} -s
+fi
 
 #echo "---------------------------------------------------------------------------------------------"
 #echo "Running make distcheck"
 #echo "---------------------------------------------------------------------------------------------"
 #
-# make -j `nproc` -s distcheck
+# make -j ${CPUCOUNT} -s distcheck
 #
 #echo "---------------------------------------------------------------------------------------------"
 #echo "Running make cppcheck"
 #echo "---------------------------------------------------------------------------------------------"
 #
-# make -j `nproc` -s cppcheck
+# make -j ${CPUCOUNT} -s cppcheck
 #
 #echo "---------------------------------------------------------------------------------------------"
 #

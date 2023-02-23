@@ -71,7 +71,7 @@ EXTRA_DIST = $(TESTS) funcs.sh srcdir test_filenames test_tags test_audio test_f
 EXTRA_DIST += $(wildcard tags/*)
 # NOT IN RELEASE 1.0! Add later: test_picture
 
-CLEANFILES = $(patsubst %,%.builtin.log,$(TESTS))
+CLEANFILES = $(patsubst %,%_builtin.log,$(TESTS))
 
 AM_CPPFLAGS=-Ofast $(libswresample_CFLAGS)
 check_PROGRAMS = fpcompare metadata

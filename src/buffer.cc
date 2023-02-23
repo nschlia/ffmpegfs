@@ -90,7 +90,7 @@ bool Buffer::open_file(uint32_t segment_no, uint32_t flags, size_t defaultsize)
 
         if (defaultsize)
         {
-			// Make sure the requested size is available
+            // Make sure the requested size is available
             reserve(defaultsize);
         }
         // Already open
@@ -923,7 +923,7 @@ bool Buffer::copy(uint8_t* out_data, size_t offset, size_t bufsize, uint32_t seg
 
     if (!segment_size && errno)
     {
-        Logging::error(m_cur_ci->m_cachefile, "INTERNAL ERROR: size(segment_no) returned error. Segment: %1 (%2) %3", segment_no, errno, strerror(errno));
+        Logging::error(m_cur_ci->m_cachefile, "INTERNAL ERROR: Buffer::copy()! size(segment_no) returned error. Segment: %1 (%2) %3", segment_no, errno, strerror(errno));
         return false;
     }
 
@@ -934,8 +934,6 @@ bool Buffer::copy(uint8_t* out_data, size_t offset, size_t bufsize, uint32_t seg
         return false;
     }
 
-    bool success = true;
-
     if (segment_size > offset)
     {
         if (segment_size < offset + bufsize)
@@ -944,15 +942,16 @@ bool Buffer::copy(uint8_t* out_data, size_t offset, size_t bufsize, uint32_t seg
         }
 
         std::memmove(out_data, ci->m_buffer + offset, bufsize);
+
+        return true;
     }
     else
     {
-        Logging::error(m_cur_ci->m_cachefile, "INTERNAL ERROR: Buffer::copy()! size(segment_no) > offset - Segment: %1 Segment Size: %2 Offset: %3", segment_no, segment_size, offset);
+        Logging::error(m_cur_ci->m_cachefile, "INTERNAL ERROR: Buffer::copy()! segment_size <= offset - Segment: %1 Segment Size: %2 Offset: %3", segment_no, segment_size, offset);
         errno = ESPIPE;
-        success = false;
-    }
 
-    return success;
+        return false;
+    }
 }
 
 bool Buffer::reallocate(size_t newsize)

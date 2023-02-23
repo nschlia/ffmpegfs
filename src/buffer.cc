@@ -90,7 +90,7 @@ bool Buffer::open_file(uint32_t segment_no, uint32_t flags, size_t defaultsize)
 
         if (defaultsize)
         {
-			// Make sure the requested size is available
+            // Make sure the requested size is available
             reserve(defaultsize);
         }
         // Already open

@@ -36,19 +36,18 @@ To see what's been done so far, checkout the [windows](https://github.com/nschli
 
 **New in in 2.14 (2023-02-XX):**
 
-- **Bugfix:** Closes [#141](https://github.com/nschlia/ffmpegfs/issues/141): Improved memory management by allocating several times the average size of allocations far. This prevents obtaining tiny portions over and over again.
-  Additionally, after the file is opened, grabbing the entire expected memory block rather than doing a tiny allocation initially, followed by a larger allocation.
-- **Bugfix:** Avoid race condition causing the inter-process semaphore creation to fail for second process.
+- **Bugfix:** Closes [#141](https://github.com/nschlia/ffmpegfs/issues/141): Improved memory management by allocating several times the average size of allocations. This prevents obtaining tiny portions over and over again. Additionally, after the file is opened, grab the entire expected memory block rather than doing a tiny allocation initially, followed by a larger allocation.
+- **Bugfix:** Avoid race conditions that cause the inter-process semaphore creation to fail for the second process.
 - **Bugfix:** Issue [#119](https://github.com/nschlia/ffmpegfs/issues/119): If a seek request is still open after EOF, restart transcoding.
 - **Bugfix:** Issue [#119](https://github.com/nschlia/ffmpegfs/issues/119): To prevent frame/segment creation errors, the frame set and HLS code has been updated.
-- **Bugfix:** Avoid crash during shutdown if cache object had already been closed.
+- **Bugfix:** Avoid crashes during shutdown if cache objects have already been closed.
 - **Bugfix:** Issue [#119](https://github.com/nschlia/ffmpegfs/issues/119): The AVSEEK_FLAG_FRAME set should be used to seek to frames when building frame sets. Otherwise, output images may vary if searched for or continuously decoded.
-- **Bugfix:** PTS to frame number and vice versa conversion for frame sets was incorrect if TBR did not equal frames per second.
-- **Bugfix:** Fix seek requests that are being ignored with frame sets.
-- **Bugfix:** When transferring from cache to Fuse buffer, avoid a possible 1 byte overrun.
+- **Bugfix:** The conversion of PTS to frame number and vice versa for frame sets was incorrect if TBR did not equal frames per second.
+- **Bugfix:** Fixed seek requests that are being ignored with frame sets.
+- **Bugfix:** When transferring from cache to the Fuse buffer, avoid a possible 1 byte overrun.
 - **Enhancement:** Record milliseconds for every log event.
-- **Enhancement:** make check: Added file size check to frame set tests.
-- **Optimisation:** When reopening after invalidating the cache, the size remained at 0. The original size now is once more reserved in order to prevent reallocations.
+- **Enhancement:** make check: added a file size check to frame set tests.
+- **Optimisation:** When reopening after invalidating the cache, the size remained at 0. The original size is now once again reserved in order to prevent reallocations.
 - **Optimisation:** To avoid reallocations, save enough space in the cache buffer to hold the entire frame set.
 - **Optimisation:** Checking folders to see if they can be transcoded is completely pointless. Directories are now immediately skipped.
 

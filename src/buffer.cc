@@ -920,7 +920,7 @@ bool Buffer::copy(uint8_t* out_data, size_t offset, size_t bufsize, uint32_t seg
             bufsize = segment_size - offset - 1;
         }
 
-        std::memmove(out_data, ci->m_buffer + offset, bufsize);
+        std::memcpy(out_data, ci->m_buffer + offset, bufsize);
 
         return true;
     }

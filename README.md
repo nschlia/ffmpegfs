@@ -46,7 +46,7 @@ To see what's been done so far, checkout the [windows](https://github.com/nschli
 - **Bugfix:** Fixed seek requests that are being ignored with frame sets.
 - **Bugfix:** When transferring from cache to the Fuse buffer, avoid a possible 1 byte overrun.
 - **Bugfix:** Issue [#143](https://github.com/nschlia/ffmpegfs/issues/143): To avoid occasional EPERM failures, missing synchronisation objects were added.
-- **Bugfix:** Issue [#144](https://github.com/nschlia/ffmpegfs/issues/144): The variables impacted by the potential threading issue were marked as "volatile," and the crashes may have been caused by that.
+- **Bugfix:** Issue [#144](https://github.com/nschlia/ffmpegfs/issues/144): To fix the crashes that may have been caused by them, the variables impacted by a potential threading issue were marked as "volatile."
 - **Enhancement:** Record milliseconds for every log event.
 - **Enhancement:** make check: added a file size check to frame set tests.
 - **Optimisation:** When reopening after invalidating the cache, the size remained at 0. The original size is now once again reserved in order to prevent reallocations.

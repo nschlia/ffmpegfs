@@ -358,7 +358,7 @@ bool Buffer::segment_exists(uint32_t segment_no)
     return file_exists(m_ci[segment_no - 1].m_cachefile);
 }
 
-bool Buffer::map_file(const std::string & filename, int *fd, uint8_t **p, size_t *filesize, bool *isdefaultsize, size_t defaultsize, bool truncate) const
+bool Buffer::map_file(const std::string & filename, volatile int *fd, uint8_t **p, size_t *filesize, bool *isdefaultsize, size_t defaultsize, bool truncate) const
 {
     bool success = true;
 
@@ -441,7 +441,7 @@ bool Buffer::map_file(const std::string & filename, int *fd, uint8_t **p, size_t
     return success;
 }
 
-bool Buffer::unmap_file(const std::string &filename, int * fd, uint8_t **p, size_t len, size_t * filesize) const
+bool Buffer::unmap_file(const std::string &filename, volatile int *fd, uint8_t **p, size_t len, size_t * filesize) const
 {
     bool success = true;
 

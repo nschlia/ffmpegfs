@@ -103,7 +103,7 @@ public:
 
         // Main cache
         std::string             m_cachefile;                    /**< @brief Cache file name */
-        int                     m_fd;                           /**< @brief File handle for buffer */
+        volatile int            m_fd;                           /**< @brief File handle for buffer */
         uint8_t *               m_buffer;                       /**< @brief Pointer to buffer memory */
         size_t                  m_buffer_pos;                   /**< @brief Read/write position */
         size_t                  m_buffer_watermark;             /**< @brief Number of bytes in buffer */
@@ -111,7 +111,7 @@ public:
         bool                    m_seg_finished;                 /**< @brief True if segment completely decoded */
         // Index for frame sets
         std::string             m_cachefile_idx;                /**< @brief Index file name */
-        int                     m_fd_idx;                       /**< @brief File handle for index */
+        volatile int            m_fd_idx;                       /**< @brief File handle for index */
         uint8_t *               m_buffer_idx;                   /**< @brief Pointer to index memory */
         size_t                  m_buffer_size_idx;              /**< @brief Size of index buffer */
         // Flags
@@ -446,7 +446,7 @@ private:
      * @param[out] truncate - If true, when the file is opened, it is truncated.
      * @return Returns true if successful and fd, p, filesize, and isdefaultsize are filled in, or false on error.
      */
-    bool                    map_file(const std::string & filename, int *fd, uint8_t **p, size_t *filesize, bool *isdefaultsize, size_t defaultsize, bool truncate) const;
+    bool                    map_file(const std::string & filename, volatile int *fd, uint8_t **p, size_t *filesize, bool *isdefaultsize, size_t defaultsize, bool truncate) const;
     /**
      * @brief Unmap memory from the file.
      * @param[in] filename - Name of cache file to unmap.
@@ -456,7 +456,7 @@ private:
      * @param[in] filesize - Actual size of the cache file.
      * @return Returns true on success; false on error.
      */
-    bool                    unmap_file(const std::string & filename, int *fd, uint8_t **p, size_t len, size_t *filesize) const;
+    bool                    unmap_file(const std::string & filename, volatile int *fd, uint8_t **p, size_t len, size_t *filesize) const;
 
     /**
      * @brief Get cache information.

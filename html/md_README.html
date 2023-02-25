@@ -111,6 +111,8 @@ Version 2.14 under development</h2>
 <li><b>Bugfix:</b> The conversion of PTS to frame number and vice versa for frame sets was incorrect if TBR did not equal frames per second.</li>
 <li><b>Bugfix:</b> Fixed seek requests that are being ignored with frame sets.</li>
 <li><b>Bugfix:</b> When transferring from cache to the Fuse buffer, avoid a possible 1 byte overrun.</li>
+<li><b>Bugfix:</b> Issue <a href="https://github.com/nschlia/ffmpegfs/issues/143">#143</a>: To avoid occasional EPERM failures, missing synchronisation objects were added.</li>
+<li><b>Bugfix:</b> Issue <a href="https://github.com/nschlia/ffmpegfs/issues/144">#144</a>: To fix the crashes that may have been caused by them, the variables impacted by a potential threading issue were marked as "volatile."</li>
 <li><b>Enhancement:</b> Record milliseconds for every log event.</li>
 <li><b>Enhancement:</b> make check: added a file size check to frame set tests.</li>
 <li><b>Optimisation:</b> When reopening after invalidating the cache, the size remained at 0. The original size is now once again reserved in order to prevent reallocations.</li>

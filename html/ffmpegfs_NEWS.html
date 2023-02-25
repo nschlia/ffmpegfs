@@ -90,6 +90,10 @@ $(function() {
 <div class="line">* Bugfix: Fixed seek requests that are being ignored with frame sets.</div>
 <div class="line">* Bugfix: When transferring from cache to the Fuse buffer, avoid a possible 1 byte</div>
 <div class="line">  overrun.</div>
+<div class="line">* Bugfix: Issue #143: To avoid occasional EPERM failures, missing synchronisation</div>
+<div class="line">  objects were added.</div>
+<div class="line">* Bugfix: Issue #144: To fix the crashes that may have been caused by them, the</div>
+<div class="line">  variables impacted by a potential threading issue were marked as &quot;volatile.&quot;</div>
 <div class="line">* Enhancement: Record milliseconds for every log event.</div>
 <div class="line">* Enhancement: make check: added a file size check to frame set tests.</div>
 <div class="line">* Optimisation: When reopening after invalidating the cache, the size remained</div>

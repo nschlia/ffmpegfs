@@ -76,17 +76,21 @@ int Buffer::openio(LPVIRTUALFILE virtualfile)
 
 bool Buffer::open_file(uint32_t segment_no, uint32_t flags, size_t defaultsize)
 {
+    std::lock_guard<std::recursive_mutex> lock_mutex(m_mutex);
+
     uint32_t index = segment_no;
     if (index)
     {
         index--;
     }
 
-    m_ci[index].m_flags |= flags;
+    CACHEINFO & ci = m_ci[index];
 
-    if (m_ci[index].m_fd != -1)
+    ci.m_flags |= flags;
+
+    if (ci.m_fd != -1)
     {
-        Logging::trace(m_ci[index].m_cachefile, "Cache file is already open.");
+        Logging::trace(ci.m_cachefile, "Cache file is already open.");
 
         if (defaultsize)
         {
@@ -99,31 +103,31 @@ bool Buffer::open_file(uint32_t segment_no, uint32_t flags, size_t defaultsize)
 
     if (flags & CACHE_FLAG_RW)
     {
-        Logging::debug(m_ci[index].m_cachefile, "Writing to cache file.");
+        Logging::debug(ci.m_cachefile, "Writing to cache file.");
     }
     else
     {
-        Logging::debug(m_ci[index].m_cachefile, "Reading from cache file.");
+        Logging::debug(ci.m_cachefile, "Reading from cache file.");
     }
 
     size_t filesize     = 0;
     bool isdefaultsize  = false;
     uint8_t *p          = nullptr;
 
-    if (!map_file(m_ci[index].m_cachefile, &m_ci[index].m_fd, &p, &filesize, &isdefaultsize, defaultsize, (flags & CACHE_FLAG_RW) ? true : false))
+    if (!map_file(ci.m_cachefile, &ci.m_fd, &p, &filesize, &isdefaultsize, defaultsize, (flags & CACHE_FLAG_RW) ? true : false))
     {
         return false;
     }
 
     if (!isdefaultsize)
     {
-        m_ci[index].m_buffer_pos = m_ci[index].m_buffer_watermark = filesize;
+        ci.m_buffer_pos = ci.m_buffer_watermark = filesize;
     }
 
-    m_ci[index].m_buffer_size       = filesize;
-    m_ci[index].m_buffer            = static_cast<uint8_t*>(p);
-    m_ci[index].m_buffer_write_size = 0;
-    m_ci[index].m_buffer_writes     = 0;
+    ci.m_buffer_size        = filesize;
+    ci.m_buffer             = static_cast<uint8_t*>(p);
+    ci.m_buffer_write_size  = 0;
+    ci.m_buffer_writes      = 0;
 
     ++m_cur_open;   // track open files
 
@@ -132,33 +136,37 @@ bool Buffer::open_file(uint32_t segment_no, uint32_t flags, size_t defaultsize)
 
 bool Buffer::close_file(uint32_t segment_no, uint32_t flags)
 {
+    std::lock_guard<std::recursive_mutex> lock_mutex(m_mutex);
+
     uint32_t index = segment_no;
     if (index)
     {
         index--;
     }
 
-    m_ci[index].m_flags &= ~flags;
+    CACHEINFO & ci = m_ci[index];
 
-    if (m_ci[index].m_flags)
+    ci.m_flags &= ~flags;
+
+    if (ci.m_flags)
     {
-        Logging::trace(m_ci[index].m_cachefile, "While attempting to close, the cache file is still in use. Currently open: %1", m_cur_open);
+        Logging::trace(ci.m_cachefile, "While attempting to close, the cache file is still in use. Currently open: %1", m_cur_open);
         return true;
     }
 
-    if (m_ci[index].m_fd == -1)
+    if (ci.m_fd == -1)
     {
         // Already closed
-        Logging::trace(m_ci[index].m_cachefile, "No need to close the unopened cache file. Currently open: %1", m_cur_open);
+        Logging::trace(ci.m_cachefile, "No need to close the unopened cache file. Currently open: %1", m_cur_open);
         return true;
     }
 
-    Logging::trace(m_ci[index].m_cachefile, "Closing cache file.");
+    Logging::trace(ci.m_cachefile, "Closing cache file.");
 
-    bool success = unmap_file(m_ci[index].m_cachefile, &m_ci[index].m_fd, &m_ci[index].m_buffer, m_ci[index].m_buffer_size, &m_ci[index].m_buffer_watermark);
+    bool success = unmap_file(ci.m_cachefile, &ci.m_fd, &ci.m_buffer, ci.m_buffer_size, &ci.m_buffer_watermark);
 
-    m_ci[index].m_buffer_pos    = 0;
-    m_ci[index].m_buffer_size   = 0;
+    ci.m_buffer_pos    = 0;
+    ci.m_buffer_size   = 0;
 
     if (success && m_cur_open > 0)
     {
@@ -236,21 +244,23 @@ bool Buffer::init(bool erase_cache)
 
         delete [] cachefile;
 
-        for (uint32_t index = 0; index < segment_count(); index++)
+#if __cplusplus >= 202002L
+        // C++20 (and later) code
+        for (uint32_t index = 0; CACHEINFO & ci : m_ci)
+#else
+        uint32_t index = 0;
+        for (CACHEINFO & ci : m_ci)
+#endif
         {
-            m_ci[index].m_fd                = -1;
-            m_ci[index].m_buffer            = nullptr;
-            m_ci[index].m_buffer_pos        = 0;
-            m_ci[index].m_buffer_watermark  = 0;
-            m_ci[index].m_buffer_size       = 0;
-            m_ci[index].m_buffer_write_size = 0;
-            m_ci[index].m_buffer_writes     = 0;
+            ci.reset();
 
             if (erase_cache)
             {
                 remove_cachefile(index + 1);
                 errno = 0;  // ignore this error
             }
+
+            index++;
         }
 
         // Index only required for frame sets and there is only one.
@@ -283,15 +293,9 @@ bool Buffer::init(bool erase_cache)
 
         if (!success)
         {
-            for (uint32_t index = 0; index < segment_count(); index++)
+            for (CACHEINFO & ci : m_ci)
             {
-                m_ci[index].m_fd                = -1;
-                m_ci[index].m_buffer            = nullptr;
-                m_ci[index].m_buffer_pos        = 0;
-                m_ci[index].m_buffer_watermark  = 0;
-                m_ci[index].m_buffer_size       = 0;
-                m_ci[index].m_buffer_write_size = 0;
-                m_ci[index].m_buffer_writes     = 0;
+                ci.reset();
             }
         }
     }
@@ -354,7 +358,7 @@ bool Buffer::segment_exists(uint32_t segment_no)
     return file_exists(m_ci[segment_no - 1].m_cachefile);
 }
 
-bool Buffer::map_file(const std::string & filename, int *fd, uint8_t **p, size_t *filesize, bool *isdefaultsize, size_t defaultsize, bool truncate) const
+bool Buffer::map_file(const std::string & filename, volatile int *fd, uint8_t **p, size_t *filesize, bool *isdefaultsize, size_t defaultsize, bool truncate) const
 {
     bool success = true;
 
@@ -437,7 +441,7 @@ bool Buffer::map_file(const std::string & filename, int *fd, uint8_t **p, size_t
     return success;
 }
 
-bool Buffer::unmap_file(const std::string &filename, int * fd, uint8_t **p, size_t len, size_t * filesize) const
+bool Buffer::unmap_file(const std::string &filename, volatile int *fd, uint8_t **p, size_t len, size_t * filesize) const
 {
     bool success = true;
 
@@ -539,12 +543,12 @@ bool Buffer::release(int flags /*= CACHE_CLOSE_NOOPT*/)
 
 bool Buffer::remove_cachefile(uint32_t segment_no) const
 {
-    LPCCACHEINFO ci = !segment_no ? m_cur_ci : &m_ci[segment_no - 1];
-    bool success = remove_file(ci->m_cachefile);
+    const CACHEINFO & ci = !segment_no ? *m_cur_ci : m_ci[segment_no - 1];
+    bool success = remove_file(ci.m_cachefile);
 
-    if (!ci->m_cachefile_idx.empty())
+    if (!ci.m_cachefile_idx.empty())
     {
-        if (!remove_file(ci->m_cachefile_idx))
+        if (!remove_file(ci.m_cachefile_idx))
         {
             success = false;
         }
@@ -586,36 +590,34 @@ bool Buffer::clear()
 
     bool success = true;
 
-    for (uint32_t n = 0; n < segment_count(); n++)
+    for (CACHEINFO & ci : m_ci)
     {
-        LPCACHEINFO ci = &m_ci[n];
+        ci.m_buffer_pos        = 0;
+        ci.m_buffer_watermark  = 0;
+        ci.m_buffer_size       = 0;
+        ci.m_seg_finished      = false;
+        ci.m_buffer_write_size = 0;
+        ci.m_buffer_writes     = 0;
 
-        ci->m_buffer_pos        = 0;
-        ci->m_buffer_watermark  = 0;
-        ci->m_buffer_size       = 0;
-        ci->m_seg_finished      = false;
-        ci->m_buffer_write_size = 0;
-        ci->m_buffer_writes     = 0;
-
-        if (ci->m_fd != -1)
+        if (ci.m_fd != -1)
         {
             // If empty set file size to 1 page
             long filesize = sysconf(_SC_PAGESIZE);
 
-            if (ftruncate(ci->m_fd, filesize) == -1)
+            if (ftruncate(ci.m_fd, filesize) == -1)
             {
-                Logging::error(ci->m_cachefile, "Error calling ftruncate() to clear the file: (%1) %2 (fd = %3)", errno, strerror(errno), ci->m_fd);
+                Logging::error(ci.m_cachefile, "Error calling ftruncate() to clear the file: (%1) %2 (fd = %3)", errno, strerror(errno), ci.m_fd);
                 success = false;
             }
         }
         else
         {
-            remove_file(ci->m_cachefile);
+            remove_file(ci.m_cachefile);
         }
 
-        if (ci->m_fd_idx != -1)
+        if (ci.m_fd_idx != -1)
         {
-            std::memset(ci->m_buffer_idx, 0, ci->m_buffer_size_idx);
+            std::memset(ci.m_buffer_idx, 0, ci.m_buffer_size_idx);
         }
     }
 
@@ -919,17 +921,17 @@ bool Buffer::copy(uint8_t* out_data, size_t offset, size_t bufsize, uint32_t seg
         return false;
     }
 
-    size_t segment_size = size(segment_no);
+    size_t segment_size = ci->m_buffer_size;
 
     if (!segment_size && errno)
     {
-        Logging::error(m_cur_ci->m_cachefile, "INTERNAL ERROR: Buffer::copy()! size(segment_no) returned error. Segment: %1 (%2) %3", segment_no, errno, strerror(errno));
+        Logging::error(ci->m_cachefile, "INTERNAL ERROR: Buffer::copy()! size(segment_no) returned error. Segment: %1 (%2) %3", segment_no, errno, strerror(errno));
         return false;
     }
 
     if (ci->m_buffer_size != segment_size)
     {
-        Logging::error(m_cur_ci->m_cachefile, "INTERNAL ERROR: Buffer::copy()! ci->m_buffer_size != segment_size - Segment: %1 ci->m_buffer_size: %2 segment_size: %3", segment_no, ci->m_buffer_size, segment_size);
+        Logging::error(ci->m_cachefile, "INTERNAL ERROR: Buffer::copy()! ci->m_buffer_size != segment_size - Segment: %1 ci->m_buffer_size: %2 segment_size: %3", segment_no, ci->m_buffer_size, segment_size);
         errno = ESPIPE; // Comes from size()
         return false;
     }
@@ -941,13 +943,13 @@ bool Buffer::copy(uint8_t* out_data, size_t offset, size_t bufsize, uint32_t seg
             bufsize = segment_size - offset - 1;
         }
 
-        std::memmove(out_data, ci->m_buffer + offset, bufsize);
+        std::memcpy(out_data, ci->m_buffer + offset, bufsize);
 
         return true;
     }
     else
     {
-        Logging::error(m_cur_ci->m_cachefile, "INTERNAL ERROR: Buffer::copy()! segment_size <= offset - Segment: %1 Segment Size: %2 Offset: %3", segment_no, segment_size, offset);
+        Logging::error(ci->m_cachefile, "INTERNAL ERROR: Buffer::copy()! segment_size <= offset - Segment: %1 Segment Size: %2 Offset: %3", segment_no, segment_size, offset);
         errno = ESPIPE;
 
         return false;
@@ -1107,9 +1109,9 @@ bool Buffer::is_open()
 {
     std::lock_guard<std::recursive_mutex> lock_mutex(m_mutex);
 
-    for (uint32_t index = 0; index < segment_count(); index++)
+    for (CACHEINFO & ci : m_ci)
     {
-        if ((m_ci[index].m_fd != -1 && (fcntl(m_ci[index].m_fd, F_GETFL) != -1 || errno != EBADF)))
+        if ((ci.m_fd != -1 && (fcntl(ci.m_fd, F_GETFL) != -1 || errno != EBADF)))
         {
             return true;
         }

@@ -896,17 +896,17 @@ bool Buffer::copy(uint8_t* out_data, size_t offset, size_t bufsize, uint32_t seg
         return false;
     }
 
-    size_t segment_size = size(segment_no);
+    size_t segment_size = ci->m_buffer_size; 
 
     if (!segment_size && errno)
     {
-        Logging::error(m_cur_ci->m_cachefile, "INTERNAL ERROR: Buffer::copy()! size(segment_no) returned error. Segment: %1 (%2) %3", segment_no, errno, strerror(errno));
+        Logging::error(ci->m_cachefile, "INTERNAL ERROR: Buffer::copy()! size(segment_no) returned error. Segment: %1 (%2) %3", segment_no, errno, strerror(errno));
         return false;
     }
 
     if (ci->m_buffer_size != segment_size)
     {
-        Logging::error(m_cur_ci->m_cachefile, "INTERNAL ERROR: Buffer::copy()! ci->m_buffer_size != segment_size - Segment: %1 ci->m_buffer_size: %2 segment_size: %3", segment_no, ci->m_buffer_size, segment_size);
+        Logging::error(ci->m_cachefile, "INTERNAL ERROR: Buffer::copy()! ci->m_buffer_size != segment_size - Segment: %1 ci->m_buffer_size: %2 segment_size: %3", segment_no, ci->m_buffer_size, segment_size);
         errno = ESPIPE; // Comes from size()
         return false;
     }
@@ -924,7 +924,7 @@ bool Buffer::copy(uint8_t* out_data, size_t offset, size_t bufsize, uint32_t seg
     }
     else
     {
-        Logging::error(m_cur_ci->m_cachefile, "INTERNAL ERROR: Buffer::copy()! segment_size <= offset - Segment: %1 Segment Size: %2 Offset: %3", segment_no, segment_size, offset);
+        Logging::error(ci->m_cachefile, "INTERNAL ERROR: Buffer::copy()! segment_size <= offset - Segment: %1 Segment Size: %2 Offset: %3", segment_no, segment_size, offset);
         errno = ESPIPE;
 
         return false;

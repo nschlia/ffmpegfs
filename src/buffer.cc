@@ -76,6 +76,8 @@ int Buffer::openio(LPVIRTUALFILE virtualfile)
 
 bool Buffer::open_file(uint32_t segment_no, uint32_t flags, size_t defaultsize)
 {
+    std::lock_guard<std::recursive_mutex> lock_mutex(m_mutex);
+
     uint32_t index = segment_no;
     if (index)
     {
@@ -132,6 +134,8 @@ bool Buffer::open_file(uint32_t segment_no, uint32_t flags, size_t defaultsize)
 
 bool Buffer::close_file(uint32_t segment_no, uint32_t flags)
 {
+    std::lock_guard<std::recursive_mutex> lock_mutex(m_mutex);
+
     uint32_t index = segment_no;
     if (index)
     {

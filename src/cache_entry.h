@@ -272,7 +272,7 @@ public:
     std::atomic_bool        m_is_decoding;                  /**< @brief true while file is decoding */
     std::recursive_mutex    m_active_mutex;                 /**< @brief Mutex while thread is active */
     std::recursive_mutex    m_restart_mutex;               	/**< @brief Mutex while thread is restarted */
-    std::atomic_bool        m_suspend_timeout;              /**< @brief true to temporarly disabled read_frame timeout */
+    std::atomic_bool        m_suspend_timeout;              /**< @brief true to temporarly disable read_frame timeout */
 
     CACHE_INFO              m_cache_info;                   /**< @brief Info about cached object */
 

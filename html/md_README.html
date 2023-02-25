@@ -96,25 +96,27 @@ Packaging Status</h1>
 News</h1>
 <h2><a class="anchor" id="autotoc_md5"></a>
 Windows Version</h2>
-<p>A Windows version of FFmpegfs has frequently been requested; see Issue <a href="https://github.com/nschlia/ffmpegfs/issues/76">#76</a> for more information. In essence, this failed because Windows doesn't support Fuse. I discovered <a href="https://winfsp.dev/">WinFSP</a>, which offers everything necessary.</p>
-<p>To get what's been done so far, checkout the <a href="https://github.com/nschlia/ffmpegfs/tree/windows">windows</a> branch.</p>
+<p>A Windows version of FFmpegfs has frequently been requested; see issue <a href="https://github.com/nschlia/ffmpegfs/issues/76">#76</a> for more information. In essence, this failed because Windows doesn't support Fuse. I discovered <a href="https://winfsp.dev/">WinFSP</a>, which offers everything necessary.</p>
+<p>To see what's been done so far, checkout the <a href="https://github.com/nschlia/ffmpegfs/tree/windows">windows</a> branch.</p>
 <h2><a class="anchor" id="autotoc_md6"></a>
 Version 2.14 under development</h2>
 <p><b>New in in 2.14 (2023-02-XX):</b></p>
 <ul>
-<li><b>Bugfix:</b> Closes <a href="https://github.com/nschlia/ffmpegfs/issues/141">#141</a>: Improved memory management by allocating several times the average size of allocations far. This prevents obtaining tiny portions over and over again. Additionally, after the file is opened, grabbing the entire expected memory block rather than doing a tiny allocation initially, followed by a larger allocation.</li>
-<li><b>Bugfix:</b> Avoid race condition causing the inter-process semaphore creation to fail for second process.</li>
+<li><b>Bugfix:</b> Closes <a href="https://github.com/nschlia/ffmpegfs/issues/141">#141</a>: Improved memory management by allocating several times the average size of allocations. This prevents obtaining tiny portions over and over again. Additionally, after the file is opened, grab the entire expected memory block rather than doing a tiny allocation initially, followed by a larger allocation.</li>
+<li><b>Bugfix:</b> Avoid race conditions that cause the inter-process semaphore creation to fail for the second process.</li>
 <li><b>Bugfix:</b> Issue <a href="https://github.com/nschlia/ffmpegfs/issues/119">#119</a>: If a seek request is still open after EOF, restart transcoding.</li>
 <li><b>Bugfix:</b> Issue <a href="https://github.com/nschlia/ffmpegfs/issues/119">#119</a>: To prevent frame/segment creation errors, the frame set and HLS code has been updated.</li>
-<li><b>Bugfix:</b> Avoid crash during shutdown if cache object had already been closed.</li>
+<li><b>Bugfix:</b> Avoid crashes during shutdown if cache objects have already been closed.</li>
 <li><b>Bugfix:</b> Issue <a href="https://github.com/nschlia/ffmpegfs/issues/119">#119</a>: The AVSEEK_FLAG_FRAME set should be used to seek to frames when building frame sets. Otherwise, output images may vary if searched for or continuously decoded.</li>
-<li><b>Bugfix:</b> PTS to frame number and vice versa conversion for frame sets was incorrect if TBR did not equal frames per second.</li>
-<li><b>Bugfix:</b> Fix seek requests that are being ignored with frame sets.</li>
+<li><b>Bugfix:</b> The conversion of PTS to frame number and vice versa for frame sets was incorrect if TBR did not equal frames per second.</li>
+<li><b>Bugfix:</b> Fixed seek requests that are being ignored with frame sets.</li>
+<li><b>Bugfix:</b> When transferring from cache to the Fuse buffer, avoid a possible 1 byte overrun.</li>
 <li><b>Enhancement:</b> Record milliseconds for every log event.</li>
-<li><b>Enhancement:</b> make check: Added file size check to frame set tests.</li>
-<li><b>Optimisation:</b> When reopening after invalidating the cache, the size remained at 0. The original size now is once more reserved in order to prevent reallocations.</li>
+<li><b>Enhancement:</b> make check: added a file size check to frame set tests.</li>
+<li><b>Optimisation:</b> When reopening after invalidating the cache, the size remained at 0. The original size is now once again reserved in order to prevent reallocations.</li>
 <li><b>Optimisation:</b> To avoid reallocations, save enough space in the cache buffer to hold the entire frame set.</li>
 <li><b>Optimisation:</b> Checking folders to see if they can be transcoded is completely pointless. Directories are now immediately skipped.</li>
+<li>To avoid problems with logfile viewers, renamed built-in logfiles to *_builtin.log (removing the double extension).</li>
 </ul>
 <h2><a class="anchor" id="autotoc_md7"></a>
 Version 2.13 has been released</h2>
@@ -128,18 +130,18 @@ Version 2.13 has been released</h2>
 </ul>
 <h1><a class="anchor" id="autotoc_md8"></a>
 Full History</h1>
-<p>See <a class="el" href="md_HISTORY.html">history</a> for details.</p>
+<p>For more information, see <a class="el" href="md_HISTORY.html">history</a>.</p>
 <h1><a class="anchor" id="autotoc_md9"></a>
 Supported Formats</h1>
 <h2><a class="anchor" id="autotoc_md10"></a>
 Input</h2>
 <p>Making a full list of the formats the FFmpeg API supports would be somewhat pointless. See <a href="https://ffmpeg.org/ffmpeg-formats.html#Demuxers">Demuxers</a> on FFmpeg's home pages and <a href="https://en.wikipedia.org/wiki/FFmpeg#Supported_formats">Supported Formats</a> on Wikipedia to get an idea.</p>
-<p>Sadly, it also depends on the codecs that have been built into the Linux distribution's library. Some, like openSUSE, only include royalty-free codecs, while others, like Red Hat, completely omit FFmpeg. Use this command to find out:</p>
+<p>Sadly, it also depends on the codecs that have been built into the Linux distribution's library. Some, like openSUSE, only include royalty-free codecs, while others, like Red Hat, completely omit FFmpeg. You can use the following command to find out:</p>
 <div class="fragment"><div class="line">ffmpeg -formats</div>
-</div><!-- fragment --><p>A list of the available codecs will be created as a result.</p>
+</div><!-- fragment --><p>A list of the available codecs will be created as a result. In the case of missing codecs or no FFmpeg at all, your only option is to build FFmpeg yourself. Big fun...</p>
 <h2><a class="anchor" id="autotoc_md11"></a>
 Output</h2>
-<p>Only formats that can be read while being written to can be used as output. While MP4 isn't one of them, it can still be supported with the help of some format extensions.</p>
+<p>As output, only formats that can be read while being written to can be used. Whereas MP4 is not one of them, it can be supported through the use of format extensions.</p>
 <h3><a class="anchor" id="autotoc_md12"></a>
 Audio Formats</h3>
 <table class="markdownTable">

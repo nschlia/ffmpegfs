@@ -1,16 +1,17 @@
 <map id="src/cache_entry.h" name="src/cache_entry.h">
-<area shape="rect" id="node1" title="Cache entry" alt="" coords="426,5,550,32"/>
-<area shape="rect" id="node2" href="$cache_8h.html" title="Data cache management." alt="" coords="354,80,422,107"/>
-<area shape="rect" id="node13" href="$id3v1tag_8h.html" title="ID3v1 tag structure" alt="" coords="447,80,529,107"/>
-<area shape="rect" id="node14" title=" " alt="" coords="553,80,615,107"/>
-<area shape="rect" id="node3" href="$buffer_8h.html" title="Buffer class." alt="" coords="157,155,222,181"/>
-<area shape="rect" id="node8" title=" " alt="" coords="407,304,454,331"/>
-<area shape="rect" id="node12" title=" " alt="" coords="426,155,497,181"/>
-<area shape="rect" id="node4" href="$fileio_8h.html" title="FileIO class." alt="" coords="249,229,309,256"/>
-<area shape="rect" id="node7" title=" " alt="" coords="5,304,64,331"/>
-<area shape="rect" id="node10" title=" " alt="" coords="72,229,131,256"/>
-<area shape="rect" id="node11" title=" " alt="" coords="155,229,224,256"/>
-<area shape="rect" id="node5" title=" " alt="" coords="224,304,304,331"/>
-<area shape="rect" id="node6" title=" " alt="" coords="329,304,383,331"/>
-<area shape="rect" id="node9" title=" " alt="" coords="88,304,200,331"/>
+<area shape="rect" id="node1" title="Cache entry" alt="" coords="575,5,709,32"/>
+<area shape="rect" id="node2" href="$cache_8h.html" title="Data cache management." alt="" coords="501,80,573,107"/>
+<area shape="rect" id="node14" href="$id3v1tag_8h.html" title="ID3v1 tag structure" alt="" coords="597,80,687,107"/>
+<area shape="rect" id="node15" title=" " alt="" coords="711,80,778,107"/>
+<area shape="rect" id="node3" href="$buffer_8h.html" title="Buffer class." alt="" coords="301,155,372,181"/>
+<area shape="rect" id="node8" title=" " alt="" coords="527,304,578,331"/>
+<area shape="rect" id="node13" title=" " alt="" coords="575,155,653,181"/>
+<area shape="rect" id="node4" href="$fileio_8h.html" title="FileIO class." alt="" coords="214,229,281,256"/>
+<area shape="rect" id="node7" title=" " alt="" coords="5,304,68,331"/>
+<area shape="rect" id="node11" title=" " alt="" coords="305,229,369,256"/>
+<area shape="rect" id="node12" title=" " alt="" coords="393,229,467,256"/>
+<area shape="rect" id="node5" title=" " alt="" coords="93,304,178,331"/>
+<area shape="rect" id="node6" title=" " alt="" coords="202,304,261,331"/>
+<area shape="rect" id="node9" title=" " alt="" coords="285,304,351,331"/>
+<area shape="rect" id="node10" title=" " alt="" coords="375,304,503,331"/>
 </map>

@@ -177,7 +177,7 @@ $(function() {
 <div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160; </div>
 <div class="line"><a name="l00158"></a><span class="lineno">  158</span>&#160;    <a class="code" href="classVcdInfo.html#ae2e5f1e6890bb0e907d56e7d19fba9af">m_file_date</a>      = stbuf.st_mtime;</div>
 <div class="line"><a name="l00159"></a><span class="lineno">  159</span>&#160; </div>
-<div class="line"><a name="l00160"></a><span class="lineno">  160</span>&#160;    memset(&amp;vi, 0, <span class="keyword">sizeof</span>(vi));</div>
+<div class="line"><a name="l00160"></a><span class="lineno">  160</span>&#160;    std::memset(&amp;vi, 0, <span class="keyword">sizeof</span>(vi));</div>
 <div class="line"><a name="l00161"></a><span class="lineno">  161</span>&#160; </div>
 <div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160;    <span class="keywordflow">if</span> (fread(<span class="keyword">reinterpret_cast&lt;</span><span class="keywordtype">char</span> *<span class="keyword">&gt;</span>(&amp;vi), 1, <span class="keyword">sizeof</span>(vi), fpi) == <span class="keyword">sizeof</span>(vi))</div>
 <div class="line"><a name="l00163"></a><span class="lineno">  163</span>&#160;    {</div>

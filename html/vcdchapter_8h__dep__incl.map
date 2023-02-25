@@ -1,9 +1,9 @@
 <map id="src/vcd/vcdchapter.h" name="src/vcd/vcdchapter.h">
-<area shape="rect" id="node1" title="S/VCD VcdChapter class." alt="" coords="179,5,321,32"/>
-<area shape="rect" id="node2" href="$vcdchapter_8cc.html" title="S/VCD VcdChapter class implementation." alt="" coords="5,80,156,107"/>
-<area shape="rect" id="node3" href="$vcdentries_8h.html" title="S/VCD VcdEntries class." alt="" coords="180,80,320,107"/>
-<area shape="rect" id="node6" href="$vcdinfo_8h.html" title="S/VCD VcdInfo class." alt="" coords="345,80,467,107"/>
-<area shape="rect" id="node4" href="$vcdentries_8cc.html" title="S/VCD VcdEntries class implementation." alt="" coords="23,155,170,181"/>
-<area shape="rect" id="node5" href="$vcdparser_8cc.html" title="Video/Super Video CD parser implementation." alt="" coords="195,155,313,181"/>
-<area shape="rect" id="node7" href="$vcdinfo_8cc.html" title="S/VCD VcdInfo class implementation." alt="" coords="341,155,471,181"/>
+<area shape="rect" id="node1" title="S/VCD VcdChapter class." alt="" coords="190,5,345,32"/>
+<area shape="rect" id="node2" href="$vcdchapter_8cc.html" title="S/VCD VcdChapter class implementation." alt="" coords="5,80,167,107"/>
+<area shape="rect" id="node3" href="$vcdentries_8h.html" title="S/VCD VcdEntries class." alt="" coords="191,80,343,107"/>
+<area shape="rect" id="node6" href="$vcdinfo_8h.html" title="S/VCD VcdInfo class." alt="" coords="368,80,500,107"/>
+<area shape="rect" id="node4" href="$vcdentries_8cc.html" title="S/VCD VcdEntries class implementation." alt="" coords="27,155,185,181"/>
+<area shape="rect" id="node5" href="$vcdparser_8cc.html" title="Video/Super Video CD parser implementation." alt="" coords="209,155,336,181"/>
+<area shape="rect" id="node7" href="$vcdinfo_8cc.html" title="S/VCD VcdInfo class implementation." alt="" coords="365,155,503,181"/>
 </map>

@@ -92,130 +92,128 @@ $(function() {
 <div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;<span class="comment"> */</span></div>
 <div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160; </div>
 <div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="diskio_8h.html">diskio.h</a>&quot;</span></div>
-<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="ffmpegfs_8h.html">ffmpegfs.h</a>&quot;</span></div>
-<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="logging_8h.html">logging.h</a>&quot;</span></div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160; </div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;<span class="preprocessor">#include &lt;cerrno&gt;</span></div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160; </div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;DiskIO::DiskIO()</div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;    : m_fpi(nullptr)</div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;{</div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160; </div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;}</div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160; </div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;DiskIO::~DiskIO()</div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;{</div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;    <a class="code" href="classDiskIO.html#ad711ba800d6a0c073192830a098d4bad">pvt_close</a>();</div>
-<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;}</div>
-<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160; </div>
-<div class="line"><a name="l00049"></a><span class="lineno"><a class="line" href="classDiskIO.html#a568efe3628419d2a8f761eed8af01c09">   49</a></span>&#160;<a class="code" href="fileio_8h.html#a1199d38534b11312b0210e527499a805">VIRTUALTYPE</a> <a class="code" href="classDiskIO.html#a568efe3628419d2a8f761eed8af01c09">DiskIO::type</a>()<span class="keyword"> const</span></div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;<span class="keyword"></span>{</div>
-<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;    <span class="keywordflow">return</span> <a class="code" href="fileio_8h.html#a1199d38534b11312b0210e527499a805af42a6f57f20e27166aba4ec9e4b2a2f8">VIRTUALTYPE_DISK</a>;</div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;}</div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160; </div>
-<div class="line"><a name="l00054"></a><span class="lineno"><a class="line" href="classDiskIO.html#a96f349ffe26a826b642c119cca6de3dc">   54</a></span>&#160;<span class="keywordtype">size_t</span> <a class="code" href="classDiskIO.html#a96f349ffe26a826b642c119cca6de3dc">DiskIO::bufsize</a>()<span class="keyword"> const</span></div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;<span class="keyword"></span>{</div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;    <span class="keywordflow">return</span> (100 <span class="comment">/* KB */</span> * 1024);</div>
-<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;}</div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160; </div>
-<div class="line"><a name="l00059"></a><span class="lineno"><a class="line" href="classDiskIO.html#a0a3c4ed61f6d68cd736b7118136625ce">   59</a></span>&#160;<span class="keywordtype">int</span> <a class="code" href="classDiskIO.html#a0a3c4ed61f6d68cd736b7118136625ce">DiskIO::openio</a>(<a class="code" href="structVIRTUALFILE.html">LPVIRTUALFILE</a> virtualfile)</div>
-<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;{</div>
-<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;    <a class="code" href="classFileIO.html#a6596a9c65d31ef13a09d1fa162e76bba">set_virtualfile</a>(<a class="code" href="classFileIO.html#a2e330b909423f2118b8482732f50986a">virtualfile</a>);</div>
-<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160; </div>
-<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;    <a class="code" href="classLogging.html#a663ec4391c599b4b0ebc1cf1bf007e45">Logging::debug</a>(<a class="code" href="classFileIO.html#a2e330b909423f2118b8482732f50986a">virtualfile</a>-&gt;<a class="code" href="structVIRTUALFILE.html#a2e3f8f80c58a330a8829daa0c215f40e">m_origfile</a>, <span class="stringliteral">&quot;Opening the input file.&quot;</span>);</div>
-<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160; </div>
-<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;    <a class="code" href="classDiskIO.html#ae25ae39c3fcd7015f516ed8a1c980b1e">m_fpi</a> = fopen(<a class="code" href="classFileIO.html#a2e330b909423f2118b8482732f50986a">virtualfile</a>-&gt;<a class="code" href="structVIRTUALFILE.html#a2e3f8f80c58a330a8829daa0c215f40e">m_origfile</a>.c_str(), <span class="stringliteral">&quot;rb&quot;</span>);</div>
-<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160; </div>
-<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;    <span class="keywordflow">if</span> (<a class="code" href="classDiskIO.html#ae25ae39c3fcd7015f516ed8a1c980b1e">m_fpi</a> != <span class="keyword">nullptr</span>)</div>
-<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;    {</div>
-<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;        <span class="keywordflow">return</span> 0;</div>
-<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;    }</div>
-<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;    <span class="keywordflow">else</span></div>
-<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;    {</div>
-<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;        <span class="keywordflow">return</span> errno;</div>
-<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;    }</div>
-<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;}</div>
-<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160; </div>
-<div class="line"><a name="l00077"></a><span class="lineno"><a class="line" href="classDiskIO.html#ad2e22cf99e15ae8246ef58ee46747fd3">   77</a></span>&#160;<span class="keywordtype">size_t</span> <a class="code" href="classDiskIO.html#ad2e22cf99e15ae8246ef58ee46747fd3">DiskIO::readio</a>(<span class="keywordtype">void</span> * data, <span class="keywordtype">size_t</span> size)</div>
-<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;{</div>
-<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;    <span class="keywordflow">return</span> fread(data, 1, <a class="code" href="classDiskIO.html#ae31a7d301f8a4842d2e225ee8727bb6b">size</a>, <a class="code" href="classDiskIO.html#ae25ae39c3fcd7015f516ed8a1c980b1e">m_fpi</a>);</div>
-<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;}</div>
-<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160; </div>
-<div class="line"><a name="l00082"></a><span class="lineno"><a class="line" href="classDiskIO.html#a75ac9a7c711b4e1873e45380766f0df0">   82</a></span>&#160;<span class="keywordtype">int</span> <a class="code" href="classDiskIO.html#a75ac9a7c711b4e1873e45380766f0df0">DiskIO::error</a>()<span class="keyword"> const</span></div>
-<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;<span class="keyword"></span>{</div>
-<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;    <span class="keywordflow">return</span> ferror(<a class="code" href="classDiskIO.html#ae25ae39c3fcd7015f516ed8a1c980b1e">m_fpi</a>);</div>
-<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;}</div>
-<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160; </div>
-<div class="line"><a name="l00087"></a><span class="lineno"><a class="line" href="classDiskIO.html#a47c289671bb630fd929fcf3970a22484">   87</a></span>&#160;int64_t <a class="code" href="classDiskIO.html#a47c289671bb630fd929fcf3970a22484">DiskIO::duration</a>()<span class="keyword"> const</span></div>
-<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;<span class="keyword"></span>{</div>
-<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;    <span class="keywordflow">return</span> AV_NOPTS_VALUE;  <span class="comment">// not applicable</span></div>
-<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;}</div>
-<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160; </div>
-<div class="line"><a name="l00092"></a><span class="lineno"><a class="line" href="classDiskIO.html#ae31a7d301f8a4842d2e225ee8727bb6b">   92</a></span>&#160;<span class="keywordtype">size_t</span> <a class="code" href="classDiskIO.html#ae31a7d301f8a4842d2e225ee8727bb6b">DiskIO::size</a>()<span class="keyword"> const</span></div>
-<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;<span class="keyword"></span>{</div>
-<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;    <span class="keywordflow">if</span> (<a class="code" href="classDiskIO.html#ae25ae39c3fcd7015f516ed8a1c980b1e">m_fpi</a> == <span class="keyword">nullptr</span>)</div>
-<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;    {</div>
-<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;        errno = EINVAL;</div>
-<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;        <span class="keywordflow">return</span> 0;</div>
-<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;    }</div>
-<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160; </div>
-<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;    <span class="keyword">struct </span>stat stbuf;</div>
-<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;    fstat(fileno(<a class="code" href="classDiskIO.html#ae25ae39c3fcd7015f516ed8a1c980b1e">m_fpi</a>), &amp;stbuf);</div>
-<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;    <span class="keywordflow">return</span> <span class="keyword">static_cast&lt;</span><span class="keywordtype">size_t</span><span class="keyword">&gt;</span>(stbuf.st_size);</div>
-<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;}</div>
-<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160; </div>
-<div class="line"><a name="l00105"></a><span class="lineno"><a class="line" href="classDiskIO.html#ae4cd1c7e268ced7dbb720b2b28cee4c8">  105</a></span>&#160;<span class="keywordtype">size_t</span> <a class="code" href="classDiskIO.html#ae4cd1c7e268ced7dbb720b2b28cee4c8">DiskIO::tell</a>()<span class="keyword"> const</span></div>
-<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;<span class="keyword"></span>{</div>
-<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;    <span class="keywordflow">return</span> <span class="keyword">static_cast&lt;</span><span class="keywordtype">size_t</span><span class="keyword">&gt;</span>(ftell(<a class="code" href="classDiskIO.html#ae25ae39c3fcd7015f516ed8a1c980b1e">m_fpi</a>));</div>
-<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;}</div>
-<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160; </div>
-<div class="line"><a name="l00110"></a><span class="lineno"><a class="line" href="classDiskIO.html#a1d8be188276285377e2b8de618a6e7d6">  110</a></span>&#160;<span class="keywordtype">int</span> <a class="code" href="classDiskIO.html#a1d8be188276285377e2b8de618a6e7d6">DiskIO::seek</a>(int64_t offset, <span class="keywordtype">int</span> whence)</div>
-<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;{</div>
-<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;    <span class="keywordflow">return</span> fseek(<a class="code" href="classDiskIO.html#ae25ae39c3fcd7015f516ed8a1c980b1e">m_fpi</a>, <span class="keyword">static_cast&lt;</span><span class="keywordtype">long</span> <span class="keywordtype">int</span><span class="keyword">&gt;</span>(offset), whence);</div>
-<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;}</div>
-<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160; </div>
-<div class="line"><a name="l00115"></a><span class="lineno"><a class="line" href="classDiskIO.html#a5a7111203a8d613af0777db12a022be1">  115</a></span>&#160;<span class="keywordtype">bool</span> <a class="code" href="classDiskIO.html#a5a7111203a8d613af0777db12a022be1">DiskIO::eof</a>()<span class="keyword"> const</span></div>
-<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;<span class="keyword"></span>{</div>
-<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;    <span class="keywordflow">return</span> feof(<a class="code" href="classDiskIO.html#ae25ae39c3fcd7015f516ed8a1c980b1e">m_fpi</a>) ? true : <span class="keyword">false</span>;</div>
-<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;}</div>
-<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160; </div>
-<div class="line"><a name="l00120"></a><span class="lineno"><a class="line" href="classDiskIO.html#aad6e6557cda58a2fea92cab0de8cf404">  120</a></span>&#160;<span class="keywordtype">void</span> <a class="code" href="classDiskIO.html#aad6e6557cda58a2fea92cab0de8cf404">DiskIO::closeio</a>()</div>
-<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;{</div>
-<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;    <a class="code" href="classDiskIO.html#ad711ba800d6a0c073192830a098d4bad">pvt_close</a>();</div>
-<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;}</div>
-<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160; </div>
-<div class="line"><a name="l00125"></a><span class="lineno"><a class="line" href="classDiskIO.html#ad711ba800d6a0c073192830a098d4bad">  125</a></span>&#160;<span class="keywordtype">void</span> <a class="code" href="classDiskIO.html#ad711ba800d6a0c073192830a098d4bad">DiskIO::pvt_close</a>()</div>
-<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;{</div>
-<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;    FILE *fpi = <a class="code" href="classDiskIO.html#ae25ae39c3fcd7015f516ed8a1c980b1e">m_fpi</a>;</div>
-<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;    <span class="keywordflow">if</span> (fpi != <span class="keyword">nullptr</span>)</div>
-<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;    {</div>
-<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;        <a class="code" href="classDiskIO.html#ae25ae39c3fcd7015f516ed8a1c980b1e">m_fpi</a> = <span class="keyword">nullptr</span>;</div>
-<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;        fclose(fpi);</div>
-<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;    }</div>
-<div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;}</div>
-<div class="ttc" id="aclassDiskIO_html_a0a3c4ed61f6d68cd736b7118136625ce"><div class="ttname"><a href="classDiskIO.html#a0a3c4ed61f6d68cd736b7118136625ce">DiskIO::openio</a></div><div class="ttdeci">virtual int openio(LPVIRTUALFILE virtualfile) override</div><div class="ttdoc">Open a file.</div><div class="ttdef"><b>Definition:</b> <a href="diskio_8cc_source.html#l00059">diskio.cc:59</a></div></div>
-<div class="ttc" id="aclassDiskIO_html_a1d8be188276285377e2b8de618a6e7d6"><div class="ttname"><a href="classDiskIO.html#a1d8be188276285377e2b8de618a6e7d6">DiskIO::seek</a></div><div class="ttdeci">virtual int seek(int64_t offset, int whence) override</div><div class="ttdoc">Seek to position in file.</div><div class="ttdef"><b>Definition:</b> <a href="diskio_8cc_source.html#l00110">diskio.cc:110</a></div></div>
-<div class="ttc" id="aclassDiskIO_html_a47c289671bb630fd929fcf3970a22484"><div class="ttname"><a href="classDiskIO.html#a47c289671bb630fd929fcf3970a22484">DiskIO::duration</a></div><div class="ttdeci">virtual int64_t duration() const override</div><div class="ttdoc">Get the duration of the file, in AV_TIME_BASE fractional seconds.</div><div class="ttdef"><b>Definition:</b> <a href="diskio_8cc_source.html#l00087">diskio.cc:87</a></div></div>
-<div class="ttc" id="aclassDiskIO_html_a568efe3628419d2a8f761eed8af01c09"><div class="ttname"><a href="classDiskIO.html#a568efe3628419d2a8f761eed8af01c09">DiskIO::type</a></div><div class="ttdeci">virtual VIRTUALTYPE type() const override</div><div class="ttdoc">Get type of the virtual file.</div><div class="ttdef"><b>Definition:</b> <a href="diskio_8cc_source.html#l00049">diskio.cc:49</a></div></div>
-<div class="ttc" id="aclassDiskIO_html_a5a7111203a8d613af0777db12a022be1"><div class="ttname"><a href="classDiskIO.html#a5a7111203a8d613af0777db12a022be1">DiskIO::eof</a></div><div class="ttdeci">virtual bool eof() const override</div><div class="ttdoc">Check if at end of file.</div><div class="ttdef"><b>Definition:</b> <a href="diskio_8cc_source.html#l00115">diskio.cc:115</a></div></div>
-<div class="ttc" id="aclassDiskIO_html_a75ac9a7c711b4e1873e45380766f0df0"><div class="ttname"><a href="classDiskIO.html#a75ac9a7c711b4e1873e45380766f0df0">DiskIO::error</a></div><div class="ttdeci">virtual int error() const override</div><div class="ttdoc">Get last error.</div><div class="ttdef"><b>Definition:</b> <a href="diskio_8cc_source.html#l00082">diskio.cc:82</a></div></div>
-<div class="ttc" id="aclassDiskIO_html_a96f349ffe26a826b642c119cca6de3dc"><div class="ttname"><a href="classDiskIO.html#a96f349ffe26a826b642c119cca6de3dc">DiskIO::bufsize</a></div><div class="ttdeci">virtual size_t bufsize() const override</div><div class="ttdoc">Get the ideal buffer size.</div><div class="ttdef"><b>Definition:</b> <a href="diskio_8cc_source.html#l00054">diskio.cc:54</a></div></div>
-<div class="ttc" id="aclassDiskIO_html_aad6e6557cda58a2fea92cab0de8cf404"><div class="ttname"><a href="classDiskIO.html#aad6e6557cda58a2fea92cab0de8cf404">DiskIO::closeio</a></div><div class="ttdeci">virtual void closeio() override</div><div class="ttdoc">Close virtual file.</div><div class="ttdef"><b>Definition:</b> <a href="diskio_8cc_source.html#l00120">diskio.cc:120</a></div></div>
-<div class="ttc" id="aclassDiskIO_html_ad2e22cf99e15ae8246ef58ee46747fd3"><div class="ttname"><a href="classDiskIO.html#ad2e22cf99e15ae8246ef58ee46747fd3">DiskIO::readio</a></div><div class="ttdeci">virtual size_t readio(void *data, size_t size) override</div><div class="ttdoc">Read data from file.</div><div class="ttdef"><b>Definition:</b> <a href="diskio_8cc_source.html#l00077">diskio.cc:77</a></div></div>
-<div class="ttc" id="aclassDiskIO_html_ad711ba800d6a0c073192830a098d4bad"><div class="ttname"><a href="classDiskIO.html#ad711ba800d6a0c073192830a098d4bad">DiskIO::pvt_close</a></div><div class="ttdeci">void pvt_close()</div><div class="ttdoc">Close virtual file. Non-virtual version to be safely called from constructor/destructor.</div><div class="ttdef"><b>Definition:</b> <a href="diskio_8cc_source.html#l00125">diskio.cc:125</a></div></div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="logging_8h.html">logging.h</a>&quot;</span></div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160; </div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;<span class="preprocessor">#include &lt;cerrno&gt;</span></div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160; </div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;DiskIO::DiskIO()</div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;    : m_fpi(nullptr)</div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;{</div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160; </div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;}</div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160; </div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;DiskIO::~DiskIO()</div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;{</div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;    <a class="code" href="classDiskIO.html#ad711ba800d6a0c073192830a098d4bad">pvt_close</a>();</div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;}</div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160; </div>
+<div class="line"><a name="l00048"></a><span class="lineno"><a class="line" href="classDiskIO.html#a568efe3628419d2a8f761eed8af01c09">   48</a></span>&#160;<a class="code" href="fileio_8h.html#a1199d38534b11312b0210e527499a805">VIRTUALTYPE</a> <a class="code" href="classDiskIO.html#a568efe3628419d2a8f761eed8af01c09">DiskIO::type</a>()<span class="keyword"> const</span></div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;<span class="keyword"></span>{</div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;    <span class="keywordflow">return</span> <a class="code" href="fileio_8h.html#a1199d38534b11312b0210e527499a805af42a6f57f20e27166aba4ec9e4b2a2f8">VIRTUALTYPE_DISK</a>;</div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;}</div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160; </div>
+<div class="line"><a name="l00053"></a><span class="lineno"><a class="line" href="classDiskIO.html#a96f349ffe26a826b642c119cca6de3dc">   53</a></span>&#160;<span class="keywordtype">size_t</span> <a class="code" href="classDiskIO.html#a96f349ffe26a826b642c119cca6de3dc">DiskIO::bufsize</a>()<span class="keyword"> const</span></div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;<span class="keyword"></span>{</div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;    <span class="keywordflow">return</span> (100 <span class="comment">/* KB */</span> * 1024);</div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;}</div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160; </div>
+<div class="line"><a name="l00058"></a><span class="lineno"><a class="line" href="classDiskIO.html#a0a3c4ed61f6d68cd736b7118136625ce">   58</a></span>&#160;<span class="keywordtype">int</span> <a class="code" href="classDiskIO.html#a0a3c4ed61f6d68cd736b7118136625ce">DiskIO::openio</a>(<a class="code" href="structVIRTUALFILE.html">LPVIRTUALFILE</a> virtualfile)</div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;{</div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;    <a class="code" href="classFileIO.html#a6596a9c65d31ef13a09d1fa162e76bba">set_virtualfile</a>(<a class="code" href="classFileIO.html#a2e330b909423f2118b8482732f50986a">virtualfile</a>);</div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160; </div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;    <a class="code" href="classLogging.html#a663ec4391c599b4b0ebc1cf1bf007e45">Logging::debug</a>(<a class="code" href="classFileIO.html#a2e330b909423f2118b8482732f50986a">virtualfile</a>-&gt;<a class="code" href="structVIRTUALFILE.html#a2e3f8f80c58a330a8829daa0c215f40e">m_origfile</a>, <span class="stringliteral">&quot;Opening the input file.&quot;</span>);</div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160; </div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;    <a class="code" href="classDiskIO.html#ae25ae39c3fcd7015f516ed8a1c980b1e">m_fpi</a> = fopen(<a class="code" href="classFileIO.html#a2e330b909423f2118b8482732f50986a">virtualfile</a>-&gt;<a class="code" href="structVIRTUALFILE.html#a2e3f8f80c58a330a8829daa0c215f40e">m_origfile</a>.c_str(), <span class="stringliteral">&quot;rb&quot;</span>);</div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160; </div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;    <span class="keywordflow">if</span> (<a class="code" href="classDiskIO.html#ae25ae39c3fcd7015f516ed8a1c980b1e">m_fpi</a> != <span class="keyword">nullptr</span>)</div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;    {</div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;        <span class="keywordflow">return</span> 0;</div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;    }</div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;    <span class="keywordflow">else</span></div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;    {</div>
+<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;        <span class="keywordflow">return</span> errno;</div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;    }</div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;}</div>
+<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160; </div>
+<div class="line"><a name="l00076"></a><span class="lineno"><a class="line" href="classDiskIO.html#ad2e22cf99e15ae8246ef58ee46747fd3">   76</a></span>&#160;<span class="keywordtype">size_t</span> <a class="code" href="classDiskIO.html#ad2e22cf99e15ae8246ef58ee46747fd3">DiskIO::readio</a>(<span class="keywordtype">void</span> * data, <span class="keywordtype">size_t</span> size)</div>
+<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;{</div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;    <span class="keywordflow">return</span> fread(data, 1, <a class="code" href="classDiskIO.html#ae31a7d301f8a4842d2e225ee8727bb6b">size</a>, <a class="code" href="classDiskIO.html#ae25ae39c3fcd7015f516ed8a1c980b1e">m_fpi</a>);</div>
+<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;}</div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160; </div>
+<div class="line"><a name="l00081"></a><span class="lineno"><a class="line" href="classDiskIO.html#a75ac9a7c711b4e1873e45380766f0df0">   81</a></span>&#160;<span class="keywordtype">int</span> <a class="code" href="classDiskIO.html#a75ac9a7c711b4e1873e45380766f0df0">DiskIO::error</a>()<span class="keyword"> const</span></div>
+<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;<span class="keyword"></span>{</div>
+<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;    <span class="keywordflow">return</span> ferror(<a class="code" href="classDiskIO.html#ae25ae39c3fcd7015f516ed8a1c980b1e">m_fpi</a>);</div>
+<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;}</div>
+<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160; </div>
+<div class="line"><a name="l00086"></a><span class="lineno"><a class="line" href="classDiskIO.html#a47c289671bb630fd929fcf3970a22484">   86</a></span>&#160;int64_t <a class="code" href="classDiskIO.html#a47c289671bb630fd929fcf3970a22484">DiskIO::duration</a>()<span class="keyword"> const</span></div>
+<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;<span class="keyword"></span>{</div>
+<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;    <span class="keywordflow">return</span> AV_NOPTS_VALUE;  <span class="comment">// not applicable</span></div>
+<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;}</div>
+<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160; </div>
+<div class="line"><a name="l00091"></a><span class="lineno"><a class="line" href="classDiskIO.html#ae31a7d301f8a4842d2e225ee8727bb6b">   91</a></span>&#160;<span class="keywordtype">size_t</span> <a class="code" href="classDiskIO.html#ae31a7d301f8a4842d2e225ee8727bb6b">DiskIO::size</a>()<span class="keyword"> const</span></div>
+<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;<span class="keyword"></span>{</div>
+<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;    <span class="keywordflow">if</span> (<a class="code" href="classDiskIO.html#ae25ae39c3fcd7015f516ed8a1c980b1e">m_fpi</a> == <span class="keyword">nullptr</span>)</div>
+<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;    {</div>
+<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;        errno = EINVAL;</div>
+<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;        <span class="keywordflow">return</span> 0;</div>
+<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;    }</div>
+<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160; </div>
+<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;    <span class="keyword">struct </span>stat stbuf;</div>
+<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;    fstat(fileno(<a class="code" href="classDiskIO.html#ae25ae39c3fcd7015f516ed8a1c980b1e">m_fpi</a>), &amp;stbuf);</div>
+<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;    <span class="keywordflow">return</span> <span class="keyword">static_cast&lt;</span><span class="keywordtype">size_t</span><span class="keyword">&gt;</span>(stbuf.st_size);</div>
+<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;}</div>
+<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160; </div>
+<div class="line"><a name="l00104"></a><span class="lineno"><a class="line" href="classDiskIO.html#ae4cd1c7e268ced7dbb720b2b28cee4c8">  104</a></span>&#160;<span class="keywordtype">size_t</span> <a class="code" href="classDiskIO.html#ae4cd1c7e268ced7dbb720b2b28cee4c8">DiskIO::tell</a>()<span class="keyword"> const</span></div>
+<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;<span class="keyword"></span>{</div>
+<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;    <span class="keywordflow">return</span> <span class="keyword">static_cast&lt;</span><span class="keywordtype">size_t</span><span class="keyword">&gt;</span>(ftell(<a class="code" href="classDiskIO.html#ae25ae39c3fcd7015f516ed8a1c980b1e">m_fpi</a>));</div>
+<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;}</div>
+<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160; </div>
+<div class="line"><a name="l00109"></a><span class="lineno"><a class="line" href="classDiskIO.html#a1d8be188276285377e2b8de618a6e7d6">  109</a></span>&#160;<span class="keywordtype">int</span> <a class="code" href="classDiskIO.html#a1d8be188276285377e2b8de618a6e7d6">DiskIO::seek</a>(int64_t offset, <span class="keywordtype">int</span> whence)</div>
+<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;{</div>
+<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;    <span class="keywordflow">return</span> fseek(<a class="code" href="classDiskIO.html#ae25ae39c3fcd7015f516ed8a1c980b1e">m_fpi</a>, <span class="keyword">static_cast&lt;</span><span class="keywordtype">long</span> <span class="keywordtype">int</span><span class="keyword">&gt;</span>(offset), whence);</div>
+<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;}</div>
+<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160; </div>
+<div class="line"><a name="l00114"></a><span class="lineno"><a class="line" href="classDiskIO.html#a5a7111203a8d613af0777db12a022be1">  114</a></span>&#160;<span class="keywordtype">bool</span> <a class="code" href="classDiskIO.html#a5a7111203a8d613af0777db12a022be1">DiskIO::eof</a>()<span class="keyword"> const</span></div>
+<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;<span class="keyword"></span>{</div>
+<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;    <span class="keywordflow">return</span> feof(<a class="code" href="classDiskIO.html#ae25ae39c3fcd7015f516ed8a1c980b1e">m_fpi</a>) ? true : <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;}</div>
+<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160; </div>
+<div class="line"><a name="l00119"></a><span class="lineno"><a class="line" href="classDiskIO.html#aad6e6557cda58a2fea92cab0de8cf404">  119</a></span>&#160;<span class="keywordtype">void</span> <a class="code" href="classDiskIO.html#aad6e6557cda58a2fea92cab0de8cf404">DiskIO::closeio</a>()</div>
+<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;{</div>
+<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;    <a class="code" href="classDiskIO.html#ad711ba800d6a0c073192830a098d4bad">pvt_close</a>();</div>
+<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;}</div>
+<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160; </div>
+<div class="line"><a name="l00124"></a><span class="lineno"><a class="line" href="classDiskIO.html#ad711ba800d6a0c073192830a098d4bad">  124</a></span>&#160;<span class="keywordtype">void</span> <a class="code" href="classDiskIO.html#ad711ba800d6a0c073192830a098d4bad">DiskIO::pvt_close</a>()</div>
+<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;{</div>
+<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;    FILE *fpi = <a class="code" href="classDiskIO.html#ae25ae39c3fcd7015f516ed8a1c980b1e">m_fpi</a>;</div>
+<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;    <span class="keywordflow">if</span> (fpi != <span class="keyword">nullptr</span>)</div>
+<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;    {</div>
+<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;        <a class="code" href="classDiskIO.html#ae25ae39c3fcd7015f516ed8a1c980b1e">m_fpi</a> = <span class="keyword">nullptr</span>;</div>
+<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;        fclose(fpi);</div>
+<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;    }</div>
+<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;}</div>
+<div class="ttc" id="aclassDiskIO_html_a0a3c4ed61f6d68cd736b7118136625ce"><div class="ttname"><a href="classDiskIO.html#a0a3c4ed61f6d68cd736b7118136625ce">DiskIO::openio</a></div><div class="ttdeci">virtual int openio(LPVIRTUALFILE virtualfile) override</div><div class="ttdoc">Open a file.</div><div class="ttdef"><b>Definition:</b> <a href="diskio_8cc_source.html#l00058">diskio.cc:58</a></div></div>
+<div class="ttc" id="aclassDiskIO_html_a1d8be188276285377e2b8de618a6e7d6"><div class="ttname"><a href="classDiskIO.html#a1d8be188276285377e2b8de618a6e7d6">DiskIO::seek</a></div><div class="ttdeci">virtual int seek(int64_t offset, int whence) override</div><div class="ttdoc">Seek to position in file.</div><div class="ttdef"><b>Definition:</b> <a href="diskio_8cc_source.html#l00109">diskio.cc:109</a></div></div>
+<div class="ttc" id="aclassDiskIO_html_a47c289671bb630fd929fcf3970a22484"><div class="ttname"><a href="classDiskIO.html#a47c289671bb630fd929fcf3970a22484">DiskIO::duration</a></div><div class="ttdeci">virtual int64_t duration() const override</div><div class="ttdoc">Get the duration of the file, in AV_TIME_BASE fractional seconds.</div><div class="ttdef"><b>Definition:</b> <a href="diskio_8cc_source.html#l00086">diskio.cc:86</a></div></div>
+<div class="ttc" id="aclassDiskIO_html_a568efe3628419d2a8f761eed8af01c09"><div class="ttname"><a href="classDiskIO.html#a568efe3628419d2a8f761eed8af01c09">DiskIO::type</a></div><div class="ttdeci">virtual VIRTUALTYPE type() const override</div><div class="ttdoc">Get type of the virtual file.</div><div class="ttdef"><b>Definition:</b> <a href="diskio_8cc_source.html#l00048">diskio.cc:48</a></div></div>
+<div class="ttc" id="aclassDiskIO_html_a5a7111203a8d613af0777db12a022be1"><div class="ttname"><a href="classDiskIO.html#a5a7111203a8d613af0777db12a022be1">DiskIO::eof</a></div><div class="ttdeci">virtual bool eof() const override</div><div class="ttdoc">Check if at end of file.</div><div class="ttdef"><b>Definition:</b> <a href="diskio_8cc_source.html#l00114">diskio.cc:114</a></div></div>
+<div class="ttc" id="aclassDiskIO_html_a75ac9a7c711b4e1873e45380766f0df0"><div class="ttname"><a href="classDiskIO.html#a75ac9a7c711b4e1873e45380766f0df0">DiskIO::error</a></div><div class="ttdeci">virtual int error() const override</div><div class="ttdoc">Get last error.</div><div class="ttdef"><b>Definition:</b> <a href="diskio_8cc_source.html#l00081">diskio.cc:81</a></div></div>
+<div class="ttc" id="aclassDiskIO_html_a96f349ffe26a826b642c119cca6de3dc"><div class="ttname"><a href="classDiskIO.html#a96f349ffe26a826b642c119cca6de3dc">DiskIO::bufsize</a></div><div class="ttdeci">virtual size_t bufsize() const override</div><div class="ttdoc">Get the ideal buffer size.</div><div class="ttdef"><b>Definition:</b> <a href="diskio_8cc_source.html#l00053">diskio.cc:53</a></div></div>
+<div class="ttc" id="aclassDiskIO_html_aad6e6557cda58a2fea92cab0de8cf404"><div class="ttname"><a href="classDiskIO.html#aad6e6557cda58a2fea92cab0de8cf404">DiskIO::closeio</a></div><div class="ttdeci">virtual void closeio() override</div><div class="ttdoc">Close virtual file.</div><div class="ttdef"><b>Definition:</b> <a href="diskio_8cc_source.html#l00119">diskio.cc:119</a></div></div>
+<div class="ttc" id="aclassDiskIO_html_ad2e22cf99e15ae8246ef58ee46747fd3"><div class="ttname"><a href="classDiskIO.html#ad2e22cf99e15ae8246ef58ee46747fd3">DiskIO::readio</a></div><div class="ttdeci">virtual size_t readio(void *data, size_t size) override</div><div class="ttdoc">Read data from file.</div><div class="ttdef"><b>Definition:</b> <a href="diskio_8cc_source.html#l00076">diskio.cc:76</a></div></div>
+<div class="ttc" id="aclassDiskIO_html_ad711ba800d6a0c073192830a098d4bad"><div class="ttname"><a href="classDiskIO.html#ad711ba800d6a0c073192830a098d4bad">DiskIO::pvt_close</a></div><div class="ttdeci">void pvt_close()</div><div class="ttdoc">Close virtual file. Non-virtual version to be safely called from constructor/destructor.</div><div class="ttdef"><b>Definition:</b> <a href="diskio_8cc_source.html#l00124">diskio.cc:124</a></div></div>
 <div class="ttc" id="aclassDiskIO_html_ae25ae39c3fcd7015f516ed8a1c980b1e"><div class="ttname"><a href="classDiskIO.html#ae25ae39c3fcd7015f516ed8a1c980b1e">DiskIO::m_fpi</a></div><div class="ttdeci">FILE * m_fpi</div><div class="ttdoc">File pointer to source media.</div><div class="ttdef"><b>Definition:</b> <a href="diskio_8h_source.html#l00125">diskio.h:125</a></div></div>
-<div class="ttc" id="aclassDiskIO_html_ae31a7d301f8a4842d2e225ee8727bb6b"><div class="ttname"><a href="classDiskIO.html#ae31a7d301f8a4842d2e225ee8727bb6b">DiskIO::size</a></div><div class="ttdeci">virtual size_t size() const override</div><div class="ttdoc">Get the file size.</div><div class="ttdef"><b>Definition:</b> <a href="diskio_8cc_source.html#l00092">diskio.cc:92</a></div></div>
-<div class="ttc" id="aclassDiskIO_html_ae4cd1c7e268ced7dbb720b2b28cee4c8"><div class="ttname"><a href="classDiskIO.html#ae4cd1c7e268ced7dbb720b2b28cee4c8">DiskIO::tell</a></div><div class="ttdeci">virtual size_t tell() const override</div><div class="ttdoc">Get current read position.</div><div class="ttdef"><b>Definition:</b> <a href="diskio_8cc_source.html#l00105">diskio.cc:105</a></div></div>
+<div class="ttc" id="aclassDiskIO_html_ae31a7d301f8a4842d2e225ee8727bb6b"><div class="ttname"><a href="classDiskIO.html#ae31a7d301f8a4842d2e225ee8727bb6b">DiskIO::size</a></div><div class="ttdeci">virtual size_t size() const override</div><div class="ttdoc">Get the file size.</div><div class="ttdef"><b>Definition:</b> <a href="diskio_8cc_source.html#l00091">diskio.cc:91</a></div></div>
+<div class="ttc" id="aclassDiskIO_html_ae4cd1c7e268ced7dbb720b2b28cee4c8"><div class="ttname"><a href="classDiskIO.html#ae4cd1c7e268ced7dbb720b2b28cee4c8">DiskIO::tell</a></div><div class="ttdeci">virtual size_t tell() const override</div><div class="ttdoc">Get current read position.</div><div class="ttdef"><b>Definition:</b> <a href="diskio_8cc_source.html#l00104">diskio.cc:104</a></div></div>
 <div class="ttc" id="aclassFileIO_html_a2e330b909423f2118b8482732f50986a"><div class="ttname"><a href="classFileIO.html#a2e330b909423f2118b8482732f50986a">FileIO::virtualfile</a></div><div class="ttdeci">LPVIRTUALFILE virtualfile()</div><div class="ttdoc">Get virtual file object.</div><div class="ttdef"><b>Definition:</b> <a href="fileio_8cc_source.html#l00114">fileio.cc:114</a></div></div>
 <div class="ttc" id="aclassFileIO_html_a6596a9c65d31ef13a09d1fa162e76bba"><div class="ttname"><a href="classFileIO.html#a6596a9c65d31ef13a09d1fa162e76bba">FileIO::set_virtualfile</a></div><div class="ttdeci">void set_virtualfile(LPVIRTUALFILE virtualfile)</div><div class="ttdoc">Set the virtual file object.</div><div class="ttdef"><b>Definition:</b> <a href="fileio_8cc_source.html#l00097">fileio.cc:97</a></div></div>
 <div class="ttc" id="aclassLogging_html_a663ec4391c599b4b0ebc1cf1bf007e45"><div class="ttname"><a href="classLogging.html#a663ec4391c599b4b0ebc1cf1bf007e45">Logging::debug</a></div><div class="ttdeci">static void debug(const T filename, const std::string &amp;format_string, Args &amp;&amp;...args)</div><div class="ttdoc">Write debug level log entry.</div><div class="ttdef"><b>Definition:</b> <a href="logging_8h_source.html#l00182">logging.h:182</a></div></div>
 <div class="ttc" id="adiskio_8h_html"><div class="ttname"><a href="diskio_8h.html">diskio.h</a></div><div class="ttdoc">Direct disk I/O.</div></div>
-<div class="ttc" id="affmpegfs_8h_html"><div class="ttname"><a href="ffmpegfs_8h.html">ffmpegfs.h</a></div><div class="ttdoc">Main include for FFmpegfs project.</div></div>
-<div class="ttc" id="afileio_8h_html_a1199d38534b11312b0210e527499a805"><div class="ttname"><a href="fileio_8h.html#a1199d38534b11312b0210e527499a805">VIRTUALTYPE</a></div><div class="ttdeci">VIRTUALTYPE</div><div class="ttdoc">Virtual file types enum.</div><div class="ttdef"><b>Definition:</b> <a href="fileio_8h_source.html#l00087">fileio.h:88</a></div></div>
-<div class="ttc" id="afileio_8h_html_a1199d38534b11312b0210e527499a805af42a6f57f20e27166aba4ec9e4b2a2f8"><div class="ttname"><a href="fileio_8h.html#a1199d38534b11312b0210e527499a805af42a6f57f20e27166aba4ec9e4b2a2f8">VIRTUALTYPE_DISK</a></div><div class="ttdeci">@ VIRTUALTYPE_DISK</div><div class="ttdoc">Regular disk file to transcode.</div><div class="ttdef"><b>Definition:</b> <a href="fileio_8h_source.html#l00090">fileio.h:90</a></div></div>
+<div class="ttc" id="afileio_8h_html_a1199d38534b11312b0210e527499a805"><div class="ttname"><a href="fileio_8h.html#a1199d38534b11312b0210e527499a805">VIRTUALTYPE</a></div><div class="ttdeci">VIRTUALTYPE</div><div class="ttdoc">Virtual file types enum.</div><div class="ttdef"><b>Definition:</b> <a href="fileio_8h_source.html#l00089">fileio.h:90</a></div></div>
+<div class="ttc" id="afileio_8h_html_a1199d38534b11312b0210e527499a805af42a6f57f20e27166aba4ec9e4b2a2f8"><div class="ttname"><a href="fileio_8h.html#a1199d38534b11312b0210e527499a805af42a6f57f20e27166aba4ec9e4b2a2f8">VIRTUALTYPE_DISK</a></div><div class="ttdeci">@ VIRTUALTYPE_DISK</div><div class="ttdoc">Regular disk file to transcode.</div><div class="ttdef"><b>Definition:</b> <a href="fileio_8h_source.html#l00092">fileio.h:92</a></div></div>
 <div class="ttc" id="alogging_8h_html"><div class="ttname"><a href="logging_8h.html">logging.h</a></div><div class="ttdoc">Provide various log facilities to stderr, disk or syslog.</div></div>
-<div class="ttc" id="astructVIRTUALFILE_html"><div class="ttname"><a href="structVIRTUALFILE.html">VIRTUALFILE</a></div><div class="ttdoc">Virtual file definition.</div><div class="ttdef"><b>Definition:</b> <a href="fileio_8h_source.html#l00118">fileio.h:119</a></div></div>
-<div class="ttc" id="astructVIRTUALFILE_html_a2e3f8f80c58a330a8829daa0c215f40e"><div class="ttname"><a href="structVIRTUALFILE.html#a2e3f8f80c58a330a8829daa0c215f40e">VIRTUALFILE::m_origfile</a></div><div class="ttdeci">std::string m_origfile</div><div class="ttdoc">Sanitised name and path of original file.</div><div class="ttdef"><b>Definition:</b> <a href="fileio_8h_source.html#l00148">fileio.h:148</a></div></div>
+<div class="ttc" id="astructVIRTUALFILE_html"><div class="ttname"><a href="structVIRTUALFILE.html">VIRTUALFILE</a></div><div class="ttdoc">Virtual file definition.</div><div class="ttdef"><b>Definition:</b> <a href="fileio_8h_source.html#l00120">fileio.h:121</a></div></div>
+<div class="ttc" id="astructVIRTUALFILE_html_a2e3f8f80c58a330a8829daa0c215f40e"><div class="ttname"><a href="structVIRTUALFILE.html#a2e3f8f80c58a330a8829daa0c215f40e">VIRTUALFILE::m_origfile</a></div><div class="ttdeci">std::string m_origfile</div><div class="ttdoc">Sanitised name and path of original file.</div><div class="ttdef"><b>Definition:</b> <a href="fileio_8h_source.html#l00150">fileio.h:150</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

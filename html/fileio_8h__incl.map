@@ -1,8 +1,9 @@
 <map id="src/fileio.h" name="src/fileio.h">
-<area shape="rect" id="node1" title="FileIO class." alt="" coords="177,5,260,32"/>
-<area shape="rect" id="node2" title=" " alt="" coords="5,80,85,107"/>
-<area shape="rect" id="node3" title=" " alt="" coords="110,80,165,107"/>
-<area shape="rect" id="node4" title=" " alt="" coords="189,80,248,107"/>
-<area shape="rect" id="node5" title=" " alt="" coords="273,80,319,107"/>
-<area shape="rect" id="node6" title=" " alt="" coords="344,80,456,107"/>
+<area shape="rect" id="node1" title="FileIO class." alt="" coords="225,5,314,32"/>
+<area shape="rect" id="node2" title=" " alt="" coords="5,80,91,107"/>
+<area shape="rect" id="node3" title=" " alt="" coords="115,80,173,107"/>
+<area shape="rect" id="node4" title=" " alt="" coords="198,80,261,107"/>
+<area shape="rect" id="node5" title=" " alt="" coords="285,80,336,107"/>
+<area shape="rect" id="node6" title=" " alt="" coords="360,80,427,107"/>
+<area shape="rect" id="node7" title=" " alt="" coords="451,80,579,107"/>
 </map>

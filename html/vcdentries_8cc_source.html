@@ -153,7 +153,7 @@ $(function() {
 <div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160; </div>
 <div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;        <a class="code" href="classVcdEntries.html#a1e14cc383e9ebee5e965473fb2fd1d9b">m_file_date</a>      = stbuf.st_mtime;</div>
 <div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160; </div>
-<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;        memset(&amp;vcdentry, 0, <span class="keyword">sizeof</span>(vcdentry));</div>
+<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;        std::memset(&amp;vcdentry, 0, <span class="keyword">sizeof</span>(vcdentry));</div>
 <div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160; </div>
 <div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;        <span class="keywordflow">if</span> (fread(<span class="keyword">reinterpret_cast&lt;</span><span class="keywordtype">char</span> *<span class="keyword">&gt;</span>(&amp;vcdentry), 1, <span class="keyword">sizeof</span>(vcdentry), fpi) != <span class="keyword">sizeof</span>(vcdentry))</div>
 <div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;        {</div>
@@ -215,7 +215,7 @@ $(function() {
 <div class="line"><a name="l00164"></a><span class="lineno">  164</span>&#160;    std::string fullname;</div>
 <div class="line"><a name="l00165"></a><span class="lineno">  165</span>&#160;    <span class="keyword">struct </span>stat stbuf;</div>
 <div class="line"><a name="l00166"></a><span class="lineno">  166</span>&#160; </div>
-<div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160;    memset(&amp;stbuf, 0, <span class="keyword">sizeof</span>(stbuf));</div>
+<div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160;    std::memset(&amp;stbuf, 0, <span class="keyword">sizeof</span>(stbuf));</div>
 <div class="line"><a name="l00168"></a><span class="lineno">  168</span>&#160; </div>
 <div class="line"><a name="l00169"></a><span class="lineno">  169</span>&#160;    <span class="keywordflow">if</span> (!<a class="code" href="classVcdEntries.html#ab8114296152d3e0519be909b699dcbf4">m_chapters</a>.size())</div>
 <div class="line"><a name="l00170"></a><span class="lineno">  170</span>&#160;    {</div>

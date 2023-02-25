@@ -1,13 +1,14 @@
 <map id="src/cache.h" name="src/cache.h">
-<area shape="rect" id="node1" title="Data cache management." alt="" coords="343,5,433,32"/>
-<area shape="rect" id="node2" href="$buffer_8h.html" title="Buffer class." alt="" coords="157,80,222,107"/>
-<area shape="rect" id="node7" title=" " alt="" coords="407,229,454,256"/>
-<area shape="rect" id="node11" title=" " alt="" coords="426,80,497,107"/>
-<area shape="rect" id="node3" href="$fileio_8h.html" title="FileIO class." alt="" coords="249,155,309,181"/>
-<area shape="rect" id="node6" title=" " alt="" coords="5,229,64,256"/>
-<area shape="rect" id="node9" title=" " alt="" coords="72,155,131,181"/>
-<area shape="rect" id="node10" title=" " alt="" coords="155,155,224,181"/>
-<area shape="rect" id="node4" title=" " alt="" coords="224,229,304,256"/>
-<area shape="rect" id="node5" title=" " alt="" coords="329,229,383,256"/>
-<area shape="rect" id="node8" title=" " alt="" coords="88,229,200,256"/>
+<area shape="rect" id="node1" title="Data cache management." alt="" coords="489,5,584,32"/>
+<area shape="rect" id="node2" href="$buffer_8h.html" title="Buffer class." alt="" coords="301,80,372,107"/>
+<area shape="rect" id="node7" title=" " alt="" coords="527,229,578,256"/>
+<area shape="rect" id="node12" title=" " alt="" coords="575,80,653,107"/>
+<area shape="rect" id="node3" href="$fileio_8h.html" title="FileIO class." alt="" coords="214,155,281,181"/>
+<area shape="rect" id="node6" title=" " alt="" coords="5,229,68,256"/>
+<area shape="rect" id="node10" title=" " alt="" coords="305,155,369,181"/>
+<area shape="rect" id="node11" title=" " alt="" coords="393,155,467,181"/>
+<area shape="rect" id="node4" title=" " alt="" coords="93,229,178,256"/>
+<area shape="rect" id="node5" title=" " alt="" coords="202,229,261,256"/>
+<area shape="rect" id="node8" title=" " alt="" coords="285,229,351,256"/>
+<area shape="rect" id="node9" title=" " alt="" coords="375,229,503,256"/>
 </map>

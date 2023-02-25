@@ -85,6 +85,9 @@ public:
         {
         }
 
+        /**
+         * @brief Reset buffer pointers
+         */
         void reset()
         {
             m_fd                = -1;
@@ -92,11 +95,6 @@ public:
             m_buffer_pos        = 0;
             m_buffer_watermark  = 0;
             m_buffer_size       = 0;
-            //m_seg_finished(false)
-            //m_fd_idx(-1)
-            //m_buffer_idx(nullptr)
-            //m_buffer_size_idx(0)
-            //m_flags(0)
             m_buffer_write_size = 0;
             m_buffer_writes     = 0;
         }

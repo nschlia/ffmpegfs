@@ -6502,15 +6502,12 @@ int FFmpeg_Transcoder::init_deinterlace_filters(AVCodecContext *codec_ctx, AVPix
 
         // buffer video sink: to terminate the filter chain.
 
-        AVBufferSinkParams buffer_sink_params;
         std::array<enum AVPixelFormat, 3> pixel_fmts;
 
         pixel_fmts[0] = pix_fmt;
         pixel_fmts[1] = AV_PIX_FMT_NONE;
 
-        buffer_sink_params.pixel_fmts = pixel_fmts.data();
-
-        ret = avfilter_graph_create_filter(&m_buffer_sink_context, buffer_sink, "out", nullptr, &buffer_sink_params, m_filter_graph);
+        ret = avfilter_graph_create_filter(&m_buffer_sink_context, buffer_sink, "out", nullptr, nullptr, m_filter_graph);
 
         if (ret < 0)
         {

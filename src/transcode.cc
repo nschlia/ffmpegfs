@@ -983,6 +983,8 @@ static bool transcode(THREAD_DATA *thread_data, Cache_Entry *cache_entry, FFmpeg
         thread_data->m_thread_running_cond.notify_all();           // unlock main thread
     }
 
+    cache_entry->m_suspend_timeout = false; // Should end that suspension; otherwise, read may hang.
+
     cache_entry->m_cache_info.m_errno       = syserror;                         // Preserve errno
     cache_entry->m_cache_info.m_averror     = averror;                          // Preserve averror
 

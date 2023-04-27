@@ -13,11 +13,11 @@ Web site: https://nschlia.github.io/ffmpegfs/
 
 | Branch                                                    | Compiler     | FFmpeg | Host OS      | CPU    | Build State                                                  |
 | --------------------------------------------------------- | ------------ | ------ | ------------ | ------ | ------------------------------------------------------------ |
-| [master](https://github.com/nschlia/ffmpegfs/tree/master) | GCC 12.2.0   | 5.0.1  | Debian 12    | AMD/64 | ![Build Status](https://secure.oblivion-software.de/jenkins/buildStatus/icon?job=ffmpegfs+%28github-latest%29) |
-| [master](https://github.com/nschlia/ffmpegfs/tree/master) | GCC 10.2.1   | 4.3.2  | Debian 11    | AMD/64 | ![Build Status](https://secure.oblivion-software.de/jenkins/buildStatus/icon?job=ffmpegfs%20(github-ffmpeg)) |
+| [master](https://github.com/nschlia/ffmpegfs/tree/master) | GCC 12.2.0   | 5.0.1  | Debian 12    | AMD/64 | ![Build Status](https://secure.oblivion-software.de/jenkins/buildStatus/icon?job=ffmpegfs+github-latest) |
+| [master](https://github.com/nschlia/ffmpegfs/tree/master) | GCC 10.2.1   | 4.3.2  | Debian 11    | AMD/64 | ![Build Status](https://secure.oblivion-software.de/jenkins/buildStatus/icon?job=ffmpegfs%20github-ffmpeg) |
 | [master](https://github.com/nschlia/ffmpegfs/tree/master) | GCC 9.3.0    | 4.2.4  | Ubuntu 20.04 | AMD/64 | [![Build Status](https://github.com/nschlia/ffmpegfs/actions/workflows/make-gcc.yml/badge.svg)](https://github.com/nschlia/ffmpegfs/actions/workflows/make-gcc.yml) |
-| [master](https://github.com/nschlia/ffmpegfs/tree/master) | GCC 10.2.1   | 4.3.4  | Debian 11    | ARM/32 | ![Build Status](https://secure.oblivion-software.de/jenkins/buildStatus/icon?job=ffmpegfs+%28github-arm32%29) |
-| [master](https://github.com/nschlia/ffmpegfs/tree/master) | Clang 11.0.1 | 4.3.2  | Debian 11    | AMD/64 | ![Build Status](https://secure.oblivion-software.de/jenkins/buildStatus/icon?job=ffmpegfs%20(github-ffmpeg-clang)) |
+| [master](https://github.com/nschlia/ffmpegfs/tree/master) | GCC 10.2.1   | 4.3.4  | Debian 11    | ARM/32 | ![Build Status](https://secure.oblivion-software.de/jenkins/buildStatus/icon?job=ffmpegfs+github-arm32) |
+| [master](https://github.com/nschlia/ffmpegfs/tree/master) | Clang 11.0.1 | 4.3.2  | Debian 11    | AMD/64 | ![Build Status](https://secure.oblivion-software.de/jenkins/buildStatus/icon?job=ffmpegfs%20github-ffmpeg-clang) |
 | [master](https://github.com/nschlia/ffmpegfs/tree/master) | Clang 11.0.1 | 4.2.4  | Ubuntu 20.04 | AMD/64 | [![Build Status](https://github.com/nschlia/ffmpegfs/actions/workflows/make-clang.yml/badge.svg)](https://github.com/nschlia/ffmpegfs/actions/workflows/make-clang.yml) |
 | [master](https://github.com/nschlia/ffmpegfs/tree/master) |              |        |              |        | [![CodeQL](https://github.com/nschlia/ffmpegfs/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/nschlia/ffmpegfs/actions/workflows/codeql-analysis.yml) |
 

@@ -278,12 +278,12 @@ private:
     /**
      * @brief Standard format_helper without parameters.
      * @param[in] string_to_update - Original string.
-     * @param[in] size - unused
+     * @param[in] index_to_replace - unused
      * @return Returns original string.
      */
     static std::string format_helper(
             const std::string &string_to_update,
-            const size_t __attribute__((unused)) size);
+            const size_t __attribute__((unused)) index_to_replace);
 
     /**
      * @brief format_helper with variadic parameters.

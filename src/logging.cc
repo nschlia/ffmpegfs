@@ -234,7 +234,7 @@ void Logging::log_with_level(LOGLEVEL loglevel, const std::string & filename, co
 }
 
 std::string Logging::format_helper(const std::string &string_to_update,
-                                   const size_t __attribute__((unused)) size)
+                                   const size_t __attribute__((unused)) index_to_replace)
 {
     return string_to_update;
 }

@@ -290,8 +290,8 @@ private:
      *
      * Calls itself recursively until all tokens are replaced.
      *
-     * @param[in] string_to_search - fformat string to be searched.
-     * @param[in] index_to_replace - index numer (%n) to be replaced. May be present 0...x times.
+     * @param[in] string_to_search - format string to be searched.
+     * @param[in] index_to_replace - index number (%n) to be replaced. May be present 0...x times.
      * @param[in] val - Replacement value to fill in tokens.
      * @param[in] args - Further arguments.
      * @return Contents of string_to_search with all tokens replaced.

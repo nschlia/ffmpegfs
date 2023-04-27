@@ -673,10 +673,9 @@ bool transcoder_read_frame(Cache_Entry* cache_entry, char* buff, size_t offset, 
                     mssleep(GRANULARITY);
                 }
             }
-            else
-            {
-                Logging::trace(cache_entry->virtname(), "Frame no. %1: Cache hit  at offset %<%11zu>2 (length %<%6u>3).", frame_no, offset, len);
-            }
+
+            Logging::trace(cache_entry->virtname(), "Frame no. %1: Cache hit  at offset %<%11zu>2 (length %<%6u>3).", frame_no, offset, len);
+
             success = !cache_entry->m_cache_info.m_error;
         }
         else
@@ -983,6 +982,8 @@ static bool transcode(THREAD_DATA *thread_data, Cache_Entry *cache_entry, FFmpeg
         thread_data->m_thread_running_lock_guard = true;
         thread_data->m_thread_running_cond.notify_all();           // unlock main thread
     }
+
+    cache_entry->m_suspend_timeout = false; // Should end that suspension; otherwise, read may hang.
 
     cache_entry->m_cache_info.m_errno       = syserror;                         // Preserve errno
     cache_entry->m_cache_info.m_averror     = averror;                          // Preserve averror

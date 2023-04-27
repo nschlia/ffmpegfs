@@ -1,12 +1,12 @@
 <map id="src/buffer.h" name="src/buffer.h">
-<area shape="rect" id="node1" title="Buffer class." alt="" coords="228,5,323,32"/>
-<area shape="rect" id="node2" href="$fileio_8h.html" title="FileIO class." alt="" coords="198,80,265,107"/>
-<area shape="rect" id="node5" title=" " alt="" coords="5,155,68,181"/>
-<area shape="rect" id="node9" title=" " alt="" coords="289,80,353,107"/>
-<area shape="rect" id="node10" title=" " alt="" coords="377,80,451,107"/>
-<area shape="rect" id="node3" title=" " alt="" coords="93,155,178,181"/>
-<area shape="rect" id="node4" title=" " alt="" coords="202,155,261,181"/>
-<area shape="rect" id="node6" title=" " alt="" coords="285,155,335,181"/>
-<area shape="rect" id="node7" title=" " alt="" coords="359,155,426,181"/>
-<area shape="rect" id="node8" title=" " alt="" coords="450,155,578,181"/>
+<area shape="rect" id="node1" title="Buffer class." alt="" coords="218,5,305,32"/>
+<area shape="rect" id="node2" href="$fileio_8h.html" title="FileIO class." alt="" coords="190,80,250,107"/>
+<area shape="rect" id="node5" title=" " alt="" coords="5,155,64,181"/>
+<area shape="rect" id="node9" title=" " alt="" coords="275,80,333,107"/>
+<area shape="rect" id="node10" title=" " alt="" coords="357,80,427,107"/>
+<area shape="rect" id="node3" title=" " alt="" coords="88,155,168,181"/>
+<area shape="rect" id="node4" title=" " alt="" coords="193,155,247,181"/>
+<area shape="rect" id="node6" title=" " alt="" coords="271,155,318,181"/>
+<area shape="rect" id="node7" title=" " alt="" coords="343,155,404,181"/>
+<area shape="rect" id="node8" title=" " alt="" coords="428,155,540,181"/>
 </map>

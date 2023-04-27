@@ -1,4 +1,4 @@
 <map id="DiskIO" name="DiskIO">
-<area shape="rect" id="node1" title="Disk file I/O class." alt="" coords="5,80,71,107"/>
-<area shape="rect" id="node2" href="$classFileIO.html" title="Base class for I/O." alt="" coords="9,5,67,32"/>
+<area shape="rect" id="node1" title="Disk file I/O class." alt="" coords="5,80,68,107"/>
+<area shape="rect" id="node2" href="$classFileIO.html" title="Base class for I/O." alt="" coords="8,5,65,32"/>
 </map>

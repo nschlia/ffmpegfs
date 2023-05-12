@@ -6,13 +6,20 @@ export OPTIMISATION = -DNDEBUG -Ofast -g
 endif
 
 export WARNINGS = -Wall -Wextra -Wconversion -Wsign-compare -Wsign-conversion -Wpedantic
-export AM_CFLAGS = -std=c17 $(INCLUDES) $(WARNINGS) $(OPTIMISATION) $(WIN_CPPFLAGS) -D_GNU_SOURCE -D_FORTIFY_SOURCE=2 -DBIT_WIDTH=$(BIT_WIDTH) -Wl,-z,relro,-z,now
-export AM_CXXFLAGS = -std=c++17 $(INCLUDES) $(WARNINGS) $(OPTIMISATION) $(WIN_CPPFLAGS) -D_GNU_SOURCE -D_FORTIFY_SOURCE=2 -DBIT_WIDTH=$(BIT_WIDTH) -Wl,-z,relro,-z,now
+export AM_CFLAGS = -std=c17 $(INCLUDES) $(WARNINGS) $(OPTIMISATION) $(WIN_CPPFLAGS) -D_GNU_SOURCE -D_FORTIFY_SOURCE=2 -DBIT_WIDTH=$(BIT_WIDTH)
+export AM_CXXFLAGS = -std=c++17 $(INCLUDES) $(WARNINGS) $(OPTIMISATION) $(WIN_CPPFLAGS) -D_GNU_SOURCE -D_FORTIFY_SOURCE=2 -DBIT_WIDTH=$(BIT_WIDTH)
+if !WINDOWS
+export AM_CFLAGS += -Wl,-z,relro,-z,now
+export AM_CXXFLAGS += -Wl,-z,relro,-z,now
+endif
 if ENABLE_EXTRA_VERSION
 export AM_CFLAGS += -DEXTRA_VERSION=\"${EXTRA_VERSION}\"
 export AM_CXXFLAGS += -DEXTRA_VERSION=\"${EXTRA_VERSION}\"
 endif
-AM_LDFLAGS = -Wl,-z,relro,-z,now
+AM_LDFLAGS =
+if !WINDOWS
+AM_LDFLAGS += -Wl,-z,relro,-z,now
+endif
 
 export CACHEDIR="$(DESTDIR)/var/cache/ffmpegfs"
 

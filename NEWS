@@ -1,6 +1,6 @@
 FFmpegfs NEWS
 
-Important changes in 2.14 (2023-02-XX):
+Important changes in 2.14 (2023-05-XX):
 
 * Bugfix: Closes #141: Improved memory management by allocating several times the
   average size of allocations. This prevents obtaining tiny portions over and over

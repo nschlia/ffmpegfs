@@ -18,7 +18,7 @@ Important changes in 2.20 (2023-02-XX):
 * TODO: Create Windows installer.
 - TODO: Automatically build Windows release binaries and add to release assets.
 
-Important changes in 2.14 (2023-02-XX):
+Important changes in 2.14 (2023-05-XX):
 
 * Bugfix: Closes #141: Improved memory management by allocating several times the
   average size of allocations. This prevents obtaining tiny portions over and over

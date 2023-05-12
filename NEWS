@@ -1,6 +1,6 @@
 FFmpegfs NEWS
 
-Important changes in 2.20 (2023-02-XX):
+Important changes in 2.20 (2023-05-XX):
 
 * Issue #76: Added Windows support, see Building For Windows for information
   if you wish to build a Windows version. Currently no pre-compiled binaries

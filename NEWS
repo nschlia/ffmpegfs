@@ -434,12 +434,6 @@ This is a pre-release towards the new version 2.0 coming up soon.
            output format will not be recoded. Added --recodesame option to allow transcoding to the
            same format.
 
-Important changes in 1.12 (2020-04-XX)
-
-* Support:
-* Feature:
-* Bugfix:
-
 Important changes in 1.11 (2020-04-15)
 
 * Cool, there's an online revivew on Linux Uprising, you can read it here:

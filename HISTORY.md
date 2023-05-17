@@ -5,7 +5,7 @@ History
 
 **New in in 2.13 (2023-01-15):**
 
-- **Feature:** Added --prebuffer_time parameter. Files will be decoded until the  buffer contains the specified playing time, allowing playback to start
+- **Feature:** Added --prebuffer_time parameter. Files will be decoded until the buffer contains the specified playing time, allowing playback to start
   smoothly without lags. Works similar to --prebuffer_size but gives better control because it does not depend on the bit rate. An example: when set to 25 seconds for HLS transcoding, this will make sure that at least 2 complete segments will be available once the file is released and visible.
 - **Feature:** Closes [#140](https://github.com/nschlia/ffmpegfs/issues/140): Filtering the files that will be encoded has been added. A comma-separated list of extensions is specified by the *—include_extensions* parameter. These file extensions are the only ones that will be transcoded. The entries support shell wildcard patterns.
 - **Feature:** The --hide_extensions parameter syntax has been extended. The entries now support shell wildcard patterns.
@@ -66,9 +66,9 @@ History
 
 **New in in 2.9 (2022-02-16):**
 
-* **Feature:** [Issue #97](https://github.com/nschlia/ffmpegfs/issues/97):  Added options to chose different codecs. The audio codec can be selected with --audiocodec, for videos use --videocodec.
-* **Feature:** [Issue #109](https://github.com/nschlia/ffmpegfs/issues/109):  Allow user defined file extensions for source files. By default, only standard extensions are accepted, i.e., mp4, ts, avi etc. Arbitrary file extensions can be defined now, e.g. using --extensions=xxx,abc,yxz,aaa to also convert files ending with .xxx, .abc and so on.
-* **Feature:** [Issue #121](https://github.com/nschlia/ffmpegfs/issues/121): Added MKV support.  New format can be selected with --desttype=mkv.
+* **Feature:** [Issue #97](https://github.com/nschlia/ffmpegfs/issues/97): Added options to chose different codecs. The audio codec can be selected with --audiocodec, for videos use --videocodec.
+* **Feature:** [Issue #109](https://github.com/nschlia/ffmpegfs/issues/109): Allow user defined file extensions for source files. By default, only standard extensions are accepted, i.e., mp4, ts, avi etc. Arbitrary file extensions can be defined now, e.g. using --extensions=xxx,abc,yxz,aaa to also convert files ending with .xxx, .abc and so on.
+* **Feature:** [Issue #121](https://github.com/nschlia/ffmpegfs/issues/121): Added MKV support. New format can be selected with --desttype=mkv.
 * **Bugfix:** [Issue #112](https://github.com/nschlia/ffmpegfs/issues/112): Fixed Docker detection.
 * **Bugfix:** [Issue #110](https://github.com/nschlia/ffmpegfs/issues/110): Docker build command failed, added missing libchardet and allow libdvdread4 or *8 to be used, whatever available.
 * **Bugfix:** Fixed crash when video had no audio.
@@ -138,7 +138,7 @@ History
 **New in 2.3 (2021-06-11):**
 
 * **Enhancement:** [Issue #80](https://github.com/nschlia/ffmpegfs/issues/80): Open input video codec only if target supports video. Saves resources: no need to decode video frames if not used.
-* **Enhancement:**  [Issue #81](https://github.com/nschlia/ffmpegfs/issues/81): If source format has no audio, and the target supports no video (e.g.WAV/MP3), the files have shown up zero sized. These will now not be visible when doing ls. When trying to open them "File not found" will be returned.
+* **Enhancement:** [Issue #81](https://github.com/nschlia/ffmpegfs/issues/81): If source format has no audio, and the target supports no video (e.g.WAV/MP3), the files have shown up zero sized. These will now not be visible when doing ls. When trying to open them "File not found" will be returned.
 * **Added** "configure --enable-debug" to create binaries with debug symbols. Defaults to the optimised version.
 * **Feature:** [Issue #73](https://github.com/nschlia/ffmpegfs/issues/73) Cue sheet tracks now play "gapless" if played in order. Whenever a track is started, the next track will automatically be transcoded as well.
 * **Feature:** [Issue #66](https://github.com/nschlia/ffmpegfs/issues/66) and [issue #82](https://github.com/nschlia/ffmpegfs/issues/82): Added cue sheet support. If a file with cue extension is found with the same name as a media file or if a cue sheet is embedded into it (a tag named CUESHEET), tracks defined in it will show up in a virtual directory.
@@ -171,7 +171,7 @@ History
 **New in 2.1 (2020-12-14):**
 
 * **Feature**: Add BLURAY_VIDEO_FORMAT_2160P (UHD)
-* **Feature**: Implemented in 1.7, removed experimental state for --win_smb_fix now.  Windows seems to access the files on Samba drives starting at the last 64K segment simply when the file is opened. Setting --win_smb_fix=1 will ignore these attempts (not decode the file up to this point).
+* **Feature**: Implemented in 1.7, removed experimental state for --win_smb_fix now. Windows seems to access the files on Samba drives starting at the last 64K segment simply when the file is opened. Setting --win_smb_fix=1 will ignore these attempts (not decode the file up to this point).
 * **Feature**: --win_smb_fix now defaults to 1 (fix on by default). Has no effect if the drive is accessed directly or via Samba from Linux.
 * **Bugfix**: Fixed grammatical error in text: It's "access to", not "access at".
 * **Bugfix**: Did not transcode some source files with invalid DTS.

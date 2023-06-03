@@ -124,7 +124,7 @@ A 32-bit version is probably possible, but Cygwin 32 is no longer supported on W
 
 #### Troubleshooting
 
-When ffmepgfs.exe refuses to run with the following message:
+When ffmpegfs.exe refuses to run with the following message:
 
 ```
  "link_up(): shmget error (88) Function not implemented" -> Cygserver not running

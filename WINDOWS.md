@@ -29,7 +29,7 @@ In order to activate Fuse support please follow the instructions  on https://win
 
 The necessary build environment will be made available by installing via Cygwin setup.
 ```
-git, gcc-core, gcc-g++, make, pkg-config, asciidoc, docbook-xml, xxd, libtool, libiconv-devel, libcue-devel,  libsqlite3-devel, wget
+git, gcc-core, gcc-g++, make, pkg-config, asciidoc, docbook-xml, xxd, libtool, libiconv-devel, libcue-devel,  libsqlite3-devel, wget, automake
 ```
 If there are multiple versions available, choose the highest. Additionally make sure to install the **automake** wrapper for various versions. This will save you from the headache of choosing the right bundles.
 To get DVD support:

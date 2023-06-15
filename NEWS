@@ -27,6 +27,7 @@ Important changes in 2.14 (2023-06-15):
 * Bugfix: Issue #144: To fix the crashes that may have been caused by them, the
   variables impacted by a potential threading issue were marked as "volatile."
 * Bugfix: Closes#1037653: Fix build with GCC-13
+* Bugfix: Update docker build for Debian Bookworm
 * Enhancement: Record milliseconds for every log event.
 * Enhancement: make check: added a file size check to frame set tests.
 * Optimisation: When reopening after invalidating the cache, the size remained

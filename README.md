@@ -54,6 +54,7 @@ News
 - **Bugfix:** Issue [#143](https://github.com/nschlia/ffmpegfs/issues/143): To avoid occasional EPERM failures, missing synchronisation objects were added.
 - **Bugfix:** Issue [#144](https://github.com/nschlia/ffmpegfs/issues/144): To fix the crashes that may have been caused by them, the variables impacted by a potential threading issue were marked as "volatile."
 - **Bugfix:** [Closes#1037653:](https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=1037653) Fix build with GCC-13
+- **Bugfix:** Update docker build for Debian Bookworm
 - **Enhancement:** Record milliseconds for every log event.
 - **Enhancement:** make check: added a file size check to frame set tests.
 - **Optimisation:** When reopening after invalidating the cache, the size remained at 0. The original size is now once again reserved in order to prevent reallocations.

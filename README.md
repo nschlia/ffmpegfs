@@ -34,7 +34,7 @@ To see what's been done so far, checkout the [windows](https://github.com/nschli
 
 ### Version 2.14 under development
 
-**New in in 2.14 (2023-05-XX):**
+**New in in 2.14 (2023-06-15):**
 
 - **Bugfix:** Closes [#141](https://github.com/nschlia/ffmpegfs/issues/141): Improved memory management by allocating several times the average size of allocations. This prevents obtaining tiny portions over and over again. Additionally, after the file is opened, grab the entire expected memory block rather than doing a tiny allocation initially, followed by a larger allocation.
 - **Bugfix:** Avoid race conditions that cause the inter-process semaphore creation to fail for the second process.
@@ -47,6 +47,7 @@ To see what's been done so far, checkout the [windows](https://github.com/nschli
 - **Bugfix:** When transferring from cache to the Fuse buffer, avoid a possible 1 byte overrun.
 - **Bugfix:** Issue [#143](https://github.com/nschlia/ffmpegfs/issues/143): To avoid occasional EPERM failures, missing synchronisation objects were added.
 - **Bugfix:** Issue [#144](https://github.com/nschlia/ffmpegfs/issues/144): To fix the crashes that may have been caused by them, the variables impacted by a potential threading issue were marked as "volatile."
+- **Bugfix:** [Closes#1037653:](https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=1037653) Fix build with GCC-13
 - **Enhancement:** Record milliseconds for every log event.
 - **Enhancement:** make check: added a file size check to frame set tests.
 - **Optimisation:** When reopening after invalidating the cache, the size remained at 0. The original size is now once again reserved in order to prevent reallocations.

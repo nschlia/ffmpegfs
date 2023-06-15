@@ -73,6 +73,9 @@ AC_SYS_LARGEFILE
 # Define POSIX standard conformance
 AC_DEFINE([_POSIX_C_SOURCE], [200809L], [Define the POSIX version])
 
+# Bug#1037653: Fix build with GCC-13
+AC_DEFINE([__STDC_CONSTANT_MACROS], [], [Must be defined for build with GCC 13])
+
 # This is because there are PKG_CHECK_MODULES calls is inside a conditional.
 PKG_PROG_PKG_CONFIG
 

@@ -38,7 +38,16 @@ News
 - TODO: Create Windows installer.
 - TODO: Automatically build Windows release binaries and add to release assets.
 
-### Version 2.14 under development
+### Version 2.15 under development
+
+- Issue [#149](https://github.com/nschlia/ffmpegfs/issues/149): 2023-05-04 - xxxxxxxxxx - lavu 58.7.100 - frame.h
+  Deprecate AVFrame.interlaced_frame, AVFrame.top_field_first, and AVFrame.key_frame.
+  Add AV_FRAME_FLAG_INTERLACED, AV_FRAME_FLAG_TOP_FIELD_FIRST, and AV_FRAME_FLAG_KEY flags as replacement.
+- Issue [#149](https://github.com/nschlia/ffmpegfs/issues/149): 2023-05-04 - xxxxxxxxxx - lavu 58.7.100 - frame.h
+  Deprecate AVFrame.interlaced_frame, AVFrame.top_field_first, and AVFrame.key_frame.
+  Add AV_FRAME_FLAG_INTERLACED, AV_FRAME_FLAG_TOP_FIELD_FIRST, and AV_FRAME_FLAG_KEY flags as replacement.
+- Issue [#149](https://github.com/nschlia/ffmpegfs/issues/149): 2021-09-20 - dd846bc4a91 - lavc 59.8.100 - avcodec.h codec.h
+  Deprecate AV_CODEC_FLAG_TRUNCATED and AV_CODEC_CAP_TRUNCATED, as they are redundant with parsers.
 
 **New in in 2.14 (2023-06-15):**
 
@@ -61,18 +70,6 @@ News
 - **Optimisation:** To avoid reallocations, save enough space in the cache buffer to hold the entire frame set.
 - **Optimisation:** Checking folders to see if they can be transcoded is completely pointless. Directories are now immediately skipped.
 - To avoid problems with logfile viewers, renamed built-in logfiles to *_builtin.log (removing the double extension).
-
-### Version 2.13 has been released
-
-**New in in 2.13 (2023-01-15):**
-
-- **Feature:** Added --prebuffer_time parameter. Files will be decoded until the buffer contains the specified playing time, allowing playback to start
- smoothly without lags. Works similar to --prebuffer_size but gives better control because it does not depend on the bit rate. An example: when set to 25 seconds for HLS transcoding, this will make sure that at least 2 complete segments will be available once the file is released and visible.
-- **Feature:** Closes [#140](https://github.com/nschlia/ffmpegfs/issues/140): Filtering the files that will be encoded has been added. A comma-separated list of extensions is specified by the *—include_extensions* parameter. These file extensions are the only ones that will be transcoded. The entries support shell wildcard patterns.
-- **Feature:** The --hide_extensions parameter syntax has been extended. The entries now support shell wildcard patterns.
-- **Bugfix:** Closes [#139](https://github.com/nschlia/ffmpegfs/issues/139): Additional files could be added using the *—extensions* parameter. However, this is no longer necessary; in the past, a file's extension determined whether or not it would be transcoded. Files with unknown extensions would be ignored. The extension is no longer important because FFmpegfs now examines all input files and recognises transcodable files by the format.
-The outdated *—extensions* argument was removed without substitution.
-- **Bugfix:** Fixed crash when implode() function was called with an empty string. Happened with Windows GCC 11.3.0 only.
 
 ## Full History
 

@@ -72,7 +72,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 #set(CMAKE_VERBOSE_MAKEFILE ON) # Enable if you are curious. Make builds very slow...
 
-project(ffmpegfs VERSION 2.13)
+project(ffmpegfs VERSION 2.15)
 
 # Project metadata
 set(PROJECT_VENDOR      "Oblivion Software/Norbert Schlia")
@@ -700,7 +700,6 @@ target_link_libraries(${PROJECT_NAME}
     swscale
     swresample
     chardet
-    postproc
     sqlite3
     rt
     dvdnav
@@ -715,7 +714,7 @@ add_subdirectory(test)
 
 # cppcheck
 add_custom_command(OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/cppcheck.log"
-    COMMAND cppcheck --force --enable=all --inconclusive --library=posix --output-file="${CMAKE_CURRENT_BINARY_DIR}/cppcheck.log" --suppressions-list=${CMAKE_CURRENT_SOURCE_DIR}/cppcheck-suppressions.txt -I "${CMAKE_CURRENT_SOURCE_DIR}/src/" -I "${CMAKE_CURRENT_SOURCE_DIR}/src/vcd/" -DLIBAVUTIL_VERSION_MICRO -DUSE_LIBBLURAY -DUSE_LIBDVD -DUSE_LIBVCD -DHAVE_CONFIG_H -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DUSE_LIBSWRESAMPLE -UAV_CODEC_CAP_TRUNCATED -DAV_CODEC_FLAG_TRUNCATED=1 -D__GNUC_ -DPACKAGE_NAME="FFmpegfs" -DFFMPEFS_VERSION="V0.0" -U__clang_version__ -UPRESCAN_FRAMES -DEXTRA_VERSION="" "${CMAKE_CURRENT_SOURCE_DIR}/src/" "${CMAKE_CURRENT_SOURCE_DIR}/src/vcd/"
+    COMMAND cppcheck --force --enable=all --inconclusive --library=posix --output-file="${CMAKE_CURRENT_BINARY_DIR}/cppcheck.log" --suppressions-list=${CMAKE_CURRENT_SOURCE_DIR}/cppcheck-suppressions.txt -I "${CMAKE_CURRENT_SOURCE_DIR}/src/" -I "${CMAKE_CURRENT_SOURCE_DIR}/src/vcd/" -DLIBAVUTIL_VERSION_MICRO -DUSE_LIBBLURAY -DUSE_LIBDVD -DUSE_LIBVCD -DHAVE_CONFIG_H -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DUSE_LIBSWRESAMPLE -D__GNUC_ -DPACKAGE_NAME="FFmpegfs" -DFFMPEFS_VERSION="V0.0" -U__clang_version__ -UPRESCAN_FRAMES -DEXTRA_VERSION="" "${CMAKE_CURRENT_SOURCE_DIR}/src/" "${CMAKE_CURRENT_SOURCE_DIR}/src/vcd/"
     WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}"
     COMMENT "Running cppcheck"
     VERBATIM

@@ -41,6 +41,7 @@
  * deprecated functions as needed.
  *
  * See doc/APIchanges
+ * https://raw.githubusercontent.com/FFmpeg/FFmpeg/master/doc/APIchanges
  */
 
 // FFmpeg 4.1.8 "al-Khwarizmi" or newer:
@@ -128,5 +129,27 @@
   * Deprecate swr_alloc_set_opts() and swr_build_matrix().
 */
 #define SWR_DEP_ALLOC_SET_OPTS              (LIBSWRESAMPLE_VERSION_INT >= AV_VERSION_INT(4, 5, 0))
+/**
+ * 2023-05-04 - xxxxxxxxxx - lavu 58.7.100 - frame.h
+ * Deprecate AVFrame.interlaced_frame, AVFrame.top_field_first, and
+ * AVFrame.key_frame.
+ * Add AV_FRAME_FLAG_INTERLACED, AV_FRAME_FLAG_TOP_FIELD_FIRST, and
+ * AV_FRAME_FLAG_KEY flags as replacement.
+ */
+#define LAVU_ADD_NEW_FRAME_FLAGS            (LIBAVUTIL_VERSION_INT >= AV_VERSION_INT(58, 7, 0))
+/**
+ * 2021-09-20 - dd846bc4a91 - lavc 59.8.100 - avcodec.h codec.h
+ * Deprecate AV_CODEC_FLAG_TRUNCATED and AV_CODEC_CAP_TRUNCATED,
+ * as they are redundant with parsers.
+ */
+#define LAVC_DEP_FLAG_TRUNCATED             (LIBAVCODEC_VERSION_INT >= AV_VERSION_INT(59, 8, 0))
+
+/**
+ * 2023-05-xx - xxxxxxxxxx - lavc 60 - avcodec.h
+ * Depreate AVCodecContext.ticks_per_frame in favor of
+ * AVCodecContext.framerate (encoding) and
+ * AV_CODEC_PROP_FIELDS (decoding).
+ */
+//#define LAVC_DEP_TICKSPERFRAME              (LIBAVCODEC_VERSION_INT >= AV_VERSION_INT(60, 0, 0))
 
 #endif // FFMPEG_COMPAT_H

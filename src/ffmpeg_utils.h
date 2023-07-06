@@ -119,10 +119,6 @@ const char *get_media_type_string(enum AVMediaType media_type);
 #endif
 
 // These once had a different name
-#if !defined(AV_CODEC_CAP_DELAY) && defined(CODEC_CAP_DELAY)
-#define AV_CODEC_CAP_DELAY                      CODEC_CAP_DELAY                         /**< @brief AV_CODEC_CAP_DELAY is missing in older FFmpeg versions */
-#endif
-
 #if !defined(AV_CODEC_CAP_TRUNCATED) && defined(CODEC_CAP_TRUNCATED)
 #define AV_CODEC_CAP_TRUNCATED                  CODEC_CAP_TRUNCATED                     /**< @brief AV_CODEC_CAP_TRUNCATED is missing in older FFmpeg versions */
 #endif

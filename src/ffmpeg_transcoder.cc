@@ -650,6 +650,7 @@ int FFmpeg_Transcoder::open_bestmatch_video()
 
             m_is_video = is_video();
 
+#if !LAVC_DEP_FLAG_TRUNCATED
 #ifdef AV_CODEC_CAP_TRUNCATED
             if (m_in.m_video.m_codec_ctx->codec->capabilities & AV_CODEC_CAP_TRUNCATED)
             {
@@ -658,6 +659,7 @@ int FFmpeg_Transcoder::open_bestmatch_video()
 #else
 #warning "Your FFMPEG distribution is missing AV_CODEC_CAP_TRUNCATED flag. Probably requires fixing!"
 #endif
+#endif  // !LAVC_DEP_FLAG_TRUNCATED
         }
     }
     return 0;
@@ -3497,7 +3499,9 @@ int FFmpeg_Transcoder::decode_video_frame(AVPacket *pkt, int *decoded)
                 }
 
                 frame->quality      = m_out.m_video.m_codec_ctx->global_quality;
+#if !LAVU_ADD_NEW_FRAME_FLAGS
                 frame->key_frame    = 0;                    // Leave that decision to encoder
+#endif
                 frame->pict_type    = AV_PICTURE_TYPE_NONE;	// other than AV_PICTURE_TYPE_NONE causes warnings
 
                 if (frame->pts != AV_NOPTS_VALUE)
@@ -3518,7 +3522,11 @@ int FFmpeg_Transcoder::decode_video_frame(AVPacket *pkt, int *decoded)
                         {
                             Logging::debug(virtname(), "Force key frame for next segment no. %1 at PTS=%2 (%3).", next_segment, pts, format_duration(pos).c_str());
 
-                            frame->key_frame    = 1;                // This is required to reset the GOP counter (insert the next key frame after gop_size frames)
+#if LAVU_ADD_NEW_FRAME_FLAGS
+                            frame->flags        |= AV_FRAME_FLAG_KEY;   // This is required to reset the GOP counter (insert the next key frame after gop_size frames)
+#else   // !LAVU_ADD_NEW_FRAME_FLAGS
+                            frame->key_frame    = 1;                    // This is required to reset the GOP counter (insert the next key frame after gop_size frames)
+#endif  // !LAVU_ADD_NEW_FRAME_FLAGS
                             frame->pict_type    = AV_PICTURE_TYPE_I;
                             m_insert_keyframe   = true;
                         }
@@ -4423,17 +4431,31 @@ int FFmpeg_Transcoder::encode_video_frame(const AVFrame *frame, int *data_presen
     // Packet used for temporary storage.
     if (frame != nullptr)
     {
+#if LAVU_ADD_NEW_FRAME_FLAGS
+        if (frame->flags & AV_FRAME_FLAG_INTERLACED)
+        {
+            if (m_out.m_video.m_codec_ctx->codec->id == AV_CODEC_ID_MJPEG)
+            {
+                m_out.m_video.m_stream->codecpar->field_order = (frame->flags & AV_FRAME_FLAG_TOP_FIELD_FIRST) ? AV_FIELD_TT : AV_FIELD_BB;
+            }
+            else
+            {
+                m_out.m_video.m_stream->codecpar->field_order = (frame->flags & AV_FRAME_FLAG_TOP_FIELD_FIRST) ? AV_FIELD_TB : AV_FIELD_BT;
+            }
+        }
+#else   // !LAVU_ADD_NEW_FRAME_FLAGS
         if (frame->interlaced_frame)
         {
             if (m_out.m_video.m_codec_ctx->codec->id == AV_CODEC_ID_MJPEG)
             {
-                m_out.m_video.m_stream->codecpar->field_order = frame->top_field_first ? AV_FIELD_TT:AV_FIELD_BB;
+                m_out.m_video.m_stream->codecpar->field_order = frame->top_field_first ? AV_FIELD_TT : AV_FIELD_BB;
             }
             else
             {
-                m_out.m_video.m_stream->codecpar->field_order = frame->top_field_first ? AV_FIELD_TB:AV_FIELD_BT;
+                m_out.m_video.m_stream->codecpar->field_order = frame->top_field_first ? AV_FIELD_TB : AV_FIELD_BT;
             }
         }
+#endif  // !LAVU_ADD_NEW_FRAME_FLAGS
         else
         {
             m_out.m_video.m_stream->codecpar->field_order = AV_FIELD_PROGRESSIVE;
@@ -6587,7 +6609,7 @@ int FFmpeg_Transcoder::send_filters(FFmpeg_Frame *srcframe, int & ret)
 {
     ret = 0;
 
-    if (m_buffer_source_context != nullptr /*&& srcframe->interlaced_frame*/)
+    if (m_buffer_source_context != nullptr)
     {
         try
         {

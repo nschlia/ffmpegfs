@@ -1,3 +1,74 @@
+ffmpegfs (2.14-1) unstable; urgency=medium
+
+  * Bugfix: Closes #141: Improved memory management by allocating several times
+    the average size of allocations. This prevents obtaining tiny portions over
+    and over again. Additionally, after the file is opened, grab the entire
+    expected memory block rather than doing a tiny allocation initially,
+    followed by a larger allocation.
+  * Bugfix: Avoid race conditions that cause the inter-process semaphore
+    creation to fail for the second process.
+  * Bugfix: Issue #119: If a seek request is still open after EOF, restart
+    transcoding.
+  * Bugfix: Issue #119: To prevent frame/segment creation errors, the frame set
+    and HLS code has been updated.
+  * Bugfix: Avoid crashes during shutdown if cache objects have already been
+    closed.
+  * Bugfix: Issue #119: The AVSEEK_FLAG_FRAME set should be used to seek to
+    frames when building frame sets. Otherwise, output images may vary if
+    searched for or continuously decoded.
+  * Bugfix: The conversion of PTS to frame number and vice versa for frame sets
+    was incorrect if TBR did not equal frames per second.
+  * Bugfix: Fixed seek requests that are being ignored with frame sets.
+  * Bugfix: When transferring from cache to the Fuse buffer, avoid a possible
+    1 byte overrun.
+  * Bugfix: Issue #143: To avoid occasional EPERM failures, missing
+    synchronisation objects were added.
+  * Bugfix: Issue #144: To fix the crashes that may have been caused by them,
+    the variables impacted by a potential threading issue were marked as
+    "volatile."
+  * Bugfix: Closes:#1037653: Fix build with GCC-13
+  * Bugfix: Update docker build for Debian Bookworm
+  * Enhancement: Record milliseconds for every log event.
+  * Enhancement: make check: added a file size check to frame set tests.
+  * Optimisation: When reopening after invalidating the cache, the size remained
+    at 0. The original size is now once again reserved in order to prevent
+    reallocations.
+  * Optimisation: To avoid reallocations, save enough space in the cache buffer
+    to hold the entire frame set.
+  * Optimisation: Checking folders to see if they can be transcoded is
+    completely pointless. Directories are now immediately skipped.
+  * To avoid problems with logfile viewers, renamed built-in logfiles to
+    *_builtin.log (removing the double extension).
+
+ -- Norbert Schlia <nschlia@oblivion-software.de>  Thu, 15 Jun 2023 22:01:32 +0200
+
+ffmpegfs (2.13-1) unstable; urgency=medium
+
+  * Added --prebuffer_time parameter. Files will be decoded until the buffer
+    contains the specified playing time, allowing playback to start smoothly
+    without lags. Works similar to --prebuffer_size but gives better control
+    because it does not depend on the bit rate. An example: when set to
+    25 seconds for HLS transcoding, this will make sure that at least 2 complete
+    segments will be available once the file is released and visible.
+  * Feature: Closes #140: Filtering the files that will be encoded has been
+    added. A comma-separated list of extensions is specified by the
+    --include_extensions parameter. These file extensions are the only ones that
+    will be transcoded.
+    The entries support shell wildcard patterns.
+  * Feature: The --hide_extensions parameter syntax has been extended. The
+    entries now support shell wildcard patterns.
+  * Bugfix: Closes #139: Additional files could be added using the --extensions
+    parameter. However, this is no longer necessary; in the past, a file's
+    extension determined whether or not it would be transcoded. Files with
+    unknown extensions would be ignored. The extension is no longer important
+    because FFmpegfs now examines all input files and recognises transcodable
+    files by the format.
+    The outdated --extensions argument was removed without substitution.
+  * Bugfix: Fixed crash when implode() function was called with an empty string.
+    Happened with Windows GCC 11.3.0 only.
+
+ -- Norbert Schlia <nschlia@oblivion-software.de>  Sun, 15 Jan 2023 12:19:42 +0100
+
 ffmpegfs (2.12-1) unstable; urgency=medium
 
   * The code has been run through clang-tidy to identify bug-prone or

@@ -225,24 +225,24 @@ bool Buffer::init(bool erase_cache)
         m_cur_ci = &m_ci[0];
 
         // Create the path to the cache file. All paths are the same, so this is required only once.
-        char *cachefile = new_strdup(m_ci[0].m_cachefile);
+        char *cachefiletmp = new_strdup(m_ci[0].m_cachefile);
 
-        if (cachefile == nullptr)
+        if (cachefiletmp == nullptr)
         {
             Logging::error(m_ci[0].m_cachefile, "Error opening the cache file: out of memory.");
             errno = ENOMEM;
             throw false;
         }
 
-        if (mktree(dirname(cachefile), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH) && errno != EEXIST)
+        if (mktree(dirname(cachefiletmp), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH) && errno != EEXIST)
         {
             Logging::error(m_ci[0].m_cachefile, "Error creating cache directory: (%1) %2", errno, strerror(errno));
-            delete [] cachefile;
+            delete [] cachefiletmp;
             throw false;
         }
         errno = 0;  // reset EEXIST, error can safely be ignored here
 
-        delete [] cachefile;
+        delete [] cachefiletmp;
 
 #if __cplusplus >= 202002L
         // C++20 (and later) code
@@ -929,13 +929,6 @@ bool Buffer::copy(uint8_t* out_data, size_t offset, size_t bufsize, uint32_t seg
         return false;
     }
 
-    if (ci->m_buffer_size != segment_size)
-    {
-        Logging::error(ci->m_cachefile, "INTERNAL ERROR: Buffer::copy()! ci->m_buffer_size != segment_size - Segment: %1 ci->m_buffer_size: %2 segment_size: %3", segment_no, ci->m_buffer_size, segment_size);
-        errno = ESPIPE; // Comes from size()
-        return false;
-    }
-
     if (segment_size > offset)
     {
         if (segment_size < offset + bufsize)
@@ -1109,7 +1102,7 @@ bool Buffer::is_open()
 {
     std::lock_guard<std::recursive_mutex> lock_mutex(m_mutex);
 
-    for (CACHEINFO & ci : m_ci)
+    for (const CACHEINFO & ci : m_ci)
     {
         if ((ci.m_fd != -1 && (fcntl(ci.m_fd, F_GETFL) != -1 || errno != EBADF)))
         {

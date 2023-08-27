@@ -164,9 +164,9 @@ bool Format_Options::is_video_codec_supported(AVCodecID codec_id) const
     FORMAT_MAP::const_iterator it = m_format_map.find(params.m_sample_fmt);
     if (it != m_format_map.cend())
     {
-        for (const AVCodecID & video_codec : it->second.m_video_codec)
+        for (const AVCodecID & video_codec_id : it->second.m_video_codec)
         {
-            if (video_codec == codec_id)
+            if (video_codec_id == codec_id)
             {
                 return true;
             }
@@ -181,14 +181,14 @@ std::string Format_Options::video_codec_list() const
     FORMAT_MAP::const_iterator it = m_format_map.find(params.m_sample_fmt);
     if (it != m_format_map.cend())
     {
-        for (const AVCodecID & video_codec : it->second.m_video_codec)
+        for (const AVCodecID & video_codec_id : it->second.m_video_codec)
         {
             if (!buffer.empty())
             {
                 buffer += ", ";
             }
 
-            buffer += get_video_codec_text(video_codec);
+            buffer += get_video_codec_text(video_codec_id);
         }
     }
 
@@ -217,9 +217,9 @@ bool Format_Options::is_audio_codec_supported(AVCodecID codec_id) const
     FORMAT_MAP::const_iterator it = m_format_map.find(params.m_sample_fmt);
     if (it != m_format_map.cend())
     {
-        for (const AVCodecID & audio_codec : it->second.m_audio_codec)
+        for (const AVCodecID & audio_codec_id : it->second.m_audio_codec)
         {
-            if (audio_codec == codec_id)
+            if (audio_codec_id == codec_id)
             {
                 return true;
             }
@@ -234,14 +234,14 @@ std::string Format_Options::audio_codec_list() const
     FORMAT_MAP::const_iterator it = m_format_map.find(params.m_sample_fmt);
     if (it != m_format_map.cend())
     {
-        for (const AVCodecID & audio_codec : it->second.m_audio_codec)
+        for (const AVCodecID & audio_codec_id : it->second.m_audio_codec)
         {
             if (!buffer.empty())
             {
                 buffer += ", ";
             }
 
-            buffer += get_audio_codec_text(audio_codec);
+            buffer += get_audio_codec_text(audio_codec_id);
         }
     }
 
@@ -291,12 +291,12 @@ AVCodecID Format_Options::subtitle_codec(AVCodecID codec_id) const
     }
 
     // Try to find direct match, prefer same as input stream
-    for (const AVCodecID & subtitle_codec : it->second.m_subtitle_codec)
+    for (const AVCodecID & subtitle_codec_id : it->second.m_subtitle_codec)
     {
         // Also match AV_CODEC_ID_DVD_SUBTITLE to AV_CODEC_ID_DVB_SUBTITLE
-        if (subtitle_codec == codec_id || (codec_id == AV_CODEC_ID_DVD_SUBTITLE && subtitle_codec == AV_CODEC_ID_DVB_SUBTITLE))
+        if (subtitle_codec_id == codec_id || (codec_id == AV_CODEC_ID_DVD_SUBTITLE && subtitle_codec_id == AV_CODEC_ID_DVB_SUBTITLE))
         {
-            return subtitle_codec;
+            return subtitle_codec_id;
         }
     }
 
@@ -304,22 +304,22 @@ AVCodecID Format_Options::subtitle_codec(AVCodecID codec_id) const
     if (is_text_codec(codec_id))
     {
         // Find a text based codec in the list
-        for (const AVCodecID & subtitle_codec : it->second.m_subtitle_codec)
+        for (const AVCodecID & subtitle_codec_id : it->second.m_subtitle_codec)
         {
-            if (is_text_codec(subtitle_codec))
+            if (is_text_codec(subtitle_codec_id))
             {
-                return subtitle_codec;
+                return subtitle_codec_id;
             }
         }
     }
     else
     {
         // Find a bitmap based codec in the list
-        for (const AVCodecID & subtitle_codec : it->second.m_subtitle_codec)
+        for (const AVCodecID & subtitle_codec_id : it->second.m_subtitle_codec)
         {
-            if (!is_text_codec(subtitle_codec))
+            if (!is_text_codec(subtitle_codec_id))
             {
-                return subtitle_codec;
+                return subtitle_codec_id;
             }
         }
     }
@@ -2383,7 +2383,7 @@ int read_file(const std::string & path, std::string & result)
         }
         res = encoding;
     }
-    catch (std::system_error& e)
+    catch (const std::system_error& e)
     {
         res = errno;
     }

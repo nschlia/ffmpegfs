@@ -390,8 +390,8 @@ size_t DvdIO::demux_pes(uint8_t *out, const uint8_t *in, size_t len) const
     size_t netsize = 0;
     while (len > 0)
     {
-        size_t size = 0;
-        if (!get_packet_size(in, len, &size) || size > len)
+        size_t pktsize = 0;
+        if (!get_packet_size(in, len, &pktsize) || pktsize > len)
         {
             break;
         }
@@ -408,29 +408,29 @@ size_t DvdIO::demux_pes(uint8_t *out, const uint8_t *in, size_t len) const
         }
         case (0x100 | PS_STREAM_ID_PACK_HEADER):    // MPEG-2 Pack Header
         {
-            std::memcpy(out, in, size);
-            out += size;
-            netsize += size;
+            std::memcpy(out, in, pktsize);
+            out += pktsize;
+            netsize += pktsize;
             break;
         }
         default:
         {
-            int id = get_pes_id(in, size);
+            int id = get_pes_id(in, pktsize);
             if (id >= PS_STREAM_ID_AUDIO)           // Audio/Video/Extended or Directory
             {
                 // Probably this is sufficient here:
                 // 110x xxxx    0xC0 - 0xDF	MPEG-1 or MPEG-2 audio stream number x xxxx
                 // 1110 xxxx    0xE0 - 0xEF	MPEG-1 or MPEG-2 video stream number xxxx
-                std::memcpy(out, in, size);
-                out += size;
-                netsize += size;
+                std::memcpy(out, in, pktsize);
+                out += pktsize;
+                netsize += pktsize;
             }
             break;
         }
         }
 
-        in += size;
-        len -= size;
+        in += pktsize;
+        len -= pktsize;
     }
 
     return netsize;

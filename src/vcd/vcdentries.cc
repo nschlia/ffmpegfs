@@ -161,7 +161,6 @@ int VcdEntries::load_file(const std::string & path)
 int VcdEntries::scan_chapters()
 {
     FILE *      fpi = nullptr;
-    std::string fullname;
     struct stat stbuf;
 
     std::memset(&stbuf, 0, sizeof(stbuf));
@@ -181,6 +180,8 @@ int VcdEntries::scan_chapters()
         {
             if (last_track_no != m_chapters[chapter_no].get_track_no())
             {
+                std::string fullname;
+
                 last_track_no = m_chapters[chapter_no].get_track_no();
 
                 int orgerrno = VCDUTILS::locate_video(m_disk_path, last_track_no, fullname);

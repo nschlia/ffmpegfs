@@ -16,7 +16,7 @@ cp -vpf "${DIRNAME}/raven_d.ogg.${FILEEXT}" "${TMPPATH}" > /dev/null
 if [ "${DESTTYPE}" == "mp4" ];
 then
     # mp4
-    check_filesize "raven_e.flac" 485435 494238
+    check_filesize "raven_e.flac" 485372 494238
     check_filesize "raven_d.ogg" 349440 355298
 elif [ "${DESTTYPE}" == "mp3" ];
 then
@@ -31,22 +31,22 @@ then
 elif [ "${DESTTYPE}" == "ogg" ];
 then
     # ogg
-    check_filesize "raven_e.flac" 356664 489113
+    check_filesize "raven_e.flac" 356662 489113
     check_filesize "raven_d" 264179
 elif [ "${DESTTYPE}" == "webm" ];
 then
     # webm
-    check_filesize "raven_e.flac" 429344 548761
-    check_filesize "raven_d.ogg" 262845 393946
+    check_filesize "raven_e.flac" 429341 548761
+    check_filesize "raven_d.ogg" 262842 393946
 elif [ "${DESTTYPE}" == "opus" ];
 then
     # opus
-    check_filesize "raven_e.flac" 421675 548761
+    check_filesize "raven_e.flac" 421673 548761
     check_filesize "raven_d.ogg" 255740 393946
 elif [ "${DESTTYPE}" == "mov" ];
 then
     # mov
-    check_filesize "raven_e.flac" 486622 495447
+    check_filesize "raven_e.flac" 486559 495447
     check_filesize "raven_d.ogg" 342690 356142
 elif [ "${DESTTYPE}" == "aiff" ];
 then

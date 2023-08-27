@@ -906,13 +906,6 @@ bool Buffer::copy(uint8_t* out_data, size_t offset, size_t bufsize, uint32_t seg
         return false;
     }
 
-    if (ci->m_buffer_size != segment_size)
-    {
-        Logging::error(ci->m_cachefile, "INTERNAL ERROR: Buffer::copy()! ci->m_buffer_size != segment_size - Segment: %1 ci->m_buffer_size: %2 segment_size: %3", segment_no, ci->m_buffer_size, segment_size);
-        errno = ESPIPE; // Comes from size()
-        return false;
-    }
-
     if (segment_size > offset)
     {
         if (segment_size < offset + bufsize)

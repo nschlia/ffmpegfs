@@ -2383,7 +2383,7 @@ int read_file(const std::string & path, std::string & result)
         }
         res = encoding;
     }
-    catch (std::system_error& e)
+    catch (const std::system_error& e)
     {
         res = errno;
     }

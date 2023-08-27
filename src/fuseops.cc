@@ -1999,8 +1999,6 @@ LPVIRTUALFILE find_parent(const std::string & origpath)
 static int make_hls_fileset(void * buf, fuse_fill_dir_t filler, const std::string & origpath, LPVIRTUALFILE virtualfile)
 {
     // Generate set of TS segment files and necessary M3U lists
-    std::string master_contents;
-    std::string index_0_av_contents;
 
     if (!virtualfile->get_segment_count())
     {
@@ -2013,6 +2011,9 @@ static int make_hls_fileset(void * buf, fuse_fill_dir_t filler, const std::strin
 
     if (virtualfile->get_segment_count())
     {
+        std::string master_contents;
+        std::string index_0_av_contents;
+
         // Examples...
         //"#EXT-X-STREAM-INF:PROGRAM-ID=1,BANDWIDTH=1250,RESOLUTION=720x406,CODECS= \"avc1.77.30, mp4a.40.2 \",CLOSED-CAPTIONS=NONE\n"
         //"index_0_av.m3u8\n";

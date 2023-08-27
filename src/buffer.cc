@@ -1079,7 +1079,7 @@ bool Buffer::is_open()
 {
     std::lock_guard<std::recursive_mutex> lock_mutex(m_mutex);
 
-    for (CACHEINFO & ci : m_ci)
+    for (const CACHEINFO & ci : m_ci)
     {
         if ((ci.m_fd != -1 && (fcntl(ci.m_fd, F_GETFL) != -1 || errno != EBADF)))
         {

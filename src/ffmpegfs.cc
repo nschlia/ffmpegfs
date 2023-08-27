@@ -518,7 +518,7 @@ static const PROFILE_MAP profile_map =
 /**
   * List if ProRes levels.
   */
-static const LEVEL_MAP level_map =
+static const LEVEL_MAP prores_level_map =
 {
     // ProRes
     { "PROXY",          PRORESLEVEL_PRORES_PROXY },
@@ -1375,13 +1375,13 @@ static int get_level(const std::string & arg, PRORESLEVEL *level)
         std::string param(arg.substr(0, pos));
         std::string data(arg.substr(pos + 1));
 
-        LEVEL_MAP::const_iterator it = level_map.find(data);
+        LEVEL_MAP::const_iterator it = prores_level_map.find(data);
 
-        if (it == level_map.cend())
+        if (it == prores_level_map.cend())
         {
             std::fprintf(stderr, "INVALID PARAMETER (%s): Invalid level: %s\n", param.c_str(), data.c_str());
 
-            list_options("Valid levels are", level_map);
+            list_options("Valid levels are", prores_level_map);
 
             return -1;
         }
@@ -1399,8 +1399,8 @@ static int get_level(const std::string & arg, PRORESLEVEL *level)
 // Get level text
 std::string get_level_text(PRORESLEVEL level)
 {
-    LEVEL_MAP::const_iterator it = search_by_value(level_map, level);
-    if (it != level_map.cend())
+    LEVEL_MAP::const_iterator it = search_by_value(prores_level_map, level);
+    if (it != prores_level_map.cend())
     {
         return it->first;
     }
@@ -2323,7 +2323,7 @@ static void ffmpeg_log(void *ptr, int level, const char *fmt, va_list vl)
  */
 static bool init_logging(const std::string &logfile, const std::string & max_level, bool to_stderr, bool to_syslog)
 {
-    static const std::map<const std::string, const Logging::LOGLEVEL, comp> level_map =
+    static const std::map<const std::string, const Logging::LOGLEVEL, comp> log_level_map =
     {
         { "ERROR",      LOGERROR },
         { "WARNING",    LOGWARN },
@@ -2332,9 +2332,9 @@ static bool init_logging(const std::string &logfile, const std::string & max_lev
         { "TRACE",      LOGTRACE },
     };
 
-    std::map<const std::string, const Logging::LOGLEVEL, comp>::const_iterator it = level_map.find(max_level);
+    std::map<const std::string, const Logging::LOGLEVEL, comp>::const_iterator it = log_level_map.find(max_level);
 
-    if (it == level_map.cend())
+    if (it == log_level_map.cend())
     {
         std::fprintf(stderr, "Invalid logging level string: %s\n", max_level.c_str());
         return false;

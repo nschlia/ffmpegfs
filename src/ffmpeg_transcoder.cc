@@ -3431,7 +3431,7 @@ int FFmpeg_Transcoder::decode_video_frame(AVPacket *pkt, int *decoded)
 
         if (frame != nullptr)
         {
-            if (data_present && !(frame->flags & AV_FRAME_FLAG_CORRUPT || frame->flags & AV_FRAME_FLAG_DISCARD))
+            if (!(frame->flags & AV_FRAME_FLAG_CORRUPT || frame->flags & AV_FRAME_FLAG_DISCARD))
             {
                 ret = send_filters(&frame, ret);
                 if (ret)

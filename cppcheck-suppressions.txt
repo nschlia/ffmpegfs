@@ -14,3 +14,4 @@ unusedFunction
 ctunullpointer:src/fuseops.cc
 nullPointer:src/fuseops.cc
 noExplicitConstructor:src/ffmpeg_frame.h
+ConfigurationNotChecked:src/ffmpeg_utils.cc

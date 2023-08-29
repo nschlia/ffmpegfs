@@ -3369,6 +3369,7 @@ int FFmpeg_Transcoder::decode_video_frame(AVPacket *pkt, int *decoded)
         ret = decode(m_in.m_video.m_codec_ctx.get(), frame, &data_present, again ? nullptr : pkt);
         if (!data_present)
         {
+            // No data available
             break;
         }
 

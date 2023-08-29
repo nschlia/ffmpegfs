@@ -944,7 +944,7 @@ static bool transcode(THREAD_DATA *thread_data, Cache_Entry *cache_entry, FFmpeg
                     mssleep(GRANULARITY);
                 }
 
-                if (timeout)
+                if (*timeout)
                 {
                     break;
                 }

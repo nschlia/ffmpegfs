@@ -1050,10 +1050,11 @@ const std::string & remove_ext(std::string *filepath)
     if (found != std::string::npos)
     {
         // Have extension
-        *filepath = filepath->substr(0, found);
+        filepath->resize(found);
     }
     return *filepath;
 }
+
 
 bool find_ext(std::string * ext, const std::string & filename)
 {
@@ -1095,7 +1096,7 @@ const std::string & replace_ext(std::string * filepath, const std::string & ext)
     else
     {
         // Have extension, so replace
-        *filepath = filepath->substr(0, found + 1);
+        filepath->resize(found + 1);
     }
 
     *filepath += ext;

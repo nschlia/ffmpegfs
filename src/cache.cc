@@ -251,15 +251,28 @@ bool Cache::check_min_version(int *db_version_major, int *db_version_minor)
 
 int Cache::cmp_version(int version_major_l, int version_minor_l, int version_major_r, int version_minor_r)
 {
-    if (version_major_l > version_major_r || (version_major_l == version_major_r && version_minor_l > version_minor_r))
+    if (version_major_l > version_major_r)
     {
         return 1;
     }
-
-    if (version_major_l < version_major_r || (version_major_l == version_major_r && version_minor_l < version_minor_r))
+    if (version_major_l < version_major_r)
     {
         return -1;
     }
+
+    // version_major_l == version_major_r
+
+    if (version_minor_l > version_minor_r)
+    {
+        return 1;
+    }
+    if (version_minor_l < version_minor_r)
+    {
+        return -1;
+    }
+
+    // version_minor_l == version_minor_r
+
     return 0;
 }
 

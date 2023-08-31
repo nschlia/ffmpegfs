@@ -1874,7 +1874,7 @@ static int selector(const struct dirent * de)
 static int scandir(const char *dirp, std::vector<struct dirent> * _namelist, int (*selector) (const struct dirent *), int (*cmp) (const struct dirent **, const struct dirent **))
 {
     struct dirent **namelist;
-    int count = scandir(dirp, &namelist, selector, cmp);
+    int count = scandir(dirp, &namelist, selector, cmp);    // cppcheck-suppress [nullPointer, ctunullpointer]
 
     _namelist->clear();
 
@@ -1927,6 +1927,7 @@ LPVIRTUALFILE find_original(std::string * filepath)
             remove_filename(&dir);
             origfile = dir;
 
+            // cppcheck-suppress nullPointer
             count = scandir(dir.c_str(), &namelist, selector, nullptr);
             if (count == -1)
             {

@@ -4062,8 +4062,8 @@ int FFmpeg_Transcoder::flush_frames_single(int stream_idx, bool use_flush_packet
                 flush_packet->stream_index  = stream_idx;
             }
 
-            int decoded = 1;
-            do
+            // cppcheck-suppress knownConditionTrueFalse
+            for (int decoded = 1; decoded;)
             {
                 ret = (this->*decode_frame_ptr)(flush_packet, &decoded);
                 if (ret < 0 && ret != AVERROR(EAGAIN))
@@ -4071,7 +4071,6 @@ int FFmpeg_Transcoder::flush_frames_single(int stream_idx, bool use_flush_packet
                     break;
                 }
             }
-            while (decoded);
 
             av_packet_unref(flush_packet);
 #if LAVC_DEP_AV_INIT_PACKET

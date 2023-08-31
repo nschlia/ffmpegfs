@@ -4058,6 +4058,7 @@ int FFmpeg_Transcoder::flush_frames_single(int stream_idx, bool use_flush_packet
                 flush_packet->stream_index  = stream_idx;
             }
 
+            // cppcheck-suppress knownConditionTrueFalse
             for (int decoded = 1; decoded;)
             {
                 ret = (this->*decode_frame_ptr)(flush_packet, &decoded);

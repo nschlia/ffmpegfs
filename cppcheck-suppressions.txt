@@ -9,9 +9,3 @@ readdirCalled
 missingInclude
 // This is just annoying.
 unusedFunction
-
-// File specific suppressions
-ctunullpointer:src/fuseops.cc
-nullPointer:src/fuseops.cc
-noExplicitConstructor:src/ffmpeg_frame.h
-ConfigurationNotChecked:src/ffmpeg_utils.cc

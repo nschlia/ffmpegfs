@@ -1236,6 +1236,7 @@ std::string ffmpeg_libinfo()
 
     info = "FFmpeg Version      : " FFMPEG_VERSION "\n";
 
+    // cppcheck-suppress ConfigurationNotChecked
     info += PRINT_LIB_INFO(avutil,      AVUTIL);
     info += PRINT_LIB_INFO(avcodec,     AVCODEC);
     info += PRINT_LIB_INFO(avformat,    AVFORMAT);

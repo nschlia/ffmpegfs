@@ -122,7 +122,7 @@ wipe-all: doxy-clean distclean
 
 # Run cppcheck
 cppcheck:
-	cppcheck --force --enable=all --inconclusive --library=posix --output-file=cppcheck.log --suppressions-list=cppcheck-suppressions.txt  -I src/ -I src/vcd/ -DLIBAVUTIL_VERSION_MICRO -DUSE_LIBBLURAY -DUSE_LIBDVD -DUSE_LIBVCD -DHAVE_CONFIG_H -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DUSE_LIBSWRESAMPLE -DLAVU_DEP_OLD_CHANNEL_LAYOUT=1 -D__GNUC_ -DPACKAGE_NAME="FFmpegfs" -DFFMPEFS_VERSION=\"V0.0\" -U__clang_version__ -UPRESCAN_FRAMES -DEXTRA_VERSION="" src/ src/vcd/	
+	cppcheck --inline-suppr --force --enable=all --inconclusive --library=posix --output-file=cppcheck.log --suppressions-list=cppcheck-suppressions.txt  -I src/ -I src/vcd/ -DUSE_LIBBLURAY -DUSE_LIBDVD -DUSE_LIBVCD -DHAVE_CONFIG_H -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DUSE_LIBSWRESAMPLE -DLAVU_DEP_OLD_CHANNEL_LAYOUT=1 -D__GNUC_ -DPACKAGE_NAME="FFmpegfs" -DFFMPEFS_VERSION=\"V0.0\" -U__clang_version__ -UPRESCAN_FRAMES -DEXTRA_VERSION="" src/ src/vcd/	
 
 # android- 	Checks related to Android.
 # boost- 	Checks related to Boost library.

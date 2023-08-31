@@ -58,7 +58,7 @@ public:
      * @param[in] frame - Pointer to source AVFrame struct.
      * @note Do not declare explicit, breaks use in std::variant
      */
-    FFmpeg_Frame(const AVFrame * frame);
+    FFmpeg_Frame(const AVFrame * frame);    // cppcheck-suppress noExplicitConstructor
     /**
      * @brief Destruct FFmpeg_Frame object.
      */

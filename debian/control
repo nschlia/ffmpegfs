@@ -28,7 +28,7 @@ Build-Depends:
  xsltproc,
  xxd,
  w3m
-Standards-Version: 4.6.1
+Standards-Version: 4.6.2
 Rules-Requires-Root: no
 Homepage: https://nschlia.github.io/ffmpegfs/
 Vcs-Git: https://salsa.debian.org/nschlia/ffmpegfs.git -b master

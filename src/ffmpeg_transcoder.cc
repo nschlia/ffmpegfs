@@ -833,7 +833,7 @@ bool FFmpeg_Transcoder::can_copy_stream(const AVStream *stream) const
     else if ((params.m_autocopy == AUTOCOPY_STRICT || params.m_autocopy == AUTOCOPY_STRICTLIMIT))
     {
         // Output codec must strictly match
-        Logging::debug(virtname(), "Check autocopy strict: %1: %2 -> %3", codec_type_str, avcodec_get_name(codec_in), avcodec_get_name(codec_out));
+        Logging::debug(virtname(), "Check autocopy strict: %1: %2 -> %3", codec_type_str.c_str(), avcodec_get_name(codec_in), avcodec_get_name(codec_out));
         if (codec_in != codec_out)
         {
             // Different codecs - no auto copy

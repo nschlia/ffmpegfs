@@ -34,6 +34,7 @@ To see what's been done so far, checkout the [windows](https://github.com/nschli
 
 ### Version 2.15 under development
 
+- Issue [#151](https://github.com/nschlia/ffmpegfs/issues/151): Fixed autocopy STRICT never triggers for video streams
 - Issue [#149](https://github.com/nschlia/ffmpegfs/issues/149): 2023-05-04 - xxxxxxxxxx - lavu 58.7.100 - frame.h
   Deprecate AVFrame.interlaced_frame, AVFrame.top_field_first, and AVFrame.key_frame.
   Add AV_FRAME_FLAG_INTERLACED, AV_FRAME_FLAG_TOP_FIELD_FIRST, and AV_FRAME_FLAG_KEY flags as replacement.

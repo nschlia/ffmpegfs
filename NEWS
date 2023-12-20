@@ -1,7 +1,8 @@
 FFmpegfs NEWS
 
-Important changes in 2.15 (2023-08-XX):
+Important changes in 2.15 (2023-12-XX):
 
+* Issue #151: Fixed autocopy STRICT never triggers for video streams
 * Issue #149: 2023-05-04 - xxxxxxxxxx - lavu 58.7.100 - frame.h
   Deprecate AVFrame.interlaced_frame, AVFrame.top_field_first, and
   AVFrame.key_frame.

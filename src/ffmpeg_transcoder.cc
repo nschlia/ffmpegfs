@@ -801,6 +801,29 @@ bool FFmpeg_Transcoder::can_copy_stream(const AVStream *stream) const
         return false;
     }
 
+    AVMediaType codec_type = stream->codecpar->codec_type;
+    AVCodecID codec_in = stream->codecpar->codec_id;
+    std::string codec_type_str;
+    AVCodecID codec_out;
+    int64_t bitrate_out;
+    if (codec_type == AVMEDIA_TYPE_VIDEO)
+    {
+        codec_type_str = "video";
+        codec_out = m_current_format->video_codec();
+        bitrate_out = params.m_videobitrate;
+    }
+    else if (codec_type == AVMEDIA_TYPE_AUDIO)
+    {
+        codec_type_str = "audio";
+        codec_out = m_current_format->audio_codec();
+        bitrate_out = params.m_audiobitrate;
+    }
+    else
+    {
+        // Codec is not video or audio
+        return false;
+    }
+
     if ((params.m_autocopy == AUTOCOPY_MATCH || params.m_autocopy == AUTOCOPY_MATCHLIMIT))
     {
         // Any codec supported by output format OK
@@ -814,7 +837,8 @@ bool FFmpeg_Transcoder::can_copy_stream(const AVStream *stream) const
     else if ((params.m_autocopy == AUTOCOPY_STRICT || params.m_autocopy == AUTOCOPY_STRICTLIMIT))
     {
         // Output codec must strictly match
-        if (stream->codecpar->codec_id != m_current_format->audio_codec())
+        Logging::debug(virtname(), "Check autocopy strict: %1: %2 -> %3", codec_type_str.c_str(), avcodec_get_name(codec_in), avcodec_get_name(codec_out));
+        if (codec_in != codec_out)
         {
             // Different codecs - no auto copy
             return false;
@@ -824,7 +848,7 @@ bool FFmpeg_Transcoder::can_copy_stream(const AVStream *stream) const
     if (params.m_autocopy == AUTOCOPY_MATCHLIMIT || params.m_autocopy == AUTOCOPY_STRICTLIMIT)
     {
         BITRATE orig_bit_rate = (stream->codecpar->bit_rate != 0) ? stream->codecpar->bit_rate : m_in.m_format_ctx->bit_rate;
-        if (get_output_bit_rate(orig_bit_rate, params.m_audiobitrate))
+        if (get_output_bit_rate(orig_bit_rate, bitrate_out))
         {
             // Bit rate changed, no auto copy
             Logging::info(virtname(), "Because the bit rate has changed, no auto copy is possible.");

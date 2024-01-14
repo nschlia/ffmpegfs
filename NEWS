@@ -34,6 +34,8 @@ Important changes in 2.15 (2023-12-XX):
 * Issue #149: 2021-09-20 - dd846bc4a91 - lavc 59.8.100 - avcodec.h codec.h
   Deprecate AV_CODEC_FLAG_TRUNCATED and AV_CODEC_CAP_TRUNCATED,
   as they are redundant with parsers.
+* Closes #153: The --include_extensions parameter now contains a description,
+  which was previously missing from the manual and online help.
 
 Important changes in 2.14 (2023-06-15):
 

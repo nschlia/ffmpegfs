@@ -49,6 +49,7 @@ News
   Add AV_FRAME_FLAG_INTERLACED, AV_FRAME_FLAG_TOP_FIELD_FIRST, and AV_FRAME_FLAG_KEY flags as replacement.
 - Issue [#149](https://github.com/nschlia/ffmpegfs/issues/149): 2021-09-20 - dd846bc4a91 - lavc 59.8.100 - avcodec.h codec.h
   Deprecate AV_CODEC_FLAG_TRUNCATED and AV_CODEC_CAP_TRUNCATED, as they are redundant with parsers.
+- **Bugfix:** Closes [#153](https://github.com/nschlia/ffmpegfs/issues/153): The --include_extensions parameter now contains a description, which was previously missing from the manual and online help.
 
 **New in in 2.14 (2023-06-15):**
 

@@ -2004,7 +2004,7 @@ int FFmpeg_Transcoder::add_stream(AVCodecID codec_id)
                 //    Logging::error(virtname(), "Could not set 'qp' for %1 output codec %2 (error '%3').", get_media_type_string(output_codec->type), get_codec_name(codec_id, false), ffmpeg_geterror(ret).c_str());
                 //    return ret;
                 //}
-                output_codec_ctx->global_quality = 34;
+               output_codec_ctx->global_quality = 34;
             }
 
             // Avoid mismatches for H264 and profile

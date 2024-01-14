@@ -159,8 +159,18 @@ Set level for output if available. 'NAME' can be:
 +
 Defaults to: *HQ*
 
+*--include_extensions*=LIST, *-oinclude_extensions*=LIST::
+Set the list of file extensions to be encoded. 'LIST' can have one or more entries that are separated by commas. These are the only file extensions that will be transcoded.
+Can be specified numerous times and will be merged, which is required when specifying them in the fstab because commas cannot be used to separate the extensions.
+The entries support shell wildcard patterns.
++
+Example: --include_extensions=mp4,wmv to encode MPEG-4 and Windows Media files only.
++
+Defaults to: Encode all supported files.
+
 *--hide_extensions*=LIST, *-ohide_extensions*=LIST::
-Set a list of file extensions that should be hidden from the output. 'LIST' can contain one or more entries, separated by commas.
+Set a list of file extensions to exclude from the output. 'LIST' can have one or more entries that are separated by commas.
+Can be specified numerous times and will be merged, which is required when specifying them in the fstab because commas cannot be used to separate the extensions.
 The entries support shell wildcard patterns.
 +
 Example: --hide_extensions=jpg,png,cue to stop covers and cue sheets from showing up.

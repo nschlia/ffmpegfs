@@ -40,16 +40,16 @@ News
 
 ### Version 2.15 under development
 
-- Issue [#151](https://github.com/nschlia/ffmpegfs/issues/151): Fixed autocopy STRICT never triggers for video streams
-- Issue [#149](https://github.com/nschlia/ffmpegfs/issues/149): 2023-05-04 - xxxxxxxxxx - lavu 58.7.100 - frame.h
-  Deprecate AVFrame.interlaced_frame, AVFrame.top_field_first, and AVFrame.key_frame.
-  Add AV_FRAME_FLAG_INTERLACED, AV_FRAME_FLAG_TOP_FIELD_FIRST, and AV_FRAME_FLAG_KEY flags as replacement.
-- Issue [#149](https://github.com/nschlia/ffmpegfs/issues/149): 2023-05-04 - xxxxxxxxxx - lavu 58.7.100 - frame.h
-  Deprecate AVFrame.interlaced_frame, AVFrame.top_field_first, and AVFrame.key_frame.
-  Add AV_FRAME_FLAG_INTERLACED, AV_FRAME_FLAG_TOP_FIELD_FIRST, and AV_FRAME_FLAG_KEY flags as replacement.
-- Issue [#149](https://github.com/nschlia/ffmpegfs/issues/149): 2021-09-20 - dd846bc4a91 - lavc 59.8.100 - avcodec.h codec.h
-  Deprecate AV_CODEC_FLAG_TRUNCATED and AV_CODEC_CAP_TRUNCATED, as they are redundant with parsers.
+- **Bugfix:** Issue [#151](https://github.com/nschlia/ffmpegfs/issues/151): Fixed autocopy STRICT never triggers for video streams
 - **Bugfix:** Closes [#153](https://github.com/nschlia/ffmpegfs/issues/153): The --include_extensions parameter now contains a description, which was previously missing from the manual and online help.
+- **Issue** [#149](https://github.com/nschlia/ffmpegfs/issues/149): 2023-05-04 - xxxxxxxxxx - lavu 58.7.100 - frame.h
+  Deprecate AVFrame.interlaced_frame, AVFrame.top_field_first, and AVFrame.key_frame.
+  Add AV_FRAME_FLAG_INTERLACED, AV_FRAME_FLAG_TOP_FIELD_FIRST, and AV_FRAME_FLAG_KEY flags as replacement.
+- **Issue** [#149](https://github.com/nschlia/ffmpegfs/issues/149): 2023-05-04 - xxxxxxxxxx - lavu 58.7.100 - frame.h
+  Deprecate AVFrame.interlaced_frame, AVFrame.top_field_first, and AVFrame.key_frame.
+  Add AV_FRAME_FLAG_INTERLACED, AV_FRAME_FLAG_TOP_FIELD_FIRST, and AV_FRAME_FLAG_KEY flags as replacement.
+- **Issue** [#149](https://github.com/nschlia/ffmpegfs/issues/149): 2021-09-20 - dd846bc4a91 - lavc 59.8.100 - avcodec.h codec.h
+  Deprecate AV_CODEC_FLAG_TRUNCATED and AV_CODEC_CAP_TRUNCATED, as they are redundant with parsers.
 
 **New in in 2.14 (2023-06-15):**
 
@@ -323,7 +323,7 @@ See https://www.ffmpeg.org/legal.html for details.
 Copyright
 ---------
 
-This fork with FFmpeg support copyright \(C) 2017-2023 Norbert Schlia (nschlia@oblivion-software.de).
+This fork with FFmpeg support copyright \(C) 2017-2024 Norbert Schlia (nschlia@oblivion-software.de).
 
 Based on work Copyright \(C) 2006-2008 David Collett, 2008-2013 K. Henriksson.
 

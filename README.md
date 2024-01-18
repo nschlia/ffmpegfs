@@ -44,6 +44,7 @@ To see what's been done so far, checkout the [windows](https://github.com/nschli
   Add AV_FRAME_FLAG_INTERLACED, AV_FRAME_FLAG_TOP_FIELD_FIRST, and AV_FRAME_FLAG_KEY flags as replacement.
 - **Issue** [#149](https://github.com/nschlia/ffmpegfs/issues/149): 2021-09-20 - dd846bc4a91 - lavc 59.8.100 - avcodec.h codec.h
   Deprecate AV_CODEC_FLAG_TRUNCATED and AV_CODEC_CAP_TRUNCATED, as they are redundant with parsers.
+- Closes [#136](https://github.com/nschlia/ffmpegfs/issues/136): The CMake build files have been removed. Support was never more than experimental, and CMake lacks a good uninstall option. Will stick to automake system from now on.
 
 **New in in 2.14 (2023-06-15):**
 

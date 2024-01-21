@@ -167,7 +167,7 @@ Some new codec combinations are now possible (the default codecs are in bold):
 | Formats | Audio Codecs      | Video Codecs                 |
 | ------- | ----------------- | ---------------------------- |
 | MP4     | **AAC**, MP3      | **H264**, H265, MPEG1, MPEG2 |
-| WebM    | **OPUS**, VORBIS  | **VP9**, VP8, AV1            |
+| WebM    | **OPUS**, VORBIS  | **VP9**, VP8                 |
 | MOV     | **AAC**, AC3, MP3 | **H264**, H265, MPEG1, MPEG2 |
 | TS, HLS | **AAC**, AC3, MP3 | **H264**, H265, MPEG1, MPEG2 |
 

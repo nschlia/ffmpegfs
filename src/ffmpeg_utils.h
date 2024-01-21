@@ -768,7 +768,7 @@ int                 show_caps(int device_only);
  * @param[in] long_name - If true, gets the long name.
  * @return Returns the codec name or "unknown" on error.
  */
-const char *        get_codec_name(AVCodecID codec_id, bool long_name);
+const char *        get_codec_name(AVCodecID codec_id, bool long_name = false);
 /**
  * @brief Check if file type supports album arts.
  * @param[in] filetype - File type: MP3, MP4 etc.

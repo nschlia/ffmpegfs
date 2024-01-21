@@ -995,7 +995,7 @@ int FFmpeg_Transcoder::open_decoder(AVFormatContext *format_ctx, AVCodecContext 
                 if (check_hwaccel_dec_blocked(input_stream->codecpar->codec_id, input_stream->codecpar->profile))
                 {
                     const char *profile = ::avcodec_profile_name(codec_id, input_stream->codecpar->profile);
-                    Logging::info(filename(), "Codec '%1' profile '%2' is blocked from hardware decoding. Reverting to software decoder.", ::get_codec_name(codec_id, false), profile != nullptr ? profile : "unknown");
+                    Logging::info(filename(), "Codec '%1' profile '%2' is blocked from hardware decoding. Reverting to software decoder.", ::get_codec_name(codec_id), profile != nullptr ? profile : "unknown");
                     m_hwaccel_dec_mode              = HWACCELMODE_FALLBACK;
                 }
             }
@@ -1963,7 +1963,7 @@ int FFmpeg_Transcoder::add_stream(AVCodecID codec_id)
             ret = prepare_codec(output_codec_ctx->priv_data, m_out.m_filetype);
             if (ret < 0)
             {
-                Logging::error(virtname(), "Could not set profile for %1 output codec %2 (error '%3').", get_media_type_string(output_codec->type), get_codec_name(codec_id, false), ffmpeg_geterror(ret).c_str());
+                Logging::error(virtname(), "Could not set profile for %1 output codec %2 (error '%3').", get_media_type_string(output_codec->type), get_codec_name(codec_id), ffmpeg_geterror(ret).c_str());
                 return ret;
             }
 
@@ -1972,7 +1972,7 @@ int FFmpeg_Transcoder::add_stream(AVCodecID codec_id)
             //ret = av_opt_set(output_codec_ctx->priv_data, "crf", "36", AV_OPT_SEARCH_CHILDREN);
             //if (ret < 0)
             //{
-            //    Logging::error(virtname(), "Could not set 'crf' for %1 output codec %2 (error '%3').", get_media_type_string(output_codec->type), get_codec_name(codec_id, false), ffmpeg_geterror(ret).c_str());
+            //    Logging::error(virtname(), "Could not set 'crf' for %1 output codec %2 (error '%3').", get_media_type_string(output_codec->type), get_codec_name(codec_id), ffmpeg_geterror(ret).c_str());
             // 	return ret;
             //}
 
@@ -1995,13 +1995,13 @@ int FFmpeg_Transcoder::add_stream(AVCodecID codec_id)
                 //ret = av_opt_set(output_codec_ctx->priv_data, "rc_mode", "CQP", AV_OPT_SEARCH_CHILDREN);
                 //if (ret < 0)
                 //{
-                //    Logging::error(virtname(), "Could not set 'rc_mode=CQP' for %1 output codec %2 (error '%3').", get_media_type_string(output_codec->type), get_codec_name(codec_id, false), ffmpeg_geterror(ret).c_str());
+                //    Logging::error(virtname(), "Could not set 'rc_mode=CQP' for %1 output codec %2 (error '%3').", get_media_type_string(output_codec->type), get_codec_name(codec_id), ffmpeg_geterror(ret).c_str());
                 //    return ret;
                 //}
                 //ret = av_opt_set(output_codec_ctx->priv_data, "qp", "23", AV_OPT_SEARCH_CHILDREN);
                 //if (ret < 0)
                 //{
-                //    Logging::error(virtname(), "Could not set 'qp' for %1 output codec %2 (error '%3').", get_media_type_string(output_codec->type), get_codec_name(codec_id, false), ffmpeg_geterror(ret).c_str());
+                //    Logging::error(virtname(), "Could not set 'qp' for %1 output codec %2 (error '%3').", get_media_type_string(output_codec->type), get_codec_name(codec_id), ffmpeg_geterror(ret).c_str());
                 //    return ret;
                 //}
                output_codec_ctx->global_quality = 34;
@@ -2045,7 +2045,7 @@ int FFmpeg_Transcoder::add_stream(AVCodecID codec_id)
                         ret = av_opt_set(output_codec_ctx->priv_data, "profile", "high422", 0);
                         if (ret < 0)
                         {
-                            Logging::error(virtname(), "Could not set profile=high422 for %1 output codec %2 (error '%3').", get_media_type_string(output_codec->type), get_codec_name(codec_id, false), ffmpeg_geterror(ret).c_str());
+                            Logging::error(virtname(), "Could not set profile=high422 for %1 output codec %2 (error '%3').", get_media_type_string(output_codec->type), get_codec_name(codec_id), ffmpeg_geterror(ret).c_str());
                             return ret;
                         }
                         break;
@@ -2095,7 +2095,7 @@ int FFmpeg_Transcoder::add_stream(AVCodecID codec_id)
                         ret = av_opt_set(output_codec_ctx->priv_data, "profile", "high444", 0);
                         if (ret < 0)
                         {
-                            Logging::error(virtname(), "Could not set profile=high444 for %1 output codec %2 (error '%3').", get_media_type_string(output_codec->type), get_codec_name(codec_id, false), ffmpeg_geterror(ret).c_str());
+                            Logging::error(virtname(), "Could not set profile=high444 for %1 output codec %2 (error '%3').", get_media_type_string(output_codec->type), get_codec_name(codec_id), ffmpeg_geterror(ret).c_str());
                             return ret;
                         }
                         break;
@@ -2115,7 +2115,7 @@ int FFmpeg_Transcoder::add_stream(AVCodecID codec_id)
             ret = prepare_codec(output_codec_ctx->priv_data, FILETYPE_WEBM);
             if (ret < 0)
             {
-                Logging::error(virtname(), "Could not set profile for %1 output codec %2 (error '%3').", get_media_type_string(output_codec->type), get_codec_name(codec_id, false), ffmpeg_geterror(ret).c_str());
+                Logging::error(virtname(), "Could not set profile for %1 output codec %2 (error '%3').", get_media_type_string(output_codec->type), get_codec_name(codec_id), ffmpeg_geterror(ret).c_str());
                 return ret;
             }
             break;
@@ -2125,7 +2125,7 @@ int FFmpeg_Transcoder::add_stream(AVCodecID codec_id)
             ret = prepare_codec(output_codec_ctx->priv_data, FILETYPE_PRORES);
             if (ret < 0)
             {
-                Logging::error(virtname(), "Could not set profile for %1 output codec %2 (error '%3').", get_media_type_string(output_codec->type), get_codec_name(codec_id, false), ffmpeg_geterror(ret).c_str());
+                Logging::error(virtname(), "Could not set profile for %1 output codec %2 (error '%3').", get_media_type_string(output_codec->type), get_codec_name(codec_id), ffmpeg_geterror(ret).c_str());
                 return ret;
             }
 
@@ -2141,7 +2141,7 @@ int FFmpeg_Transcoder::add_stream(AVCodecID codec_id)
             ret = prepare_codec(output_codec_ctx->priv_data, FILETYPE_ALAC);
             if (ret < 0)
             {
-                Logging::error(virtname(), "Could not set profile for %1 output codec %2 (error '%3').", get_media_type_string(output_codec->type), get_codec_name(codec_id, false), ffmpeg_geterror(ret).c_str());
+                Logging::error(virtname(), "Could not set profile for %1 output codec %2 (error '%3').", get_media_type_string(output_codec->type), get_codec_name(codec_id), ffmpeg_geterror(ret).c_str());
                 return ret;
             }
             break;
@@ -2217,7 +2217,7 @@ int FFmpeg_Transcoder::add_stream(AVCodecID codec_id)
 
     if (!av_dict_get(opt, "threads", nullptr, 0))
     {
-        Logging::trace(virtname(), "Setting threads to auto for codec %1.", get_codec_name(output_codec_ctx->codec_id, false));
+        Logging::trace(virtname(), "Setting threads to auto for codec %1.", get_codec_name(output_codec_ctx->codec_id));
         dict_set_with_check(&opt, "threads", "auto", 0, virtname());
     }
 
@@ -2225,7 +2225,7 @@ int FFmpeg_Transcoder::add_stream(AVCodecID codec_id)
     ret = avcodec_open2(output_codec_ctx, output_codec, &opt);
     if (ret < 0)
     {
-        Logging::error(virtname(), "Could not open %1 output codec %2 for stream #%3 (error '%4').", get_media_type_string(output_codec->type), get_codec_name(codec_id, false), output_stream->index, ffmpeg_geterror(ret).c_str());
+        Logging::error(virtname(), "Could not open %1 output codec %2 for stream #%3 (error '%4').", get_media_type_string(output_codec->type), get_codec_name(codec_id), output_stream->index, ffmpeg_geterror(ret).c_str());
         return ret;
     }
 
@@ -2334,7 +2334,7 @@ int FFmpeg_Transcoder::add_subtitle_stream(AVCodecID codec_id, StreamRef & input
     ret = avcodec_open2(output_codec_ctx, output_codec, &opt);
     if (ret < 0)
     {
-        Logging::error(virtname(), "Could not open %1 output codec %2 for stream #%3 (error '%4').", get_media_type_string(output_codec->type), get_codec_name(codec_id, false), output_stream->index, ffmpeg_geterror(ret).c_str());
+        Logging::error(virtname(), "Could not open %1 output codec %2 for stream #%3 (error '%4').", get_media_type_string(output_codec->type), get_codec_name(codec_id), output_stream->index, ffmpeg_geterror(ret).c_str());
         return ret;
     }
 
@@ -2544,7 +2544,7 @@ int FFmpeg_Transcoder::add_albumart_stream(const AVCodecContext * input_codec_ct
     ret = avcodec_open2(output_codec_ctx, output_codec, &opt);
     if (ret < 0)
     {
-        Logging::error(virtname(), "Could not open %1 output codec %2 for stream #%3 (error '%4').", get_media_type_string(output_codec->type), get_codec_name(input_codec->id, false), output_stream->index, ffmpeg_geterror(ret).c_str());
+        Logging::error(virtname(), "Could not open %1 output codec %2 for stream #%3 (error '%4').", get_media_type_string(output_codec->type), get_codec_name(input_codec->id), output_stream->index, ffmpeg_geterror(ret).c_str());
         return ret;
     }
 
@@ -6117,7 +6117,7 @@ size_t FFmpeg_Transcoder::calculate_predicted_filesize() const
 
         if (!audio_size(&filesize, m_current_format->audio_codec(), input_audio_bit_rate, file_duration, channels, input_sample_rate, m_cur_sample_fmt))
         {
-            Logging::warning(filename(), "Unsupported audio codec '%1' for format %2.", get_codec_name(m_current_format->audio_codec(), false), m_current_format->desttype().c_str());
+            Logging::warning(filename(), "Unsupported audio codec '%1' for format %2.", get_codec_name(m_current_format->audio_codec()), m_current_format->desttype().c_str());
         }
     }
 
@@ -6132,7 +6132,7 @@ size_t FFmpeg_Transcoder::calculate_predicted_filesize() const
 
             if (!video_size(&filesize, m_current_format->video_codec(), input_video_bit_rate, file_duration, width, height, interleaved, framerate))
             {
-                Logging::warning(filename(), "Unsupported video codec '%1' for format %2.", get_codec_name(m_current_format->video_codec(), false), m_current_format->desttype().c_str());
+                Logging::warning(filename(), "Unsupported video codec '%1' for format %2.", get_codec_name(m_current_format->video_codec()), m_current_format->desttype().c_str());
             }
         }
         // else      /** @todo Feature #2260: Add picture size */

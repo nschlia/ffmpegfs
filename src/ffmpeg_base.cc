@@ -229,7 +229,7 @@ void FFmpeg_Base::video_info(bool out_file, const AVFormatContext *format_ctx, c
         Logging::debug(out_file ? virtname() : filename(), "Video %1 #%2: %3@%4 [%5]",
                        out_file ? "out" : "in",
                        stream->index,
-                       get_codec_name(stream->codecpar->codec_id, false),
+                       get_codec_name(stream->codecpar->codec_id),
                        format_bitrate((stream->codecpar->bit_rate != 0) ? stream->codecpar->bit_rate : format_ctx->bit_rate).c_str(),
                        format_duration(duration).c_str());
     }
@@ -254,7 +254,7 @@ void FFmpeg_Base::audio_info(bool out_file, const AVFormatContext *format_ctx, c
         Logging::debug(out_file ? virtname() : filename(), "Audio %1 #2: %3@%4 %5 Channels %6 [%7]",
                        out_file ? "out" : "in",
                        stream->index,
-                       get_codec_name(stream->codecpar->codec_id, false),
+                       get_codec_name(stream->codecpar->codec_id),
                        format_bitrate((stream->codecpar->bit_rate != 0) ? stream->codecpar->bit_rate : format_ctx->bit_rate).c_str(),
                        get_channels(stream->codecpar),
                        format_samplerate(stream->codecpar->sample_rate).c_str(),
@@ -274,7 +274,7 @@ void FFmpeg_Base::subtitle_info(bool out_file, const AVFormatContext * /*format_
         Logging::debug(out_file ? virtname() : filename(), "Subtitle %1 #%2: %3",
                        out_file ? "out" : "in",
                        stream->index,
-                       get_codec_name(stream->codecpar->codec_id, false));
+                       get_codec_name(stream->codecpar->codec_id));
     }
     else
     {

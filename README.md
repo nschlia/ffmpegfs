@@ -32,7 +32,7 @@ A Windows version of FFmpegfs has frequently been requested; see issue [#76](htt
 
 To see what's been done so far, checkout the [windows](https://github.com/nschlia/ffmpegfs/tree/windows) branch.
 
-### Version 2.15 under development
+**New in in 2.15 (2024-02-03):**
 
 - **Bugfix:** Issue [#151](https://github.com/nschlia/ffmpegfs/issues/151): Fixed autocopy STRICT never triggers for video streams
 - **Bugfix:** Closes [#153](https://github.com/nschlia/ffmpegfs/issues/153): The --include_extensions parameter now contains a description, which was previously missing from the manual and online help.

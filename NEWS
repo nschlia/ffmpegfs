@@ -1,6 +1,6 @@
 FFmpegfs NEWS
 
-Important changes in 2.15 (2024-01-XX):
+Important changes in 2.15 (2024-02-03):
 
 * Bugfix: Issue #151: Fixed autocopy STRICT never triggers for video streams
 * Bugfix: Closes #153: The --include_extensions parameter now contains a

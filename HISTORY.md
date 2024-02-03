@@ -1,7 +1,41 @@
 History
 =======
 
-### Version 2.13 has been released
+**New in in 2.15 (2024-02-03):**
+
+- **Bugfix:** Issue [#151](https://github.com/nschlia/ffmpegfs/issues/151): Fixed autocopy STRICT never triggers for video streams
+- **Bugfix:** Closes [#153](https://github.com/nschlia/ffmpegfs/issues/153): The --include_extensions parameter now contains a description, which was previously missing from the manual and online help.
+- **Issue** [#149](https://github.com/nschlia/ffmpegfs/issues/149): 2023-05-04 - xxxxxxxxxx - lavu 58.7.100 - frame.h
+  Deprecate AVFrame.interlaced_frame, AVFrame.top_field_first, and AVFrame.key_frame.
+  Add AV_FRAME_FLAG_INTERLACED, AV_FRAME_FLAG_TOP_FIELD_FIRST, and AV_FRAME_FLAG_KEY flags as replacement.
+- **Issue** [#149](https://github.com/nschlia/ffmpegfs/issues/149): 2023-05-04 - xxxxxxxxxx - lavu 58.7.100 - frame.h
+  Deprecate AVFrame.interlaced_frame, AVFrame.top_field_first, and AVFrame.key_frame.
+  Add AV_FRAME_FLAG_INTERLACED, AV_FRAME_FLAG_TOP_FIELD_FIRST, and AV_FRAME_FLAG_KEY flags as replacement.
+- **Issue** [#149](https://github.com/nschlia/ffmpegfs/issues/149): 2021-09-20 - dd846bc4a91 - lavc 59.8.100 - avcodec.h codec.h
+  Deprecate AV_CODEC_FLAG_TRUNCATED and AV_CODEC_CAP_TRUNCATED, as they are redundant with parsers.
+- Closes [#136](https://github.com/nschlia/ffmpegfs/issues/136): The CMake build files have been removed. Support was never more than experimental, and CMake lacks a good uninstall option. Will stick to automake system from now on.
+
+**New in in 2.14 (2023-06-15):**
+
+- **Bugfix:** Closes [#141](https://github.com/nschlia/ffmpegfs/issues/141): Improved memory management by allocating several times the average size of allocations. This prevents obtaining tiny portions over and over again. Additionally, after the file is opened, grab the entire expected memory block rather than doing a tiny allocation initially, followed by a larger allocation.
+- **Bugfix:** Avoid race conditions that cause the inter-process semaphore creation to fail for the second process.
+- **Bugfix:** Issue [#119](https://github.com/nschlia/ffmpegfs/issues/119): If a seek request is still open after EOF, restart transcoding.
+- **Bugfix:** Issue [#119](https://github.com/nschlia/ffmpegfs/issues/119): To prevent frame/segment creation errors, the frame set and HLS code has been updated.
+- **Bugfix:** Avoid crashes during shutdown if cache objects have already been closed.
+- **Bugfix:** Issue [#119](https://github.com/nschlia/ffmpegfs/issues/119): The AVSEEK_FLAG_FRAME set should be used to seek to frames when building frame sets. Otherwise, output images may vary if searched for or continuously decoded.
+- **Bugfix:** The conversion of PTS to frame number and vice versa for frame sets was incorrect if TBR did not equal frames per second.
+- **Bugfix:** Fixed seek requests that are being ignored with frame sets.
+- **Bugfix:** When transferring from cache to the Fuse buffer, avoid a possible 1 byte overrun.
+- **Bugfix:** Issue [#143](https://github.com/nschlia/ffmpegfs/issues/143): To avoid occasional EPERM failures, missing synchronisation objects were added.
+- **Bugfix:** Issue [#144](https://github.com/nschlia/ffmpegfs/issues/144): To fix the crashes that may have been caused by them, the variables impacted by a potential threading issue were marked as "volatile."
+- **Bugfix:** [Closes#1037653:](https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=1037653) Fix build with GCC-13
+- **Bugfix:** Update docker build for Debian Bookworm
+- **Enhancement:** Record milliseconds for every log event.
+- **Enhancement:** make check: added a file size check to frame set tests.
+- **Optimisation:** When reopening after invalidating the cache, the size remained at 0. The original size is now once again reserved in order to prevent reallocations.
+- **Optimisation:** To avoid reallocations, save enough space in the cache buffer to hold the entire frame set.
+- **Optimisation:** Checking folders to see if they can be transcoded is completely pointless. Directories are now immediately skipped.
+- To avoid problems with logfile viewers, renamed built-in logfiles to *_builtin.log (removing the double extension).
 
 **New in in 2.13 (2023-01-15):**
 

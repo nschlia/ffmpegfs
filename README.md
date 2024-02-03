@@ -38,7 +38,7 @@ News
 - TODO: Create Windows installer.
 - TODO: Automatically build Windows release binaries and add to release assets.
 
-### Version 2.15 under development
+**New in in 2.15 (2024-02-03):**
 
 - **Bugfix:** Issue [#151](https://github.com/nschlia/ffmpegfs/issues/151): Fixed autocopy STRICT never triggers for video streams
 - **Bugfix:** Closes [#153](https://github.com/nschlia/ffmpegfs/issues/153): The --include_extensions parameter now contains a description, which was previously missing from the manual and online help.

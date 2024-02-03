@@ -18,7 +18,7 @@ Important changes in 2.20 (2023-06-XX):
 * TODO: Create Windows installer.
 - TODO: Automatically build Windows release binaries and add to release assets.
 
-Important changes in 2.15 (2024-01-XX):
+Important changes in 2.15 (2024-02-03):
 
 * Bugfix: Issue #151: Fixed autocopy STRICT never triggers for video streams
 * Bugfix: Closes #153: The --include_extensions parameter now contains a

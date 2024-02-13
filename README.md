@@ -30,8 +30,6 @@ News
 
 ### Version 2.20 under development
 
-**New in in 2.20 (2024-02-XX):**
-
 - Issue [#76](https://github.com/nschlia/ffmpegfs/issues/76): Added Windows support, see [Building For Windows](WINDOWS.md) for information if you wish to build a Windows version. Currently no pre-compiled binaries are available.
 - A "make export" option has been added, which gathers all necessary binaries to run FFmpegfs without needing to install Cygwin. They can be found in the export directory.
 - "make check" is now barely functional under Windows, but not when the "-j" option is used. Performing multiple tests at the same time is difficult under Windows because WinFSP only uses one drive letter per instance. As an example, instance 1 uses A:, instance 2 B:, and so on. This reduces the number of concurrent tests, and locating a free drive letter is not as simple as it seems. Under Windows, performance is also below zero, so the tests can take a long time.

@@ -285,6 +285,19 @@ private:
             const std::string &string_to_update,
             const size_t __attribute__((unused)) index_to_replace);
 
+    // std::string kann man eigentlich nicht an %s übergeben. So geht es doch...
+
+    template<class T, typename std::enable_if<!std::is_same<T, std::string>::value, bool>::type = true>
+    static T & fix_std_string(T & val)
+    {
+        return val;
+    }
+
+    static const char * fix_std_string(const std::string & val)
+    {
+        return val.c_str();
+    }
+
     /**
      * @brief format_helper with variadic parameters.
      *
@@ -318,10 +331,10 @@ private:
             if (res[2].length())
             {
                 // Found match with printf format in res[2]
-                size_t size = static_cast<size_t>(std::snprintf(nullptr, 0, res[2].str().c_str(), val)) + 1;
+                size_t size = static_cast<size_t>(std::snprintf(nullptr, 0, res[2].str().c_str(), fix_std_string(val))) + 1;
                 std::vector<char> buffer;
                 buffer.resize(size);
-                std::snprintf(buffer.data(), size, res[2].str().c_str(), val);
+                std::snprintf(buffer.data(), size, res[2].str().c_str(), fix_std_string(val));
                 ostr << buffer.data();
             }
             else

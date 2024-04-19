@@ -172,7 +172,7 @@ static bool audio_stream_info(const std::string & path, BLURAY_STREAM_INFO *ss, 
     }
     default:
     {
-        Logging::error(path, "Unrecognised coding type %<%02x>1.", ss->coding_type);
+        Logging::error(path, "Unrecognised coding type %<02x>1.", ss->coding_type);
         break;
     }
     }
@@ -382,7 +382,7 @@ static bool video_stream_info(const std::string & path, BLURAY_STREAM_INFO *ss, 
     }
     default:
     {
-        Logging::error(path, "Unrecognised coding type %<%02x>1.", ss->coding_type);
+        Logging::error(path, "Unrecognised coding type %<02x>1.", ss->coding_type);
         break;
     }
     }
@@ -542,7 +542,7 @@ static bool create_bluray_virtualfile(BLURAY *bd, const BLURAY_TITLE_INFO* ti, c
             audio = video_stream_info(path, &clip->video_streams[parse_find_best_video_stream()], &virtualfile->m_width, &virtualfile->m_height, &virtualfile->m_framerate, &interleaved);
         }
 
-        Logging::trace(path, "Video %1 %2x%3@%<%5.2f>4%5 fps %6 [%7]", format_bitrate(video_bit_rate).c_str(), virtualfile->m_width, virtualfile->m_height, av_q2d(virtualfile->m_framerate), interleaved ? "i" : "p", format_size(size).c_str(), format_duration(duration).c_str());
+        Logging::trace(path, "Video %1 %2x%3@%<5.2f>4%5 fps %6 [%7]", format_bitrate(video_bit_rate).c_str(), virtualfile->m_width, virtualfile->m_height, av_q2d(virtualfile->m_framerate), interleaved ? "i" : "p", format_size(size).c_str(), format_duration(duration).c_str());
         if (audio)
         {
             Logging::trace(path, "Audio %1 channels %2", virtualfile->m_channels, format_samplerate(virtualfile->m_sample_rate).c_str());

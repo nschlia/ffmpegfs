@@ -666,7 +666,7 @@ bool transcoder_read_frame(Cache_Entry* cache_entry, char* buff, size_t offset, 
 
                     if (!reported)
                     {
-                        Logging::trace(cache_entry->virtname(), "Frame no. %1: Cache miss at offset %<%11zu>2 (length %<%6u>3).", frame_no, offset, len);
+                        Logging::trace(cache_entry->virtname(), "Frame no. %1: Cache miss at offset %<11zu>2 (length %<6u>3).", frame_no, offset, len);
                         reported = true;
                     }
 
@@ -674,7 +674,7 @@ bool transcoder_read_frame(Cache_Entry* cache_entry, char* buff, size_t offset, 
                 }
             }
 
-            Logging::trace(cache_entry->virtname(), "Frame no. %1: Cache hit  at offset %<%11zu>2 (length %<%6u>3).", frame_no, offset, len);
+            Logging::trace(cache_entry->virtname(), "Frame no. %1: Cache hit  at offset %<11zu>2 (length %<6u>3).", frame_no, offset, len);
 
             success = !cache_entry->m_cache_info.m_error;
         }

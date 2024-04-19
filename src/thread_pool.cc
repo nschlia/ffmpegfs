@@ -68,14 +68,14 @@ void thread_pool::loop_function()
                 break;
             }
 
-            Logging::trace(nullptr, "Starting job taking pool thread no. %1 with id 0x%<%" FFMPEGFS_FORMAT_PTHREAD_T ">2.", thread_no, pthread_self());
+            Logging::trace(nullptr, "Starting job taking pool thread no. %1 with id 0x%<" FFMPEGFS_FORMAT_PTHREAD_T ">2.", thread_no, pthread_self());
             info = m_thread_queue.front();
             m_thread_queue.pop();
         }
 
         int ret = info.m_thread_func(info.m_opaque);
 
-        Logging::trace(nullptr, "The job using pool thread no. %1 with id 0x%<%" FFMPEGFS_FORMAT_PTHREAD_T ">2 has exited with return code %3.", thread_no, pthread_self(), ret);
+        Logging::trace(nullptr, "The job using pool thread no. %1 with id 0x%<" FFMPEGFS_FORMAT_PTHREAD_T ">2 has exited with return code %3.", thread_no, pthread_self(), ret);
     }
 }
 

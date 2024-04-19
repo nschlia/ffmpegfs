@@ -71,7 +71,7 @@
  * @code
  * int channels = 2;
  * double sample_rate = 44.1:
- * Logging::debug(filename, "Audio %1 %<%.3f>2 KHz", channels == 2 ? "stereo" : "mono", sample_rate);
+ * Logging::debug(filename, "Audio %1 %<.3f>2 KHz", channels == 2 ? "stereo" : "mono", sample_rate);
  * @endcode
  *
  * Prints "Audio stereo 44.100 KHz".
@@ -275,15 +275,33 @@ public:
     }
 
 private:
-    /**
-     * @brief Standard format_helper without parameters.
-     * @param[in] string_to_update - Original string.
-     * @param[in] index_to_replace - unused
-     * @return Returns original string.
-     */
-    static std::string format_helper(
-            const std::string &string_to_update,
-            const size_t __attribute__((unused)) index_to_replace);
+    template<typename T>
+    static T & convert(T & val)
+    {
+        return val;
+    }
+    static std::string convert(const char * val)
+    {
+        if (val != nullptr)
+        {
+            return val;
+        }
+        else
+        {
+            return "(null)";
+        }
+    }
+    static std::string convert(char * val)
+    {
+        if (val != nullptr)
+        {
+            return val;
+        }
+        else
+        {
+            return "(null)";
+        }
+    }
 
     // std::string kann man eigentlich nicht an %s übergeben. So geht es doch...
 
@@ -297,6 +315,16 @@ private:
     {
         return val.c_str();
     }
+
+    /**
+     * @brief Standard format_helper without parameters.
+     * @param[in] string_to_update - Original string.
+     * @param[in] index_to_replace - unused
+     * @return Returns original string.
+     */
+    static std::string format_helper(
+            const std::string &string_to_update,
+            const size_t __attribute__((unused)) index_to_replace);
 
     /**
      * @brief format_helper with variadic parameters.
@@ -331,16 +359,25 @@ private:
             if (res[2].length())
             {
                 // Found match with printf format in res[2]
-                size_t size = static_cast<size_t>(std::snprintf(nullptr, 0, res[2].str().c_str(), fix_std_string(val))) + 1;
+                std::vector<char> format;
+
+                if (res[2].str().front() != '%')
+                {
+                    format.push_back('%');
+                }
+
+                format.insert(format.end(), res[2].str().begin(), res[2].str().end());
+
+                size_t size = static_cast<size_t>(std::snprintf(nullptr, 0, format.data(), fix_std_string(val))) + 1;
                 std::vector<char> buffer;
                 buffer.resize(size);
-                std::snprintf(buffer.data(), size, res[2].str().c_str(), fix_std_string(val));
+                std::snprintf(buffer.data(), size, format.data(), fix_std_string(val));
                 ostr << buffer.data();
             }
             else
             {
                 // No printf format, replace literally
-                ostr << val;
+                ostr << convert(val);
             }
 
             string_to_update.replace(static_cast<size_t>(res.position()) + offset, static_cast<size_t>(res[0].length()), ostr.str());

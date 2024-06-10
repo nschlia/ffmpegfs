@@ -35,6 +35,10 @@ To see what's been done so far, checkout the [windows](https://github.com/nschli
 **New in 2.16 (2024-06-XX):**
 
 - Bugfix: Closes [#160](https://github.com/nschlia/ffmpegfs/issues/160): Fix build with FFmpeg 7.0. [Debian Bug #1072412](https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=1072412). write_packet() now with const buffer as of Libavformat 61+.
+- Fixed deprecation: 2023-05-15 - 7d1d61cc5f5 - lavc 60 - avcodec.h
+  Depreate AVCodecContext.ticks_per_frame in favor of
+  AVCodecContext.framerate (encoding) and
+  AV_CODEC_PROP_FIELDS (decoding).
 
 **New in 2.15 (2024-02-03):**
 

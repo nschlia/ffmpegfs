@@ -4226,6 +4226,9 @@ void FFmpeg_Transcoder::produce_audio_dts(AVPacket *pkt)
         {
             pkt_duration = pkt->duration;
 
+#if !LAVC_DEP_TICKSPERFRAME
+            // This has probably long since been fixed in FFmpeg, so we remove this completly
+            // instead of replacing it with updated code.
             if (m_out.m_audio.m_codec_ctx->codec_id == AV_CODEC_ID_OPUS || m_current_format->filetype() == FILETYPE_TS || m_current_format->filetype() == FILETYPE_HLS)
             {
                 /** @todo Is this a FFmpeg bug or am I too stupid? @n
@@ -4239,6 +4242,7 @@ void FFmpeg_Transcoder::produce_audio_dts(AVPacket *pkt)
                     pkt->duration = pkt_duration = static_cast<int>(av_rescale(pkt_duration, static_cast<int64_t>(m_out.m_audio.m_stream->time_base.den) * m_out.m_audio.m_codec_ctx->ticks_per_frame, m_out.m_audio.m_stream->codecpar->sample_rate * static_cast<int64_t>(m_out.m_audio.m_stream->time_base.num)));
                 }
             }
+#endif
         }
         else
         {

@@ -157,11 +157,11 @@
 #define LAVF_WRITEPACKET_CONST              (LIBAVFORMAT_VERSION_INT >= AV_VERSION_INT(61, 0, 0))
 
 /**
- * 2023-05-xx - xxxxxxxxxx - lavc 60 - avcodec.h
+ * 2023-05-15 - 7d1d61cc5f5 - lavc 60 - avcodec.h
  * Depreate AVCodecContext.ticks_per_frame in favor of
  * AVCodecContext.framerate (encoding) and
  * AV_CODEC_PROP_FIELDS (decoding).
  */
-//#define LAVC_DEP_TICKSPERFRAME              (LIBAVCODEC_VERSION_INT >= AV_VERSION_INT(60, 0, 0))
+#define LAVC_DEP_TICKSPERFRAME              (LIBAVCODEC_VERSION_INT >= AV_VERSION_INT(60, 0, 0))
 
 #endif // FFMPEG_COMPAT_H

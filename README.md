@@ -36,7 +36,7 @@ News
 - TODO: Create Windows installer.
 - TODO: Automatically build Windows release binaries and add to release assets.
 
-**New in 2.16 (2024-06-XX):**
+**New in 2.16 (2024-06-10):**
 
 - Bugfix: Closes [#160](https://github.com/nschlia/ffmpegfs/issues/160): Fix build with FFmpeg 7.0. [Debian Bug #1072412](https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=1072412). write_packet() now with const buffer as of Libavformat 61+.
 - Fixed deprecation: 2014-05-18 - 68c0518 / fd05602 - lavc 55.63.100 / 55.52.0 - avcodec.h

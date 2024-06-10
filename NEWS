@@ -18,7 +18,7 @@ FFmpegfs NEWS
 * TODO: Create Windows installer.
 - TODO: Automatically build Windows release binaries and add to release assets.
 
-Important changes in 2.16 (2024-06-XX):
+Important changes in 2.16 (2024-06-10):
 
 * Bugfix: Closes#1072412: Fix build with FFmpeg 7.0. write_packet() now with
   const buffer as of Libavformat 61+.

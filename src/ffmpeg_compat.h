@@ -36,6 +36,12 @@
 
 #pragma once
 
+#ifdef __clang__
+#define FALLTHROUGH_INTENDED [[clang::fallthrough]]
+#else
+#define FALLTHROUGH_INTENDED [[gnu::fallthrough]]
+#endif
+
 /**
  * FFmpeg compatibility layer: Maintain support for older versions while removing
  * deprecated functions as needed.

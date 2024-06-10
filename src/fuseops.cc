@@ -640,7 +640,7 @@ static int ffmpegfs_getattr(const char *path, struct stat *stbuf)
         // Use stored status
         mempcpy(stbuf, &virtualfile->m_st, sizeof(struct stat));
         no_check = true;    // FILETYPE already known, no need to check again.
-        [[clang::fallthrough]];
+        FALLTHROUGH_INTENDED;
     }
     case VIRTUALTYPE_DISK:
     {
@@ -906,7 +906,7 @@ static int ffmpegfs_fgetattr(const char *path, struct stat * stbuf, struct fuse_
         // Use stored status
         mempcpy(stbuf, &virtualfile->m_st, sizeof(struct stat));
         no_check = true;
-        [[clang::fallthrough]];
+        FALLTHROUGH_INTENDED;
     }
     case VIRTUALTYPE_DISK:
     {

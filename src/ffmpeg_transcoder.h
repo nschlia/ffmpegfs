@@ -779,7 +779,11 @@ protected:
      * @param[in] size - Size of data block.
      * @return On success, returns bytes written. On error, returns a negative AVERROR value.
      */
+#if LAVF_WRITEPACKET_CONST
+    static int                  output_write(void * opaque, const uint8_t * data, int size);
+#else
     static int                  output_write(void * opaque, unsigned char * data, int size);
+#endif
     /**
      * @brief Custom seek function for FFmpeg
      *

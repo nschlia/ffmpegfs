@@ -149,6 +149,12 @@
  * as they are redundant with parsers.
  */
 #define LAVC_DEP_FLAG_TRUNCATED             (LIBAVCODEC_VERSION_INT >= AV_VERSION_INT(59, 8, 0))
+/**
+ * 2023-09-07 - 2a68d945cd7 - lavf 60.12.100 - avio.h
+ * Constify the buffer pointees in the write_packet and write_data_type
+ * callbacks of AVIOContext on the next major bump.
+ */
+#define LAVF_WRITEPACKET_CONST              (LIBAVFORMAT_VERSION_INT >= AV_VERSION_INT(61, 0, 0))
 
 /**
  * 2023-05-xx - xxxxxxxxxx - lavc 60 - avcodec.h

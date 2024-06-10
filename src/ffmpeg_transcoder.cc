@@ -6231,7 +6231,11 @@ int FFmpeg_Transcoder::input_read(void * opaque, unsigned char * data, int size)
     return read;
 }
 
+#if LAVF_WRITEPACKET_CONST
+int FFmpeg_Transcoder::output_write(void * opaque, const uint8_t * data, int size)
+#else
 int FFmpeg_Transcoder::output_write(void * opaque, unsigned char * data, int size)
+#endif
 {
     Buffer * buffer = static_cast<Buffer *>(opaque);
 
@@ -6241,7 +6245,11 @@ int FFmpeg_Transcoder::output_write(void * opaque, unsigned char * data, int siz
         return AVERROR(EINVAL);
     }
 
+#if LAVF_WRITEPACKET_CONST
+    int written = static_cast<int>(buffer->writeio(data, static_cast<size_t>(size)));
+#else
     int written = static_cast<int>(buffer->writeio(static_cast<const uint8_t*>(data), static_cast<size_t>(size)));
+#endif
     if (written != size)
     {
         // Write error

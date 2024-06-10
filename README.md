@@ -32,9 +32,9 @@ A Windows version of FFmpegfs has frequently been requested; see issue [#76](htt
 
 To see what's been done so far, checkout the [windows](https://github.com/nschlia/ffmpegfs/tree/windows) branch.
 
-**Work on 2.16 in progress (2024-02-XX):**
+**New in 2.16 (2024-06-XX):**
 
-Coming soon...
+- Bugfix: Closes [#160](https://github.com/nschlia/ffmpegfs/issues/160): Fix build with FFmpeg 7.0. [Debian Bug #1072412](https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=1072412). write_packet() now with const buffer as of Libavformat 61+.
 
 **New in 2.15 (2024-02-03):**
 

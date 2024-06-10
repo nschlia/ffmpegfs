@@ -1,6 +1,10 @@
 History
 =======
 
+**New in 2.16 (2024-06-XX):**
+
+* Bugfix: Closes#1072412: Fix build with FFmpeg 7.0
+
 **New in 2.15 (2024-02-03):**
 
 - **Bugfix:** Issue [#151](https://github.com/nschlia/ffmpegfs/issues/151): Fixed autocopy STRICT never triggers for video streams

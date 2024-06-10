@@ -1,6 +1,6 @@
 FFmpegfs NEWS
 
-Important changes in 2.20 (2023-06-XX):
+### Version 2.20 under development
 
 * Issue #76: Added Windows support, see Building For Windows for information
   if you wish to build a Windows version. Currently no pre-compiled binaries
@@ -18,9 +18,18 @@ Important changes in 2.20 (2023-06-XX):
 * TODO: Create Windows installer.
 - TODO: Automatically build Windows release binaries and add to release assets.
 
-Work on 2.16 in progress (2024-02-XX):
+Important changes in 2.16 (2024-06-XX):
 
-Coming soon...
+* Bugfix: Closes#1072412: Fix build with FFmpeg 7.0. write_packet() now with
+  const buffer as of Libavformat 61+.
+* Fixed deprecation: 2014-05-18 - 68c0518 / fd05602 - lavc 55.63.100 / 55.52.0
+  - avcodec.h
+  Add avcodec_free_context(). From now on it should be used for freeing
+  AVCodecContext.
+* Fixed deprecation: 2023-05-15 - 7d1d61cc5f5 - lavc 60 - avcodec.h
+  Depreate AVCodecContext.ticks_per_frame in favor of
+  AVCodecContext.framerate (encoding) and
+  AV_CODEC_PROP_FIELDS (decoding).
 
 Important changes in 2.15 (2024-02-03):
 

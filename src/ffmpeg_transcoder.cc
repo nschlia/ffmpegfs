@@ -189,7 +189,6 @@ struct av_context_deleter       /**< @brief Delete helper struct for std::shared
      */
     void operator ()( T * p) const
     {
-        avcodec_close(p);
         avcodec_free_context(&p);
     }
 };
@@ -4230,6 +4229,9 @@ void FFmpeg_Transcoder::produce_audio_dts(AVPacket *pkt)
         {
             pkt_duration = pkt->duration;
 
+#if !LAVC_DEP_TICKSPERFRAME
+            // This has probably long since been fixed in FFmpeg, so we remove this completly
+            // instead of replacing it with updated code.
             if (m_out.m_audio.m_codec_ctx->codec_id == AV_CODEC_ID_OPUS || m_current_format->filetype() == FILETYPE_TS || m_current_format->filetype() == FILETYPE_HLS)
             {
                 /** @todo Is this a FFmpeg bug or am I too stupid? @n
@@ -4243,6 +4245,7 @@ void FFmpeg_Transcoder::produce_audio_dts(AVPacket *pkt)
                     pkt->duration = pkt_duration = static_cast<int>(av_rescale(pkt_duration, static_cast<int64_t>(m_out.m_audio.m_stream->time_base.den) * m_out.m_audio.m_codec_ctx->ticks_per_frame, m_out.m_audio.m_stream->codecpar->sample_rate * static_cast<int64_t>(m_out.m_audio.m_stream->time_base.num)));
                 }
             }
+#endif
         }
         else
         {
@@ -6235,7 +6238,11 @@ int FFmpeg_Transcoder::input_read(void * opaque, unsigned char * data, int size)
     return read;
 }
 
+#if LAVF_WRITEPACKET_CONST
+int FFmpeg_Transcoder::output_write(void * opaque, const uint8_t * data, int size)
+#else
 int FFmpeg_Transcoder::output_write(void * opaque, unsigned char * data, int size)
+#endif
 {
     Buffer * buffer = static_cast<Buffer *>(opaque);
 
@@ -6245,7 +6252,11 @@ int FFmpeg_Transcoder::output_write(void * opaque, unsigned char * data, int siz
         return AVERROR(EINVAL);
     }
 
+#if LAVF_WRITEPACKET_CONST
+    int written = static_cast<int>(buffer->writeio(data, static_cast<size_t>(size)));
+#else
     int written = static_cast<int>(buffer->writeio(static_cast<const uint8_t*>(data), static_cast<size_t>(size)));
+#endif
     if (written != size)
     {
         // Write error

@@ -36,6 +36,12 @@
 
 #pragma once
 
+#ifdef __clang__
+#define FALLTHROUGH_INTENDED [[clang::fallthrough]]
+#else
+#define FALLTHROUGH_INTENDED [[gnu::fallthrough]]
+#endif
+
 /**
  * FFmpeg compatibility layer: Maintain support for older versions while removing
  * deprecated functions as needed.
@@ -143,13 +149,19 @@
  * as they are redundant with parsers.
  */
 #define LAVC_DEP_FLAG_TRUNCATED             (LIBAVCODEC_VERSION_INT >= AV_VERSION_INT(59, 8, 0))
+/**
+ * 2023-09-07 - 2a68d945cd7 - lavf 60.12.100 - avio.h
+ * Constify the buffer pointees in the write_packet and write_data_type
+ * callbacks of AVIOContext on the next major bump.
+ */
+#define LAVF_WRITEPACKET_CONST              (LIBAVFORMAT_VERSION_INT >= AV_VERSION_INT(61, 0, 0))
 
 /**
- * 2023-05-xx - xxxxxxxxxx - lavc 60 - avcodec.h
+ * 2023-05-15 - 7d1d61cc5f5 - lavc 60 - avcodec.h
  * Depreate AVCodecContext.ticks_per_frame in favor of
  * AVCodecContext.framerate (encoding) and
  * AV_CODEC_PROP_FIELDS (decoding).
  */
-//#define LAVC_DEP_TICKSPERFRAME              (LIBAVCODEC_VERSION_INT >= AV_VERSION_INT(60, 0, 0))
+#define LAVC_DEP_TICKSPERFRAME              (LIBAVCODEC_VERSION_INT >= AV_VERSION_INT(60, 0, 0))
 
 #endif // FFMPEG_COMPAT_H

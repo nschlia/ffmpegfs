@@ -63,10 +63,10 @@
  * @code
  * int channels = 2;
  * int sample_rate = 44100:
- * Logging::debug(filename, "Audio %1 channels %2 KHz", channels, sample_rate);
+ * Logging::debug(filename, "Audio %1 channels %2 Hz", channels, sample_rate);
  * @endcode
  *
- * Prints "Audio 2 channels 44100 KHz".
+ * Prints "Audio 2 channels 44100 Hz".
  *
  * @code
  * int channels = 2;
@@ -359,19 +359,22 @@ private:
             if (res[2].length())
             {
                 // Found match with printf format in res[2]
-                std::vector<char> format;
+                std::vector<char> fmt;
+                std::string ftmspec = res[2].str();
 
-                if (res[2].str().front() != '%')
+                if (ftmspec.front() != '%')
                 {
-                    format.push_back('%');
+                    fmt.push_back('%');
                 }
 
-                format.insert(format.end(), res[2].str().begin(), res[2].str().end());
 
-                size_t size = static_cast<size_t>(std::snprintf(nullptr, 0, format.data(), fix_std_string(val))) + 1;
+                fmt.insert(fmt.end(), ftmspec.begin(), ftmspec.end());
+                fmt.push_back('\0');
+
+                size_t size = static_cast<size_t>(std::snprintf(nullptr, 0, fmt.data(), fix_std_string(val))) + 1;
                 std::vector<char> buffer;
                 buffer.resize(size);
-                std::snprintf(buffer.data(), size, format.data(), fix_std_string(val));
+                std::snprintf(buffer.data(), size, fmt.data(), fix_std_string(val));
                 ostr << buffer.data();
             }
             else

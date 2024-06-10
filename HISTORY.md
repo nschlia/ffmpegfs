@@ -1,7 +1,11 @@
 History
 =======
 
-**New in in 2.15 (2024-02-03):**
+**New in 2.16 (2024-06-XX):**
+
+* Bugfix: Closes#1072412: Fix build with FFmpeg 7.0
+
+**New in 2.15 (2024-02-03):**
 
 - **Bugfix:** Issue [#151](https://github.com/nschlia/ffmpegfs/issues/151): Fixed autocopy STRICT never triggers for video streams
 - **Bugfix:** Closes [#153](https://github.com/nschlia/ffmpegfs/issues/153): The --include_extensions parameter now contains a description, which was previously missing from the manual and online help.
@@ -15,7 +19,7 @@ History
   Deprecate AV_CODEC_FLAG_TRUNCATED and AV_CODEC_CAP_TRUNCATED, as they are redundant with parsers.
 - Closes [#136](https://github.com/nschlia/ffmpegfs/issues/136): The CMake build files have been removed. Support was never more than experimental, and CMake lacks a good uninstall option. Will stick to automake system from now on.
 
-**New in in 2.14 (2023-06-15):**
+**New in 2.14 (2023-06-15):**
 
 - **Bugfix:** Closes [#141](https://github.com/nschlia/ffmpegfs/issues/141): Improved memory management by allocating several times the average size of allocations. This prevents obtaining tiny portions over and over again. Additionally, after the file is opened, grab the entire expected memory block rather than doing a tiny allocation initially, followed by a larger allocation.
 - **Bugfix:** Avoid race conditions that cause the inter-process semaphore creation to fail for the second process.
@@ -37,7 +41,7 @@ History
 - **Optimisation:** Checking folders to see if they can be transcoded is completely pointless. Directories are now immediately skipped.
 - To avoid problems with logfile viewers, renamed built-in logfiles to *_builtin.log (removing the double extension).
 
-**New in in 2.13 (2023-01-15):**
+**New in 2.13 (2023-01-15):**
 
 - **Feature:** Added --prebuffer_time parameter. Files will be decoded until the buffer contains the specified playing time, allowing playback to start
   smoothly without lags. Works similar to --prebuffer_size but gives better control because it does not depend on the bit rate. An example: when set to 25 seconds for HLS transcoding, this will make sure that at least 2 complete segments will be available once the file is released and visible.
@@ -49,7 +53,7 @@ History
 
 ### Version 2.12 released
 
-**New in in 2.12 (2022-08-27):**
+**New in 2.12 (2022-08-27):**
 
 - The code has been run through clang-tidy to detect areas that could be updated to C++17 and to find areas that are prone to bugs or are inefficient. Many problems could be fixed. Sometimes a few lines of code can take the place of many. Some components function far more effectively than they did in the past. C++17 is cool! I must purchase a t-shirt.
 - **Bugfix:** In get prores bitrate(), a crash that might have happened under unusual circumstances has been corrected. If the best match resolution could not be found, array access out-of-bounds could happen.
@@ -59,7 +63,7 @@ History
 
 ### Version 2.11 released
 
-**New in in 2.11 (2022-06-16):**
+**New in 2.11 (2022-06-16):**
 
 * **Feature:** [Issue #86](https://github.com/nschlia/ffmpegfs/issues/86): Smart transcode now detects if a source file is audio only and uses the correct target format. For example, with --destination=webm+mp3, if one MP4 input file contains a video stream and another an audio stream only, the resulting files will be WebM (for the video input) and mp3 for the audio only file.
 * **Feature:** [Issue #137](https://github.com/nschlia/ffmpegfs/issues/137): Add --no_subtitles option to turn subtitles off.
@@ -79,7 +83,7 @@ History
 
 ### Version 2.10 released
 
-**New in in 2.10 (2022-04-26):**
+**New in 2.10 (2022-04-26):**
 
 * **Feature:** [Issue #123](https://github.com/nschlia/ffmpegfs/issues/123): New command line option to hide files by extension. Example: `--hide_extensions=jpg,png,cue` would stop covers and cue sheets from showing up.
 * **Feature:** [Issue #120](https://github.com/nschlia/ffmpegfs/issues/120): Added subtitle support. Subtitle streams can now also be transcoded to the output files. Separate SRT or VTT files will be incorporated as subtitle streams.
@@ -98,7 +102,7 @@ History
 
 ### Version 2.9 released
 
-**New in in 2.9 (2022-02-16):**
+**New in 2.9 (2022-02-16):**
 
 * **Feature:** [Issue #97](https://github.com/nschlia/ffmpegfs/issues/97): Added options to chose different codecs. The audio codec can be selected with --audiocodec, for videos use --videocodec.
 * **Feature:** [Issue #109](https://github.com/nschlia/ffmpegfs/issues/109): Allow user defined file extensions for source files. By default, only standard extensions are accepted, i.e., mp4, ts, avi etc. Arbitrary file extensions can be defined now, e.g. using --extensions=xxx,abc,yxz,aaa to also convert files ending with .xxx, .abc and so on.
@@ -116,7 +120,7 @@ History
 
 ### Version 2.8 released
 
-**New in in 2.8 (2021-11-29):**
+**New in 2.8 (2021-11-29):**
 
 * **Bugfix:** [Issue #102](https://github.com/nschlia/ffmpegfs/issues/102): Not all SQL queries where case sensitive, causing cache confusion. Several database entries were created, but only one was updated. Made all queries case sensitive.
 * **Bugfix:** [Issue #91](https://github.com/nschlia/ffmpegfs/issues/91): Fixed HLS problems with cache causing garbled videos and hick-ups in audio.
@@ -128,7 +132,7 @@ History
 
 ### Version 2.7 released
 
-**New in in 2.7 (2021-11-08):**
+**New in 2.7 (2021-11-08):**
 
 * **Bugfix:** [Issue #92](https://github.com/nschlia/ffmpegfs/issues/92): Fixed crash when hardware decoding failed. The problem is that the FFmpeg API very late reports that it cannot decode the file in hardware. To find out about that, the source file must be decoded until the first video frame is encountered.
   It would be very time consuming to do this on every file (decode until it is clear that the file is supported, then actually start transcoding it from scratch). There is no feasible way to automatically handle the situation. To get around this a --hwaccel_dec_blocked parameter has been added.

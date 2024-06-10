@@ -63,10 +63,10 @@
  * @code
  * int channels = 2;
  * int sample_rate = 44100:
- * Logging::debug(filename, "Audio %1 channels %2 KHz", channels, sample_rate);
+ * Logging::debug(filename, "Audio %1 channels %2 Hz", channels, sample_rate);
  * @endcode
  *
- * Prints "Audio 2 channels 44100 KHz".
+ * Prints "Audio 2 channels 44100 Hz".
  *
  * @code
  * int channels = 2;

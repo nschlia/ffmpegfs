@@ -189,7 +189,6 @@ struct av_context_deleter       /**< @brief Delete helper struct for std::shared
      */
     void operator ()( T * p) const
     {
-        avcodec_close(p);
         avcodec_free_context(&p);
     }
 };

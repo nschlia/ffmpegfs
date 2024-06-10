@@ -1,6 +1,6 @@
 FFmpegfs NEWS
 
-### Version 2.20 under development
+### Version 2.50 under development
 
 * Issue #76: Added Windows support, see Building For Windows for information
   if you wish to build a Windows version. Currently no pre-compiled binaries

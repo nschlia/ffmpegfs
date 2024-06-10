@@ -28,7 +28,7 @@ Web site: https://nschlia.github.io/ffmpegfs/
 News
 ----
 
-### Version 2.20 under development
+### Version 2.50 under development
 
 - Issue [#76](https://github.com/nschlia/ffmpegfs/issues/76): Added Windows support, see [Building For Windows](WINDOWS.md) for information if you wish to build a Windows version. Currently no pre-compiled binaries are available.
 - A "make export" option has been added, which gathers all necessary binaries to run FFmpegfs without needing to install Cygwin. They can be found in the export directory.

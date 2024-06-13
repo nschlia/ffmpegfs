@@ -1,3 +1,4 @@
 version=4
-opts="pgpsigurlmangle=s/$/.asc/" \
-         https://github.com/nschlia/ffmpegfs/releases (?:.*\/)?ffmpegfs-(\d[\d\.]*)\.tar\.gz
+opts="searchmode=plain,pgpsigurlmangle=s/$/.asc/" \
+	https://api.github.com/repos/nschlia/ffmpegfs/releases \
+	https://github.com/nschlia/ffmpegfs/releases/download/v(?:\d[\d.]*)/ffmpegfs-(\d[\d.]*)\.tar\.gz 

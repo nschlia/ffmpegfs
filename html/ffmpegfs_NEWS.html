@@ -21,7 +21,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">FFmpegfs Fuse Multi Media Filesystem<span id="projectnumber">&#160;2.14</span>
+   <div id="projectname">FFmpegfs Fuse Multi Media Filesystem<span id="projectnumber">&#160;2.16</span>
    </div>
   </td>
  </tr>
@@ -67,9 +67,24 @@ $(function() {
 <div class="contents">
 <div class="textblock"><div class="fragment"><div class="line">FFmpegfs NEWS</div>
 <div class="line"> </div>
-<div class="line">Important changes in 2.15 (2023-12-XX):</div>
+<div class="line">Important changes in 2.16 (2024-06-10):</div>
 <div class="line"> </div>
-<div class="line">* Issue #151: Fixed autocopy STRICT never triggers for video streams</div>
+<div class="line">* Bugfix: Closes#1072412: Fix build with FFmpeg 7.0. write_packet() now with</div>
+<div class="line">  const buffer as of Libavformat 61+.</div>
+<div class="line">* Fixed deprecation: 2014-05-18 - 68c0518 / fd05602 - lavc 55.63.100 / 55.52.0</div>
+<div class="line">  - avcodec.h</div>
+<div class="line">  Add avcodec_free_context(). From now on it should be used for freeing</div>
+<div class="line">  AVCodecContext.</div>
+<div class="line">* Fixed deprecation: 2023-05-15 - 7d1d61cc5f5 - lavc 60 - avcodec.h</div>
+<div class="line">  Depreate AVCodecContext.ticks_per_frame in favor of</div>
+<div class="line">  AVCodecContext.framerate (encoding) and</div>
+<div class="line">  AV_CODEC_PROP_FIELDS (decoding).</div>
+<div class="line"> </div>
+<div class="line">Important changes in 2.15 (2024-02-03):</div>
+<div class="line"> </div>
+<div class="line">* Bugfix: Issue #151: Fixed autocopy STRICT never triggers for video streams</div>
+<div class="line">* Bugfix: Closes #153: The --include_extensions parameter now contains a</div>
+<div class="line">  description, which was previously missing from the manual and online help.</div>
 <div class="line">* Issue #149: 2023-05-04 - xxxxxxxxxx - lavu 58.7.100 - frame.h</div>
 <div class="line">  Deprecate AVFrame.interlaced_frame, AVFrame.top_field_first, and</div>
 <div class="line">  AVFrame.key_frame.</div>
@@ -83,8 +98,9 @@ $(function() {
 <div class="line">* Issue #149: 2021-09-20 - dd846bc4a91 - lavc 59.8.100 - avcodec.h codec.h</div>
 <div class="line">  Deprecate AV_CODEC_FLAG_TRUNCATED and AV_CODEC_CAP_TRUNCATED,</div>
 <div class="line">  as they are redundant with parsers.</div>
-<div class="line">* Closes #153: The --include_extensions parameter now contains a description,</div>
-<div class="line">  which was previously missing from the manual and online help.</div>
+<div class="line">* Closes #136: The CMake build files have been removed. Support was never more</div>
+<div class="line">  than experimental, and CMake lacks a good uninstall option. Will stick to</div>
+<div class="line">  automake system from now on.</div>
 <div class="line"> </div>
 <div class="line">Important changes in 2.14 (2023-06-15):</div>
 <div class="line"> </div>
@@ -1034,7 +1050,7 @@ $(function() {
 <div class="line">========================================================================</div>
 <div class="line"> </div>
 <div class="line">Copyright (C) 2010-2014 K. Henriksson</div>
-<div class="line">Copyright (C) 2017-2023 Norbert Schlia (FFmpeg support)</div>
+<div class="line">Copyright (C) 2017-2024 Norbert Schlia (FFmpeg support)</div>
 <div class="line"> </div>
 <div class="line">This documentation may be distributed under the GNU Free Documentation License</div>
 <div class="line">(GFDL) 1.3 or later with no invariant sections, or alternatively under the GNU</div>

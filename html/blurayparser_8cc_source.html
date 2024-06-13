@@ -21,7 +21,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">FFmpegfs Fuse Multi Media Filesystem<span id="projectnumber">&#160;2.14</span>
+   <div id="projectname">FFmpegfs Fuse Multi Media Filesystem<span id="projectnumber">&#160;2.16</span>
    </div>
   </td>
  </tr>
@@ -70,7 +70,7 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 <a href="blurayparser_8cc.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="comment">/*</span></div>
-<div class="line"><a id="l00002" name="l00002"></a><span class="lineno">    2</span><span class="comment"> * Copyright (C) 2017-2023 Norbert Schlia (nschlia@oblivion-software.de)</span></div>
+<div class="line"><a id="l00002" name="l00002"></a><span class="lineno">    2</span><span class="comment"> * Copyright (C) 2017-2024 Norbert Schlia (nschlia@oblivion-software.de)</span></div>
 <div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span><span class="comment"> *</span></div>
 <div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span><span class="comment"> * This program is free software; you can redistribute it and/or modify</span></div>
 <div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="comment"> * it under the terms of the GNU General Public License as published by</span></div>
@@ -225,7 +225,7 @@ $(function() {
 <div class="line"><a id="l00172" name="l00172"></a><span class="lineno">  172</span>    }</div>
 <div class="line"><a id="l00173" name="l00173"></a><span class="lineno">  173</span>    <span class="keywordflow">default</span>:</div>
 <div class="line"><a id="l00174" name="l00174"></a><span class="lineno">  174</span>    {</div>
-<div class="line"><a id="l00175" name="l00175"></a><span class="lineno">  175</span>        <a class="code hl_function" href="classLogging.html#ae48fc6adc12bc24c60d62eb5fbac1d86">Logging::error</a>(path, <span class="stringliteral">&quot;Unrecognised coding type %&lt;%02x&gt;1.&quot;</span>, ss-&gt;coding_type);</div>
+<div class="line"><a id="l00175" name="l00175"></a><span class="lineno">  175</span>        <a class="code hl_function" href="classLogging.html#ae48fc6adc12bc24c60d62eb5fbac1d86">Logging::error</a>(path, <span class="stringliteral">&quot;Unrecognised coding type %&lt;02x&gt;1.&quot;</span>, ss-&gt;coding_type);</div>
 <div class="line"><a id="l00176" name="l00176"></a><span class="lineno">  176</span>        <span class="keywordflow">break</span>;</div>
 <div class="line"><a id="l00177" name="l00177"></a><span class="lineno">  177</span>    }</div>
 <div class="line"><a id="l00178" name="l00178"></a><span class="lineno">  178</span>    }</div>
@@ -425,7 +425,7 @@ $(function() {
 <div class="line"><a id="l00382" name="l00382"></a><span class="lineno">  382</span>    }</div>
 <div class="line"><a id="l00383" name="l00383"></a><span class="lineno">  383</span>    <span class="keywordflow">default</span>:</div>
 <div class="line"><a id="l00384" name="l00384"></a><span class="lineno">  384</span>    {</div>
-<div class="line"><a id="l00385" name="l00385"></a><span class="lineno">  385</span>        <a class="code hl_function" href="classLogging.html#ae48fc6adc12bc24c60d62eb5fbac1d86">Logging::error</a>(path, <span class="stringliteral">&quot;Unrecognised coding type %&lt;%02x&gt;1.&quot;</span>, ss-&gt;coding_type);</div>
+<div class="line"><a id="l00385" name="l00385"></a><span class="lineno">  385</span>        <a class="code hl_function" href="classLogging.html#ae48fc6adc12bc24c60d62eb5fbac1d86">Logging::error</a>(path, <span class="stringliteral">&quot;Unrecognised coding type %&lt;02x&gt;1.&quot;</span>, ss-&gt;coding_type);</div>
 <div class="line"><a id="l00386" name="l00386"></a><span class="lineno">  386</span>        <span class="keywordflow">break</span>;</div>
 <div class="line"><a id="l00387" name="l00387"></a><span class="lineno">  387</span>    }</div>
 <div class="line"><a id="l00388" name="l00388"></a><span class="lineno">  388</span>    }</div>
@@ -551,7 +551,7 @@ $(function() {
 <div class="line"><a id="l00542" name="l00542"></a><span class="lineno">  542</span>            audio = <a class="code hl_function" href="blurayparser_8cc.html#ae764c9147d2f72a7c867f6ab6b989a99">video_stream_info</a>(path, &amp;clip-&gt;video_streams[<a class="code hl_function" href="blurayparser_8cc.html#aa1d91d3ccaa872502b7054e73ba33677">parse_find_best_video_stream</a>()], &amp;virtualfile-&gt;<a class="code hl_variable" href="structVIRTUALFILE.html#a415f212c36e6f13c1d180ddbe3111359">m_width</a>, &amp;virtualfile-&gt;<a class="code hl_variable" href="structVIRTUALFILE.html#a45ba86461820fb7529effe3dbb644c56">m_height</a>, &amp;virtualfile-&gt;<a class="code hl_variable" href="structVIRTUALFILE.html#a7ada4d231f0daaa221c3550ebb2ec28e">m_framerate</a>, &amp;interleaved);</div>
 <div class="line"><a id="l00543" name="l00543"></a><span class="lineno">  543</span>        }</div>
 <div class="line"><a id="l00544" name="l00544"></a><span class="lineno">  544</span> </div>
-<div class="line"><a id="l00545" name="l00545"></a><span class="lineno">  545</span>        <a class="code hl_function" href="classLogging.html#a9d2938a2b4a502b58c43a895c593d738">Logging::trace</a>(path, <span class="stringliteral">&quot;Video %1 %2x%3@%&lt;%5.2f&gt;4%5 fps %6 [%7]&quot;</span>, <a class="code hl_function" href="ffmpeg__utils_8cc.html#a92e160970289c98aafa793d05782edfb">format_bitrate</a>(video_bit_rate).c_str(), virtualfile-&gt;<a class="code hl_variable" href="structVIRTUALFILE.html#a415f212c36e6f13c1d180ddbe3111359">m_width</a>, virtualfile-&gt;<a class="code hl_variable" href="structVIRTUALFILE.html#a45ba86461820fb7529effe3dbb644c56">m_height</a>, av_q2d(virtualfile-&gt;<a class="code hl_variable" href="structVIRTUALFILE.html#a7ada4d231f0daaa221c3550ebb2ec28e">m_framerate</a>), interleaved ? <span class="stringliteral">&quot;i&quot;</span> : <span class="stringliteral">&quot;p&quot;</span>, <a class="code hl_function" href="ffmpeg__utils_8cc.html#ad417af55b0608ec2aa3efc36db9aca71">format_size</a>(size).c_str(), <a class="code hl_function" href="ffmpeg__utils_8cc.html#a2752625a2c8322c18eee3fabbcc24176">format_duration</a>(duration).c_str());</div>
+<div class="line"><a id="l00545" name="l00545"></a><span class="lineno">  545</span>        <a class="code hl_function" href="classLogging.html#a9d2938a2b4a502b58c43a895c593d738">Logging::trace</a>(path, <span class="stringliteral">&quot;Video %1 %2x%3@%&lt;5.2f&gt;4%5 fps %6 [%7]&quot;</span>, <a class="code hl_function" href="ffmpeg__utils_8cc.html#a92e160970289c98aafa793d05782edfb">format_bitrate</a>(video_bit_rate).c_str(), virtualfile-&gt;<a class="code hl_variable" href="structVIRTUALFILE.html#a415f212c36e6f13c1d180ddbe3111359">m_width</a>, virtualfile-&gt;<a class="code hl_variable" href="structVIRTUALFILE.html#a45ba86461820fb7529effe3dbb644c56">m_height</a>, av_q2d(virtualfile-&gt;<a class="code hl_variable" href="structVIRTUALFILE.html#a7ada4d231f0daaa221c3550ebb2ec28e">m_framerate</a>), interleaved ? <span class="stringliteral">&quot;i&quot;</span> : <span class="stringliteral">&quot;p&quot;</span>, <a class="code hl_function" href="ffmpeg__utils_8cc.html#ad417af55b0608ec2aa3efc36db9aca71">format_size</a>(size).c_str(), <a class="code hl_function" href="ffmpeg__utils_8cc.html#a2752625a2c8322c18eee3fabbcc24176">format_duration</a>(duration).c_str());</div>
 <div class="line"><a id="l00546" name="l00546"></a><span class="lineno">  546</span>        <span class="keywordflow">if</span> (audio)</div>
 <div class="line"><a id="l00547" name="l00547"></a><span class="lineno">  547</span>        {</div>
 <div class="line"><a id="l00548" name="l00548"></a><span class="lineno">  548</span>            <a class="code hl_function" href="classLogging.html#a9d2938a2b4a502b58c43a895c593d738">Logging::trace</a>(path, <span class="stringliteral">&quot;Audio %1 channels %2&quot;</span>, virtualfile-&gt;<a class="code hl_variable" href="structVIRTUALFILE.html#a555fd3516f41df2635b7593d823361b0">m_channels</a>, <a class="code hl_function" href="ffmpeg__utils_8cc.html#a88220910ba33fecc28ff56e9a239b18b">format_samplerate</a>(virtualfile-&gt;<a class="code hl_variable" href="structVIRTUALFILE.html#a0241541a5d6e2728c5e5a43ed7c4e0e8">m_sample_rate</a>).c_str());</div>

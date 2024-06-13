@@ -21,7 +21,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">FFmpegfs Fuse Multi Media Filesystem<span id="projectnumber">&#160;2.14</span>
+   <div id="projectname">FFmpegfs Fuse Multi Media Filesystem<span id="projectnumber">&#160;2.16</span>
    </div>
   </td>
  </tr>
@@ -72,7 +72,7 @@ $(function() {
 <a href="fuseops_8cc.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="comment">/*</span></div>
 <div class="line"><a id="l00002" name="l00002"></a><span class="lineno">    2</span><span class="comment"> * Copyright (C) 2006-2008 David Collett</span></div>
 <div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span><span class="comment"> * Copyright (C) 2008-2012 K. Henriksson</span></div>
-<div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span><span class="comment"> * Copyright (C) 2017-2023 FFmpeg support by Norbert Schlia (nschlia@oblivion-software.de)</span></div>
+<div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span><span class="comment"> * Copyright (C) 2017-2024 FFmpeg support by Norbert Schlia (nschlia@oblivion-software.de)</span></div>
 <div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="comment"> *</span></div>
 <div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span><span class="comment"> * This program is free software; you can redistribute it and/or modify</span></div>
 <div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span><span class="comment"> * it under the terms of the GNU General Public License as published by</span></div>
@@ -664,7 +664,7 @@ $(function() {
 <div class="line"><a id="l00640" name="l00640"></a><span class="lineno">  640</span>        <span class="comment">// Use stored status</span></div>
 <div class="line"><a id="l00641" name="l00641"></a><span class="lineno">  641</span>        mempcpy(stbuf, &amp;virtualfile-&gt;<a class="code hl_variable" href="structVIRTUALFILE.html#a9350bd52b2a01e77078de59f745722dc">m_st</a>, <span class="keyword">sizeof</span>(<span class="keyword">struct</span> stat));</div>
 <div class="line"><a id="l00642" name="l00642"></a><span class="lineno">  642</span>        no_check = <span class="keyword">true</span>;    <span class="comment">// FILETYPE already known, no need to check again.</span></div>
-<div class="line"><a id="l00643" name="l00643"></a><span class="lineno">  643</span>        [[clang::fallthrough]];</div>
+<div class="line"><a id="l00643" name="l00643"></a><span class="lineno">  643</span>        FALLTHROUGH_INTENDED;</div>
 <div class="line"><a id="l00644" name="l00644"></a><span class="lineno">  644</span>    }</div>
 <div class="line"><a id="l00645" name="l00645"></a><span class="lineno">  645</span>    <span class="keywordflow">case</span> <a class="code hl_enumvalue" href="fileio_8h.html#a1199d38534b11312b0210e527499a805af42a6f57f20e27166aba4ec9e4b2a2f8">VIRTUALTYPE_DISK</a>:</div>
 <div class="line"><a id="l00646" name="l00646"></a><span class="lineno">  646</span>    {</div>
@@ -923,7 +923,7 @@ $(function() {
 <div class="line"><a id="l00906" name="l00906"></a><span class="lineno">  906</span>        <span class="comment">// Use stored status</span></div>
 <div class="line"><a id="l00907" name="l00907"></a><span class="lineno">  907</span>        mempcpy(stbuf, &amp;virtualfile-&gt;m_st, <span class="keyword">sizeof</span>(<span class="keyword">struct</span> stat));</div>
 <div class="line"><a id="l00908" name="l00908"></a><span class="lineno">  908</span>        no_check = <span class="keyword">true</span>;</div>
-<div class="line"><a id="l00909" name="l00909"></a><span class="lineno">  909</span>        [[clang::fallthrough]];</div>
+<div class="line"><a id="l00909" name="l00909"></a><span class="lineno">  909</span>        FALLTHROUGH_INTENDED;</div>
 <div class="line"><a id="l00910" name="l00910"></a><span class="lineno">  910</span>    }</div>
 <div class="line"><a id="l00911" name="l00911"></a><span class="lineno">  911</span>    <span class="keywordflow">case</span> <a class="code hl_enumvalue" href="fileio_8h.html#a1199d38534b11312b0210e527499a805af42a6f57f20e27166aba4ec9e4b2a2f8">VIRTUALTYPE_DISK</a>:</div>
 <div class="line"><a id="l00912" name="l00912"></a><span class="lineno">  912</span>    {</div>

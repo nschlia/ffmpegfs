@@ -14,7 +14,7 @@ var searchData=
   ['get_5fchannels_11',['get_channels',['../classFFmpeg__Base.html#a317ac83ade3ddeed0130eadbf302afd6',1,'FFmpeg_Base::get_channels(const AVCodecParameters *codecpar) const'],['../classFFmpeg__Base.html#aeb8069543f9809849eb6b3980e031a45',1,'FFmpeg_Base::get_channels(const AVCodecContext *codec_ctx) const']]],
   ['get_5fchapter_12',['get_chapter',['../classVcdEntries.html#ac23b9ff85ac3fad73cc6265eb2b6f042',1,'VcdEntries']]],
   ['get_5fcodec_13',['get_codec',['../ffmpegfs_8cc.html#ae0f473966951d7d05ea41c54d456964f',1,'ffmpegfs.cc']]],
-  ['get_5fcodec_5fname_14',['get_codec_name',['../ffmpeg__utils_8h.html#a150f84813e3cd47e77a52162838ed394',1,'get_codec_name(AVCodecID codec_id, bool long_name):&#160;ffmpeg_utils.cc'],['../ffmpeg__utils_8cc.html#a150f84813e3cd47e77a52162838ed394',1,'get_codec_name(AVCodecID codec_id, bool long_name):&#160;ffmpeg_utils.cc']]],
+  ['get_5fcodec_5fname_14',['get_codec_name',['../ffmpeg__utils_8h.html#a82defc64a60013c4f7ccab01175e832a',1,'get_codec_name(AVCodecID codec_id, bool long_name=false):&#160;ffmpeg_utils.cc'],['../ffmpeg__utils_8cc.html#a150f84813e3cd47e77a52162838ed394',1,'get_codec_name(AVCodecID codec_id, bool long_name):&#160;ffmpeg_utils.cc']]],
   ['get_5fdesttype_15',['get_desttype',['../ffmpegfs_8cc.html#a8530a489a14bb732328c0b54e5b4852e',1,'ffmpegfs.cc']]],
   ['get_5fdirectory_16',['get_directory',['../namespaceVCDUTILS.html#a394354e787de56c0f518b901d89a4c13',1,'VCDUTILS']]],
   ['get_5fdisk_5ffree_17',['get_disk_free',['../ffmpeg__utils_8h.html#a7ec1cf4d66baa6146d5a408adc6424d8',1,'get_disk_free(std::string &amp;path):&#160;ffmpeg_utils.cc'],['../ffmpeg__utils_8cc.html#a7ec1cf4d66baa6146d5a408adc6424d8',1,'get_disk_free(std::string &amp;path):&#160;ffmpeg_utils.cc']]],

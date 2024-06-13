@@ -21,7 +21,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">FFmpegfs Fuse Multi Media Filesystem<span id="projectnumber">&#160;2.14</span>
+   <div id="projectname">FFmpegfs Fuse Multi Media Filesystem<span id="projectnumber">&#160;2.16</span>
    </div>
   </td>
  </tr>
@@ -65,9 +65,44 @@ $(function() {
   <div class="headertitle"><div class="title">History </div></div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><h2><a class="anchor" id="autotoc_md53"></a>
-Version 2.13 has been released</h2>
-<p ><b>New in in 2.13 (2023-01-15):</b></p>
+<div class="textblock"><p ><b>New in 2.16 (2024-06-10):</b></p>
+<ul>
+<li>Bugfix: Closes <a href="https://github.com/nschlia/ffmpegfs/issues/160">#160</a>: Fix build with FFmpeg 7.0. <a href="https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=1072412">Debian Bug #1072412</a>. write_packet() now with const buffer as of Libavformat 61+.</li>
+<li>Fixed deprecation: 2014-05-18 - 68c0518 / fd05602 - lavc 55.63.100 / 55.52.0 - avcodec.h Add avcodec_free_context(). From now on it should be used for freeing AVCodecContext.</li>
+<li>Fixed deprecation: 2023-05-15 - 7d1d61cc5f5 - lavc 60 - avcodec.h Depreate AVCodecContext.ticks_per_frame in favor of AVCodecContext.framerate (encoding) and AV_CODEC_PROP_FIELDS (decoding).</li>
+</ul>
+<p ><b>New in 2.15 (2024-02-03):</b></p>
+<ul>
+<li><b>Bugfix:</b> Issue <a href="https://github.com/nschlia/ffmpegfs/issues/151">#151</a>: Fixed autocopy STRICT never triggers for video streams</li>
+<li><b>Bugfix:</b> Closes <a href="https://github.com/nschlia/ffmpegfs/issues/153">#153</a>: The &ndash;include_extensions parameter now contains a description, which was previously missing from the manual and online help.</li>
+<li><b>Issue</b> <a href="https://github.com/nschlia/ffmpegfs/issues/149">#149</a>: 2023-05-04 - xxxxxxxxxx - lavu 58.7.100 - frame.h Deprecate AVFrame.interlaced_frame, AVFrame.top_field_first, and AVFrame.key_frame. Add AV_FRAME_FLAG_INTERLACED, AV_FRAME_FLAG_TOP_FIELD_FIRST, and AV_FRAME_FLAG_KEY flags as replacement.</li>
+<li><b>Issue</b> <a href="https://github.com/nschlia/ffmpegfs/issues/149">#149</a>: 2023-05-04 - xxxxxxxxxx - lavu 58.7.100 - frame.h Deprecate AVFrame.interlaced_frame, AVFrame.top_field_first, and AVFrame.key_frame. Add AV_FRAME_FLAG_INTERLACED, AV_FRAME_FLAG_TOP_FIELD_FIRST, and AV_FRAME_FLAG_KEY flags as replacement.</li>
+<li><b>Issue</b> <a href="https://github.com/nschlia/ffmpegfs/issues/149">#149</a>: 2021-09-20 - dd846bc4a91 - lavc 59.8.100 - avcodec.h codec.h Deprecate AV_CODEC_FLAG_TRUNCATED and AV_CODEC_CAP_TRUNCATED, as they are redundant with parsers.</li>
+<li>Closes <a href="https://github.com/nschlia/ffmpegfs/issues/136">#136</a>: The CMake build files have been removed. Support was never more than experimental, and CMake lacks a good uninstall option. Will stick to automake system from now on.</li>
+</ul>
+<p ><b>New in 2.14 (2023-06-15):</b></p>
+<ul>
+<li><b>Bugfix:</b> Closes <a href="https://github.com/nschlia/ffmpegfs/issues/141">#141</a>: Improved memory management by allocating several times the average size of allocations. This prevents obtaining tiny portions over and over again. Additionally, after the file is opened, grab the entire expected memory block rather than doing a tiny allocation initially, followed by a larger allocation.</li>
+<li><b>Bugfix:</b> Avoid race conditions that cause the inter-process semaphore creation to fail for the second process.</li>
+<li><b>Bugfix:</b> Issue <a href="https://github.com/nschlia/ffmpegfs/issues/119">#119</a>: If a seek request is still open after EOF, restart transcoding.</li>
+<li><b>Bugfix:</b> Issue <a href="https://github.com/nschlia/ffmpegfs/issues/119">#119</a>: To prevent frame/segment creation errors, the frame set and HLS code has been updated.</li>
+<li><b>Bugfix:</b> Avoid crashes during shutdown if cache objects have already been closed.</li>
+<li><b>Bugfix:</b> Issue <a href="https://github.com/nschlia/ffmpegfs/issues/119">#119</a>: The AVSEEK_FLAG_FRAME set should be used to seek to frames when building frame sets. Otherwise, output images may vary if searched for or continuously decoded.</li>
+<li><b>Bugfix:</b> The conversion of PTS to frame number and vice versa for frame sets was incorrect if TBR did not equal frames per second.</li>
+<li><b>Bugfix:</b> Fixed seek requests that are being ignored with frame sets.</li>
+<li><b>Bugfix:</b> When transferring from cache to the Fuse buffer, avoid a possible 1 byte overrun.</li>
+<li><b>Bugfix:</b> Issue <a href="https://github.com/nschlia/ffmpegfs/issues/143">#143</a>: To avoid occasional EPERM failures, missing synchronisation objects were added.</li>
+<li><b>Bugfix:</b> Issue <a href="https://github.com/nschlia/ffmpegfs/issues/144">#144</a>: To fix the crashes that may have been caused by them, the variables impacted by a potential threading issue were marked as "volatile."</li>
+<li><b>Bugfix:</b> <a href="https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=1037653">Closes#1037653:</a> Fix build with GCC-13</li>
+<li><b>Bugfix:</b> Update docker build for Debian Bookworm</li>
+<li><b>Enhancement:</b> Record milliseconds for every log event.</li>
+<li><b>Enhancement:</b> make check: added a file size check to frame set tests.</li>
+<li><b>Optimisation:</b> When reopening after invalidating the cache, the size remained at 0. The original size is now once again reserved in order to prevent reallocations.</li>
+<li><b>Optimisation:</b> To avoid reallocations, save enough space in the cache buffer to hold the entire frame set.</li>
+<li><b>Optimisation:</b> Checking folders to see if they can be transcoded is completely pointless. Directories are now immediately skipped.</li>
+<li>To avoid problems with logfile viewers, renamed built-in logfiles to *_builtin.log (removing the double extension).</li>
+</ul>
+<p ><b>New in 2.13 (2023-01-15):</b></p>
 <ul>
 <li><b>Feature:</b> Added &ndash;prebuffer_time parameter. Files will be decoded until the buffer contains the specified playing time, allowing playback to start smoothly without lags. Works similar to &ndash;prebuffer_size but gives better control because it does not depend on the bit rate. An example: when set to 25 seconds for HLS transcoding, this will make sure that at least 2 complete segments will be available once the file is released and visible.</li>
 <li><b>Feature:</b> Closes <a href="https://github.com/nschlia/ffmpegfs/issues/140">#140</a>: Filtering the files that will be encoded has been added. A comma-separated list of extensions is specified by the <em>—include_extensions</em> parameter. These file extensions are the only ones that will be transcoded. The entries support shell wildcard patterns.</li>
@@ -75,9 +110,9 @@ Version 2.13 has been released</h2>
 <li><b>Bugfix:</b> Closes <a href="https://github.com/nschlia/ffmpegfs/issues/139">#139</a>: Additional files could be added using the <em>—extensions</em> parameter. However, this is no longer necessary; in the past, a file's extension determined whether or not it would be transcoded. Files with unknown extensions would be ignored. The extension is no longer important because FFmpegfs now examines all input files and recognises transcodable files by the format. The outdated <em>—extensions</em> argument was removed without substitution.</li>
 <li><b>Bugfix:</b> Fixed crash when <a class="el" href="ffmpeg__utils_8h.html#a46d38ea5258c96af692914e3098e5bad" title="Combine array of strings into comma separated list.">implode()</a> function was called with an empty string. Happened with Windows GCC 11.3.0 only.</li>
 </ul>
-<h2><a class="anchor" id="autotoc_md54"></a>
+<h2><a class="anchor" id="autotoc_md52"></a>
 Version 2.12 released</h2>
-<p ><b>New in in 2.12 (2022-08-27):</b></p>
+<p ><b>New in 2.12 (2022-08-27):</b></p>
 <ul>
 <li>The code has been run through clang-tidy to detect areas that could be updated to C++17 and to find areas that are prone to bugs or are inefficient. Many problems could be fixed. Sometimes a few lines of code can take the place of many. Some components function far more effectively than they did in the past. C++17 is cool! I must purchase a t-shirt.</li>
 <li><b>Bugfix:</b> In get prores bitrate(), a crash that might have happened under unusual circumstances has been corrected. If the best match resolution could not be found, array access out-of-bounds could happen.</li>
@@ -85,9 +120,9 @@ Version 2.12 released</h2>
 <li><b>Bugfix:</b> An internal problem could cause the application to crash. Should never happen, though. Fixed anyway.</li>
 <li><b>Bugfix:</b> Sometimes, the last segment's estimated size was incredibly small - about 2 bytes. Each segment should have the same predicted size as is is calculated simply by dividing the projected size of the entire file by the number of segments. Following transcoding, the size was accurate.</li>
 </ul>
-<h2><a class="anchor" id="autotoc_md55"></a>
+<h2><a class="anchor" id="autotoc_md53"></a>
 Version 2.11 released</h2>
-<p ><b>New in in 2.11 (2022-06-16):</b></p>
+<p ><b>New in 2.11 (2022-06-16):</b></p>
 <ul>
 <li><b>Feature:</b> <a href="https://github.com/nschlia/ffmpegfs/issues/86">Issue #86</a>: Smart transcode now detects if a source file is audio only and uses the correct target format. For example, with &ndash;destination=webm+mp3, if one MP4 input file contains a video stream and another an audio stream only, the resulting files will be WebM (for the video input) and mp3 for the audio only file.</li>
 <li><b>Feature:</b> <a href="https://github.com/nschlia/ffmpegfs/issues/137">Issue #137</a>: Add &ndash;no_subtitles option to turn subtitles off.</li>
@@ -105,9 +140,9 @@ Version 2.11 released</h2>
 <li><a class="el" href="classLogging.html" title="Logging facility">Logging</a> has been revised to shorten file paths and remove mount, input, and cache paths. Log the additional portion only to reduce log file size and improve readability.</li>
 <li><b>Bugfix:</b> To fix the build with GCC 12, add the missing include headers (closes: <a href="https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=1012925">#1012925</a>).</li>
 </ul>
-<h2><a class="anchor" id="autotoc_md56"></a>
+<h2><a class="anchor" id="autotoc_md54"></a>
 Version 2.10 released</h2>
-<p ><b>New in in 2.10 (2022-04-26):</b></p>
+<p ><b>New in 2.10 (2022-04-26):</b></p>
 <ul>
 <li><b>Feature:</b> <a href="https://github.com/nschlia/ffmpegfs/issues/123">Issue #123</a>: New command line option to hide files by extension. Example: <code>--hide_extensions=jpg,png,cue</code> would stop covers and cue sheets from showing up.</li>
 <li><b>Feature:</b> <a href="https://github.com/nschlia/ffmpegfs/issues/120">Issue #120</a>: Added subtitle support. Subtitle streams can now also be transcoded to the output files. Separate SRT or VTT files will be incorporated as subtitle streams.</li>
@@ -124,9 +159,9 @@ Version 2.10 released</h2>
 <li>Going C++17 now: The packet queue has been recoded in C++17 to support external subtitles files. As C++17 is required now, why not go all the way: Starting to replace legacy C++ and somewhat C-like parts with real C++.</li>
 <li>Using std::shared_ptr to ensure proper memory allocation/free.</li>
 </ul>
-<h2><a class="anchor" id="autotoc_md57"></a>
+<h2><a class="anchor" id="autotoc_md55"></a>
 Version 2.9 released</h2>
-<p ><b>New in in 2.9 (2022-02-16):</b></p>
+<p ><b>New in 2.9 (2022-02-16):</b></p>
 <ul>
 <li><b>Feature:</b> <a href="https://github.com/nschlia/ffmpegfs/issues/97">Issue #97</a>: Added options to chose different codecs. The audio codec can be selected with &ndash;audiocodec, for videos use &ndash;videocodec.</li>
 <li><b>Feature:</b> <a href="https://github.com/nschlia/ffmpegfs/issues/109">Issue #109</a>: Allow user defined file extensions for source files. By default, only standard extensions are accepted, i.e., mp4, ts, avi etc. Arbitrary file extensions can be defined now, e.g. using &ndash;extensions=xxx,abc,yxz,aaa to also convert files ending with .xxx, .abc and so on.</li>
@@ -142,9 +177,9 @@ Version 2.9 released</h2>
 <li><b>Bugfix:</b> Avoid creating an HLS segment number which is out of bounds (higher than the expected number of segments).</li>
 <li><b>Bugfix:</b> Removed QMake support, replaced with CMake.</li>
 </ul>
-<h2><a class="anchor" id="autotoc_md58"></a>
+<h2><a class="anchor" id="autotoc_md56"></a>
 Version 2.8 released</h2>
-<p ><b>New in in 2.8 (2021-11-29):</b></p>
+<p ><b>New in 2.8 (2021-11-29):</b></p>
 <ul>
 <li><b>Bugfix:</b> <a href="https://github.com/nschlia/ffmpegfs/issues/102">Issue #102</a>: Not all SQL queries where case sensitive, causing cache confusion. Several database entries were created, but only one was updated. Made all queries case sensitive.</li>
 <li><b>Bugfix:</b> <a href="https://github.com/nschlia/ffmpegfs/issues/91">Issue #91</a>: Fixed HLS problems with cache causing garbled videos and hick-ups in audio.</li>
@@ -152,21 +187,21 @@ Version 2.8 released</h2>
 <li><b>Feature</b>: <a href="https://github.com/nschlia/ffmpegfs/issues/105">Issue #105</a>: Added Free Lossless Audio Codec (FLAC) support. Activate with <em>&ndash;desttype=FLAC</em>.</li>
 <li><b>Feature:</b> <a href="https://github.com/nschlia/ffmpegfs/issues/101">Issue #101</a>: Sample format for audio files can be selected via command line with <em>&ndash;audiosamplefmt</em>. Possible values are 0 to use the predefined setting, 8, 16, 32, 64 for integer format, F16, F32, F64 for floating point. Not all formats are supported by all destination types, selecting an invalid format will be reported as error and a list of values printed. Defaults to 0 (Use same as source or the predefined format of the destination if source format is not possible).</li>
 </ul>
-<h2><a class="anchor" id="autotoc_md59"></a>
+<h2><a class="anchor" id="autotoc_md57"></a>
 Version 2.7 released</h2>
-<p ><b>New in in 2.7 (2021-11-08):</b></p>
+<p ><b>New in 2.7 (2021-11-08):</b></p>
 <ul>
 <li><b>Bugfix:</b> <a href="https://github.com/nschlia/ffmpegfs/issues/92">Issue #92</a>: Fixed crash when hardware decoding failed. The problem is that the FFmpeg API very late reports that it cannot decode the file in hardware. To find out about that, the source file must be decoded until the first video frame is encountered. It would be very time consuming to do this on every file (decode until it is clear that the file is supported, then actually start transcoding it from scratch). There is no feasible way to automatically handle the situation. To get around this a &ndash;hwaccel_dec_blocked parameter has been added. If hardware decoding fails, check the log for a message similar this: "[vp9 @ 0x7fe910016080] No support for codec vp9 profile 0." If VP9 profile 0 is not supported, the parameter would be: &ndash;hwaccel_dec_blocked=VP9:0 This will tell FFmpegfs to decode the file in software. To block VP9 as a whole, the parameter would be &ndash;hwaccel_dec_blocked=VP9. To block both profile 0 and 1, use &ndash;hwaccel_dec_blocked=VP9:0:1. The parameter can be repeated to block even more codecs.</li>
 <li><b>Bugfix:</b> <a href="https://github.com/nschlia/ffmpegfs/issues/96">Issue #96</a>: Fixed potential buffer overrun and crash when reading corrupted input files.</li>
 <li><b>Enhancement:</b> <a href="https://github.com/nschlia/ffmpegfs/issues/99">Issue #99</a>: Report command line error if &ndash;desttype specifies audio format first, or if the second format is not audio only. Avoid misinterpretations. For example, &ndash;desttype=aiff+mov would create MOV files out of any input. Correct would be &ndash;desttype=mov+aiff which will create MOV files out of videos and AIFF from audio files, as expected.</li>
 </ul>
-<h2><a class="anchor" id="autotoc_md60"></a>
+<h2><a class="anchor" id="autotoc_md58"></a>
 Version 2.6 released</h2>
 <p ><b>New in 2.6 (2021-09-04):</b></p>
 <ul>
 <li>No new features, just a bugfix. See V2.4 for details.</li>
 </ul>
-<h2><a class="anchor" id="autotoc_md61"></a>
+<h2><a class="anchor" id="autotoc_md59"></a>
 Version 2.5 released</h2>
 <p ><b>New in 2.5 (2021-06-18):</b></p>
 <ul>
@@ -183,13 +218,13 @@ Version 2.5 released</h2>
 <li><b>Note</b>: Which hardware en/decoder actually works depends on what your hardware supports.</li>
 <li><b>Call for testers</b>: Have a CUDA capable graphics adapter and interested in testing? Please write me an e-mail.</li>
 </ul>
-<h2><a class="anchor" id="autotoc_md62"></a>
+<h2><a class="anchor" id="autotoc_md60"></a>
 Version 2.4 released</h2>
 <p ><b>New in 2.4 (2021-09-04):</b></p>
 <ul>
 <li><b>Bugfix:</b> <a href="https://github.com/nschlia/ffmpegfs/issues/90">Issue #90</a>: Make sure that one keyframe gets inserted at the start of each HLS segment.</li>
 </ul>
-<h2><a class="anchor" id="autotoc_md63"></a>
+<h2><a class="anchor" id="autotoc_md61"></a>
 Version 2.3 released</h2>
 <p ><b>New in 2.3 (2021-06-11):</b></p>
 <ul>
@@ -207,7 +242,7 @@ Version 2.3 released</h2>
 <li><b>Bugfix:</b> <a href="https://github.com/nschlia/ffmpegfs/issues/87">Issue #87</a>: Segments are now properly separated, making sure that e.g. segment 3 only goes from 30 seconds up to 40 (including 30, but not 40 seconds).</li>
 <li><b>Bugfix:</b> <a href="https://github.com/nschlia/ffmpegfs/issues/88">Issue #88</a>: HLS audio and video now stay in sync after longer playback (more than 30 minutes) or after seek operations.</li>
 </ul>
-<h2><a class="anchor" id="autotoc_md64"></a>
+<h2><a class="anchor" id="autotoc_md62"></a>
 Version 2.2 released</h2>
 <p ><b>New in 2.2 (2021-02-06):</b></p>
 <ul>
@@ -221,7 +256,7 @@ Version 2.2 released</h2>
 <li><b>Bugfix:</b> <a href="https://github.com/nschlia/ffmpegfs/issues/74">Issue #74</a>: Album arts were only copied from MP3/4 sources. Removed restriction, if the input file contains an album art it will be copied to the target (if supported, of course, e.g., to mp3 or mp4. Ogg is not yet supported because embedding album arts in Ogg can only be done by an unofficial workaround).</li>
 <li><b>Bugfix:</b> <a href="https://github.com/nschlia/ffmpegfs/issues/71">Issue #71</a>: Virtual directories were missing dot and dot-dot nodes.</li>
 </ul>
-<h2><a class="anchor" id="autotoc_md65"></a>
+<h2><a class="anchor" id="autotoc_md63"></a>
 Version 2.1 released</h2>
 <p ><b>New in 2.1 (2020-12-14):</b></p>
 <ul>

@@ -21,7 +21,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">FFmpegfs Fuse Multi Media Filesystem<span id="projectnumber">&#160;2.14</span>
+   <div id="projectname">FFmpegfs Fuse Multi Media Filesystem<span id="projectnumber">&#160;2.16</span>
    </div>
   </td>
  </tr>
@@ -70,7 +70,7 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 <a href="thread__pool_8cc.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="comment">/*</span></div>
-<div class="line"><a id="l00002" name="l00002"></a><span class="lineno">    2</span><span class="comment"> * Copyright (C) 2019-2023 Norbert Schlia (nschlia@oblivion-software.de)</span></div>
+<div class="line"><a id="l00002" name="l00002"></a><span class="lineno">    2</span><span class="comment"> * Copyright (C) 2019-2024 Norbert Schlia (nschlia@oblivion-software.de)</span></div>
 <div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span><span class="comment"> *</span></div>
 <div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span><span class="comment"> * This program is free software; you can redistribute it and/or modify</span></div>
 <div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="comment"> * it under the terms of the GNU General Public License as published by</span></div>
@@ -129,14 +129,14 @@ $(function() {
 <div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span>                <span class="keywordflow">break</span>;</div>
 <div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span>            }</div>
 <div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span> </div>
-<div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span>            <a class="code hl_function" href="classLogging.html#a9d2938a2b4a502b58c43a895c593d738">Logging::trace</a>(<span class="keyword">nullptr</span>, <span class="stringliteral">&quot;Starting job taking pool thread no. %1 with id 0x%&lt;%&quot;</span> FFMPEGFS_FORMAT_PTHREAD_T <span class="stringliteral">&quot;&gt;2.&quot;</span>, thread_no, pthread_self());</div>
+<div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span>            <a class="code hl_function" href="classLogging.html#a9d2938a2b4a502b58c43a895c593d738">Logging::trace</a>(<span class="keyword">nullptr</span>, <span class="stringliteral">&quot;Starting job taking pool thread no. %1 with id 0x%&lt;&quot;</span> FFMPEGFS_FORMAT_PTHREAD_T <span class="stringliteral">&quot;&gt;2.&quot;</span>, thread_no, pthread_self());</div>
 <div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span>            info = <a class="code hl_variable" href="classthread__pool.html#a0fa480c66e0f5176bcbb889fa5229d7e">m_thread_queue</a>.front();</div>
 <div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span>            <a class="code hl_variable" href="classthread__pool.html#a0fa480c66e0f5176bcbb889fa5229d7e">m_thread_queue</a>.pop();</div>
 <div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span>        }</div>
 <div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span> </div>
 <div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span>        <span class="keywordtype">int</span> ret = info.<a class="code hl_variable" href="structthread__pool_1_1THREADINFO.html#a43d80d68fa928fa5399674ddc22783aa">m_thread_func</a>(info.<a class="code hl_variable" href="structthread__pool_1_1THREADINFO.html#a0fff0c8fb8445d3e154f192bb98c9fa0">m_opaque</a>);</div>
 <div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span> </div>
-<div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span>        <a class="code hl_function" href="classLogging.html#a9d2938a2b4a502b58c43a895c593d738">Logging::trace</a>(<span class="keyword">nullptr</span>, <span class="stringliteral">&quot;The job using pool thread no. %1 with id 0x%&lt;%&quot;</span> FFMPEGFS_FORMAT_PTHREAD_T <span class="stringliteral">&quot;&gt;2 has exited with return code %3.&quot;</span>, thread_no, pthread_self(), ret);</div>
+<div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span>        <a class="code hl_function" href="classLogging.html#a9d2938a2b4a502b58c43a895c593d738">Logging::trace</a>(<span class="keyword">nullptr</span>, <span class="stringliteral">&quot;The job using pool thread no. %1 with id 0x%&lt;&quot;</span> FFMPEGFS_FORMAT_PTHREAD_T <span class="stringliteral">&quot;&gt;2 has exited with return code %3.&quot;</span>, thread_no, pthread_self(), ret);</div>
 <div class="line"><a id="l00079" name="l00079"></a><span class="lineno">   79</span>    }</div>
 <div class="line"><a id="l00080" name="l00080"></a><span class="lineno">   80</span>}</div>
 <div class="line"><a id="l00081" name="l00081"></a><span class="lineno">   81</span> </div>

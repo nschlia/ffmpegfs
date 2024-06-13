@@ -21,7 +21,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">FFmpegfs Fuse Multi Media Filesystem<span id="projectnumber">&#160;2.14</span>
+   <div id="projectname">FFmpegfs Fuse Multi Media Filesystem<span id="projectnumber">&#160;2.16</span>
    </div>
   </td>
  </tr>
@@ -70,7 +70,7 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 <a href="ffmpeg__base_8cc.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="comment">/*</span></div>
-<div class="line"><a id="l00002" name="l00002"></a><span class="lineno">    2</span><span class="comment"> * Copyright (C) 2017-2023 Norbert Schlia (nschlia@oblivion-software.de)</span></div>
+<div class="line"><a id="l00002" name="l00002"></a><span class="lineno">    2</span><span class="comment"> * Copyright (C) 2017-2024 Norbert Schlia (nschlia@oblivion-software.de)</span></div>
 <div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span><span class="comment"> *</span></div>
 <div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span><span class="comment"> * This program is free software; you can redistribute it and/or modify</span></div>
 <div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="comment"> * it under the terms of the GNU General Public License as published by</span></div>
@@ -290,7 +290,7 @@ $(function() {
 <div class="line"><a id="l00229" name="l00229"></a><span class="lineno">  229</span>        <a class="code hl_function" href="classLogging.html#a663ec4391c599b4b0ebc1cf1bf007e45">Logging::debug</a>(out_file ? <a class="code hl_function" href="classFFmpeg__Base.html#a5ac55e8b9e0f9b93a99ad7044d1ad070">virtname</a>() : <a class="code hl_function" href="classFFmpeg__Base.html#afd4bb8403bd6fd131801dbef53be06ba">filename</a>(), <span class="stringliteral">&quot;Video %1 #%2: %3@%4 [%5]&quot;</span>,</div>
 <div class="line"><a id="l00230" name="l00230"></a><span class="lineno">  230</span>                       out_file ? <span class="stringliteral">&quot;out&quot;</span> : <span class="stringliteral">&quot;in&quot;</span>,</div>
 <div class="line"><a id="l00231" name="l00231"></a><span class="lineno">  231</span>                       stream-&gt;index,</div>
-<div class="line"><a id="l00232" name="l00232"></a><span class="lineno">  232</span>                       <a class="code hl_function" href="ffmpeg__utils_8cc.html#a150f84813e3cd47e77a52162838ed394">get_codec_name</a>(stream-&gt;codecpar-&gt;codec_id, <span class="keyword">false</span>),</div>
+<div class="line"><a id="l00232" name="l00232"></a><span class="lineno">  232</span>                       <a class="code hl_function" href="ffmpeg__utils_8cc.html#a150f84813e3cd47e77a52162838ed394">get_codec_name</a>(stream-&gt;codecpar-&gt;codec_id),</div>
 <div class="line"><a id="l00233" name="l00233"></a><span class="lineno">  233</span>                       <a class="code hl_function" href="ffmpeg__utils_8cc.html#a92e160970289c98aafa793d05782edfb">format_bitrate</a>((stream-&gt;codecpar-&gt;bit_rate != 0) ? stream-&gt;codecpar-&gt;bit_rate : format_ctx-&gt;bit_rate).c_str(),</div>
 <div class="line"><a id="l00234" name="l00234"></a><span class="lineno">  234</span>                       <a class="code hl_function" href="ffmpeg__utils_8cc.html#a2752625a2c8322c18eee3fabbcc24176">format_duration</a>(duration).c_str());</div>
 <div class="line"><a id="l00235" name="l00235"></a><span class="lineno">  235</span>    }</div>
@@ -315,7 +315,7 @@ $(function() {
 <div class="line"><a id="l00254" name="l00254"></a><span class="lineno">  254</span>        <a class="code hl_function" href="classLogging.html#a663ec4391c599b4b0ebc1cf1bf007e45">Logging::debug</a>(out_file ? <a class="code hl_function" href="classFFmpeg__Base.html#a5ac55e8b9e0f9b93a99ad7044d1ad070">virtname</a>() : <a class="code hl_function" href="classFFmpeg__Base.html#afd4bb8403bd6fd131801dbef53be06ba">filename</a>(), <span class="stringliteral">&quot;Audio %1 #2: %3@%4 %5 Channels %6 [%7]&quot;</span>,</div>
 <div class="line"><a id="l00255" name="l00255"></a><span class="lineno">  255</span>                       out_file ? <span class="stringliteral">&quot;out&quot;</span> : <span class="stringliteral">&quot;in&quot;</span>,</div>
 <div class="line"><a id="l00256" name="l00256"></a><span class="lineno">  256</span>                       stream-&gt;index,</div>
-<div class="line"><a id="l00257" name="l00257"></a><span class="lineno">  257</span>                       <a class="code hl_function" href="ffmpeg__utils_8cc.html#a150f84813e3cd47e77a52162838ed394">get_codec_name</a>(stream-&gt;codecpar-&gt;codec_id, <span class="keyword">false</span>),</div>
+<div class="line"><a id="l00257" name="l00257"></a><span class="lineno">  257</span>                       <a class="code hl_function" href="ffmpeg__utils_8cc.html#a150f84813e3cd47e77a52162838ed394">get_codec_name</a>(stream-&gt;codecpar-&gt;codec_id),</div>
 <div class="line"><a id="l00258" name="l00258"></a><span class="lineno">  258</span>                       <a class="code hl_function" href="ffmpeg__utils_8cc.html#a92e160970289c98aafa793d05782edfb">format_bitrate</a>((stream-&gt;codecpar-&gt;bit_rate != 0) ? stream-&gt;codecpar-&gt;bit_rate : format_ctx-&gt;bit_rate).c_str(),</div>
 <div class="line"><a id="l00259" name="l00259"></a><span class="lineno">  259</span>                       <a class="code hl_function" href="classFFmpeg__Base.html#a317ac83ade3ddeed0130eadbf302afd6">get_channels</a>(stream-&gt;codecpar),</div>
 <div class="line"><a id="l00260" name="l00260"></a><span class="lineno">  260</span>                       <a class="code hl_function" href="ffmpeg__utils_8cc.html#a88220910ba33fecc28ff56e9a239b18b">format_samplerate</a>(stream-&gt;codecpar-&gt;sample_rate).c_str(),</div>
@@ -335,7 +335,7 @@ $(function() {
 <div class="line"><a id="l00274" name="l00274"></a><span class="lineno">  274</span>        <a class="code hl_function" href="classLogging.html#a663ec4391c599b4b0ebc1cf1bf007e45">Logging::debug</a>(out_file ? <a class="code hl_function" href="classFFmpeg__Base.html#a5ac55e8b9e0f9b93a99ad7044d1ad070">virtname</a>() : <a class="code hl_function" href="classFFmpeg__Base.html#afd4bb8403bd6fd131801dbef53be06ba">filename</a>(), <span class="stringliteral">&quot;Subtitle %1 #%2: %3&quot;</span>,</div>
 <div class="line"><a id="l00275" name="l00275"></a><span class="lineno">  275</span>                       out_file ? <span class="stringliteral">&quot;out&quot;</span> : <span class="stringliteral">&quot;in&quot;</span>,</div>
 <div class="line"><a id="l00276" name="l00276"></a><span class="lineno">  276</span>                       stream-&gt;index,</div>
-<div class="line"><a id="l00277" name="l00277"></a><span class="lineno">  277</span>                       <a class="code hl_function" href="ffmpeg__utils_8cc.html#a150f84813e3cd47e77a52162838ed394">get_codec_name</a>(stream-&gt;codecpar-&gt;codec_id, <span class="keyword">false</span>));</div>
+<div class="line"><a id="l00277" name="l00277"></a><span class="lineno">  277</span>                       <a class="code hl_function" href="ffmpeg__utils_8cc.html#a150f84813e3cd47e77a52162838ed394">get_codec_name</a>(stream-&gt;codecpar-&gt;codec_id));</div>
 <div class="line"><a id="l00278" name="l00278"></a><span class="lineno">  278</span>    }</div>
 <div class="line"><a id="l00279" name="l00279"></a><span class="lineno">  279</span>    <span class="keywordflow">else</span></div>
 <div class="line"><a id="l00280" name="l00280"></a><span class="lineno">  280</span>    {</div>

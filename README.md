@@ -32,6 +32,10 @@ A Windows version of FFmpegfs has frequently been requested; see issue [#76](htt
 
 To see what's been done so far, checkout the [windows](https://github.com/nschlia/ffmpegfs/tree/windows) branch.
 
+**New in 2.17 (2024-08-XX):**
+
+- **Bugfix:** Wrong error message fixed when an invalid audio/video codec was selected. The message should rather say "unsupported codec" instead of talking about "sample format not supported.".
+
 **New in 2.16 (2024-06-10):**
 
 - **Bugfix:** Closes [#160](https://github.com/nschlia/ffmpegfs/issues/160): Fix build with FFmpeg 7.0. [Debian Bug #1072412](https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=1072412). write_packet() now with const buffer as of Libavformat 61+.
@@ -41,20 +45,6 @@ To see what's been done so far, checkout the [windows](https://github.com/nschli
   Depreate AVCodecContext.ticks_per_frame in favor of
   AVCodecContext.framerate (encoding) and
   AV_CODEC_PROP_FIELDS (decoding).
-
-**New in 2.15 (2024-02-03):**
-
-- **Bugfix:** Issue [#151](https://github.com/nschlia/ffmpegfs/issues/151): Fixed autocopy STRICT never triggers for video streams
-- **Bugfix:** Closes [#153](https://github.com/nschlia/ffmpegfs/issues/153): The --include_extensions parameter now contains a description, which was previously missing from the manual and online help.
-- **Issue** [#149](https://github.com/nschlia/ffmpegfs/issues/149): 2023-05-04 - xxxxxxxxxx - lavu 58.7.100 - frame.h
-  Deprecate AVFrame.interlaced_frame, AVFrame.top_field_first, and AVFrame.key_frame.
-  Add AV_FRAME_FLAG_INTERLACED, AV_FRAME_FLAG_TOP_FIELD_FIRST, and AV_FRAME_FLAG_KEY flags as replacement.
-- **Issue** [#149](https://github.com/nschlia/ffmpegfs/issues/149): 2023-05-04 - xxxxxxxxxx - lavu 58.7.100 - frame.h
-  Deprecate AVFrame.interlaced_frame, AVFrame.top_field_first, and AVFrame.key_frame.
-  Add AV_FRAME_FLAG_INTERLACED, AV_FRAME_FLAG_TOP_FIELD_FIRST, and AV_FRAME_FLAG_KEY flags as replacement.
-- **Issue** [#149](https://github.com/nschlia/ffmpegfs/issues/149): 2021-09-20 - dd846bc4a91 - lavc 59.8.100 - avcodec.h codec.h
-  Deprecate AV_CODEC_FLAG_TRUNCATED and AV_CODEC_CAP_TRUNCATED, as they are redundant with parsers.
-- Closes [#136](https://github.com/nschlia/ffmpegfs/issues/136): The CMake build files have been removed. Support was never more than experimental, and CMake lacks a good uninstall option. Will stick to automake system from now on.
 
 ## Full History
 

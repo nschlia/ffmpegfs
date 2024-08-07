@@ -64,7 +64,7 @@ static Cache *              cache;                          /**< @brief Global c
 static std::atomic_bool     thread_exit;                    /**< @brief Used for shutdown: if true, forcibly exit all threads */
 
 static bool transcode(THREAD_DATA *thread_data, Cache_Entry *cache_entry, FFmpeg_Transcoder & transcoder, bool *timeout);
-static int  transcoder_thread(void *arg);
+static int  transcoder_thread(THREAD_DATA *thread_data);
 static bool transcode_until(Cache_Entry* cache_entry, size_t offset, size_t len, uint32_t segment_no);
 static int  transcode_finish(Cache_Entry* cache_entry, FFmpeg_Transcoder & transcoder);
 
@@ -416,7 +416,7 @@ Cache_Entry* transcoder_new(LPVIRTUALFILE virtualfile, bool begin_transcode)
                 {
                     std::unique_lock<std::mutex> lock_thread_running_mutex(thread_data->m_thread_running_mutex);
 
-                    tp->schedule_thread(&transcoder_thread, thread_data);
+                    tp->schedule_thread(std::bind(&transcoder_thread, thread_data));
 
                     // Let decoder get into gear before returning from open
                     while (!thread_data->m_thread_running_lock_guard)
@@ -995,12 +995,11 @@ static bool transcode(THREAD_DATA *thread_data, Cache_Entry *cache_entry, FFmpeg
 
 /**
  * @brief Transcoding thread
- * @param[in] arg - Corresponding Cache_Entry object.
+ * @param[in] thread_data - Corresponding Cache_Entry object.
  * @returns Returns 0 on success; or errno code on error.
  */
-static int transcoder_thread(void *arg)
+static int transcoder_thread(THREAD_DATA *thread_data)
 {
-    THREAD_DATA *thread_data = static_cast<THREAD_DATA*>(arg);
     Cache_Entry *cache_entry = static_cast<Cache_Entry *>(thread_data->m_arg);
     FFmpeg_Transcoder transcoder;
     bool timeout = false;

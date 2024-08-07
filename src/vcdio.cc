@@ -36,7 +36,6 @@
 
 #include "vcdio.h"
 #include "vcd/vcdutils.h"
-#include "ffmpegfs.h"
 #include "logging.h"
 
 VcdIO::VcdIO()

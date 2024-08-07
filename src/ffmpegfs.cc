@@ -70,8 +70,6 @@ extern "C" {
 #pragma GCC diagnostic ignored "-Wimplicit-int-conversion"
 #endif
 
-#include "ffmpeg_utils.h"
-
 FFMPEGFS_FORMAT_ARR ffmpeg_format;                      /**< @brief Two FFmpegfs_Format infos, 0: video file, 1: audio file */
 FFMPEGFS_PARAMS     params;                             /**< @brief FFmpegfs command line parameters */
 

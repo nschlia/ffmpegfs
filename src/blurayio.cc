@@ -32,7 +32,6 @@
  */
 
 #include "blurayio.h"
-#include "ffmpeg_utils.h"
 #include "logging.h"
 
 #include <libbluray/bluray.h>

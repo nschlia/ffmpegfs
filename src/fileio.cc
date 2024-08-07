@@ -31,7 +31,6 @@
 
 #include "fileio.h"
 #include "ffmpegfs.h"
-#include "buffer.h"
 #include "diskio.h"
 #ifdef USE_LIBVCD
 #include "vcdio.h"

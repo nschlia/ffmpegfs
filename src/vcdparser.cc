@@ -33,8 +33,6 @@
 
 #include "ffmpegfs.h"
 #include "vcdparser.h"
-#include "transcode.h"
-#include "ffmpeg_utils.h"
 #include "logging.h"
 
 #include "vcd/vcdentries.h"

@@ -42,12 +42,12 @@
 
 #define CACHE_CHECK_BIT(mask, var)  ((mask) == (mask & (var)))  /**< @brief Check bit in bitmask */
 
-#define CACHE_CLOSE_NOOPT   0x00000000                      /**< @brief Dummy, do nothing special */
-#define CACHE_CLOSE_FREE    0x00000001                      /**< @brief Free memory for cache entry */
-#define CACHE_CLOSE_DELETE  (0x00000002 | CACHE_CLOSE_FREE) /**< @brief Delete cache entry, will unlink cached file! Implies CACHE_CLOSE_FREE. */
+#define CACHE_CLOSE_NOOPT   0x00000000                          /**< @brief Dummy, do nothing special */
+#define CACHE_CLOSE_FREE    0x00000001                          /**< @brief Free memory for cache entry */
+#define CACHE_CLOSE_DELETE  (0x00000002 | CACHE_CLOSE_FREE)     /**< @brief Delete cache entry, will unlink cached file! Implies CACHE_CLOSE_FREE. */
 
-#define CACHE_FLAG_RO       0x00000001                      /**< @brief Mark cache file read-only */
-#define CACHE_FLAG_RW       0x00000002                      /**< @brief Mark cache file writeable, implies read permissions */
+#define CACHE_FLAG_RO       0x00000001                          /**< @brief Mark cache file read-only */
+#define CACHE_FLAG_RW       0x00000002                          /**< @brief Mark cache file writeable, implies read permissions */
 
 /**
  * @brief The #Buffer class

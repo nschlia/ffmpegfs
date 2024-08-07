@@ -57,7 +57,7 @@ void thread_pool::loop_function()
 
     while (true)
     {
-        THREADINFO info;
+        FunctionPointer info;
         {
             std::unique_lock<std::mutex> lock_queue_mutex(m_queue_mutex);
             m_queue_cond.wait(lock_queue_mutex, [this]{ return (!m_thread_queue.empty() || m_queue_shutdown); });
@@ -73,13 +73,13 @@ void thread_pool::loop_function()
             m_thread_queue.pop();
         }
 
-        int ret = info.m_thread_func(info.m_opaque);
+        int ret = info();
 
         Logging::trace(nullptr, "The job using pool thread no. %1 with id 0x%<" FFMPEGFS_FORMAT_PTHREAD_T ">2 has exited with return code %3.", thread_no, pthread_self(), ret);
     }
 }
 
-bool thread_pool::schedule_thread(int (*thread_func)(void *), void *opaque)
+bool thread_pool::schedule_thread(FunctionPointer &&func)
 {
     if (!m_queue_shutdown)
     {
@@ -88,11 +88,7 @@ bool thread_pool::schedule_thread(int (*thread_func)(void *), void *opaque)
         {
             std::lock_guard<std::mutex> lock_queue_mutex(m_queue_mutex);
 
-            THREADINFO info;
-
-            info.m_thread_func  = thread_func;
-            info.m_opaque       = opaque;
-            m_thread_queue.push(info);
+            m_thread_queue.push(func);
         }
 
         m_queue_cond.notify_one();
@@ -122,8 +118,14 @@ unsigned int thread_pool::pool_size() const
     return static_cast<unsigned int>(m_thread_pool.size());
 }
 
-void thread_pool::init(unsigned int num_threads /*= 0*/)
+int thread_pool::init(unsigned int num_threads /*= 0*/)
 {
+    if (!m_thread_pool.empty())
+    {
+        Logging::warning(nullptr, "The thread pool already initialised");
+        return 0;
+    }
+
     if (num_threads)
     {
         m_num_threads = num_threads;
@@ -135,6 +137,8 @@ void thread_pool::init(unsigned int num_threads /*= 0*/)
     {
         m_thread_pool.emplace_back(std::thread(&thread_pool::loop_function_starter, std::ref(*this)));
     }
+
+    return static_cast<int>(m_thread_pool.size());
 }
 
 void thread_pool::tear_down(bool silent)

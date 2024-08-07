@@ -46,17 +46,15 @@
 #include <condition_variable>
 #include <unistd.h>
 #include <atomic>
+#include <functional>
 
 /**
  * @brief The thread_pool class.
  */
 class thread_pool
 {
-    typedef struct THREADINFO                       /**< Thread info structure */
-    {
-        int (*m_thread_func)(void *);               /**< Job function pointer */
-        void *m_opaque;                             /**< Parameter for job function */
-    } THREADINFO;
+public:
+    typedef std::function<int(void)> FunctionPointer;
 
 public:
     /**
@@ -71,9 +69,11 @@ public:
 
     /**
      * @brief Initialise thread pool.
+     * Initialise the thread pool. Does nothing if called more than once.
      * @param[in] num_threads - Optional: number of threads to create in pool. Defaults to Defaults to 4x number of CPU cores.
+     * @return Number of threads created on success; on error or if called more than once, returns 0.
      */
-    void            init(unsigned int num_threads = 0);
+    int init(unsigned int num_threads = 0);
     /**
      * @brief Shut down the thread pool.
      * @param[in] silent - If true, no log messages will be issued.
@@ -85,7 +85,7 @@ public:
      * @param[in] opaque - Parameter passed to thread function.
      * @return Returns true if thread was successfully scheduled, fals if not.
      */
-    bool            schedule_thread(int (*thread_func)(void *), void *opaque);
+    bool            schedule_thread(FunctionPointer && func);
     /**
      * @brief Get number of currently running threads.
      * @return Returns number of currently running threads.
@@ -117,7 +117,7 @@ protected:
     std::vector<std::thread>    m_thread_pool;      /**< Thread pool */
     std::mutex                  m_queue_mutex;      /**< Mutex for critical section */
     std::condition_variable     m_queue_cond;       /**< Condition for critical section */
-    std::queue<THREADINFO>      m_thread_queue;     /**< Thread queue parameters */
+    std::queue<FunctionPointer> m_thread_queue;     /**< Thread queue parameters */
     std::atomic_bool            m_queue_shutdown;   /**< If true all threads have been shut down */
     unsigned int                m_num_threads;      /**< Max. number of threads. Defaults to 4x number of CPU cores. */
     unsigned int                m_cur_threads;      /**< Current number of threads. */

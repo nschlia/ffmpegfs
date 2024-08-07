@@ -70,8 +70,6 @@ extern "C" {
 #pragma GCC diagnostic ignored "-Wimplicit-int-conversion"
 #endif
 
-#include "ffmpeg_utils.h"
-
 FFMPEGFS_FORMAT_ARR ffmpeg_format;                      /**< @brief Two FFmpegfs_Format infos, 0: video file, 1: audio file */
 FFMPEGFS_PARAMS     params;                             /**< @brief FFmpegfs command line parameters */
 
@@ -454,7 +452,7 @@ typedef std::map<const std::string, const AVCodecID, comp> VIDEOCODEC_MAP;      
 /**
  * @brief List of audio codecs
  */
-static const AUDIOCODEC_MAP audiocodec_map =
+static const AUDIOCODEC_MAP audiocodec_map
 {
     { "AAC",            AV_CODEC_ID_AAC },          // TS, MP4, MOV, MKV
     { "AC3",            AV_CODEC_ID_AC3 },          // MP4, MOV, MKV
@@ -471,7 +469,7 @@ static const AUDIOCODEC_MAP audiocodec_map =
 /**
  * @brief List of video codecs
  */
-static const VIDEOCODEC_MAP videocodec_map =
+const static VIDEOCODEC_MAP videocodec_map
 {
     { "MPEG1",          AV_CODEC_ID_MPEG1VIDEO },   // TS, MP4, MKV
     { "MPEG2",          AV_CODEC_ID_MPEG2VIDEO },   // TS, MP4, MKV
@@ -486,7 +484,7 @@ static const VIDEOCODEC_MAP videocodec_map =
 /**
   * List of AUTOCOPY options
   */
-static const AUTOCOPY_MAP autocopy_map =
+static const AUTOCOPY_MAP autocopy_map
 {
     { "OFF",            AUTOCOPY_OFF },
     { "MATCH",          AUTOCOPY_MATCH },
@@ -498,7 +496,7 @@ static const AUTOCOPY_MAP autocopy_map =
 /**
   * List if MP4 profiles
   */
-static const PROFILE_MAP profile_map =
+static const PROFILE_MAP profile_map
 {
     { "NONE",           PROFILE_DEFAULT },
 
@@ -518,7 +516,7 @@ static const PROFILE_MAP profile_map =
 /**
   * List if ProRes levels.
   */
-static const LEVEL_MAP prores_level_map =
+static const LEVEL_MAP prores_level_map
 {
     // ProRes
     { "PROXY",          PRORESLEVEL_PRORES_PROXY },
@@ -530,7 +528,7 @@ static const LEVEL_MAP prores_level_map =
 /**
   * List if recode options.
   */
-static const RECODESAME_MAP recode_map =
+static const RECODESAME_MAP recode_map
 {
     // Recode to same format
     { "NO",             RECODESAME_NO },
@@ -545,7 +543,7 @@ static const RECODESAME_MAP recode_map =
   * in build_device_type_list() by asking the FFmpeg API for the proper
   * type.
   */
-static HWACCEL_MAP hwaccel_map =
+static HWACCEL_MAP hwaccel_map
 {
     { "NONE",           { true,     HWACCELAPI_NONE,            AV_HWDEVICE_TYPE_NONE } },
 
@@ -592,7 +590,7 @@ static HWACCEL_MAP hwaccel_map =
 /**
   * List of AUTOCOPY options
   */
-static const CODEC_MAP hwaccel_codec_map =
+static const CODEC_MAP hwaccel_codec_map
 {
     { "H263",   AV_CODEC_ID_H263 },
     { "H264",   AV_CODEC_ID_H264 },
@@ -608,7 +606,7 @@ static const CODEC_MAP hwaccel_codec_map =
 /**
  * List of sample formats.
  */
-static const SAMPLE_FMT_MAP sample_fmt_map =
+static const SAMPLE_FMT_MAP sample_fmt_map
 {
     { "0",      SAMPLE_FMT_DONTCARE },
     { "8",      SAMPLE_FMT_8 },
@@ -2477,7 +2475,7 @@ int main(int argc, char *argv[])
     {
         if (fmt.filetype() != FILETYPE_UNKNOWN && !fmt.is_sample_fmt_supported())
         {
-            std::fprintf(stderr, "INVALID PARAMETER: Sample format %s not supported for %s\n\n", get_sampleformat_text(params.m_sample_fmt).c_str(), fmt.desttype().c_str());
+            std::fprintf(stderr, "INVALID PARAMETER: %s does not support the sample format %s\n\n", fmt.desttype().c_str(), get_sampleformat_text(params.m_sample_fmt).c_str());
             std::fprintf(stderr, "Supported formats: %s\n\n", fmt.sample_fmt_list().c_str());
             return 1;
         }
@@ -2490,14 +2488,14 @@ int main(int argc, char *argv[])
         {
             if (params.m_audio_codec != AV_CODEC_ID_NONE && !fmt.is_audio_codec_supported(params.m_audio_codec))
             {
-                std::fprintf(stderr, "INVALID PARAMETER: Sample format %s not supported for %s\n\n", get_audio_codec_text(params.m_audio_codec).c_str(), fmt.desttype().c_str());
+                std::fprintf(stderr, "INVALID PARAMETER: %s does not support audio codec %s\n\n", fmt.desttype().c_str(), get_audio_codec_text(params.m_audio_codec).c_str());
                 std::fprintf(stderr, "Supported formats: %s\n\n", fmt.audio_codec_list().c_str());
                 return 1;
             }
 
             if (params.m_video_codec != AV_CODEC_ID_NONE && !fmt.is_video_codec_supported(params.m_video_codec))
             {
-                std::fprintf(stderr, "INVALID PARAMETER: Sample format %s not supported for %s\n\n", get_video_codec_text(params.m_video_codec).c_str(), fmt.desttype().c_str());
+                std::fprintf(stderr, "INVALID PARAMETER: %s does not support video codec %s\n\n", fmt.desttype().c_str(), get_video_codec_text(params.m_video_codec).c_str());
                 std::fprintf(stderr, "Supported formats: %s\n\n", fmt.video_codec_list().c_str());
                 return 1;
             }

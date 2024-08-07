@@ -44,7 +44,6 @@ extern "C" {
 }
 #endif
 
-#include "ffmpeg_utils.h"
 #include "id3v1tag.h"
 #include "ffmpegfs.h"
 

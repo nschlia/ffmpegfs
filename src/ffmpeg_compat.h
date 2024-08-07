@@ -37,9 +37,9 @@
 #pragma once
 
 #ifdef __clang__
-#define FALLTHROUGH_INTENDED [[clang::fallthrough]]
+#define FALLTHROUGH_INTENDED [[clang::fallthrough]]     /**< @brief Allow fallthrough in case statements for Clang */
 #else
-#define FALLTHROUGH_INTENDED [[gnu::fallthrough]]
+#define FALLTHROUGH_INTENDED [[gnu::fallthrough]]       /**< @brief Allow fallthrough in case statements for GCC */
 #endif
 
 /**

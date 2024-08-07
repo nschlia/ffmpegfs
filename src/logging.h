@@ -275,11 +275,22 @@ public:
     }
 
 private:
+    /**
+     * @brief Dummy: return orignal value unchanged
+     * @param[in] val - Original value
+     * @return Reference to original value.
+     */
     template<typename T>
     static T & convert(T & val)
     {
         return val;
     }
+
+    /**
+     * @brief Convert const char* to std::string
+     * @param[in] val - Original value as pointer to zero terminated const char
+     * @return Value converted to std::string or (null) if original pointer is NULL.
+     */
     static std::string convert(const char * val)
     {
         if (val != nullptr)
@@ -291,6 +302,12 @@ private:
             return "(null)";
         }
     }
+
+    /**
+     * @brief Convert char* to std::string
+     * @param[in] val - Original value as pointer to zero terminated char
+     * @return Value converted to std::string or (null) if original pointer is NULL.
+     */
     static std::string convert(char * val)
     {
         if (val != nullptr)
@@ -303,14 +320,24 @@ private:
         }
     }
 
-    // std::string kann man eigentlich nicht an %s übergeben. So geht es doch...
+    // std::string cannot actually be passed to %s. That's how it works...
 
+    /**
+     * @brief Dummy: return orignal value unchanged if not type std::string
+     * @param[in] val - Original value
+     * @return Reference to original value.
+     */
     template<class T, typename std::enable_if<!std::is_same<T, std::string>::value, bool>::type = true>
     static T & fix_std_string(T & val)
     {
         return val;
     }
 
+    /**
+     * @brief Convert std::string to const char*
+     * @param[in] val - Original value as constant reference to std::string
+     * @return Value converted to const char *.
+     */
     static const char * fix_std_string(const std::string & val)
     {
         return val.c_str();

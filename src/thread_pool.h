@@ -54,7 +54,7 @@
 class thread_pool
 {
 public:
-    typedef std::function<int(void)> FunctionPointer;
+    typedef std::function<int(void)> FunctionPointer; /**< @brief Pointer to thread pool function */
 
 public:
     /**
@@ -81,9 +81,8 @@ public:
     void            tear_down(bool silent = false);
     /**
      * @brief Schedule a new thread from pool.
-     * @param[in] thread_func - Thread function to start.
-     * @param[in] opaque - Parameter passed to thread function.
-     * @return Returns true if thread was successfully scheduled, fals if not.
+     * @param[in] func - std::function object to call
+     * @return Returns true if thread was successfully scheduled, false if not.
      */
     bool            schedule_thread(FunctionPointer && func);
     /**

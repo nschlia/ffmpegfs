@@ -112,6 +112,8 @@ This can speed up transcoding significantly as copying streams uses much less co
 +
 *STRICT* would convert AAC to MP3 for MPEG or H264 to ProRes for Prores files to strictly adhere to the output format setting. This will create homogenous results which might prevent problems with picky playback software.
 +
+Note: When the *--audiocodec* or *--videocodec* option is specified, the STRICT option should be used to ensure that the chosen output codec is used in any scenario. MATCH would enable copy if the output format supports the input codec.
+
 Defaults to: *OFF*
 
 *--recodesame*=OPTION, *-orecodesame*=OPTION::

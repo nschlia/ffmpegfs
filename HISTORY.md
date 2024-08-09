@@ -1,6 +1,9 @@
 History
 =======
 
+**New in 2.17 (2024-08-XX):**
+
+- **Bugfix:** Wrong error message fixed when an invalid audio/video codec was selected. The message should rather say "unsupported codec" instead of talking about "sample format not supported.".
 **New in 2.16 (2024-06-10):**
 
 - **Bugfix:** Issue [#160](https://github.com/nschlia/ffmpegfs/issues/160): Fix build with FFmpeg 7.0. [Debian Bug #1072412](https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=1072412). write_packet() now with const buffer as of Libavformat 61+.

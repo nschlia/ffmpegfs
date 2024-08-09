@@ -1,9 +1,15 @@
 History
 =======
 
+**New in 2.17 (2024-08-XX):**
+
+- **Bugfix:** Wrong error message fixed when an invalid audio/video codec was selected. The message should rather say "unsupported codec" instead of talking about "sample format not supported.".
+- **Bugfix:** Issue [#162](https://github.com/nschlia/ffmpegfs/issues/162): If not present, add time stamps to the copied streams.
+- Changed quality from 34 to 40 for hardware encoded video streams to create slightly smaller files.
+
 **New in 2.16 (2024-06-10):**
 
-- **Bugfix:** Closes [#160](https://github.com/nschlia/ffmpegfs/issues/160): Fix build with FFmpeg 7.0. [Debian Bug #1072412](https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=1072412). write_packet() now with const buffer as of Libavformat 61+.
+- **Bugfix:** Issue [#160](https://github.com/nschlia/ffmpegfs/issues/160): Fix build with FFmpeg 7.0. [Debian Bug #1072412](https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=1072412). write_packet() now with const buffer as of Libavformat 61+.
 - Fixed deprecation: 2014-05-18 - 68c0518 / fd05602 - lavc 55.63.100 / 55.52.0 - avcodec.h
   Add avcodec_free_context(). From now on it should be used for freeing AVCodecContext.
 - Fixed deprecation: 2023-05-15 - 7d1d61cc5f5 - lavc 60 - avcodec.h
@@ -14,7 +20,7 @@ History
 **New in 2.15 (2024-02-03):**
 
 - **Bugfix:** Issue [#151](https://github.com/nschlia/ffmpegfs/issues/151): Fixed autocopy STRICT never triggers for video streams
-- **Bugfix:** Closes [#153](https://github.com/nschlia/ffmpegfs/issues/153): The --include_extensions parameter now contains a description, which was previously missing from the manual and online help.
+- **Bugfix:** Issue [#153](https://github.com/nschlia/ffmpegfs/issues/153): The --include_extensions parameter now contains a description, which was previously missing from the manual and online help.
 - **Issue** [#149](https://github.com/nschlia/ffmpegfs/issues/149): 2023-05-04 - xxxxxxxxxx - lavu 58.7.100 - frame.h
   Deprecate AVFrame.interlaced_frame, AVFrame.top_field_first, and AVFrame.key_frame.
   Add AV_FRAME_FLAG_INTERLACED, AV_FRAME_FLAG_TOP_FIELD_FIRST, and AV_FRAME_FLAG_KEY flags as replacement.
@@ -23,11 +29,11 @@ History
   Add AV_FRAME_FLAG_INTERLACED, AV_FRAME_FLAG_TOP_FIELD_FIRST, and AV_FRAME_FLAG_KEY flags as replacement.
 - **Issue** [#149](https://github.com/nschlia/ffmpegfs/issues/149): 2021-09-20 - dd846bc4a91 - lavc 59.8.100 - avcodec.h codec.h
   Deprecate AV_CODEC_FLAG_TRUNCATED and AV_CODEC_CAP_TRUNCATED, as they are redundant with parsers.
-- Closes [#136](https://github.com/nschlia/ffmpegfs/issues/136): The CMake build files have been removed. Support was never more than experimental, and CMake lacks a good uninstall option. Will stick to automake system from now on.
+- Issue [#136](https://github.com/nschlia/ffmpegfs/issues/136): The CMake build files have been removed. Support was never more than experimental, and CMake lacks a good uninstall option. Will stick to automake system from now on.
 
 **New in 2.14 (2023-06-15):**
 
-- **Bugfix:** Closes [#141](https://github.com/nschlia/ffmpegfs/issues/141): Improved memory management by allocating several times the average size of allocations. This prevents obtaining tiny portions over and over again. Additionally, after the file is opened, grab the entire expected memory block rather than doing a tiny allocation initially, followed by a larger allocation.
+- **Bugfix:** Issue [#141](https://github.com/nschlia/ffmpegfs/issues/141): Improved memory management by allocating several times the average size of allocations. This prevents obtaining tiny portions over and over again. Additionally, after the file is opened, grab the entire expected memory block rather than doing a tiny allocation initially, followed by a larger allocation.
 - **Bugfix:** Avoid race conditions that cause the inter-process semaphore creation to fail for the second process.
 - **Bugfix:** Issue [#119](https://github.com/nschlia/ffmpegfs/issues/119): If a seek request is still open after EOF, restart transcoding.
 - **Bugfix:** Issue [#119](https://github.com/nschlia/ffmpegfs/issues/119): To prevent frame/segment creation errors, the frame set and HLS code has been updated.
@@ -51,9 +57,9 @@ History
 
 - **Feature:** Added --prebuffer_time parameter. Files will be decoded until the buffer contains the specified playing time, allowing playback to start
   smoothly without lags. Works similar to --prebuffer_size but gives better control because it does not depend on the bit rate. An example: when set to 25 seconds for HLS transcoding, this will make sure that at least 2 complete segments will be available once the file is released and visible.
-- **Feature:** Closes [#140](https://github.com/nschlia/ffmpegfs/issues/140): Filtering the files that will be encoded has been added. A comma-separated list of extensions is specified by the *—include_extensions* parameter. These file extensions are the only ones that will be transcoded. The entries support shell wildcard patterns.
+- **Feature:** Issue [#140](https://github.com/nschlia/ffmpegfs/issues/140): Filtering the files that will be encoded has been added. A comma-separated list of extensions is specified by the *—include_extensions* parameter. These file extensions are the only ones that will be transcoded. The entries support shell wildcard patterns.
 - **Feature:** The --hide_extensions parameter syntax has been extended. The entries now support shell wildcard patterns.
-- **Bugfix:** Closes [#139](https://github.com/nschlia/ffmpegfs/issues/139): Additional files could be added using the *—extensions* parameter. However, this is no longer necessary; in the past, a file's extension determined whether or not it would be transcoded. Files with unknown extensions would be ignored. The extension is no longer important because FFmpegfs now examines all input files and recognises transcodable files by the format.
+- **Bugfix:** Issue [#139](https://github.com/nschlia/ffmpegfs/issues/139): Additional files could be added using the *—extensions* parameter. However, this is no longer necessary; in the past, a file's extension determined whether or not it would be transcoded. Files with unknown extensions would be ignored. The extension is no longer important because FFmpegfs now examines all input files and recognises transcodable files by the format.
   The outdated *—extensions* argument was removed without substitution.
 - **Bugfix:** Fixed crash when implode() function was called with an empty string. Happened with Windows GCC 11.3.0 only.
 

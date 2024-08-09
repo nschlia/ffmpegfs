@@ -1968,43 +1968,14 @@ int FFmpeg_Transcoder::add_stream(AVCodecID codec_id)
                 return ret;
             }
 
-            // Set constant rate factor to avoid getting huge result files
-            // The default is 23, but values between 30..40 create properly sized results. Possible values are 0 (lossless) to 51 (very small but ugly results).
-            //ret = av_opt_set(output_codec_ctx->priv_data, "crf", "36", AV_OPT_SEARCH_CHILDREN);
-            //if (ret < 0)
-            //{
-            //    Logging::error(virtname(), "Could not set 'crf' for %1 output codec %2 (error '%3').", get_media_type_string(output_codec->type), get_codec_name(codec_id), ffmpeg_geterror(ret).c_str());
-            // 	return ret;
-            //}
-
             if (m_hwaccel_enable_enc_buffering)
             {
-                // From libavcodec/vaapi_encode.c:
-                //
-                // Rate control mode selection:
-                // * If the user has set a mode explicitly with the rc_mode option,
-                //   use it and fail if it is not available.
-                // * If an explicit QP option has been set, use CQP.
-                // * If the codec is CQ-only, use CQP.
-                // * If the QSCALE avcodec option is set, use CQP.
-                // * If bitrate and quality are both set, try QVBR.
-                // * If quality is set, try ICQ, then CQP.
-                // * If bitrate and maxrate are set and have the same value, try CBR.
-                // * If a bitrate is set, try AVBR, then VBR, then CBR.
-                // * If no bitrate is set, try ICQ, then CQP.
+                // For hardware encoding only
 
-                //ret = av_opt_set(output_codec_ctx->priv_data, "rc_mode", "CQP", AV_OPT_SEARCH_CHILDREN);
-                //if (ret < 0)
-                //{
-                //    Logging::error(virtname(), "Could not set 'rc_mode=CQP' for %1 output codec %2 (error '%3').", get_media_type_string(output_codec->type), get_codec_name(codec_id), ffmpeg_geterror(ret).c_str());
-                //    return ret;
-                //}
-                //ret = av_opt_set(output_codec_ctx->priv_data, "qp", "23", AV_OPT_SEARCH_CHILDREN);
-                //if (ret < 0)
-                //{
-                //    Logging::error(virtname(), "Could not set 'qp' for %1 output codec %2 (error '%3').", get_media_type_string(output_codec->type), get_codec_name(codec_id), ffmpeg_geterror(ret).c_str());
-                //    return ret;
-                //}
+                // Defaults to 20. Set to 40 to create slightly smaller results (the bigger, the smaller the files).
+                // Values seem to range between 1 and 51.
+                // Must be non-zero, otherwise hardware encoding my fail with:
+                // "Driver does not support any RC mode compatible with selected options (supported modes: CQP)."
                 output_codec_ctx->global_quality = 40;
             }
 

@@ -35,6 +35,7 @@ To see what's been done so far, checkout the [windows](https://github.com/nschli
 **New in 2.17 (2024-08-XX):**
 
 - **Bugfix:** Wrong error message fixed when an invalid audio/video codec was selected. The message should rather say "unsupported codec" instead of talking about "sample format not supported.".
+- **Bugfix:** Issue [#162](https://github.com/nschlia/ffmpegfs/issues/162): If not present, add time stamps to the copied streams.
 
 **New in 2.16 (2024-06-10):**
 

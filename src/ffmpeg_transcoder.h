@@ -636,6 +636,14 @@ protected:
      */
     int                         decode_subtitle(AVCodecContext *codec_ctx, AVPacket *pkt, int *decoded, int out_stream_idx);
     /**
+     * @brief Create PTS/DTS and update the packet.
+     * If the update packet lacks time stamps, create a fictitious PTS or DTS and update it.
+     * If the packet already has valid time stamps, nothing is changed.
+     * @param[inout] pkt - Audio/video packet to update.
+     * @param[inout] cur_ts - Current time stamp, will be updated to the next position.
+     */
+    void                        make_pts(AVPacket *pkt, int64_t *cur_ts) const;
+    /**
      * @brief Decode one frame.
      * @param[in] pkt - Packet to decode.
      * @return On success, returns 0; on error, a negative AVERROR value.
@@ -1250,6 +1258,10 @@ private:
     // If the audio and/or video stream is copied, packets will be stuffed into the packet queue.
     bool                        m_copy_audio;                   /**< @brief If true, copy audio stream from source to target (just remux, no recode). */
     bool                        m_copy_video;                   /**< @brief If true, copy video stream from source to target (just remux, no recode). */
+
+    // Time stamps
+    int64_t                     m_cur_audio_ts;                 /**< @brief If the audio stream is copied and the time stamps are absent from the input stream, we have to generate them. */
+    int64_t                     m_cur_video_ts;                 /**< @brief If the video stream is copied and the time stamps are absent from the input stream, we have to generate them. */
 
     const FFmpegfs_Format *     m_current_format;               /**< @brief Currently used output format(s) */
 

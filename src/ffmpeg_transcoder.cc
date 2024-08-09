@@ -235,6 +235,8 @@ FFmpeg_Transcoder::FFmpeg_Transcoder()
     , m_insert_keyframe(true)
     , m_copy_audio(false)
     , m_copy_video(false)
+    , m_cur_audio_ts(0)
+    , m_cur_video_ts(0)
     , m_current_format(nullptr)
     , m_buffer(nullptr)
     , m_reset_pts(0)
@@ -3745,6 +3747,33 @@ int FFmpeg_Transcoder::store_packet(AVPacket *pkt, AVMediaType mediatype)
     return ret;
 }
 
+void FFmpeg_Transcoder::make_pts(AVPacket *pkt, int64_t *cur_ts) const
+{
+    if (pkt->pts != AV_NOPTS_VALUE)
+    {
+        *cur_ts = pkt->pts + pkt->duration;
+    }
+    else if (pkt->dts != AV_NOPTS_VALUE)
+    {
+        *cur_ts = pkt->dts;
+    }
+
+    if (pkt->duration)
+    {
+        if (pkt->pts == AV_NOPTS_VALUE)
+        {
+            pkt->pts            = *cur_ts;
+        }
+
+        *cur_ts += pkt->duration;
+
+        if (pkt->dts == AV_NOPTS_VALUE)
+        {
+            pkt->dts            = *cur_ts;
+        }
+    }
+}
+
 int FFmpeg_Transcoder::decode_frame(AVPacket *pkt)
 {
     int ret = 0;
@@ -3771,18 +3800,13 @@ int FFmpeg_Transcoder::decode_frame(AVPacket *pkt)
         {
             // Simply copy packet without recoding
             pkt->stream_index   = m_out.m_audio.m_stream_idx;
-            if (pkt->pts != AV_NOPTS_VALUE)
-            {
-                pkt->pts            = ffmpeg_rescale_q_rnd(pkt->pts, m_in.m_audio.m_stream->time_base, m_out.m_audio.m_stream->time_base);
-            }
-            if (pkt->dts != AV_NOPTS_VALUE)
-            {
-                pkt->dts            = ffmpeg_rescale_q_rnd(pkt->dts, m_in.m_audio.m_stream->time_base, m_out.m_audio.m_stream->time_base);
-            }
-            if (pkt->duration)
-            {
-                pkt->duration       = static_cast<int>(ffmpeg_rescale_q(pkt->duration, m_in.m_audio.m_stream->time_base, m_out.m_audio.m_stream->time_base));
-            }
+
+            // Rescale packet
+            av_packet_rescale_ts(pkt, m_in.m_audio.m_stream->time_base, m_out.m_audio.m_stream->time_base);
+
+            // Make PTS/DTS if missing
+            make_pts(pkt, &m_cur_audio_ts);
+
             pkt->pos            = -1;
 
             ret = store_packet(pkt, AVMEDIA_TYPE_AUDIO);
@@ -3859,7 +3883,13 @@ int FFmpeg_Transcoder::decode_frame(AVPacket *pkt)
         {
             // Simply copy packet without recoding
             pkt->stream_index   = m_out.m_video.m_stream_idx;
+
+            // Rescale packet
             av_packet_rescale_ts(pkt, m_in.m_video.m_stream->time_base, m_out.m_video.m_stream->time_base);
+
+            // Make PTS/DTS if missing
+            make_pts(pkt, &m_cur_video_ts);
+
             pkt->pos            = -1;
 
             ret = store_packet(pkt, AVMEDIA_TYPE_VIDEO);

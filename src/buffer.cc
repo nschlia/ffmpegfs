@@ -628,10 +628,17 @@ bool Buffer::reserve(size_t size)
 {
     std::lock_guard<std::recursive_mutex> lock_mutex(m_mutex);
 
-    if (m_cur_ci == nullptr || m_cur_ci->m_buffer == nullptr)
+    if (m_cur_ci == nullptr)
     {
         errno = ENOMEM;
-        Logging::error(nullptr, "INTERNAL ERROR: Buffer::reserve()!");
+        Logging::error(nullptr, "INTERNAL ERROR: Buffer::reserve() - m_cur_ci == nullptr!");
+        return false;
+    }
+
+    if (m_cur_ci->m_buffer == nullptr)
+    {
+        errno = ENOMEM;
+        Logging::error(nullptr, "INTERNAL ERROR: Buffer::reserve() - m_cur_ci->m_buffer == nullptr!");
         return false;
     }
 

@@ -40,6 +40,8 @@
 
 #include "fileio.h"
 
+#include <array>
+
 typedef struct bluray BLURAY;               /**< @brief Forward declaration of libbluray handle */
 
 /**
@@ -138,24 +140,24 @@ private:
     void            pvt_close();
 
 protected:
-    BLURAY *        m_bd;                                       /**< @brief Blu-ray disk handle */
+    BLURAY *                        m_bd;                   /**< @brief Blu-ray disk handle */
 
-    bool            m_is_eof;                                   /**< @brief true if at end of virtual file */
-    int             m_errno;                                    /**< @brief Last errno */
-    size_t          m_rest_size;                                /**< @brief Rest bytes in buffer */
-    size_t          m_rest_pos;                                 /**< @brief Position in buffer */
-    int64_t         m_cur_pos;                                  /**< @brief Current position in virtual file */
-    int64_t         m_start_pos;                                /**< @brief Start offset in bytes */
-    int64_t         m_end_pos;                                  /**< @brief End offset in bytes (not including this byte) */
+    bool                            m_is_eof;               /**< @brief true if at end of virtual file */
+    int                             m_errno;                /**< @brief Last errno */
+    size_t                          m_rest_size;            /**< @brief Rest bytes in buffer */
+    size_t                          m_rest_pos;             /**< @brief Position in buffer */
+    int64_t                         m_cur_pos;              /**< @brief Current position in virtual file */
+    int64_t                         m_start_pos;            /**< @brief Start offset in bytes */
+    int64_t                         m_end_pos;              /**< @brief End offset in bytes (not including this byte) */
 
-    bool            m_full_title;                               /**< @brief If true, ignore m_chapter_no and provide full track */
-    uint32_t        m_title_idx;                                /**< @brief Track index (track number - 1) */
-    unsigned        m_chapter_idx;                              /**< @brief Chapter index (chapter number - 1) */
-    unsigned        m_angle_idx;                                /**< @brief Selected angle index (angle number -1) */
+    bool                            m_full_title;           /**< @brief If true, ignore m_chapter_no and provide full track */
+    uint32_t                        m_title_idx;            /**< @brief Track index (track number - 1) */
+    unsigned                        m_chapter_idx;          /**< @brief Chapter index (chapter number - 1) */
+    unsigned                        m_angle_idx;            /**< @brief Selected angle index (angle number -1) */
 
-    uint8_t         m_data[192 * 1024];                         /**< @brief Buffer for readio() data */
+    std::array<uint8_t, 192 * 1024> m_data;                 /**< @brief Buffer for readio() data */
 
-    int64_t         m_duration;                                 /**< @brief Track/chapter duration, in AV_TIME_BASE fractional seconds. */
+    int64_t                         m_duration;             /**< @brief Track/chapter duration, in AV_TIME_BASE fractional seconds. */
 };
 #endif // USE_LIBBLURAY
 

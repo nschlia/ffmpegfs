@@ -48,45 +48,45 @@ typedef struct VCDINFO
      *
      * This ID is CD type dependant: VIDEO_CD, SUPERVCD or HQ-VCD. It is always 8 bytes long.
      */
-    char    m_ID[8];            // NOLINT(modernize-avoid-c-arrays)
+    std::array<char, 8>     m_ID;
     /**
      * @brief 1 Byte: CD type
      *
      * 1 for VCD 1.0, VCD 1.1, SVCD 1.0 and HQVCD
      * 2 for VCD 2.0
      */
-    char    m_type;
+    char                    m_type;
     /**
      * @brief 1 Byte: System profile tag
      *
      * 0 fuer VCD 1.0, VCD 2.0, SVCD und HQVCD
      * 1 fuer VCD 1.1
      */
-    char    m_profile_tag;
+    char                    m_profile_tag;
     /**
      * @brief 16 Byte: Album ID
      *
      * The album ID is the name of this album.
      */
-    char    m_albumid[16];      // NOLINT(modernize-avoid-c-arrays)
+    std::array<char, 16>    m_albumid;
     /**
      * @brief 2 Byte: Number of CDs in set
      *
      * Total number of CDs in this set.
      */
-    short   m_numberof_cds;
+    short                   m_numberof_cds;
     /**
      * @brief 2 Byte: Number of this CD
      *
      * Defines which number this CD is in this set.
      */
-    short   m_cd_number;
+    short                   m_cd_number;
     /**
      * @brief 98 Byte: PAL Flags
      *
      * The meaning of these flags is unknown to me.
      */
-    char    m_palflags[98];     // NOLINT(modernize-avoid-c-arrays)
+    std::array<char, 98>    m_palflags;
 
     // reserved1:
     // restriction:
@@ -106,6 +106,8 @@ typedef struct VCDINFO
 
 } VCDINFO, *LPVCDINFO;                  /**< @brief Pointer version of VCDINFO */
 typedef const VCDINFO * LPCVCDINFO;     /**< @brief Pointer to const version of VCDINFO */
+
+static_assert(sizeof(VCDINFO) == 128);
 
 VcdInfo::VcdInfo()
 {
@@ -161,14 +163,13 @@ int VcdInfo::load_file(const std::string & path)
 
     if (fread(reinterpret_cast<char *>(&vi), 1, sizeof(vi), fpi) == sizeof(vi))
     {
-        m_id            = VCDUTILS::convert_txt2string(vi.m_ID, sizeof(vi.m_ID));
+        m_id            = VCDUTILS::convert_txt2string(vi.m_ID.data(), vi.m_ID.size());
         m_type          = static_cast<VCDTYPE>(vi.m_type);
         m_profile_tag   = static_cast<VCDPROFILETAG>(vi.m_profile_tag);
-        m_album_id      = VCDUTILS::convert_txt2string(vi.m_albumid, sizeof(vi.m_albumid));
+        m_album_id      = VCDUTILS::convert_txt2string(vi.m_albumid.data(), vi.m_albumid.size());
         m_number_of_cds = htons(static_cast<uint16_t>(vi.m_numberof_cds));
         m_cd_number     = htons(static_cast<uint16_t>(vi.m_cd_number));
     }
-
     else
     {
         success = false;

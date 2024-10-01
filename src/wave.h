@@ -37,6 +37,8 @@
 
 #include <stdint.h>
 
+#include <array>
+
 #pragma pack(push, 1)
 
 /**
@@ -47,7 +49,7 @@
 typedef struct WAV_HEADER
 {
     /**@{*/
-    uint8_t     m_riff_header[4];   /**< @brief RIFF Header: Contains the letters "RIFF" in ASCII form (0x52494646 big-endian form). */
+    std::array<uint8_t, 4>  m_riff_header;      /**< @brief RIFF Header: Contains the letters "RIFF" in ASCII form (0x52494646 big-endian form). */
     /**
      * Size of the wav portion of the file, which follows the first 8 bytes (File size - 8).@n
      * 36 + fmt_chunk_size, or more precisely:@n
@@ -58,21 +60,23 @@ typedef struct WAV_HEADER
      * two fields not included in this count:
      * riff_header and wav_size.
      */
-    uint32_t    m_wav_size;
-    uint8_t     m_wave_header[4];   /**< @brief Contains the letters "WAVE" (0x57415645 big-endian form). */
+    uint32_t                m_wav_size;
+    std::array<uint8_t, 4>  m_wave_header;      /**< @brief Contains the letters "WAVE" (0x57415645 big-endian form). */
     /**@}*/
 
     /**@{*/
-    uint8_t     m_fmt_header[4];    /**< @brief RIFF Format Header: Contains "fmt " including trailing space (0x666d7420 big-endian form). */
-    uint32_t    m_fmt_chunk_size;   /**< @brief Should be 16 for PCM This is the size of the rest of the chunk size which follows this number. */
-    uint16_t    m_audio_format;     /**< @brief Should be 1 for PCM. 3 for IEEE Float */
-    uint16_t    m_num_channels;     /**< @brief Number of channels 1...n (1: mono, 2: stereo/dual channel;...) */
-    uint32_t    m_sample_rate;      /**< @brief 8000, 44100, etc. */
-    uint32_t    m_byte_rate;        /**< @brief Number of bytes per second. sample_rate * num_channels * bit_depth / 8 */
-    uint16_t    m_sample_alignment; /**< @brief num_channels * bit_depth / 8 */
-    uint16_t    m_bit_depth;        /**< @brief Number of bits per sample: 8 bits = 8, 16 bits = 16, etc. */
+    std::array<uint8_t, 4>  m_fmt_header;       /**< @brief RIFF Format Header: Contains "fmt " including trailing space (0x666d7420 big-endian form). */
+    uint32_t                m_fmt_chunk_size;   /**< @brief Should be 16 for PCM This is the size of the rest of the chunk size which follows this number. */
+    uint16_t                m_audio_format;     /**< @brief Should be 1 for PCM. 3 for IEEE Float */
+    uint16_t                m_num_channels;     /**< @brief Number of channels 1...n (1: mono, 2: stereo/dual channel;...) */
+    uint32_t                m_sample_rate;      /**< @brief 8000, 44100, etc. */
+    uint32_t                m_byte_rate;        /**< @brief Number of bytes per second. sample_rate * num_channels * bit_depth / 8 */
+    uint16_t                m_sample_alignment; /**< @brief num_channels * bit_depth / 8 */
+    uint16_t                m_bit_depth;        /**< @brief Number of bits per sample: 8 bits = 8, 16 bits = 16, etc. */
     /**@}*/
 } WAV_HEADER;
+
+static_assert(sizeof(WAV_HEADER) == 36);
 
 /**
  * @brief WAVE extended header structure
@@ -81,11 +85,13 @@ typedef struct WAV_HEADER
  */
 typedef struct WAV_HEADER_EX
 {
-    uint16_t    m_extension_size;           /**< @brief Extension Size           2 	16-bit unsigned integer (value 22) */
-    uint16_t    m_valid_bits_per_sample;    /**< @brief Valid Bits Per Sample    2 	16-bit unsigned integer */
-    uint32_t    m_channel_mask;             /**< @brief Channel Mask             4 	32-bit unsigned integer */
-    uint8_t     m_sub_format_guid[16];      /**< @brief Sub Format GUID          16 	16-byte GUID */
+    uint16_t                m_extension_size;           /**< @brief Extension Size           2 	16-bit unsigned integer (value 22) */
+    uint16_t                m_valid_bits_per_sample;    /**< @brief Valid Bits Per Sample    2 	16-bit unsigned integer */
+    uint32_t                m_channel_mask;             /**< @brief Channel Mask             4 	32-bit unsigned integer */
+    std::array<uint8_t, 16> m_sub_format_guid;          /**< @brief Sub Format GUID          16 16-byte GUID */
 } WAV_HEADER_EX;
+
+static_assert(sizeof(WAV_HEADER_EX) == 24);
 
 /**
  * @brief WAVE "fact" header structure
@@ -94,10 +100,12 @@ typedef struct WAV_HEADER_EX
  */
 typedef struct WAV_FACT
 {
-    uint8_t     m_chunk_id[4];              /**< @brief Chunk ID                4 	0x66 0x61 0x63 0x74 (i.e. "fact") */
-    uint32_t    m_body_size;                /**< @brief Chunk Body Size         4 	32-bit unsigned integer */
-    uint32_t    m_number_of_sample_frames;  /**< @brief Number of sample frames 4 	32-bit unsigned integer */
+    std::array<uint8_t, 4>  m_chunk_id;                 /**< @brief Chunk ID                4 	0x66 0x61 0x63 0x74 (i.e. "fact") */
+    uint32_t                m_body_size;                /**< @brief Chunk Body Size         4 	32-bit unsigned integer */
+    uint32_t                m_number_of_sample_frames;  /**< @brief Number of sample frames 4 	32-bit unsigned integer */
 } WAV_FACT;
+
+static_assert(sizeof(WAV_FACT) == 12);
 
 /**
  *  @brief WAVE list header structure
@@ -106,10 +114,12 @@ typedef struct WAV_FACT
  */
 typedef struct WAV_LIST_HEADER
 {
-    uint8_t     m_list_header[4];   /**< @brief Contains "list" (0x6C696E74) */
-    uint32_t    m_data_bytes;       /**< @brief Number of bytes in list. */
-    uint8_t     m_list_type[4];     /**< @brief Contains "adtl" (0x6164746C) */
+    std::array<uint8_t, 4>  m_list_header;              /**< @brief Contains "list" (0x6C696E74) */
+    uint32_t                m_data_bytes;               /**< @brief Number of bytes in list. */
+    std::array<uint8_t, 4>  m_list_type;                /**< @brief Contains "adtl" (0x6164746C) */
 } WAV_LIST_HEADER;
+
+static_assert(sizeof(WAV_LIST_HEADER) == 12);
 
 /** @brief WAVE data header structure
  *
@@ -117,11 +127,13 @@ typedef struct WAV_LIST_HEADER
  */
 typedef struct WAV_DATA_HEADER
 {
-    uint8_t     m_data_header[4];   /**< @brief Contains "data" (0x64617461 big-endian form). */
-    uint32_t    m_data_bytes;       /**< @brief Number of bytes in data. Number of samples * num_channels * bit_depth / 8 */
+    std::array<uint8_t, 4>  m_data_header;              /**< @brief Contains "data" (0x64617461 big-endian form). */
+    uint32_t                m_data_bytes;               /**< @brief Number of bytes in data. Number of samples * num_channels * bit_depth / 8 */
     // Remainder of wave file: actual sound data
     // uint8_t m_bytes[];
 } WAV_DATA_HEADER;
+
+static_assert(sizeof(WAV_DATA_HEADER) == 8);
 
 #pragma pack(pop)
 

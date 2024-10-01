@@ -39,14 +39,14 @@
 #include <map>
 #include <sqlite3.h>
 
-#define     DB_BASE_VERSION_MAJOR   1           /**< @brief The oldest database version major (Release < 1.95) */
-#define     DB_BASE_VERSION_MINOR   0           /**< @brief The oldest database version minor (Release < 1.95) */
+#define     DB_BASE_VERSION_MAJOR   1               /**< @brief The oldest database version major (Release < 1.95) */
+#define     DB_BASE_VERSION_MINOR   0               /**< @brief The oldest database version minor (Release < 1.95) */
 
-#define     DB_VERSION_MAJOR        1           /**< @brief Current database version major */
-#define     DB_VERSION_MINOR        97          /**< @brief Current database version minor */
+#define     DB_VERSION_MAJOR        1               /**< @brief Current database version major */
+#define     DB_VERSION_MINOR        97              /**< @brief Current database version minor */
 
-#define     DB_MIN_VERSION_MAJOR    1           /**< @brief Required database version major (required 1.95) */
-#define     DB_MIN_VERSION_MINOR    97          /**< @brief Required database version minor (required 1.95) */
+#define     DB_MIN_VERSION_MAJOR    1               /**< @brief Required database version major (required 1.95) */
+#define     DB_MIN_VERSION_MINOR    97              /**< @brief Required database version minor (required 1.95) */
 
 /**
   * @brief RESULTCODE of transcoding operation
@@ -58,40 +58,40 @@ typedef enum RESULTCODE
     RESULTCODE_FINISHED_SUCCESS,                /**< @brief Transcode finished successfully */
     RESULTCODE_FINISHED_ERROR,                  /**< @brief Transcode finished with error */
 } RESULTCODE;
-typedef RESULTCODE const *LPCRESULTCODE;        /**< @brief Pointer version of RESULTCODE */
-typedef RESULTCODE *LPRESULTCODE;               /**< @brief Pointer to const version of RESULTCODE */
+typedef RESULTCODE const *LPCRESULTCODE;            /**< @brief Pointer version of RESULTCODE */
+typedef RESULTCODE *LPRESULTCODE;                   /**< @brief Pointer to const version of RESULTCODE */
 
 /**
   * @brief Cache information block
   */
 typedef struct CACHE_INFO
 {
-    std::string     m_origfile;                 /**< @brief Original filename before transcode */
-    std::string     m_destfile;                 /**< @brief Destination filename after transcode */
-    char            m_desttype[11];             /**< @brief Destination type */
-    int64_t         m_audiobitrate;             /**< @brief Audio bitrate in bit/s */
-    int             m_audiosamplerate;          /**< @brief Audio sample rate in Hz */
-    int64_t         m_videobitrate;             /**< @brief Video bitrate in bit/s */
-    int             m_videowidth;               /**< @brief Video width */
-    int             m_videoheight;              /**< @brief Video height */
-    bool            m_deinterlace;              /**< @brief true if video was deinterlaced */
-    int64_t         m_duration;                 /**< @brief File  duration, in AV_TIME_BASE fractional seconds. */
-    size_t          m_predicted_filesize;       /**< @brief Predicted file size */
-    size_t          m_encoded_filesize;         /**< @brief Actual file size after encode */
-    uint32_t        m_video_frame_count;        /**< @brief Number of frames in video or 0 if not a video */
-    uint32_t        m_segment_count;            /**< @brief Number of segments for HLS */
-    RESULTCODE      m_result;                   /**< @brief Result code: */
-    bool            m_error;                    /**< @brief true if encode failed */
-    int             m_errno;                    /**< @brief errno if encode failed */
-    int             m_averror;                  /**< @brief FFmpeg error code if encode failed */
-    time_t          m_creation_time;            /**< @brief Source file creation time */
-    time_t          m_access_time;              /**< @brief Source file last access time */
-    time_t          m_file_time;                /**< @brief Source file file time */
-    size_t          m_file_size;                /**< @brief Source file file size */
-    unsigned int    m_access_count;             /**< @brief Read access counter */
+    std::string             m_origfile;             /**< @brief Original filename before transcode */
+    std::string             m_destfile;             /**< @brief Destination filename after transcode */
+    std::array<char, 11>    m_desttype;             /**< @brief Destination type */
+    int64_t                 m_audiobitrate;         /**< @brief Audio bitrate in bit/s */
+    int                     m_audiosamplerate;      /**< @brief Audio sample rate in Hz */
+    int64_t                 m_videobitrate;         /**< @brief Video bitrate in bit/s */
+    int                     m_videowidth;           /**< @brief Video width */
+    int                     m_videoheight;          /**< @brief Video height */
+    bool                    m_deinterlace;          /**< @brief true if video was deinterlaced */
+    int64_t                 m_duration;             /**< @brief File  duration, in AV_TIME_BASE fractional seconds. */
+    size_t                  m_predicted_filesize;   /**< @brief Predicted file size */
+    size_t                  m_encoded_filesize;     /**< @brief Actual file size after encode */
+    uint32_t                m_video_frame_count;    /**< @brief Number of frames in video or 0 if not a video */
+    uint32_t                m_segment_count;        /**< @brief Number of segments for HLS */
+    RESULTCODE              m_result;               /**< @brief Result code: */
+    bool                    m_error;                /**< @brief true if encode failed */
+    int                     m_errno;                /**< @brief errno if encode failed */
+    int                     m_averror;              /**< @brief FFmpeg error code if encode failed */
+    time_t                  m_creation_time;        /**< @brief Source file creation time */
+    time_t                  m_access_time;          /**< @brief Source file last access time */
+    time_t                  m_file_time;            /**< @brief Source file file time */
+    size_t                  m_file_size;            /**< @brief Source file file size */
+    unsigned int            m_access_count;         /**< @brief Read access counter */
 } CACHE_INFO;
-typedef CACHE_INFO const *LPCCACHE_INFO;        /**< @brief Pointer version of CACHE_INFO */
-typedef CACHE_INFO *LPCACHE_INFO;               /**< @brief Pointer to const version of CACHE_INFO */
+typedef CACHE_INFO const *LPCCACHE_INFO;            /**< @brief Pointer version of CACHE_INFO */
+typedef CACHE_INFO *LPCACHE_INFO;                   /**< @brief Pointer to const version of CACHE_INFO */
 
 class Cache_Entry;
 
@@ -100,8 +100,8 @@ class Cache_Entry;
  */
 class Cache
 {
-    typedef std::pair<std::string, std::string> cache_key_t;    ///< Filenames and destination types
-    typedef std::map<cache_key_t, Cache_Entry *> cache_t;       ///< Map of cache entries
+    typedef std::pair<std::string, std::string> cache_key_t;    /**< @brief Filenames and destination types */
+    typedef std::map<cache_key_t, Cache_Entry *> cache_t;       /**< @brief Map of cache entries */
 public:
     /**
       * @brief Definition of sql table
@@ -318,14 +318,10 @@ protected:
     bool                    upgrade_db(int *db_version_major, int *db_version_minor);
 
 private:
-    static const
-    TABLE_DEF               m_table_cache_entry;            /**< @brief Definition and indexes of table "cache_entry" */
-    static const
-    TABLECOLUMNS_VEC        m_columns_cache_entry;          /**< @brief Columns of table "cache_entry" */
-    static const
-    TABLE_DEF               m_table_version;                /**< @brief Definition and indexes of table "version" */
-    static const
-    TABLECOLUMNS_VEC        m_columns_version;              /**< @brief Columns of table "version" */
+    static const TABLE_DEF          m_table_cache_entry;    /**< @brief Definition and indexes of table "cache_entry" */
+    static const TABLECOLUMNS_VEC   m_columns_cache_entry;  /**< @brief Columns of table "cache_entry" */
+    static const TABLE_DEF          m_table_version;        /**< @brief Definition and indexes of table "version" */
+    static const TABLECOLUMNS_VEC   m_columns_version;      /**< @brief Columns of table "version" */
 
     std::recursive_mutex    m_mutex;                        /**< @brief Access mutex */
     std::string             m_cacheidx_file;                /**< @brief Name of SQLite cache index database */

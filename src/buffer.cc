@@ -730,7 +730,7 @@ size_t Buffer::write_frame(const uint8_t *data, size_t length, uint32_t frame_no
     {
         // Create new frame if not existing or not enough space
         std::memset(&new_image_frame, 0xFF, sizeof(new_image_frame));
-        std::memcpy(new_image_frame.m_tag, IMAGE_FRAME_TAG, sizeof(new_image_frame.m_tag));
+        std::memcpy(new_image_frame.m_tag.data(), IMAGE_FRAME_TAG, sizeof(new_image_frame.m_tag));
         new_image_frame.m_frame_no      = frame_no;
         new_image_frame.m_offset        = buffer_watermark();
         new_image_frame.m_size          = static_cast<uint32_t>(length);

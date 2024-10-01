@@ -604,7 +604,7 @@ size_t DvdIO::readio(void * data, size_t size)
             ssize_t maxlen;
 
             // Read NAV packet.
-            maxlen = DVDReadBlocks(m_dvd_title, static_cast<int>(m_cur_block), 1, m_buffer);
+            maxlen = DVDReadBlocks(m_dvd_title, static_cast<int>(m_cur_block), 1, m_buffer.data());
             if (maxlen != 1)
             {
                 Logging::error(path(), "Read failed for block at %1.", m_cur_block);
@@ -612,13 +612,13 @@ size_t DvdIO::readio(void * data, size_t size)
                 return 0;
             }
 
-            if (!is_nav_pack(m_buffer))
+            if (!is_nav_pack(m_buffer.data()))
             {
                 Logging::warning(path(), "Block at %1 is probably not a NAV packet. Transcode may fail.", m_cur_block);
             }
 
             // Parse the contained dsi packet.
-            dsitype = handle_DSI(&dsi_pack, &cur_output_size, &next_block, m_buffer);
+            dsitype = handle_DSI(&dsi_pack, &cur_output_size, &next_block, m_buffer.data());
             if (m_cur_block != dsi_pack.dsi_gi.nv_pck_lbn)
             {
                 Logging::error(path(), "Read failed at %1 because current block != dsi_pack.dsi_gi.nv_pck_lbn.", m_cur_block);
@@ -636,7 +636,7 @@ size_t DvdIO::readio(void * data, size_t size)
             m_cur_block++;
 
             // Read in and output cur_output_size packs.
-            maxlen = DVDReadBlocks(m_dvd_title, static_cast<int>(m_cur_block), cur_output_size, m_buffer);
+            maxlen = DVDReadBlocks(m_dvd_title, static_cast<int>(m_cur_block), cur_output_size, m_buffer.data());
 
             if (maxlen != static_cast<int>(cur_output_size))
             {
@@ -647,7 +647,7 @@ size_t DvdIO::readio(void * data, size_t size)
 
             size_t netsize = cur_output_size * DVD_VIDEO_LB_LEN;
 
-            netsize = demux_pes(m_data, m_buffer, netsize);
+            netsize = demux_pes(m_data.data(), m_buffer.data(), netsize);
 
             if (data != nullptr)
             {
@@ -655,7 +655,7 @@ size_t DvdIO::readio(void * data, size_t size)
                 {
                     result_len = size;
 
-                    std::memcpy(data, m_data, result_len);
+                    std::memcpy(data, m_data.data(), result_len);
 
                     m_rest_size = netsize - size;
                     m_rest_pos = size;
@@ -664,7 +664,7 @@ size_t DvdIO::readio(void * data, size_t size)
                 {
                     result_len = netsize;
 
-                    std::memcpy(data, m_data, result_len);
+                    std::memcpy(data, m_data.data(), result_len);
                 }
             }
             else

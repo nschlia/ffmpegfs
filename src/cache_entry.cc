@@ -48,7 +48,7 @@ Cache_Entry::Cache_Entry(Cache *owner, LPVIRTUALFILE virtualfile)
     m_cache_info.m_destfile = virtualfile->m_destfile;
 
     m_cache_info.m_desttype[0] = '\0';
-    strncat(m_cache_info.m_desttype, params.current_format(virtualfile)->desttype().c_str(), sizeof(m_cache_info.m_desttype) - 1);
+    strncat(m_cache_info.m_desttype.data(), params.current_format(virtualfile)->desttype().c_str(), m_cache_info.m_desttype.size() - 1);
 
     m_buffer = new(std::nothrow) Buffer;
 
@@ -142,7 +142,7 @@ bool Cache_Entry::write_info()
 
 bool Cache_Entry::delete_info()
 {
-    return m_owner->delete_info(filename(), m_cache_info.m_desttype);
+    return m_owner->delete_info(filename(), m_cache_info.m_desttype.data());
 }
 
 bool Cache_Entry::update_access(bool update_database /*= false*/)

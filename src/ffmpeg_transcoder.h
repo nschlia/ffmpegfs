@@ -547,6 +547,16 @@ protected:
     template <size_t size>
     const char *                tagcpy(char (&out) [ size ], const std::string & in) const;
     /**
+    * @brief Safely copy a tag to a target buffer. If the input buffer size
+    * is larger than output the data will be truncated to avoid overruns.
+    * The function never appends a /0 terminator.
+    * @param[out] out - Target buffer
+    * @param[in] in - Input buffer
+    * @return Constant pointer to target buffer.
+    */
+    template <class T>
+    const T &                   tagcpy(T & out, const std::string & in) const;
+    /**
      * @brief Process the metadata in the FFmpeg file.
      * This should be called at the beginning, before reading audio data.
      * The set_text_tag() and set_picture_tag() methods of the given Encoder will

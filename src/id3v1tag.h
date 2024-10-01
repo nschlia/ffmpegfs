@@ -34,20 +34,24 @@
 
 #pragma once
 
+#include <array>
+
 /** @brief %ID3 version 1 tag
  */
 struct ID3v1
 {
-    char m_tag[3];                      /**< @brief Contains "TAG" */
-    char m_title[30];                   /**< @brief Title of sound track */
-    char m_artist[30];                  /**< @brief Artist name */
-    char m_album[30];                   /**< @brief Album name */
-    char m_year[4];                     /**< @brief Year of publishing */
-    char m_comment[28];                 /**< @brief Any user comments */
-    char m_padding;                     /**< @brief Padding byte, must be '\0' */
-    char m_title_no;                    /**< @brief Title number */
-    char m_genre;                       /**< @brief Type of music */
+    std::array<char, 3>     m_tag;      /**< @brief Contains "TAG" */
+    std::array<char, 30>    m_title;    /**< @brief Title of sound track */
+    std::array<char, 30>    m_artist;   /**< @brief Artist name */
+    std::array<char, 30>    m_album;    /**< @brief Album name */
+    std::array<char, 4>     m_year;     /**< @brief Year of publishing */
+    std::array<char, 28>    m_comment;  /**< @brief Any user comments */
+    char                    m_padding;  /**< @brief Padding byte, must be '\0' */
+    char                    m_title_no; /**< @brief Title number */
+    char                    m_genre;    /**< @brief Type of music */
 };
+
+static_assert(sizeof(ID3v1) == 128);
 
 extern void init_id3v1(ID3v1 *id3v1);   /**< @brief Initialise ID3v1 tag */
 

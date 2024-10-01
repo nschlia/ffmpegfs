@@ -794,7 +794,7 @@ bool Cache::read_info(LPCACHE_INFO cache_info)
             throw false;
         }
 
-        if (SQLITE_OK != (ret = sqlite3_bind_text(m_cacheidx_select_stmt, 2, cache_info->m_desttype, -1, nullptr)))
+        if (SQLITE_OK != (ret = sqlite3_bind_text(m_cacheidx_select_stmt, 2, cache_info->m_desttype.data(), -1, nullptr)))
         {
             Logging::error(m_cacheidx_file, "SQLite3 select error binding 'desttype': (%1) %2", ret, sqlite3_errstr(ret));
             throw false;
@@ -808,7 +808,7 @@ bool Cache::read_info(LPCACHE_INFO cache_info)
             if (text != nullptr)
             {
                 cache_info->m_desttype[0] = '\0';
-                strncat(cache_info->m_desttype, text, sizeof(cache_info->m_desttype) - 1);
+                strncat(cache_info->m_desttype.data(), text, cache_info->m_desttype.size() - 1);
             }
             //cache_info->m_enable_ismv        = sqlite3_column_int(m_cacheidx_select_stmt, 1);
             cache_info->m_audiobitrate          = sqlite3_column_int(m_cacheidx_select_stmt, 2);
@@ -886,7 +886,7 @@ bool Cache::write_info(LPCCACHE_INFO cache_info)
         assert(sqlite3_bind_parameter_count(m_cacheidx_insert_stmt) == 22);
 
         SQLBINDTXT(1, cache_info->m_destfile.c_str());
-        SQLBINDTXT(2, cache_info->m_desttype);
+        SQLBINDTXT(2, cache_info->m_desttype.data());
         //SQLBINDNUM(sqlite3_bind_int,  3,  cache_info->m_enable_ismv);
         SQLBINDNUM(sqlite3_bind_int,    3,  enable_ismv_dummy);
         SQLBINDNUM(sqlite3_bind_int64,  4,  cache_info->m_audiobitrate);
@@ -1031,7 +1031,7 @@ bool Cache::delete_entry(Cache_Entry ** cache_entry, int flags)
         // If CACHE_CLOSE_FREE is set, also free memory
         if (CACHE_CHECK_BIT(CACHE_CLOSE_FREE, flags))
         {
-            m_cache.erase(make_pair((*cache_entry)->m_cache_info.m_destfile, (*cache_entry)->m_cache_info.m_desttype));
+            m_cache.erase(make_pair((*cache_entry)->m_cache_info.m_destfile, (*cache_entry)->m_cache_info.m_desttype.data()));
 
             deleted = (*cache_entry)->destroy();
             *cache_entry = nullptr;

@@ -4890,6 +4890,17 @@ const char * FFmpeg_Transcoder::tagcpy(char (&out) [ size ], const std::string &
     return out;
 }
 
+template <class T>
+const T & FFmpeg_Transcoder::tagcpy(T & out, const std::string & in) const
+{
+    out.fill(' ');
+    std::memcpy(out.data(), in.c_str(), std::min(out.size(), in.size()));
+//    std::memset(out, ' ', size);
+//    std::memcpy(out, in.c_str(), std::min(size, in.size()));
+    return out;
+}
+
+
 void FFmpeg_Transcoder::copy_metadata(AVDictionary **metadata_out, const AVDictionary *metadata_in, bool contentstream)
 {
     AVDictionaryEntry *tag = nullptr;

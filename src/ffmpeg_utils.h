@@ -509,7 +509,16 @@ protected:
     FILETYPE                    m_filetype;         /**< @brief File type, MP3, MP4, OPUS etc. */
 };
 
-typedef std::array<FFmpegfs_Format, 2> FFMPEGFS_FORMAT_ARR;         /**< @brief Array of FFmpegfs formats. There are two, for audio and video */
+/**
+ * @brief The FORMAT enum
+ */
+typedef enum _tagFORMAT // Cannot use enum class, won't work as array index
+{
+    VIDEO,                                                      /**< @brief FFmpegfs_Format info, 0: video file */
+    AUDIO                                                       /**< @brief FFmpegfs_Format info, 1: audio file */
+} FORMAT;
+
+typedef std::array<FFmpegfs_Format, 2> FFMPEGFS_FORMAT_ARR;     /**< @brief Array of FFmpegfs formats. There are two, for audio and video */
 
 /**
  * @brief Add / to the path if required

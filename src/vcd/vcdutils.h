@@ -41,8 +41,7 @@
  */
 #define     VCD_MAX_CHAPTERS    500
 
-#pragma pack(push)
-#pragma pack(1)
+#pragma pack(push, 1)
 
 /** @brief Video CD MSF time format
  *
@@ -73,7 +72,7 @@ typedef const VCDCHAPTER * LPCVCDCHAPTER;   /**< @brief Pointer to const version
  */
 typedef struct VCDENTRIES
 {
-    char        m_ID[8];                    /**< @brief 8 Bytes: ID "ENTRYVCD" or "ENTRYSVD" */
+    std::array<char, 8> m_ID;                    /**< @brief 8 Bytes: ID "ENTRYVCD" or "ENTRYSVD" */
     /** @brief 1 Byte: CD type
      *
      * 1 for VCD 1.0, VCD 1.1, SVCD 1.0 and HQVCD @n
@@ -100,9 +99,9 @@ typedef struct VCDENTRIES
      * 1 Byte: Tracknummer @n
      * 3 Byte: Adresse MSF
      */
-    VCDCHAPTER  m_chapter[VCD_MAX_CHAPTERS];
+    std::array<VCDCHAPTER, VCD_MAX_CHAPTERS>    m_chapter;
 
-    uint8_t     reserved[36];               /**< @brief RESERVED, must be 0x00 */
+    std::array<uint8_t, 36> reserved;       /**< @brief RESERVED, must be 0x00 */
 
 } VCDENTRY, *LPVCDENTRIES;                  /**< @brief Pointer version of VCDENTRY */
 typedef const VCDENTRY * LPCVCDENTRIES;     /**< @brief Pointer to const version of VCDENTRY */

@@ -150,110 +150,110 @@ const char *get_media_type_string(enum AVMediaType media_type);
 /**
   * File types
   */
-typedef enum FILETYPE
+enum class FILETYPE
 {
-    FILETYPE_UNKNOWN,
-    FILETYPE_MP3,
-    FILETYPE_MP4,
-    FILETYPE_WAV,
-    FILETYPE_OGG,
-    FILETYPE_WEBM,
-    FILETYPE_MOV,
-    FILETYPE_AIFF,
-    FILETYPE_OPUS,
-    FILETYPE_PRORES,
-    FILETYPE_ALAC,
-    FILETYPE_PNG,
-    FILETYPE_JPG,
-    FILETYPE_BMP,
-    FILETYPE_TS,
-    FILETYPE_HLS,
-    FILETYPE_FLAC,
-    FILETYPE_MKV,
-} FILETYPE;
+    UNKNOWN,
+    MP3,
+    MP4,
+    WAV,
+    OGG,
+    WEBM,
+    MOV,
+    AIFF,
+    OPUS,
+    PRORES,
+    ALAC,
+    PNG,
+    JPG,
+    BMP,
+    TS,
+    HLS,
+    FLAC,
+    MKV,
+};
 
 /**
   * MP4/MOV/ALAC profiles
   */
-typedef enum PROFILE
+enum class PROFILE
 {
-    PROFILE_INVALID = -1,                       /**< @brief Profile is invalid */
+    INVALID = -1,                       /**< @brief Profile is invalid */
 
-    PROFILE_DEFAULT = 0,                        /**< @brief No specific profile/Don't care */
+    DEFAULT = 0,                        /**< @brief No specific profile/Don't care */
 
     // MP4
-    PROFILE_MP4_FF = 1,                         /**< @brief Firefox */
-    PROFILE_MP4_EDGE,                           /**< @brief MS Edge */
-    PROFILE_MP4_IE,                             /**< @brief MS Internet Explorer */
-    PROFILE_MP4_CHROME,                         /**< @brief Google Chrome */
-    PROFILE_MP4_SAFARI,                         /**< @brief Apple Safari */
-    PROFILE_MP4_OPERA,                          /**< @brief Opera */
-    PROFILE_MP4_MAXTHON,                        /**< @brief Maxthon */
+    MP4_FF = 1,                         /**< @brief Firefox */
+    MP4_EDGE,                           /**< @brief MS Edge */
+    MP4_IE,                             /**< @brief MS Internet Explorer */
+    MP4_CHROME,                         /**< @brief Google Chrome */
+    MP4_SAFARI,                         /**< @brief Apple Safari */
+    MP4_OPERA,                          /**< @brief Opera */
+    MP4_MAXTHON,                        /**< @brief Maxthon */
 
     // HLS/ts
-    PROFILE_HLS_DEFAULT = PROFILE_DEFAULT,      /**< @brief HLS/ts uses no profile */
+    HLS_DEFAULT = DEFAULT,      /**< @brief HLS/ts uses no profile */
     // mov
-    PROFILE_MOV_DEFAULT = PROFILE_DEFAULT,      /**< @brief MOV uses no profile */
+    MOV_DEFAULT = DEFAULT,      /**< @brief MOV uses no profile */
     // MOV/ProRes
-    PROFILE_PRORES_DEFAULT = PROFILE_DEFAULT,   /**< @brief MOV/ProRes uses no profile */
+    PRORES_DEFAULT = DEFAULT,   /**< @brief MOV/ProRes uses no profile */
     // MOV/ProRes
-    PROFILE_ALAC_DEFAULT = PROFILE_DEFAULT,     /**< @brief MOV/ALAC uses no profile */
+    ALAC_DEFAULT = DEFAULT,     /**< @brief MOV/ALAC uses no profile */
     // WebM
-    PROFILE_WEBM_DEFAULT = PROFILE_DEFAULT,     /**< @brief WebM uses no profile */
+    WEBM_DEFAULT = DEFAULT,     /**< @brief WebM uses no profile */
 
-} PROFILE;
+};
 
 /**
   * Prores levels
   */
-typedef enum PRORESLEVEL
+enum class PRORESLEVEL
 {
-    PRORESLEVEL_NONE = -1,          /**< @brief No level */
+    NONE = -1,          /**< @brief No level */
     // Prores profiles
-    PRORESLEVEL_PRORES_PROXY = 0,   /**< @brief Prores Level: PROXY */
-    PRORESLEVEL_PRORES_LT,          /**< @brief Prores Level: LT */
-    PRORESLEVEL_PRORES_STANDARD,    /**< @brief Prores Level: STANDARD */
-    PRORESLEVEL_PRORES_HQ,          /**< @brief Prores Level: HQ */
-} PRORESLEVEL;
+    PRORES_PROXY = 0,   /**< @brief Prores Level: PROXY */
+    PRORES_LT,          /**< @brief Prores Level: LT */
+    PRORES_STANDARD,    /**< @brief Prores Level: STANDARD */
+    PRORES_HQ,          /**< @brief Prores Level: HQ */
+};
 
 /**
   * Auto copy options
   */
-typedef enum AUTOCOPY
+enum class AUTOCOPY
 {
-    AUTOCOPY_OFF = 0,      /**< @brief Never copy streams, transcode always. */
-    AUTOCOPY_MATCH,        /**< @brief Copy stream if target supports codec. */
-    AUTOCOPY_MATCHLIMIT,   /**< @brief Same as MATCH, only copy if target not larger transcode otherwise. */
-    AUTOCOPY_STRICT,       /**< @brief Copy stream if codec matches desired target, transcode otherwise. */
-    AUTOCOPY_STRICTLIMIT,  /**< @brief Same as STRICT, only copy if target not larger, transcode otherwise. */
-} AUTOCOPY;
+    OFF = 0,      /**< @brief Never copy streams, transcode always. */
+    MATCH,        /**< @brief Copy stream if target supports codec. */
+    MATCHLIMIT,   /**< @brief Same as MATCH, only copy if target not larger transcode otherwise. */
+    STRICT,       /**< @brief Copy stream if codec matches desired target, transcode otherwise. */
+    STRICTLIMIT,  /**< @brief Same as STRICT, only copy if target not larger, transcode otherwise. */
+};
 
 /**
   * Recode to same format options
   */
-typedef enum RECODESAME
+enum class RECODESAME
 {
-    RECODESAME_NO = 0,     /**< @brief Never recode to same format. */
-    RECODESAME_YES,        /**< @brief Always recode to same format. */
-} RECODESAME;
+    NO = 0,     /**< @brief Never recode to same format. */
+    YES,        /**< @brief Always recode to same format. */
+};
 
 /**
   * List of sample formats.
   * User selection, we don't care about planar or interleaved.
   */
-typedef enum SAMPLE_FMT
+enum class SAMPLE_FMT
 {
-    SAMPLE_FMT_DONTCARE = -1,   /**< @brief Don't care, leave to FFmpegfs to choose */
-    SAMPLE_FMT_8,               /**< @brief 8 bit integer */
-    SAMPLE_FMT_16,              /**< @brief 16 bit integer */
-    SAMPLE_FMT_24,              /**< @brief 24 bit integer */
-    SAMPLE_FMT_32,              /**< @brief 32 bit integer */
-    SAMPLE_FMT_64,              /**< @brief 64 bit integer */
-    SAMPLE_FMT_F16,             /**< @brief 16 bit floating point */
-    SAMPLE_FMT_F24,             /**< @brief 24 bit floating point */
-    SAMPLE_FMT_F32,             /**< @brief 32 bit floating point */
-    SAMPLE_FMT_F64              /**< @brief 64 bit floating point */
-} SAMPLE_FMT;
+    FMT_DONTCARE = -1,   /**< @brief Don't care, leave to FFmpegfs to choose */
+    FMT_8,               /**< @brief 8 bit integer */
+    FMT_16,              /**< @brief 16 bit integer */
+    FMT_24,              /**< @brief 24 bit integer */
+    FMT_32,              /**< @brief 32 bit integer */
+    FMT_64,              /**< @brief 64 bit integer */
+    FMT_F16,             /**< @brief 16 bit floating point */
+    FMT_F24,             /**< @brief 24 bit floating point */
+    FMT_F32,             /**< @brief 32 bit floating point */
+    FMT_F64              /**< @brief 64 bit floating point */
+};
 
 /**
  * Format options: Defines file extension, codecs etc.
@@ -787,7 +787,7 @@ int                 supports_albumart(FILETYPE filetype);
 /**
  * @brief Get the FFmpegfs filetype, desttype must be one of FFmpeg's "official" short names for formats.
  * @param[in] desttype - Destination type (MP4, WEBM etc.).
- * @return On success, returns FILETYPE enum; On error, returns FILETYPE_UNKNOWN.
+ * @return On success, returns FILETYPE enum; On error, returns FILETYPE::UNKNOWN.
  */
 FILETYPE            get_filetype(const std::string & desttype);
 /**
@@ -800,7 +800,7 @@ std::string         get_filetype_text(FILETYPE filetype);
  * @brief Get the FFmpegfs filetype, desttypelist must be a comma separated list of FFmpeg's "official" short names for formats.
  * Will return the first match. Same as get_filetype, but accepts a comma separated list.
  * @param[in] desttypelist - Destination type list (MP4, WEBM etc.) separated by commas.
- * @return On success, returns FILETYPE enum; On error, returns FILETYPE_UNKNOWN.
+ * @return On success, returns FILETYPE enum; On error, returns FILETYPE::UNKNOWN.
  */
 FILETYPE            get_filetype_from_list(const std::string & desttypelist);
 /**
@@ -967,16 +967,17 @@ const char *        hwdevice_get_type_name(AVHWDeviceType dev_type);
 
 /**
   * Detected encoding types
+  * Note: Muste be > 0!
   */
-typedef enum ENCODING
+enum class ENCODING
 {
-    ENCODING_ASCII          = -1,       /**< @brief Some sort of ASCII encoding. */
-    ENCODING_UTF8_BOM       = -2,       /**< @brief UTF-8 with bottom mark. */
-    ENCODING_UTF16LE_BOM    = -3,       /**< @brief UTF-16 little-endian with bottom mark. */
-    ENCODING_UTF16BE_BOM    = -4,       /**< @brief UTF-16 big-endian with bottom mark. */
-    ENCODING_UTF32LE_BOM    = -5,       /**< @brief UTF-16 little-endian with bottom mark. */
-    ENCODING_UTF32BE_BOM    = -6,       /**< @brief UTF-16 big-endian with bottom mark. */
-} ENCODING;
+    ASCII          = -1,       /**< @brief Some sort of ASCII encoding. */
+    UTF8_BOM       = -2,       /**< @brief UTF-8 with bottom mark. */
+    UTF16LE_BOM    = -3,       /**< @brief UTF-16 little-endian with bottom mark. */
+    UTF16BE_BOM    = -4,       /**< @brief UTF-16 big-endian with bottom mark. */
+    UTF32LE_BOM    = -5,       /**< @brief UTF-16 little-endian with bottom mark. */
+    UTF32BE_BOM    = -6,       /**< @brief UTF-16 big-endian with bottom mark. */
+};
 
 /**
  * @brief Convert almost any encoding to UTF-8.
@@ -1003,8 +1004,8 @@ int                 get_encoding (const char * str, std::string & encoding);
  * that may fail.
  * @param[in] path - Path and filename of input file
  * @param[out] result - File contents as UTF-8
- * @return Returns one of the ENCODING enum values on success,
- * or errno on error. Basically a return code > 0 means there is an error.
+ * @return Returns one of the ENCODING enum values on success, which are always
+ * negative; or errno on error. Basically a return code > 0 means there is an error.
  */
 int                 read_file(const std::string & path, std::string & result);
 

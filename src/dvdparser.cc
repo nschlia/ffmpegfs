@@ -314,7 +314,7 @@ static bool create_dvd_virtualfile(const ifo_handle_t *vts_file, const std::stri
                         chapter_no,
                         angle_no,
                         replace_all(format_duration(duration), ":", "-").c_str(),
-                        ffmpeg_format[0].fileext().c_str());
+                        ffmpeg_format[FORMAT::VIDEO].fileext().c_str());
             }
             else
             {
@@ -322,7 +322,7 @@ static bool create_dvd_virtualfile(const ifo_handle_t *vts_file, const std::stri
                         title_no,
                         chapter_no,
                         replace_all(format_duration(duration), ":", "-").c_str(),
-                        ffmpeg_format[0].fileext().c_str());
+                        ffmpeg_format[FORMAT::VIDEO].fileext().c_str());
             }
         }
         else
@@ -334,25 +334,25 @@ static bool create_dvd_virtualfile(const ifo_handle_t *vts_file, const std::stri
                         title_no,
                         angle_no,
                         replace_all(format_duration(duration), ":", "-").c_str(),
-                        ffmpeg_format[0].fileext().c_str());
+                        ffmpeg_format[FORMAT::VIDEO].fileext().c_str());
             }
             else
             {
                 strsprintf(&title_buf, "%02d. Title [%s].%s",
                         title_no,
                         replace_all(format_duration(duration), ":", "-").c_str(),
-                        ffmpeg_format[0].fileext().c_str());
+                        ffmpeg_format[FORMAT::VIDEO].fileext().c_str());
             }
         }
 
         LPVIRTUALFILE virtualfile = nullptr;
-        if (!ffmpeg_format[0].is_multiformat())
+        if (!ffmpeg_format[FORMAT::VIDEO].is_multiformat())
         {
-            virtualfile = insert_file(VIRTUALTYPE_DVD, path + title_buf, statbuf);
+            virtualfile = insert_file(VIRTUALTYPE::DVD, path + title_buf, statbuf);
         }
         else
         {
-            virtualfile = insert_dir(VIRTUALTYPE_DVD, path + title_buf, statbuf);
+            virtualfile = insert_dir(VIRTUALTYPE::DVD, path + title_buf, statbuf);
         }
 
         if (virtualfile == nullptr)

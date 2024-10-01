@@ -30,6 +30,8 @@
 
 #pragma once
 
+#include "vcd/vcdchapter.h"
+
 #include <string>
 #include <array>
 
@@ -105,6 +107,7 @@ typedef struct VCDENTRIES
 
 } VCDENTRY, *LPVCDENTRIES;                  /**< @brief Pointer version of VCDENTRY */
 typedef const VCDENTRY * LPCVCDENTRIES;     /**< @brief Pointer to const version of VCDENTRY */
+
 #pragma pack(pop)
 
 extern const std::array<char, 12> SYNC;     /**< @brief Chapter synchronisation in S/VCD mpeg/dat files (12 byte: 0x00FFFFFFFFFFFFFFFFFFFF00) */
@@ -144,13 +147,13 @@ int         locate_video(const std::string & path, int track_no, std::string & f
  * @param[in] type - 1: VCD 1.0, VCD 1.1, SVCD 1.0, HQVCD, 2: VCD 2.0
  * @return Disk type as a human readable string.
  */
-std::string get_type_str(int type);
+std::string get_type_str(VCDTYPE type);
 /**
  * @brief Profile as a human readable string.
  * @param[in] tag - 1: VCD 1.0, VCD 2.0, SVCD, HQVCD, 2: VCD 1.1
  * @return Returns profile as a human readable string.
  */
-std::string get_profile_tag_str(int tag);
+std::string get_profile_tag_str(VCDPROFILETAG tag);
 /**
  * @brief Check if  fullname is a directory. Remove the filename if necessary.
  * @note Really checks if fullname is a path even if the trailing slash is missing.

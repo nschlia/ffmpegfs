@@ -313,7 +313,7 @@ static int ffmpegfs_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
     // Add a virtual script if enabled
     if (params.m_enablescript)
     {
-        LPVIRTUALFILE virtualfile = make_file(buf, filler, VIRTUALTYPE_SCRIPT, origpath, params.m_scriptfile, script_file.size());
+        LPVIRTUALFILE virtualfile = make_file(buf, filler, VIRTUALTYPE::SCRIPT, origpath, params.m_scriptfile, script_file.size());
         virtualfile->m_file_contents = script_file;
     }
 
@@ -435,13 +435,13 @@ static int ffmpegfs_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
 
                             if (!current_format->is_multiformat())
                             {
-                                if (origext != newext || params.m_recodesame == RECODESAME_YES)
+                                if (origext != newext || params.m_recodesame == RECODESAME::YES)
                                 {
-                                    insert_file(VIRTUALTYPE_DISK, origpath + filename, origfile, &stbuf, flags);
+                                    insert_file(VIRTUALTYPE::DISK, origpath + filename, origfile, &stbuf, flags);
                                 }
                                 else
                                 {
-                                    insert_file(VIRTUALTYPE_DISK, origpath + filename, origfile, &stbuf, flags | VIRTUALFLAG_PASSTHROUGH);
+                                    insert_file(VIRTUALTYPE::DISK, origpath + filename, origfile, &stbuf, flags | VIRTUALFLAG_PASSTHROUGH);
                                 }
                             }
                             else
@@ -452,7 +452,7 @@ static int ffmpegfs_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
 
                                 filename = origname;	// Restore original name
 
-                                insert_file(VIRTUALTYPE_DISK, origfile, &stbuf, flags);
+                                insert_file(VIRTUALTYPE::DISK, origfile, &stbuf, flags);
                             }
                         }
                     }
@@ -554,7 +554,7 @@ static int ffmpegfs_getattr(const char *path, struct stat *stbuf)
     append_basepath(&origpath, path);
 
     LPVIRTUALFILE   virtualfile = find_original(&origpath);
-    VIRTUALTYPE     type        = (virtualfile != nullptr) ? virtualfile->m_type : VIRTUALTYPE_DISK;
+    VIRTUALTYPE     type        = (virtualfile != nullptr) ? virtualfile->m_type : VIRTUALTYPE::DISK;
     int             flags       = (virtualfile != nullptr) ? virtualfile->m_flags : VIRTUALFLAG_NONE;
 
     if (virtualfile != nullptr && (virtualfile->m_flags & VIRTUALFLAG_HIDDEN))
@@ -620,7 +620,7 @@ static int ffmpegfs_getattr(const char *path, struct stat *stbuf)
 
     switch (type)
     {
-    case VIRTUALTYPE_SCRIPT:
+    case VIRTUALTYPE::SCRIPT:
     {
         // Use stored status
         mempcpy(stbuf, &virtualfile->m_st, sizeof(struct stat));
@@ -628,13 +628,13 @@ static int ffmpegfs_getattr(const char *path, struct stat *stbuf)
         break;
     }
 #ifdef USE_LIBVCD
-    case VIRTUALTYPE_VCD:
+    case VIRTUALTYPE::VCD:
 #endif // USE_LIBVCD
 #ifdef USE_LIBDVD
-    case VIRTUALTYPE_DVD:
+    case VIRTUALTYPE::DVD:
 #endif // USE_LIBDVD
 #ifdef USE_LIBBLURAY
-    case VIRTUALTYPE_BLURAY:
+    case VIRTUALTYPE::BLURAY:
 #endif // USE_LIBBLURAY
     {
         // Use stored status
@@ -642,7 +642,7 @@ static int ffmpegfs_getattr(const char *path, struct stat *stbuf)
         no_check = true;    // FILETYPE already known, no need to check again.
         FALLTHROUGH_INTENDED;
     }
-    case VIRTUALTYPE_DISK:
+    case VIRTUALTYPE::DISK:
     {
         if (virtualfile != nullptr && (flags & (VIRTUALFLAG_FRAME | VIRTUALFLAG_HLS | VIRTUALFLAG_DIRECTORY | VIRTUALFLAG_CUESHEET)))
         {
@@ -707,7 +707,7 @@ static int ffmpegfs_getattr(const char *path, struct stat *stbuf)
                         }
                     }
 
-                    if (ffmpeg_format[0].is_frameset())
+                    if (ffmpeg_format[FORMAT::VIDEO].is_frameset())
                     {
                         LPVIRTUALFILE parent_file = find_parent(origpath);
 
@@ -743,7 +743,7 @@ static int ffmpegfs_getattr(const char *path, struct stat *stbuf)
                             return 0;
                         }
                     }
-                    else if (ffmpeg_format[0].is_hls())
+                    else if (ffmpeg_format[FORMAT::VIDEO].is_hls())
                     {
                         LPVIRTUALFILE parent_file = find_parent(origpath);
 
@@ -840,8 +840,8 @@ static int ffmpegfs_getattr(const char *path, struct stat *stbuf)
         break;
     }
         // We should never come here but this shuts up a warning
-    case VIRTUALTYPE_PASSTHROUGH:
-    case VIRTUALTYPE_BUFFER:
+    case VIRTUALTYPE::PASSTHROUGH:
+    case VIRTUALTYPE::BUFFER:
     {
         break;
     }
@@ -894,13 +894,13 @@ static int ffmpegfs_fgetattr(const char *path, struct stat * stbuf, struct fuse_
     switch (virtualfile->m_type)
     {
 #ifdef USE_LIBVCD
-    case VIRTUALTYPE_VCD:
+    case VIRTUALTYPE::VCD:
 #endif // USE_LIBVCD
 #ifdef USE_LIBDVD
-    case VIRTUALTYPE_DVD:
+    case VIRTUALTYPE::DVD:
 #endif // USE_LIBDVD
 #ifdef USE_LIBBLURAY
-    case VIRTUALTYPE_BLURAY:
+    case VIRTUALTYPE::BLURAY:
 #endif // USE_LIBBLURAY
     {
         // Use stored status
@@ -908,7 +908,7 @@ static int ffmpegfs_fgetattr(const char *path, struct stat * stbuf, struct fuse_
         no_check = true;
         FALLTHROUGH_INTENDED;
     }
-    case VIRTUALTYPE_DISK:
+    case VIRTUALTYPE::DISK:
     {
         if (virtualfile->m_flags & (VIRTUALFLAG_FILESET | VIRTUALFLAG_FRAME | VIRTUALFLAG_HLS | VIRTUALFLAG_DIRECTORY))
         {
@@ -946,14 +946,14 @@ static int ffmpegfs_fgetattr(const char *path, struct stat * stbuf, struct fuse_
 
         break;
     }
-    case VIRTUALTYPE_SCRIPT:
+    case VIRTUALTYPE::SCRIPT:
     {
         mempcpy(stbuf, &virtualfile->m_st, sizeof(struct stat));
         break;
     }
         // We should never come here but this shuts up a warning
-    case VIRTUALTYPE_PASSTHROUGH:
-    case VIRTUALTYPE_BUFFER:
+    case VIRTUALTYPE::PASSTHROUGH:
+    case VIRTUALTYPE::BUFFER:
     {
         break;
     }
@@ -1006,21 +1006,21 @@ static int ffmpegfs_open(const char *path, struct fuse_file_info *fi)
 
     switch (virtualfile->m_type)
     {
-    case VIRTUALTYPE_SCRIPT:
+    case VIRTUALTYPE::SCRIPT:
     {
         errno = 0;
         break;
     }
 #ifdef USE_LIBVCD
-    case VIRTUALTYPE_VCD:
+    case VIRTUALTYPE::VCD:
 #endif // USE_LIBVCD
 #ifdef USE_LIBDVD
-    case VIRTUALTYPE_DVD:
+    case VIRTUALTYPE::DVD:
 #endif // USE_LIBDVD
 #ifdef USE_LIBBLURAY
-    case VIRTUALTYPE_BLURAY:
+    case VIRTUALTYPE::BLURAY:
 #endif // USE_LIBBLURAY
-    case VIRTUALTYPE_DISK:
+    case VIRTUALTYPE::DISK:
     {
         if (virtualfile->m_flags & (VIRTUALFLAG_FRAME | VIRTUALFLAG_HLS))
         {
@@ -1068,8 +1068,8 @@ static int ffmpegfs_open(const char *path, struct fuse_file_info *fi)
         break;
     }
         // We should never come here but this shuts up a warning
-    case VIRTUALTYPE_PASSTHROUGH:
-    case VIRTUALTYPE_BUFFER:
+    case VIRTUALTYPE::PASSTHROUGH:
+    case VIRTUALTYPE::BUFFER:
     {
         break;
     }
@@ -1140,7 +1140,7 @@ static int ffmpegfs_read(const char *path, char *buf, size_t size, off_t offset,
 
     switch (virtualfile->m_type)
     {
-    case VIRTUALTYPE_SCRIPT:
+    case VIRTUALTYPE::SCRIPT:
     {
         if (locoffset >= virtualfile->m_file_contents.size())
         {
@@ -1163,15 +1163,15 @@ static int ffmpegfs_read(const char *path, char *buf, size_t size, off_t offset,
         break;
     }
 #ifdef USE_LIBVCD
-    case VIRTUALTYPE_VCD:
+    case VIRTUALTYPE::VCD:
 #endif // USE_LIBVCD
 #ifdef USE_LIBDVD
-    case VIRTUALTYPE_DVD:
+    case VIRTUALTYPE::DVD:
 #endif // USE_LIBDVD
 #ifdef USE_LIBBLURAY
-    case VIRTUALTYPE_BLURAY:
+    case VIRTUALTYPE::BLURAY:
 #endif // USE_LIBBLURAY
-    case VIRTUALTYPE_DISK:
+    case VIRTUALTYPE::DISK:
     {
         if (virtualfile->m_flags & VIRTUALFLAG_FRAME)
         {
@@ -1231,8 +1231,8 @@ static int ffmpegfs_read(const char *path, char *buf, size_t size, off_t offset,
         }
         break;
     }
-    case VIRTUALTYPE_PASSTHROUGH:
-    case VIRTUALTYPE_BUFFER:
+    case VIRTUALTYPE::PASSTHROUGH:
+    case VIRTUALTYPE::BUFFER:
     {
         break;
     }
@@ -1578,7 +1578,7 @@ static bool virtual_name(std::string * virtualpath, const std::string & origpath
 
         if (lstat(newvirtualfile.m_destfile.c_str(), &newvirtualfile.m_st) == 0)
         {
-            if (params.m_recodesame == RECODESAME_NO)
+            if (params.m_recodesame == RECODESAME::NO)
             {
                 newvirtualfile.m_flags |= VIRTUALFLAG_PASSTHROUGH;
             }
@@ -1704,11 +1704,11 @@ static void flags_to_dir(int *flags)
 {
     *flags |= VIRTUALFLAG_FILESET | VIRTUALFLAG_DIRECTORY;
 
-    if (ffmpeg_format[0].is_frameset())
+    if (ffmpeg_format[FORMAT::VIDEO].is_frameset())
     {
         *flags |= VIRTUALFLAG_FRAME;
     }
-    else if (ffmpeg_format[0].is_hls())
+    else if (ffmpeg_format[FORMAT::VIDEO].is_hls())
     {
         *flags |= VIRTUALFLAG_HLS;
     }
@@ -1773,13 +1773,13 @@ int load_path(const std::string & path, const struct stat *statbuf, void *buf, f
 
         if (
         #ifdef USE_LIBVCD
-                (virtualfile->m_type != VIRTUALTYPE_VCD) &&
+                (virtualfile->m_type != VIRTUALTYPE::VCD) &&
         #endif // USE_LIBVCD
         #ifdef USE_LIBDVD
-                (virtualfile->m_type != VIRTUALTYPE_DVD) &&
+                (virtualfile->m_type != VIRTUALTYPE::DVD) &&
         #endif // USE_LIBDVD
         #ifdef USE_LIBBLURAY
-                (virtualfile->m_type != VIRTUALTYPE_BLURAY) &&
+                (virtualfile->m_type != VIRTUALTYPE::BLURAY) &&
         #endif // USE_LIBBLURAY
                 !(virtualfile->m_flags & VIRTUALFLAG_CUESHEET)
                 )
@@ -1914,7 +1914,7 @@ LPVIRTUALFILE find_original(std::string * filepath)
     {
         // Fallback to old method (required if file accessed directly)
         std::string ext;
-        if (!ffmpeg_format[0].is_hls() && find_ext(&ext, *filepath) && (strcasecmp(ext, ffmpeg_format[0].fileext()) == 0 || (params.smart_transcode() && strcasecmp(ext, ffmpeg_format[1].fileext()) == 0)))
+        if (!ffmpeg_format[FORMAT::VIDEO].is_hls() && find_ext(&ext, *filepath) && (strcasecmp(ext, ffmpeg_format[FORMAT::VIDEO].fileext()) == 0 || (params.smart_transcode() && strcasecmp(ext, ffmpeg_format[FORMAT::AUDIO].fileext()) == 0)))
         {
             std::string dir(*filepath);
             std::string searchexp(*filepath);
@@ -1959,12 +1959,12 @@ LPVIRTUALFILE find_original(std::string * filepath)
 
                 if (*filepath != origfile)
                 {
-                    virtualfile2 = insert_file(VIRTUALTYPE_DISK, *filepath, origfile, &stbuf); ///<* @todo This probably won't work, need to redo "Fallback to old method"
+                    virtualfile2 = insert_file(VIRTUALTYPE::DISK, *filepath, origfile, &stbuf); ///<* @todo This probably won't work, need to redo "Fallback to old method"
                     *filepath = origfile;
                 }
                 else
                 {
-                    virtualfile2 = insert_file(VIRTUALTYPE_DISK, origfile, &stbuf, VIRTUALFLAG_PASSTHROUGH);
+                    virtualfile2 = insert_file(VIRTUALTYPE::DISK, origfile, &stbuf, VIRTUALFLAG_PASSTHROUGH);
                 }
                 return virtualfile2;
             }
@@ -2084,10 +2084,10 @@ static int make_hls_fileset(void * buf, fuse_fill_dir_t filler, const std::strin
         index_0_av_contents += "#EXT-X-ENDLIST\n";
 
         LPVIRTUALFILE child_file;
-        child_file = make_file(buf, filler, VIRTUALTYPE_SCRIPT, origpath, "master.m3u8", master_contents.size(), virtualfile->m_st.st_ctime);
+        child_file = make_file(buf, filler, VIRTUALTYPE::SCRIPT, origpath, "master.m3u8", master_contents.size(), virtualfile->m_st.st_ctime);
         std::copy(master_contents.begin(), master_contents.end(), std::back_inserter(child_file->m_file_contents));
 
-        child_file = make_file(buf, filler, VIRTUALTYPE_SCRIPT, origpath, "index_0_av.m3u8", index_0_av_contents.size(), virtualfile->m_st.st_ctime, VIRTUALFLAG_NONE);
+        child_file = make_file(buf, filler, VIRTUALTYPE::SCRIPT, origpath, "index_0_av.m3u8", index_0_av_contents.size(), virtualfile->m_st.st_ctime, VIRTUALFLAG_NONE);
         std::copy(index_0_av_contents.begin(), index_0_av_contents.end(), std::back_inserter(child_file->m_file_contents));
 
         {
@@ -2135,7 +2135,7 @@ static int make_hls_fileset(void * buf, fuse_fill_dir_t filler, const std::strin
                     "\n"
                     "</html>\n";
 
-            child_file = make_file(buf, filler, VIRTUALTYPE_SCRIPT, origpath, "hls.html", hls_html.size(), virtualfile->m_st.st_ctime, VIRTUALFLAG_NONE);
+            child_file = make_file(buf, filler, VIRTUALTYPE::SCRIPT, origpath, "hls.html", hls_html.size(), virtualfile->m_st.st_ctime, VIRTUALFLAG_NONE);
             std::copy(hls_html.begin(), hls_html.end(), std::back_inserter(child_file->m_file_contents));
         }
     }
@@ -2242,12 +2242,12 @@ static size_t guess_format_idx(const std::string & filepath)
         else
         {
             // Smart transcoding
-            if (ffmpeg_format[0].video_codec() != AV_CODEC_ID_NONE && oformat->video_codec != AV_CODEC_ID_NONE && !is_album_art(oformat->video_codec))
+            if (ffmpeg_format[FORMAT::VIDEO].video_codec() != AV_CODEC_ID_NONE && oformat->video_codec != AV_CODEC_ID_NONE && !is_album_art(oformat->video_codec))
             {
                 // Is a video: use first format (video file)
                 return 0;
             }
-            else if (ffmpeg_format[1].audio_codec() != AV_CODEC_ID_NONE && oformat->audio_codec != AV_CODEC_ID_NONE)
+            else if (ffmpeg_format[FORMAT::AUDIO].audio_codec() != AV_CODEC_ID_NONE && oformat->audio_codec != AV_CODEC_ID_NONE)
             {
                 // For audio only, use second format (audio only file)
                 return 1;
@@ -2383,20 +2383,20 @@ static const FFmpegfs_Format * get_format(LPVIRTUALFILE newvirtualfile)
     {
         // Not smart encoding: use first format (video file)
         newvirtualfile->m_format_idx = 0;
-        return &ffmpeg_format[0];
+        return &ffmpeg_format[FORMAT::VIDEO];
     }
     else
     {
         if (newvirtualfile->m_has_video)
         {
             newvirtualfile->m_format_idx = 0;
-            return &ffmpeg_format[0];
+            return &ffmpeg_format[FORMAT::VIDEO];
         }
 
         if (newvirtualfile->m_has_audio)
         {
             newvirtualfile->m_format_idx = 1;
-            return &ffmpeg_format[1];
+            return &ffmpeg_format[FORMAT::AUDIO];
         }
     }
 

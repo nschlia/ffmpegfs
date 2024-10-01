@@ -120,44 +120,43 @@ extern "C" {
   *
   * @brief Hardware acceleration types.
   */
-typedef enum HWACCELAPI
+enum class HWACCELAPI
 {
-    HWACCELAPI_NONE,
-    HWACCELAPI_VAAPI,               /**< Intel: VAAPI */
+    NONE,
+    VAAPI,                  /**< Intel: VAAPI */
 
-    HWACCELAPI_MMAL,                /**< Raspberry: MMAL */
-    HWACCELAPI_OMX,                 /**< Raspberry: OpenMAX */
+    MMAL,                   /**< Raspberry: MMAL */
+    OMX,                    /**< Raspberry: OpenMAX */
 
     // Additional formats
 #if 0
-    HWACCELAPI_CUDA,                /**< Nividia: CUDA    to be added */
-    HWACCELAPI_V4L2M2M,             /**< v4l2 mem to mem  to be added */
-    HWACCELAPI_VDPAU,               /**< VDPAU            to be added */
-    HWACCELAPI_QSV,                 /**< QSV              to be added */
-    HWACCELAPI_OPENCL,              /**< OPENCL           to be added */
+    CUDA,                   /**< Nividia: CUDA    to be added */
+    V4L2M2M,                /**< v4l2 mem to mem  to be added */
+    VDPAU,                  /**< VDPAU            to be added */
+    QSV,                    /**< QSV              to be added */
+    OPENCL,                 /**< OPENCL           to be added */
 #if HAVE_VULKAN_HWACCEL
-    HWACCELAPI_VULKAN,              /**< VULKAN           to be added */
+    VULKAN,                 /**< VULKAN           to be added */
 #endif // HAVE_VULKAN_HWACCEL
 #if __APPLE__
     // MacOS acceleration APIs not supported
-    HWACCELAPI_VIDEOTOOLBOX,        /**< VIDEOTOOLBOX     not supported */
+    VIDEOTOOLBOX,           /**< VIDEOTOOLBOX     not supported */
 #endif
 #if __ANDROID__
     // Android acceleration APIs not supported
-    HWACCELAPI_MEDIACODEC,          /**< MediaCodec API   not supported */
+    MEDIACODEC,             /**< MediaCodec API   not supported */
 #endif
 #if _WIN32
     // Windows acceleration APIs not supported
-    HWACCELAPI_DRM,                 /**< DRM              not supported */
-    HWACCELAPI_DXVA2,               /**< DXVA2            not supported */
-    HWACCELAPI_D3D11VA,             /**< D3D11VA          not supported */
+    DRM,                    /**< DRM              not supported */
+    DXVA2,                  /**< DXVA2            not supported */
+    D3D11VA,                /**< D3D11VA          not supported */
 #endif
 #endif
-} HWACCELAPI;
+};
 
 typedef std::multimap<AVCodecID, int> HWACCEL_BLOCKED_MAP;      /**< @brief Map command line option to AVCodecID */
 
-// Format
 extern FFMPEGFS_FORMAT_ARR ffmpeg_format;                       /**< @brief Two FFmpegfs_Format infos, 0: video file, 1: audio file */
 
 /**

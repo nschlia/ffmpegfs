@@ -43,13 +43,14 @@ public:
     /**
       * Seek results
       */
-    typedef enum SEEKRES
+    enum class SEEKRES
     {
-        SEEKRES_NOTFOUND,                                           /**< @brief Sync not found */
-        SEEKRES_FOUND,                                              /**< @brief Sync found */
-        SEEKRES_ERROR                                               /**< @brief Seek error */
-    } SEEKRES, *LPSEEKRES;                                          /**< @brief Pointer to SEEKRES */
-    typedef const SEEKRES * LPCSEEKRES;                             /**< @brief Const pointer to SEEKRES */
+        NOTFOUND,                                           /**< @brief Sync not found */
+        FOUND,                                              /**< @brief Sync found */
+        ERROR                                               /**< @brief Seek error */
+    };
+    typedef SEEKRES *LPSEEKRES;                             /**< @brief Pointer to SEEKRES */
+    typedef const SEEKRES *LPCSEEKRES;                      /**< @brief Const pointer to SEEKRES */
 
 public:
     /**

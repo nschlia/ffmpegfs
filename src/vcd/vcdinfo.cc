@@ -119,8 +119,8 @@ void VcdInfo::clear()
     m_disk_path.clear();
     m_file_date     = -1;
     m_id.clear();
-    m_type          = VCDTYPE_UNKNOWN;
-    m_profile_tag   = VCDPROFILETAG_UNKNOWN;
+    m_type          = VCDTYPE::UNKNOWN;
+    m_profile_tag   = VCDPROFILETAG::UNKNOWN;
     m_album_id.clear();
     m_number_of_cds = 0;
     m_cd_number     = 0;

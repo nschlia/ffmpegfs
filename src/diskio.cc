@@ -47,7 +47,7 @@ DiskIO::~DiskIO()
 
 VIRTUALTYPE DiskIO::type() const
 {
-    return VIRTUALTYPE_DISK;
+    return VIRTUALTYPE::DISK;
 }
 
 size_t DiskIO::bufsize() const

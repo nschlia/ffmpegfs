@@ -60,13 +60,14 @@ struct AVSubtitle;
 /**
  * @brief Decoder status codes. Can be error, success or end of file.
  */
-typedef enum DECODER_STATUS
+enum class DECODER_STATUS
 {
-    DECODER_ERROR = -1,                                         /**< @brief Decoder error, see return code */
-    DECODER_SUCCESS = 0,                                        /**< @brief Frame decoded successfully */
-    DECODER_EOF = 1                                             /**< @brief Read to end of file */
-} DECODER_STATUS, *LPDECODER_STATUS;                            /**< @brief Pointer version of DECODER_STATUS */
-typedef DECODER_STATUS const * LPCDECODER_STATUS;               /**< @brief Pointer to const version of DECODER_STATUS */
+    DEC_ERROR = -1,                                     /**< @brief Decoder error, see return code */
+    DEC_SUCCESS = 0,                                    /**< @brief Frame decoded successfully */
+    DEC_EOF = 1                                         /**< @brief Read to end of file */
+};
+typedef DECODER_STATUS *LPDECODER_STATUS;               /**< @brief Pointer version of DECODER_STATUS */
+typedef DECODER_STATUS const * LPCDECODER_STATUS;       /**< @brief Pointer to const version of DECODER_STATUS */
 
 /**
  * @brief The #FFmpeg_Transcoder class
@@ -139,7 +140,7 @@ protected:
     struct INPUTFILE                                                /**< @brief Input file definition */
     {
         INPUTFILE() :
-            m_filetype(FILETYPE_UNKNOWN),
+            m_filetype(FILETYPE::UNKNOWN),
             m_format_ctx(nullptr),
             m_pix_fmt(AV_PIX_FMT_NONE)
         {}
@@ -176,13 +177,12 @@ protected:
 
     typedef std::map<AVHWDeviceType, AVPixelFormat> DEVICETYPE_MAP; /**< @brief Map device types to pixel formats */
 
-    typedef enum HWACCELMODE                                        /**< @brief Currently active hardware acceleration mode */
+    enum class HWACCELMODE                                          /**< @brief Currently active hardware acceleration mode */
     {
-        HWACCELMODE_NONE,                                           /**< @brief Hardware acceleration not active */
-        HWACCELMODE_ENABLED,                                        /**< @brief Hardware acceleration is active */
-        HWACCELMODE_FALLBACK                                        /**< @brief Hardware acceleration selected, but fell back to software */
-
-    } HWACCELMODE;
+        NONE,                                                       /**< @brief Hardware acceleration not active */
+        ENABLED,                                                    /**< @brief Hardware acceleration is active */
+        FALLBACK                                                    /**< @brief Hardware acceleration selected, but fell back to software */
+    };
 
     typedef std::variant<FFmpeg_Frame, FFmpeg_Subtitle> MULTIFRAME; /**< @brief Combined audio/videoframe and subtitle */
     typedef std::multimap<int64_t, MULTIFRAME>  MULTIFRAME_MAP;     /**< @brief Audio frame/video frame/subtitle buffer */
@@ -823,7 +823,7 @@ protected:
      * @param[in] profile - Selected ProRes profile.
      * @return Bitrate in bit/s.
      */
-    static BITRATE              get_prores_bitrate(int width, int height, const AVRational &framerate, bool interleaved, int profile);
+    static BITRATE              get_prores_bitrate(int width, int height, const AVRational &framerate, bool interleaved, PRORESLEVEL profile);
     /**
      * @brief Try to predict final file size.
      */

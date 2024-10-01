@@ -56,7 +56,7 @@ VcdIO::~VcdIO()
 
 VIRTUALTYPE VcdIO::type() const
 {
-    return VIRTUALTYPE_VCD;
+    return VIRTUALTYPE::VCD;
 }
 
 size_t VcdIO::bufsize() const

@@ -765,7 +765,7 @@ bool Cache::read_info(LPCACHE_INFO cache_info)
     cache_info->m_encoded_filesize      = 0;
     cache_info->m_video_frame_count     = 0;
     cache_info->m_segment_count         = 0;
-    cache_info->m_result                = RESULTCODE_NONE;
+    cache_info->m_result                = RESULTCODE::NONE;
     cache_info->m_error                 = false;
     cache_info->m_errno                 = 0;
     cache_info->m_averror               = 0;
@@ -900,7 +900,7 @@ bool Cache::write_info(LPCCACHE_INFO cache_info)
         SQLBINDNUM(sqlite3_bind_int64,  12, static_cast<sqlite3_int64>(cache_info->m_encoded_filesize));
         SQLBINDNUM(sqlite3_bind_int,    13, static_cast<int32_t>(cache_info->m_video_frame_count));
         SQLBINDNUM(sqlite3_bind_int,    14, static_cast<int32_t>(cache_info->m_segment_count));
-        SQLBINDNUM(sqlite3_bind_int,    15, cache_info->m_result);
+        SQLBINDNUM(sqlite3_bind_int,    15, static_cast<int32_t>(cache_info->m_result));
         SQLBINDNUM(sqlite3_bind_int,    16, cache_info->m_error);
         SQLBINDNUM(sqlite3_bind_int,    17, cache_info->m_errno);
         SQLBINDNUM(sqlite3_bind_int,    18, cache_info->m_averror);

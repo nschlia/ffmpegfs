@@ -166,7 +166,7 @@ static int transcode_finish(Cache_Entry* cache_entry, FFmpeg_Transcoder &transco
     cache_entry->m_cache_info.m_encoded_filesize    = cache_entry->m_buffer->buffer_watermark();
     cache_entry->m_cache_info.m_video_frame_count   = transcoder.video_frame_count();
     cache_entry->m_cache_info.m_segment_count       = transcoder.segment_count();
-    cache_entry->m_cache_info.m_result              = !transcoder.have_seeked() ? RESULTCODE_FINISHED_SUCCESS : RESULTCODE_FINISHED_INCOMPLETE;
+    cache_entry->m_cache_info.m_result              = !transcoder.have_seeked() ? RESULTCODE::FINISHED_SUCCESS : RESULTCODE::FINISHED_INCOMPLETE;
     cache_entry->m_is_decoding                      = false;
     cache_entry->m_cache_info.m_errno               = 0;
     cache_entry->m_cache_info.m_averror             = 0;
@@ -506,7 +506,7 @@ bool transcoder_read(Cache_Entry* cache_entry, char* buff, size_t offset, size_t
         {
             switch (params.current_format(cache_entry->virtualfile())->filetype())
             {
-            case FILETYPE_MP3:
+            case FILETYPE::MP3:
             {
                 // If we are encoding to MP3 and the requested data overlaps the ID3v1 tag
                 // at the end of the file, do not encode data first up to that position.
@@ -862,7 +862,7 @@ static bool transcode(THREAD_DATA *thread_data, Cache_Entry *cache_entry, FFmpeg
 
         while (!cache_entry->is_finished() && !(*timeout = cache_entry->decode_timeout()) && !thread_exit)
         {
-            DECODER_STATUS status = DECODER_SUCCESS;
+            DECODER_STATUS status = DECODER_STATUS::DEC_SUCCESS;
 
             if (cache_entry->ref_count() > 1)
             {
@@ -901,12 +901,12 @@ static bool transcode(THREAD_DATA *thread_data, Cache_Entry *cache_entry, FFmpeg
 
             averror = transcoder.process_single_fr(&status);
 
-            if (status == DECODER_ERROR)
+            if (status == DECODER_STATUS::DEC_ERROR)
             {
                 errno = EIO;
                 throw (static_cast<int>(errno));
             }
-            else if (status == DECODER_EOF)
+            else if (status == DECODER_STATUS::DEC_EOF)
             {
                 cache_entry->m_suspend_timeout = true; // Suspend read_frame time out until transcoder is reopened.
 

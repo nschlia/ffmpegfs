@@ -36,24 +36,24 @@
 /**
   * S/VCD type
   */
-typedef enum VCDTYPE
+enum class VCDTYPE
 {
-    VCDTYPE_UNKNOWN = -1,                               /**< @brief unknown type */
-    VCDTYPE_VCD_10_11_SVCD_10_HQVCD = 1,                /**< @brief VCD 1.0, VCD 1.1, SVCD 1.0 und HQVCD */
-    VCDTYPE_VCD_20 = 2                                  /**< @brief VCD 2.0 */
-} VCDTYPE;
+    UNKNOWN = -1,                               /**< @brief unknown type */
+    VCD_10_11_SVCD_10_HQVCD = 1,                /**< @brief VCD 1.0, VCD 1.1, SVCD 1.0 und HQVCD */
+    VCD_20 = 2                                  /**< @brief VCD 2.0 */
+};
 
 /**
   * S/VCD profile tag
   */
-typedef enum VCDPROFILETAG
+enum class VCDPROFILETAG
 {
-    VCDPROFILETAG_UNKNOWN = -1,                         /**< @brief unknown file tag */
-    VCDPROFILETAG_VCD_10_20_SVCD_HQVCD = 0,             /**< @brief VCD 1.0, VCD 2.0, SVCD und HQVCD */
-    VCDPROFILETAG_VCD_11 = 1                            /**< @brief VCD 1.1 */
-} VCDPROFILETAG;
+    UNKNOWN = -1,                               /**< @brief unknown file tag */
+    VCD_10_20_SVCD_HQVCD = 0,                   /**< @brief VCD 1.0, VCD 2.0, SVCD und HQVCD */
+    VCD_11 = 1                                  /**< @brief VCD 1.1 */
+};
 
-struct VCDCHAPTER;                                      /**< @brief Video CD chapter forward declaration */
+struct VCDCHAPTER;                              /**< @brief Video CD chapter forward declaration */
 typedef struct VCDCHAPTER VCDCHAPTER;
 
 /** @brief Video CD chapter

@@ -53,7 +53,7 @@ Buffer::~Buffer()
 
 VIRTUALTYPE Buffer::type() const
 {
-    return VIRTUALTYPE_BUFFER;
+    return VIRTUALTYPE::BUFFER;
 }
 
 size_t Buffer::bufsize() const

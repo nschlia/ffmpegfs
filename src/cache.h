@@ -51,13 +51,13 @@
 /**
   * @brief RESULTCODE of transcoding operation
   */
-typedef enum RESULTCODE
+enum class RESULTCODE
 {
-    RESULTCODE_NONE,                            /**< @brief No result code available */
-    RESULTCODE_FINISHED_INCOMPLETE,             /**< @brief Transcode finished, but incomplete */
-    RESULTCODE_FINISHED_SUCCESS,                /**< @brief Transcode finished successfully */
-    RESULTCODE_FINISHED_ERROR,                  /**< @brief Transcode finished with error */
-} RESULTCODE;
+    NONE,                                /**< @brief No result code available */
+    FINISHED_INCOMPLETE,                 /**< @brief Transcode finished, but incomplete */
+    FINISHED_SUCCESS,                    /**< @brief Transcode finished successfully */
+    FINISHED_ERROR,                      /**< @brief Transcode finished with error */
+};
 typedef RESULTCODE const *LPCRESULTCODE;            /**< @brief Pointer version of RESULTCODE */
 typedef RESULTCODE *LPRESULTCODE;                   /**< @brief Pointer to const version of RESULTCODE */
 

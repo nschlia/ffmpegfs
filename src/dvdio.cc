@@ -74,7 +74,7 @@ DvdIO::~DvdIO()
 
 VIRTUALTYPE DvdIO::type() const
 {
-    return VIRTUALTYPE_DVD;
+    return VIRTUALTYPE::DVD;
 }
 
 size_t DvdIO::bufsize() const
@@ -439,7 +439,7 @@ size_t DvdIO::demux_pes(uint8_t *out, const uint8_t *in, size_t len) const
 DvdIO::DSITYPE DvdIO::handle_DSI(void *_dsi_pack, size_t * cur_output_size, unsigned int *next_block, uint8_t *data)
 {
     dsi_t * dsi_pack = reinterpret_cast<dsi_t*>(_dsi_pack);
-    DSITYPE dsitype = DSITYPE_CONTINUE;
+    DSITYPE dsitype = DSITYPE::CONTINUE;
     bool end_of_cell;
 
     navRead_DSI(dsi_pack, &data[DSI_START_BYTE]);
@@ -507,7 +507,7 @@ DvdIO::DSITYPE DvdIO::handle_DSI(void *_dsi_pack, size_t * cur_output_size, unsi
         if (m_next_cell >= m_cur_pgc->nr_of_cells)
         {
             *next_block = 0;
-            dsitype = DSITYPE_EOF_TITLE;
+            dsitype = DSITYPE::EOF_TITLE;
         }
         else
         {
@@ -517,7 +517,7 @@ DvdIO::DSITYPE DvdIO::handle_DSI(void *_dsi_pack, size_t * cur_output_size, unsi
 
             if (m_cur_cell >= m_end_cell)
             {
-                dsitype = DSITYPE_EOF_CHAPTER;
+                dsitype = DSITYPE::EOF_CHAPTER;
             }
 
             *next_block = m_cur_pgc->cell_playback[m_cur_cell].first_sector;
@@ -685,10 +685,10 @@ size_t DvdIO::readio(void * data, size_t size)
         //break;
     }
 
-    // DSITYPE_EOF_TITLE - end of title
-    // DSITYPE_EOF_CHAPTER - end of chapter
-    if ((dsitype != DSITYPE_CONTINUE && !m_full_title) ||   // Stop at end of chapter/title
-            (dsitype == DSITYPE_EOF_TITLE))                 // Stop at end of title
+    // DSITYPE::EOF_TITLE - end of title
+    // DSITYPE::EOF_CHAPTER - end of chapter
+    if ((dsitype != DSITYPE::CONTINUE && !m_full_title) ||   // Stop at end of chapter/title
+            (dsitype == DSITYPE::EOF_TITLE))                 // Stop at end of title
     {
         m_is_eof = true;
     }

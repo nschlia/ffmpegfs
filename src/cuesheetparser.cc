@@ -163,13 +163,13 @@ static bool create_cuesheet_virtualfile(LPCVIRTUALFILE virtualfile, Track *track
     std::replace(virtfilename.begin(), virtfilename.end(), '/', '-');
 
     LPVIRTUALFILE newvirtualfile = nullptr;
-    if (!ffmpeg_format[0].is_multiformat())
+    if (!ffmpeg_format[FORMAT::VIDEO].is_multiformat())
     {
-        newvirtualfile = insert_file(VIRTUALTYPE_DISK, path + virtfilename, virtualfile->m_origfile, statbuf, VIRTUALFLAG_CUESHEET);
+        newvirtualfile = insert_file(VIRTUALTYPE::DISK, path + virtfilename, virtualfile->m_origfile, statbuf, VIRTUALFLAG_CUESHEET);
     }
     else
     {
-        newvirtualfile = insert_dir(VIRTUALTYPE_DISK, path + virtfilename, statbuf, VIRTUALFLAG_CUESHEET);
+        newvirtualfile = insert_dir(VIRTUALTYPE::DISK, path + virtfilename, statbuf, VIRTUALFLAG_CUESHEET);
     }
 
     if (newvirtualfile == nullptr)
@@ -312,7 +312,7 @@ static int parse_cuesheet(LPCVIRTUALFILE virtualfile, const std::string & cueshe
             append_sep(&subbdir);
             remove_path(&dirname);
 
-            insertedvirtualfile = insert_dir(VIRTUALTYPE_DISK, subbdir, statbuf, VIRTUALFLAG_CUESHEET);
+            insertedvirtualfile = insert_dir(VIRTUALTYPE::DISK, subbdir, statbuf, VIRTUALFLAG_CUESHEET);
 
             if (insertedvirtualfile == nullptr)
             {

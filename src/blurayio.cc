@@ -61,7 +61,7 @@ BlurayIO::~BlurayIO()
 
 VIRTUALTYPE BlurayIO::type() const
 {
-    return VIRTUALTYPE_BLURAY;
+    return VIRTUALTYPE::BLURAY;
 }
 
 size_t BlurayIO::bufsize() const

@@ -109,16 +109,16 @@ int locate_video(const std::string & path, int track_no, std::string & fullname)
     return ENOENT;
 }
 
-std::string get_type_str(int type)
+std::string get_type_str(VCDTYPE type)
 {
     switch (type)
     {
-    case 1:
+    case VCDTYPE::VCD_10_11_SVCD_10_HQVCD:
     {
         return "VCD 1.0, VCD 1.1, SVCD 1.0, HQVCD";
     }
 
-    case 2:
+    case VCDTYPE::VCD_20:
     {
         return "VCD 2.0";
     }
@@ -130,15 +130,15 @@ std::string get_type_str(int type)
     }
 }
 
-std::string get_profile_tag_str(int tag)
+std::string get_profile_tag_str(VCDPROFILETAG tag)
 {
     switch (tag)
     {
-    case 0:
+    case VCDPROFILETAG::VCD_10_20_SVCD_HQVCD:
     {
         return "VCD 1.0, VCD 2.0, SVCD, HQVCD";
     }
-    case 1:
+    case VCDPROFILETAG::VCD_11:
     {
         return "VCD 1.1";
     }

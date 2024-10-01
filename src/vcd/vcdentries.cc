@@ -27,7 +27,6 @@
  * From BullysPLayer Copyright (C) 1984-2024 by Oblivion Software/Norbert Schlia
  */
 
-#include "ffmpegfs.h"
 #include "vcdentries.h"
 #include "vcdutils.h"
 
@@ -61,8 +60,8 @@ void VcdEntries::clear()
 {
     m_file_date     = -1;
     m_id.clear();
-    m_type          = VCDTYPE_UNKNOWN;
-    m_profile_tag   = VCDPROFILETAG_UNKNOWN;
+    m_type          = VCDTYPE::UNKNOWN;
+    m_profile_tag   = VCDPROFILETAG::UNKNOWN;
     m_chapters.clear();
     m_disk_path.clear();
     m_duration      = 0;
@@ -215,7 +214,7 @@ int VcdEntries::scan_chapters()
                 // Locate the first sync bytes
                 SEEKRES res = seek_sync(fpi, SYNC);
 
-                if (res != SEEKRES_FOUND)
+                if (res != SEEKRES::FOUND)
                 {
                     throw static_cast<int>(EIO);
                 }
@@ -320,7 +319,7 @@ VcdEntries::SEEKRES VcdEntries::seek_sync(FILE *fpi, const std::array<char, 12> 
     // Read first char
     if (fread(&ch, 1, 1, fpi) != 1)
     {
-        return SEEKRES_NOTFOUND;
+        return SEEKRES::NOTFOUND;
     }
 
     for (size_t n = 1; n <= sync.size(); n++)
@@ -345,11 +344,11 @@ VcdEntries::SEEKRES VcdEntries::seek_sync(FILE *fpi, const std::array<char, 12> 
 
         if (fread(&ch, 1, 1, fpi) != 1)
         {
-            return SEEKRES_NOTFOUND;
+            return SEEKRES::NOTFOUND;
         }
     }
 
-    return SEEKRES_FOUND;
+    return SEEKRES::FOUND;
 }
 
 time_t VcdEntries::get_file_date() const

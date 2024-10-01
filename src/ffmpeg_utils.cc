@@ -102,27 +102,27 @@ typedef std::map<const std::string, const FILETYPE, comp> FILETYPE_MAP; /**< @br
   */
 static const FILETYPE_MAP filetype_map =
 {
-    { "mp3",    FILETYPE_MP3 },
-    { "mp4",    FILETYPE_MP4 },
-    { "wav",    FILETYPE_WAV },
-    { "ogg",    FILETYPE_OGG },
-    { "webm",   FILETYPE_WEBM },
-    { "mov",    FILETYPE_MOV },
-    { "aiff",   FILETYPE_AIFF },
-    { "opus",   FILETYPE_OPUS },
-    { "prores", FILETYPE_PRORES },
-    { "alac",   FILETYPE_ALAC },
-    { "png",    FILETYPE_PNG },
-    { "jpg",    FILETYPE_JPG },
-    { "bmp",    FILETYPE_BMP },
-    { "ts",     FILETYPE_TS },
-    { "hls",    FILETYPE_HLS },
-    { "flac",   FILETYPE_FLAC },
-    { "mkv",    FILETYPE_MKV },
+    { "mp3",    FILETYPE::MP3 },
+    { "mp4",    FILETYPE::MP4 },
+    { "wav",    FILETYPE::WAV },
+    { "ogg",    FILETYPE::OGG },
+    { "webm",   FILETYPE::WEBM },
+    { "mov",    FILETYPE::MOV },
+    { "aiff",   FILETYPE::AIFF },
+    { "opus",   FILETYPE::OPUS },
+    { "prores", FILETYPE::PRORES },
+    { "alac",   FILETYPE::ALAC },
+    { "png",    FILETYPE::PNG },
+    { "jpg",    FILETYPE::JPG },
+    { "bmp",    FILETYPE::BMP },
+    { "ts",     FILETYPE::TS },
+    { "hls",    FILETYPE::HLS },
+    { "flac",   FILETYPE::FLAC },
+    { "mkv",    FILETYPE::MKV },
 };
 
 Format_Options::Format_Options()
-    : m_format_map{ { SAMPLE_FMT_DONTCARE, { { AV_CODEC_ID_NONE }, { AV_CODEC_ID_NONE }, { AV_CODEC_ID_NONE }, AV_SAMPLE_FMT_NONE }}}
+    : m_format_map{ { SAMPLE_FMT::FMT_DONTCARE, { { AV_CODEC_ID_NONE }, { AV_CODEC_ID_NONE }, { AV_CODEC_ID_NONE }, AV_SAMPLE_FMT_NONE }}}
     , m_albumart_supported(false)
 {
 }
@@ -334,7 +334,7 @@ const FFmpegfs_Format::OPTIONS_MAP FFmpegfs_Format::m_options_map =
     //     File extension: Mostly, but not always, same as format.
     //    {
     //        {
-    //            SAMPLE_FMT enum, or SAMPLE_FMT_DONTCARE if source format decides
+    //            SAMPLE_FMT enum, or SAMPLE_FMT::FMT_DONTCARE if source format decides
     //            {
     //                List of video codecs
     //                List of audio codec(s)
@@ -349,13 +349,13 @@ const FFmpegfs_Format::OPTIONS_MAP FFmpegfs_Format::m_options_map =
     // MP3
     // -----------------------------------------------------------------------------------------------------------------------
     {
-        FILETYPE_MP3,
+        FILETYPE::MP3,
         {
             "mp3",
             "mp3",
             {
                 {
-                    SAMPLE_FMT_DONTCARE,
+                    SAMPLE_FMT::FMT_DONTCARE,
                     {
                         { AV_CODEC_ID_NONE },
                         { AV_CODEC_ID_MP3 },
@@ -371,13 +371,13 @@ const FFmpegfs_Format::OPTIONS_MAP FFmpegfs_Format::m_options_map =
     // MP4
     // -----------------------------------------------------------------------------------------------------------------------
     {
-        FILETYPE_MP4,
+        FILETYPE::MP4,
         {
             "mp4",
             "mp4",
             {
                 {
-                    SAMPLE_FMT_DONTCARE,
+                    SAMPLE_FMT::FMT_DONTCARE,
                     {
                         { AV_CODEC_ID_H264, AV_CODEC_ID_H265, AV_CODEC_ID_MPEG1VIDEO, AV_CODEC_ID_MPEG2VIDEO },
                         { AV_CODEC_ID_AAC, AV_CODEC_ID_MP3 },
@@ -393,13 +393,13 @@ const FFmpegfs_Format::OPTIONS_MAP FFmpegfs_Format::m_options_map =
     // WAV
     // -----------------------------------------------------------------------------------------------------------------------
     {
-        FILETYPE_WAV,
+        FILETYPE::WAV,
         {
             "wav",
             "wav",
             {
                 {
-                    SAMPLE_FMT_DONTCARE,
+                    SAMPLE_FMT::FMT_DONTCARE,
                     {
                         { AV_CODEC_ID_NONE },
                         { AV_CODEC_ID_PCM_S16LE },
@@ -408,7 +408,7 @@ const FFmpegfs_Format::OPTIONS_MAP FFmpegfs_Format::m_options_map =
                     }
                 },
                 {
-                    SAMPLE_FMT_8,                   // 8 bit
+                    SAMPLE_FMT::FMT_8,                   // 8 bit
                     {
                         { AV_CODEC_ID_NONE },
                         { AV_CODEC_ID_PCM_U8 },
@@ -417,7 +417,7 @@ const FFmpegfs_Format::OPTIONS_MAP FFmpegfs_Format::m_options_map =
                     }
                 },
                 {
-                    SAMPLE_FMT_16,                  // 32 bit
+                    SAMPLE_FMT::FMT_16,                  // 32 bit
                     {
                         { AV_CODEC_ID_NONE },
                         { AV_CODEC_ID_PCM_S16LE },
@@ -426,7 +426,7 @@ const FFmpegfs_Format::OPTIONS_MAP FFmpegfs_Format::m_options_map =
                     }
                 },
                 {
-                    SAMPLE_FMT_24,                  // 24 bit
+                    SAMPLE_FMT::FMT_24,                  // 24 bit
                     {
                         { AV_CODEC_ID_NONE },
                         { AV_CODEC_ID_PCM_S24LE },
@@ -435,7 +435,7 @@ const FFmpegfs_Format::OPTIONS_MAP FFmpegfs_Format::m_options_map =
                     }
                 },
                 {
-                    SAMPLE_FMT_32,                  // 32 bit
+                    SAMPLE_FMT::FMT_32,                  // 32 bit
                     {
 
                         { AV_CODEC_ID_NONE },
@@ -445,7 +445,7 @@ const FFmpegfs_Format::OPTIONS_MAP FFmpegfs_Format::m_options_map =
                     }
                 },
                 {
-                    SAMPLE_FMT_64,                  // 64 bit
+                    SAMPLE_FMT::FMT_64,                  // 64 bit
                     {
 
                         { AV_CODEC_ID_NONE },
@@ -455,7 +455,7 @@ const FFmpegfs_Format::OPTIONS_MAP FFmpegfs_Format::m_options_map =
                     }
                 },
                 {
-                    SAMPLE_FMT_F16,                 // 16 bit float
+                    SAMPLE_FMT::FMT_F16,                 // 16 bit float
                     {
                         { AV_CODEC_ID_NONE },
                         { AV_CODEC_ID_PCM_F16LE },
@@ -464,7 +464,7 @@ const FFmpegfs_Format::OPTIONS_MAP FFmpegfs_Format::m_options_map =
                     }
                 },
                 {
-                    SAMPLE_FMT_F24,                 // 24 bit float
+                    SAMPLE_FMT::FMT_F24,                 // 24 bit float
                     {
                         { AV_CODEC_ID_NONE },
                         { AV_CODEC_ID_PCM_F24LE },
@@ -473,7 +473,7 @@ const FFmpegfs_Format::OPTIONS_MAP FFmpegfs_Format::m_options_map =
                     }
                 },
                 {
-                    SAMPLE_FMT_F32,                 // 32 bit float
+                    SAMPLE_FMT::FMT_F32,                 // 32 bit float
                     {
                         { AV_CODEC_ID_NONE },
                         { AV_CODEC_ID_PCM_F32LE },
@@ -482,7 +482,7 @@ const FFmpegfs_Format::OPTIONS_MAP FFmpegfs_Format::m_options_map =
                     }
                 },
                 {
-                    SAMPLE_FMT_F64,                 // 64 bit float
+                    SAMPLE_FMT::FMT_F64,                 // 64 bit float
                     {
                         { AV_CODEC_ID_NONE },
                         { AV_CODEC_ID_PCM_F64LE },
@@ -498,13 +498,13 @@ const FFmpegfs_Format::OPTIONS_MAP FFmpegfs_Format::m_options_map =
     // OGG
     // -----------------------------------------------------------------------------------------------------------------------
     {
-        FILETYPE_OGG,
+        FILETYPE::OGG,
         {
             "ogg",
             "ogg",
             {
                 {
-                    SAMPLE_FMT_DONTCARE,
+                    SAMPLE_FMT::FMT_DONTCARE,
                     {
                         { AV_CODEC_ID_THEORA },
                         { AV_CODEC_ID_VORBIS },
@@ -520,13 +520,13 @@ const FFmpegfs_Format::OPTIONS_MAP FFmpegfs_Format::m_options_map =
     // WebM
     // -----------------------------------------------------------------------------------------------------------------------
     {
-        FILETYPE_WEBM,
+        FILETYPE::WEBM,
         {
             "webm",
             "webm",
             {
                 {
-                    SAMPLE_FMT_DONTCARE,
+                    SAMPLE_FMT::FMT_DONTCARE,
                     {
                         { AV_CODEC_ID_VP9, AV_CODEC_ID_VP8, AV_CODEC_ID_AV1 },
                         { AV_CODEC_ID_OPUS, AV_CODEC_ID_VORBIS },
@@ -542,13 +542,13 @@ const FFmpegfs_Format::OPTIONS_MAP FFmpegfs_Format::m_options_map =
     // MOV
     // -----------------------------------------------------------------------------------------------------------------------
     {
-        FILETYPE_MOV,
+        FILETYPE::MOV,
         {
             "mov",
             "mov",
             {
                 {
-                    SAMPLE_FMT_DONTCARE,
+                    SAMPLE_FMT::FMT_DONTCARE,
                     {
                         { AV_CODEC_ID_H264, AV_CODEC_ID_H265, AV_CODEC_ID_MPEG1VIDEO, AV_CODEC_ID_MPEG2VIDEO },
                         { AV_CODEC_ID_AAC, AV_CODEC_ID_AC3, AV_CODEC_ID_MP3 },
@@ -564,13 +564,13 @@ const FFmpegfs_Format::OPTIONS_MAP FFmpegfs_Format::m_options_map =
     // AIFF
     // -----------------------------------------------------------------------------------------------------------------------
     {
-        FILETYPE_AIFF,
+        FILETYPE::AIFF,
         {
             "aiff",
             "aiff",
             {
                 {
-                    SAMPLE_FMT_DONTCARE,
+                    SAMPLE_FMT::FMT_DONTCARE,
                     {
                         { AV_CODEC_ID_NONE },
                         { AV_CODEC_ID_PCM_S16BE },
@@ -579,7 +579,7 @@ const FFmpegfs_Format::OPTIONS_MAP FFmpegfs_Format::m_options_map =
                     }
                 },
                 {
-                    SAMPLE_FMT_16,                  // 16 bit
+                    SAMPLE_FMT::FMT_16,                  // 16 bit
                     {
                         { AV_CODEC_ID_NONE },
                         { AV_CODEC_ID_PCM_S16BE },
@@ -588,7 +588,7 @@ const FFmpegfs_Format::OPTIONS_MAP FFmpegfs_Format::m_options_map =
                     }
                 },
                 {
-                    SAMPLE_FMT_32,                  // 32 bit
+                    SAMPLE_FMT::FMT_32,                  // 32 bit
                     {
                         { AV_CODEC_ID_NONE },
                         { AV_CODEC_ID_PCM_S32BE },
@@ -604,13 +604,13 @@ const FFmpegfs_Format::OPTIONS_MAP FFmpegfs_Format::m_options_map =
     // Opus
     // -----------------------------------------------------------------------------------------------------------------------
     {
-        FILETYPE_OPUS,
+        FILETYPE::OPUS,
         {
             "opus",
             "opus",
             {
                 {
-                    SAMPLE_FMT_DONTCARE,
+                    SAMPLE_FMT::FMT_DONTCARE,
                     {
                         { AV_CODEC_ID_NONE },
                         { AV_CODEC_ID_OPUS },
@@ -626,13 +626,13 @@ const FFmpegfs_Format::OPTIONS_MAP FFmpegfs_Format::m_options_map =
     // Opus
     // -----------------------------------------------------------------------------------------------------------------------
     {
-        FILETYPE_PRORES,
+        FILETYPE::PRORES,
         {
             "mov",
             "mov",
             {
                 {
-                    SAMPLE_FMT_DONTCARE,
+                    SAMPLE_FMT::FMT_DONTCARE,
                     {
                         { AV_CODEC_ID_PRORES },
                         { AV_CODEC_ID_PCM_S16LE },
@@ -648,13 +648,13 @@ const FFmpegfs_Format::OPTIONS_MAP FFmpegfs_Format::m_options_map =
     // ALAC
     // -----------------------------------------------------------------------------------------------------------------------
     {
-        FILETYPE_ALAC,
+        FILETYPE::ALAC,
         {
             "m4a",
             "m4a",
             {
                 {
-                    SAMPLE_FMT_DONTCARE,
+                    SAMPLE_FMT::FMT_DONTCARE,
                     {
                         { AV_CODEC_ID_NONE },
                         { AV_CODEC_ID_ALAC },
@@ -663,7 +663,7 @@ const FFmpegfs_Format::OPTIONS_MAP FFmpegfs_Format::m_options_map =
                     }
                 },
                 {
-                    SAMPLE_FMT_16,                  // 16 bit
+                    SAMPLE_FMT::FMT_16,                  // 16 bit
                     {
                         { AV_CODEC_ID_NONE },
                         { AV_CODEC_ID_ALAC },
@@ -672,7 +672,7 @@ const FFmpegfs_Format::OPTIONS_MAP FFmpegfs_Format::m_options_map =
                     }
                 },
                 {
-                    SAMPLE_FMT_24,                  // 24 bit
+                    SAMPLE_FMT::FMT_24,                  // 24 bit
                     {
                         { AV_CODEC_ID_NONE },
                         { AV_CODEC_ID_ALAC },
@@ -688,13 +688,13 @@ const FFmpegfs_Format::OPTIONS_MAP FFmpegfs_Format::m_options_map =
     // PNG
     // -----------------------------------------------------------------------------------------------------------------------
     {
-        FILETYPE_PNG,
+        FILETYPE::PNG,
         {
             "png",
             "png",
             {
                 {
-                    SAMPLE_FMT_DONTCARE,
+                    SAMPLE_FMT::FMT_DONTCARE,
                     {
                         { AV_CODEC_ID_PNG },
                         { AV_CODEC_ID_NONE },       // Audio codec(s)
@@ -710,13 +710,13 @@ const FFmpegfs_Format::OPTIONS_MAP FFmpegfs_Format::m_options_map =
     // JPG
     // -----------------------------------------------------------------------------------------------------------------------
     {
-        FILETYPE_JPG,
+        FILETYPE::JPG,
         {
             "jpg",
             "jpg",
             {
                 {
-                    SAMPLE_FMT_DONTCARE,
+                    SAMPLE_FMT::FMT_DONTCARE,
                     {
                         { AV_CODEC_ID_MJPEG },
                         { AV_CODEC_ID_NONE },
@@ -732,13 +732,13 @@ const FFmpegfs_Format::OPTIONS_MAP FFmpegfs_Format::m_options_map =
     // BMP
     // -----------------------------------------------------------------------------------------------------------------------
     {
-        FILETYPE_BMP,
+        FILETYPE::BMP,
         {
             "bmp",
             "bmp",
             {
                 {
-                    SAMPLE_FMT_DONTCARE,
+                    SAMPLE_FMT::FMT_DONTCARE,
                     {
                         { AV_CODEC_ID_BMP },
                         { AV_CODEC_ID_NONE },       // Audio codec(s)
@@ -754,13 +754,13 @@ const FFmpegfs_Format::OPTIONS_MAP FFmpegfs_Format::m_options_map =
     // TS
     // -----------------------------------------------------------------------------------------------------------------------
     {
-        FILETYPE_TS,
+        FILETYPE::TS,
         {
             "mpegts",
             "ts",
             {
                 {
-                    SAMPLE_FMT_DONTCARE,
+                    SAMPLE_FMT::FMT_DONTCARE,
                     {
                         { AV_CODEC_ID_H264, AV_CODEC_ID_H265, AV_CODEC_ID_MPEG1VIDEO, AV_CODEC_ID_MPEG2VIDEO },
                         { AV_CODEC_ID_AAC, AV_CODEC_ID_AC3, AV_CODEC_ID_MP3 },
@@ -777,13 +777,13 @@ const FFmpegfs_Format::OPTIONS_MAP FFmpegfs_Format::m_options_map =
     // HLS, same as TS
     // -----------------------------------------------------------------------------------------------------------------------
     {
-        FILETYPE_HLS,
+        FILETYPE::HLS,
         {
             "mpegts",
             "ts",
             {
                 {
-                    SAMPLE_FMT_DONTCARE,
+                    SAMPLE_FMT::FMT_DONTCARE,
                     {
                         { AV_CODEC_ID_H264, AV_CODEC_ID_H265, AV_CODEC_ID_MPEG1VIDEO, AV_CODEC_ID_MPEG2VIDEO },
                         { AV_CODEC_ID_AAC, AV_CODEC_ID_AC3, AV_CODEC_ID_MP3 },
@@ -799,13 +799,13 @@ const FFmpegfs_Format::OPTIONS_MAP FFmpegfs_Format::m_options_map =
     // FLAC
     // -----------------------------------------------------------------------------------------------------------------------
     {
-        FILETYPE_FLAC,
+        FILETYPE::FLAC,
         {
             "flac",
             "flac",
             {
                 {
-                    SAMPLE_FMT_DONTCARE,
+                    SAMPLE_FMT::FMT_DONTCARE,
                     {
                         { AV_CODEC_ID_NONE },
                         { AV_CODEC_ID_FLAC },
@@ -814,7 +814,7 @@ const FFmpegfs_Format::OPTIONS_MAP FFmpegfs_Format::m_options_map =
                     }
                 },
                 {
-                    SAMPLE_FMT_16,                  // 16 bit
+                    SAMPLE_FMT::FMT_16,                  // 16 bit
                     {
                         { AV_CODEC_ID_NONE },
                         { AV_CODEC_ID_FLAC },
@@ -823,7 +823,7 @@ const FFmpegfs_Format::OPTIONS_MAP FFmpegfs_Format::m_options_map =
                     }
                 },
                 {
-                    SAMPLE_FMT_24,                  // 24 bit
+                    SAMPLE_FMT::FMT_24,                  // 24 bit
                     {
                         { AV_CODEC_ID_NONE },
                         { AV_CODEC_ID_FLAC },
@@ -839,13 +839,13 @@ const FFmpegfs_Format::OPTIONS_MAP FFmpegfs_Format::m_options_map =
     // MKV
     // -----------------------------------------------------------------------------------------------------------------------
     {
-        FILETYPE_MKV,
+        FILETYPE::MKV,
         {
             "matroska",
             "mkv",
             {
                 {
-                    SAMPLE_FMT_DONTCARE,
+                    SAMPLE_FMT::FMT_DONTCARE,
                     {
                         { AV_CODEC_ID_H264, AV_CODEC_ID_H265, AV_CODEC_ID_MPEG1VIDEO, AV_CODEC_ID_MPEG2VIDEO },
                         { AV_CODEC_ID_AAC, AV_CODEC_ID_AC3, AV_CODEC_ID_MP3 },
@@ -861,7 +861,7 @@ const FFmpegfs_Format::OPTIONS_MAP FFmpegfs_Format::m_options_map =
 
 FFmpegfs_Format::FFmpegfs_Format() :
     m_cur_opts(&m_empty_options),
-    m_filetype(FILETYPE_UNKNOWN)
+    m_filetype(FILETYPE::UNKNOWN)
 {
 
 }
@@ -874,7 +874,7 @@ bool FFmpegfs_Format::init(const std::string & desttype)
         // Not found/invalid desttype
 
         m_desttype.clear();
-        m_filetype 	= FILETYPE_UNKNOWN;
+        m_filetype 	= FILETYPE::UNKNOWN;
         m_cur_opts  = &m_empty_options;
 
         return false;
@@ -917,12 +917,12 @@ bool FFmpegfs_Format::is_multiformat() const
 
 bool FFmpegfs_Format::is_frameset() const
 {
-    return (m_filetype == FILETYPE_JPG || m_filetype == FILETYPE_PNG || m_filetype == FILETYPE_BMP);
+    return (m_filetype == FILETYPE::JPG || m_filetype == FILETYPE::PNG || m_filetype == FILETYPE::BMP);
 }
 
 bool FFmpegfs_Format::is_hls() const
 {
-    return (m_filetype == FILETYPE_HLS);
+    return (m_filetype == FILETYPE::HLS);
 }
 
 bool FFmpegfs_Format::albumart_supported() const
@@ -1434,7 +1434,7 @@ void tempdir(std::string & path)
 int supports_albumart(FILETYPE filetype)
 {
     // Could also allow OGG but the format requires special handling for album arts
-    return (filetype == FILETYPE_MP3 || filetype == FILETYPE_MP4);
+    return (filetype == FILETYPE::MP3 || filetype == FILETYPE::MP4);
 }
 
 FILETYPE get_filetype(const std::string & desttype)
@@ -1446,7 +1446,7 @@ FILETYPE get_filetype(const std::string & desttype)
     catch (const std::out_of_range& /*oor*/)
     {
         //std::cerr << "Out of Range error: " << oor.what() << std::endl;
-        return FILETYPE_UNKNOWN;
+        return FILETYPE::UNKNOWN;
     }
 }
 
@@ -1464,10 +1464,10 @@ std::string get_filetype_text(FILETYPE filetype)
 FILETYPE get_filetype_from_list(const std::string & desttypelist)
 {
     std::vector<std::string> desttype = split(desttypelist, ",");
-    FILETYPE filetype = FILETYPE_UNKNOWN;
+    FILETYPE filetype = FILETYPE::UNKNOWN;
 
     // Find first matching entry
-    for (size_t n = 0; n < desttype.size() && filetype != FILETYPE_UNKNOWN; n++)
+    for (size_t n = 0; n < desttype.size() && filetype != FILETYPE::UNKNOWN; n++)
     {
         filetype = get_filetype(desttype[n]);
     }
@@ -2206,7 +2206,7 @@ int read_file(const std::string & path, std::string & result)
     constexpr std::array<char, 4> UTF_32_LE_BOM = { '\xFF', '\xFE', '\x00', '\x00' };
 
     std::ifstream ifs;
-    ENCODING encoding = ENCODING_ASCII;
+    ENCODING encoding = ENCODING::ASCII;
     int res = 0;
 
     try
@@ -2224,7 +2224,7 @@ int read_file(const std::string & path, std::string & result)
         {
             // Empty file
             result.clear();
-            throw ENCODING_ASCII;
+            throw ENCODING::ASCII;
         }
 
         // Read the bottom mark
@@ -2237,43 +2237,43 @@ int read_file(const std::string & path, std::string & result)
         if (!memcmp(BOM.data(), UTF_32_LE_BOM.data(), UTF_32_LE_BOM.size()))
         {
             // The file contains UTF-32LE BOM
-            encoding = ENCODING_UTF32LE_BOM;
+            encoding = ENCODING::UTF32LE_BOM;
             ifs.seekg(UTF_32_LE_BOM.size());
         }
         else if (!memcmp(BOM.data(), UTF_32_BE_BOM.data(), UTF_32_BE_BOM.size()))
         {
             // The file contains UTF-32BE BOM
-            encoding = ENCODING_UTF32BE_BOM;
+            encoding = ENCODING::UTF32BE_BOM;
             ifs.seekg(UTF_32_BE_BOM.size());
         }
         else if (!memcmp(BOM.data(), UTF_16_LE_BOM.data(), UTF_16_LE_BOM.size()))
         {
             // The file contains UTF-16LE BOM
-            encoding = ENCODING_UTF16LE_BOM;
+            encoding = ENCODING::UTF16LE_BOM;
             ifs.seekg(UTF_16_LE_BOM.size());
         }
         else if (!memcmp(BOM.data(), UTF_16_BE_BOM.data(), UTF_16_BE_BOM.size()))
         {
             // The file contains UTF-16BE BOM
-            encoding = ENCODING_UTF16BE_BOM;
+            encoding = ENCODING::UTF16BE_BOM;
             ifs.seekg(UTF_16_BE_BOM.size());
         }
         else if (!memcmp(BOM.data(), UTF_8_BOM.data(), UTF_8_BOM.size()))
         {
             // The file contains UTF-8 BOM
-            encoding = ENCODING_UTF8_BOM;
+            encoding = ENCODING::UTF8_BOM;
             ifs.seekg(UTF_8_BOM.size());
         }
         else
         {
             // The file does not have BOM
-            encoding = ENCODING_ASCII;
+            encoding = ENCODING::ASCII;
             ifs.seekg(0);
         }
 
         switch (encoding)
         {
-        case ENCODING_UTF16LE_BOM:
+        case ENCODING::UTF16LE_BOM:
         {
             std::u16string in;
             // For Windows, wchar_t is uint16_t, but for Linux and others
@@ -2291,7 +2291,7 @@ int read_file(const std::string & path, std::string & result)
             result = utfconv.to_bytes(in);
             break;
         }
-        case ENCODING_UTF16BE_BOM:
+        case ENCODING::UTF16BE_BOM:
         {
             std::u16string in;
             // For Windows, wchar_t is uint16_t, but for Linux and others
@@ -2309,7 +2309,7 @@ int read_file(const std::string & path, std::string & result)
             result = utfconv.to_bytes(in);
             break;
         }
-        case ENCODING_UTF32LE_BOM:
+        case ENCODING::UTF32LE_BOM:
         {
             std::u32string in;
             // For Windows, wchar_t is uint16_t, but for Linux and others
@@ -2328,7 +2328,7 @@ int read_file(const std::string & path, std::string & result)
             result = utfconv.to_bytes(in);
             break;
         }
-        case ENCODING_UTF32BE_BOM:
+        case ENCODING::UTF32BE_BOM:
         {
             std::u32string in;
             // For Windows, wchar_t is uint16_t, but for Linux and others
@@ -2347,7 +2347,7 @@ int read_file(const std::string & path, std::string & result)
             result = utfconv.to_bytes(in);
             break;
         }
-        case ENCODING_UTF8_BOM:
+        case ENCODING::UTF8_BOM:
         {
             // Already UTF-8, nothing to do
             std::stringstream ss;
@@ -2355,7 +2355,7 @@ int read_file(const std::string & path, std::string & result)
             result = ss.str();
             break;
         }
-        default:    // ENCODING_ASCII
+        default:    // ENCODING::ASCII
         {
             // This is a bit tricky, we have to try to determine the actual encoding.
             std::stringstream ss;
@@ -2382,7 +2382,7 @@ int read_file(const std::string & path, std::string & result)
             break;
         }
         }
-        res = encoding;
+        res = static_cast<int>(encoding);
     }
     catch (const std::system_error& e)
     {

@@ -241,8 +241,8 @@ FFmpeg_Transcoder::FFmpeg_Transcoder()
     , m_buffer(nullptr)
     , m_reset_pts(0)
     , m_fake_frame_no(0)
-    , m_hwaccel_enc_mode(HWACCELMODE_NONE)
-    , m_hwaccel_dec_mode(HWACCELMODE_NONE)
+    , m_hwaccel_enc_mode(HWACCELMODE::NONE)
+    , m_hwaccel_dec_mode(HWACCELMODE::NONE)
     , m_hwaccel_enable_enc_buffering(false)
     , m_hwaccel_enable_dec_buffering(false)
     , m_hwaccel_enc_device_ctx(nullptr)
@@ -404,21 +404,21 @@ int FFmpeg_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, FileIO *fio)
 #endif // !IF_DECLARED_CONST
 
 #ifdef USE_LIBVCD
-    if (m_virtualfile->m_type == VIRTUALTYPE_VCD)
+    if (m_virtualfile->m_type == VIRTUALTYPE::VCD)
     {
         Logging::debug(filename(), "To avoid misdetection, forcing MPEG format for VCD source.");
         infmt = av_find_input_format("mpeg");
     }
 #endif // USE_LIBVCD
 #ifdef USE_LIBDVD
-    if (m_virtualfile->m_type == VIRTUALTYPE_DVD)
+    if (m_virtualfile->m_type == VIRTUALTYPE::DVD)
     {
         Logging::debug(filename(), "To avoid misdetection, forcing MPEG format for DVD source.");
         infmt = av_find_input_format("mpeg");
     }
 #endif // USE_LIBDVD
 #ifdef USE_LIBBLURAY
-    if (m_virtualfile->m_type == VIRTUALTYPE_BLURAY)
+    if (m_virtualfile->m_type == VIRTUALTYPE::BLURAY)
     {
         Logging::debug(filename(), "To avoid misdetection, forcing MPEGTS format for Blu-ray source.");
         infmt = av_find_input_format("mpegts");
@@ -470,14 +470,14 @@ int FFmpeg_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, FileIO *fio)
     }
 
 #ifdef USE_LIBDVD
-    if (m_virtualfile->m_type == VIRTUALTYPE_DVD)
+    if (m_virtualfile->m_type == VIRTUALTYPE::DVD)
     {
         // FFmpeg API calculates a wrong duration, so use value from IFO
         m_in.m_format_ctx->duration = m_fileio->duration();
     }
 #endif // USE_LIBDVD
 #ifdef USE_LIBBLURAY
-    if (m_virtualfile->m_type == VIRTUALTYPE_BLURAY)
+    if (m_virtualfile->m_type == VIRTUALTYPE::BLURAY)
     {
         // FFmpeg API calculates a wrong duration, so use value from Blu-ray directory
         m_in.m_format_ctx->duration = m_fileio->duration();
@@ -494,7 +494,7 @@ int FFmpeg_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, FileIO *fio)
     }
 
 #ifdef USE_LIBDVD
-    if (m_virtualfile->m_type == VIRTUALTYPE_DVD && m_in.m_video.m_codec_ctx != nullptr && m_in.m_video.m_stream != nullptr)
+    if (m_virtualfile->m_type == VIRTUALTYPE::DVD && m_in.m_video.m_codec_ctx != nullptr && m_in.m_video.m_stream != nullptr)
     {
         // FFmpeg API sometimes cannot detect video size or frame rate, so use value from IFO
         if (!m_in.m_video.m_codec_ctx->width || !m_in.m_video.m_stream->codecpar->height)
@@ -509,7 +509,7 @@ int FFmpeg_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, FileIO *fio)
     }
 #endif // USE_LIBDVD
 #ifdef USE_LIBBLURAY
-    if (m_virtualfile->m_type == VIRTUALTYPE_BLURAY && m_in.m_video.m_codec_ctx != nullptr && m_in.m_video.m_stream != nullptr)
+    if (m_virtualfile->m_type == VIRTUALTYPE::BLURAY && m_in.m_video.m_codec_ctx != nullptr && m_in.m_video.m_stream != nullptr)
     {
         // FFmpeg API sometimes cannot detect video size or frame rate, so use value from Blu-ray directory
         if (!m_in.m_video.m_codec_ctx->width || !m_in.m_video.m_stream->codecpar->height)
@@ -633,14 +633,14 @@ int FFmpeg_Transcoder::open_bestmatch_video()
             m_in.m_video.m_stream               = m_in.m_format_ctx->streams[m_in.m_video.m_stream_idx];
 
 #ifdef USE_LIBDVD
-            if (m_virtualfile->m_type == VIRTUALTYPE_DVD)
+            if (m_virtualfile->m_type == VIRTUALTYPE::DVD)
             {
                 // FFmpeg API calculates a wrong duration, so use value from IFO
                 m_in.m_video.m_stream->duration = ffmpeg_rescale_q(m_in.m_format_ctx->duration, av_get_time_base_q(), m_in.m_video.m_stream->time_base);
             }
 #endif // USE_LIBDVD
 #ifdef USE_LIBBLURAY
-            if (m_virtualfile->m_type == VIRTUALTYPE_BLURAY)
+            if (m_virtualfile->m_type == VIRTUALTYPE::BLURAY)
             {
                 // FFmpeg API calculates a wrong duration, so use value from Blu-ray
                 m_in.m_video.m_stream->duration = ffmpeg_rescale_q(m_in.m_format_ctx->duration, av_get_time_base_q(), m_in.m_video.m_stream->time_base);
@@ -686,14 +686,14 @@ int FFmpeg_Transcoder::open_bestmatch_audio()
         m_in.m_audio.m_stream = m_in.m_format_ctx->streams[m_in.m_audio.m_stream_idx];
 
 #ifdef USE_LIBDVD
-        if (m_virtualfile->m_type == VIRTUALTYPE_DVD)
+        if (m_virtualfile->m_type == VIRTUALTYPE::DVD)
         {
             // FFmpeg API calculates a wrong duration, so use value from IFO
             m_in.m_audio.m_stream->duration = ffmpeg_rescale_q(m_in.m_format_ctx->duration, av_get_time_base_q(), m_in.m_audio.m_stream->time_base);
         }
 #endif // USE_LIBDVD
 #ifdef USE_LIBBLURAY
-        if (m_virtualfile->m_type == VIRTUALTYPE_BLURAY)
+        if (m_virtualfile->m_type == VIRTUALTYPE::BLURAY)
         {
             // FFmpeg API calculates a wrong duration, so use value from Blu-ray directory
             m_in.m_audio.m_stream->duration = ffmpeg_rescale_q(m_in.m_format_ctx->duration, av_get_time_base_q(), m_in.m_audio.m_stream->time_base);
@@ -786,7 +786,7 @@ int FFmpeg_Transcoder::open_albumarts()
 
 bool FFmpeg_Transcoder::can_copy_stream(const AVStream *stream) const
 {
-    if (params.m_autocopy == AUTOCOPY_OFF)
+    if (params.m_autocopy == AUTOCOPY::OFF)
     {
         // Auto copy disabled
         return false;
@@ -821,7 +821,7 @@ bool FFmpeg_Transcoder::can_copy_stream(const AVStream *stream) const
         return false;
     }
 
-    if ((params.m_autocopy == AUTOCOPY_MATCH || params.m_autocopy == AUTOCOPY_MATCHLIMIT))
+    if ((params.m_autocopy == AUTOCOPY::MATCH || params.m_autocopy == AUTOCOPY::MATCHLIMIT))
     {
         // Any codec supported by output format OK
         const AVOutputFormat* oformat = av_guess_format(nullptr, virtname(), nullptr);
@@ -831,7 +831,7 @@ bool FFmpeg_Transcoder::can_copy_stream(const AVStream *stream) const
             return false;
         }
     }
-    else if ((params.m_autocopy == AUTOCOPY_STRICT || params.m_autocopy == AUTOCOPY_STRICTLIMIT))
+    else if ((params.m_autocopy == AUTOCOPY::STRICT || params.m_autocopy == AUTOCOPY::STRICTLIMIT))
     {
         // Output codec must strictly match
         Logging::debug(virtname(), "Check autocopy strict: %1: %2 -> %3", codec_type_str.c_str(), avcodec_get_name(codec_in), avcodec_get_name(codec_out));
@@ -842,7 +842,7 @@ bool FFmpeg_Transcoder::can_copy_stream(const AVStream *stream) const
         }
     }
 
-    if (params.m_autocopy == AUTOCOPY_MATCHLIMIT || params.m_autocopy == AUTOCOPY_STRICTLIMIT)
+    if (params.m_autocopy == AUTOCOPY::MATCHLIMIT || params.m_autocopy == AUTOCOPY::STRICTLIMIT)
     {
         BITRATE orig_bit_rate = (stream->codecpar->bit_rate != 0) ? stream->codecpar->bit_rate : m_in.m_format_ctx->bit_rate;
         if (get_output_bit_rate(orig_bit_rate, bitrate_out))
@@ -985,7 +985,7 @@ int FFmpeg_Transcoder::open_decoder(AVFormatContext *format_ctx, AVCodecContext 
 
         codec_id = input_stream->codecpar->codec_id;
 
-        if (params.m_hwaccel_dec_API != HWACCELAPI_NONE)
+        if (params.m_hwaccel_dec_API != HWACCELAPI::NONE)
         {
             if (mediatype == AVMEDIA_TYPE_VIDEO)
             {
@@ -993,11 +993,11 @@ int FFmpeg_Transcoder::open_decoder(AVFormatContext *format_ctx, AVCodecContext 
                 {
                     const char *profile = ::avcodec_profile_name(codec_id, input_stream->codecpar->profile);
                     Logging::info(filename(), "Codec '%1' profile '%2' is blocked from hardware decoding. Reverting to software decoder.", ::get_codec_name(codec_id), profile != nullptr ? profile : "unknown");
-                    m_hwaccel_dec_mode              = HWACCELMODE_FALLBACK;
+                    m_hwaccel_dec_mode              = HWACCELMODE::FALLBACK;
                 }
             }
 
-            if (mediatype == AVMEDIA_TYPE_VIDEO && m_hwaccel_dec_mode != HWACCELMODE_FALLBACK)
+            if (mediatype == AVMEDIA_TYPE_VIDEO && m_hwaccel_dec_mode != HWACCELMODE::FALLBACK)
             {
                 // Decide whether to use a hardware decoder
                 // Check to see if decoder hardware acceleration is both requested and supported by codec.
@@ -1027,7 +1027,7 @@ int FFmpeg_Transcoder::open_decoder(AVFormatContext *format_ctx, AVCodecContext 
 
                     Logging::info(filename(), "Hardware decoder acceleration and frame buffering are active using codec '%1'.", (input_codec != nullptr) ? input_codec->name : "unknown");
 
-                    m_hwaccel_dec_mode = HWACCELMODE_ENABLED; // Hardware acceleration active
+                    m_hwaccel_dec_mode = HWACCELMODE::ENABLED; // Hardware acceleration active
                 }
                 else if (params.m_hwaccel_dec_device_type != AV_HWDEVICE_TYPE_NONE)
                 {
@@ -1048,7 +1048,7 @@ int FFmpeg_Transcoder::open_decoder(AVFormatContext *format_ctx, AVCodecContext 
 
                     Logging::info(filename(), "Hardware decoder acceleration is active using codec '%1'.", input_codec->name);
 
-                    m_hwaccel_dec_mode = HWACCELMODE_ENABLED; // Hardware acceleration active
+                    m_hwaccel_dec_mode = HWACCELMODE::ENABLED; // Hardware acceleration active
                 }
 
                 if (m_hwaccel_enable_dec_buffering)
@@ -1084,11 +1084,11 @@ int FFmpeg_Transcoder::open_decoder(AVFormatContext *format_ctx, AVCodecContext 
 
         if (ret < 0)
         {
-            if (m_hwaccel_dec_mode == HWACCELMODE_ENABLED)
+            if (m_hwaccel_dec_mode == HWACCELMODE::ENABLED)
             {
                 Logging::info(filename(), "Unable to use %1 input codec '%2' with hardware acceleration. Falling back to software.", get_media_type_string(mediatype), avcodec_get_name(codec_id));
 
-                m_hwaccel_dec_mode              = HWACCELMODE_FALLBACK;
+                m_hwaccel_dec_mode              = HWACCELMODE::FALLBACK;
                 m_hwaccel_enable_dec_buffering  = false;
                 m_dec_hw_pix_fmt                = AV_PIX_FMT_NONE;
 
@@ -1282,11 +1282,11 @@ int FFmpeg_Transcoder::open_output(Buffer *buffer)
         ret = open_output_filestreams(buffer);
         if (ret)
         {
-            if (m_hwaccel_enc_mode == HWACCELMODE_ENABLED)
+            if (m_hwaccel_enc_mode == HWACCELMODE::ENABLED)
             {
                 Logging::info(virtname(), "Unable to use output codec '%1' with hardware acceleration. Falling back to software.", avcodec_get_name(m_current_format->video_codec()));
 
-                m_hwaccel_enc_mode              = HWACCELMODE_FALLBACK;
+                m_hwaccel_enc_mode              = HWACCELMODE::FALLBACK;
                 m_hwaccel_enable_enc_buffering  = false;
                 m_enc_hw_pix_fmt                = AV_PIX_FMT_NONE;
 
@@ -1645,7 +1645,7 @@ int FFmpeg_Transcoder::add_stream(AVCodecID codec_id)
 
     std::string codec_name;
 
-    if (get_hw_encoder_name(codec_id, &codec_name) || m_hwaccel_enc_mode == HWACCELMODE_FALLBACK)
+    if (get_hw_encoder_name(codec_id, &codec_name) || m_hwaccel_enc_mode == HWACCELMODE::FALLBACK)
     {
         // find the encoder
         output_codec = avcodec_find_encoder(codec_id);
@@ -1668,7 +1668,7 @@ int FFmpeg_Transcoder::add_stream(AVCodecID codec_id)
 
         //Logging::info(virtname(), "Hardware encoder acceleration active with codec '%1'.", output_codec->name);
 
-        m_hwaccel_enc_mode = HWACCELMODE_ENABLED;
+        m_hwaccel_enc_mode = HWACCELMODE::ENABLED;
     }
 
     output_stream = avformat_new_stream(m_out.m_format_ctx, output_codec);
@@ -1926,7 +1926,7 @@ int FFmpeg_Transcoder::add_stream(AVCodecID codec_id)
 
         AVRational sample_aspect_ratio                      = m_in.m_video.m_stream->codecpar->sample_aspect_ratio;
 
-        if (output_codec_ctx->codec_id != AV_CODEC_ID_VP9 && m_out.m_filetype != FILETYPE_MKV)
+        if (output_codec_ctx->codec_id != AV_CODEC_ID_VP9 && m_out.m_filetype != FILETYPE::MKV)
         {
             output_codec_ctx->sample_aspect_ratio           = sample_aspect_ratio;
             output_stream->codecpar->sample_aspect_ratio    = sample_aspect_ratio;
@@ -2080,7 +2080,7 @@ int FFmpeg_Transcoder::add_stream(AVCodecID codec_id)
         }
         case AV_CODEC_ID_VP9:
         {
-            ret = prepare_codec(output_codec_ctx->priv_data, FILETYPE_WEBM);
+            ret = prepare_codec(output_codec_ctx->priv_data, FILETYPE::WEBM);
             if (ret < 0)
             {
                 Logging::error(virtname(), "Could not set profile for %1 output codec %2 (error '%3').", get_media_type_string(output_codec->type), get_codec_name(codec_id), ffmpeg_geterror(ret).c_str());
@@ -2090,7 +2090,7 @@ int FFmpeg_Transcoder::add_stream(AVCodecID codec_id)
         }
         case AV_CODEC_ID_PRORES:
         {
-            ret = prepare_codec(output_codec_ctx->priv_data, FILETYPE_PRORES);
+            ret = prepare_codec(output_codec_ctx->priv_data, FILETYPE::PRORES);
             if (ret < 0)
             {
                 Logging::error(virtname(), "Could not set profile for %1 output codec %2 (error '%3').", get_media_type_string(output_codec->type), get_codec_name(codec_id), ffmpeg_geterror(ret).c_str());
@@ -2101,12 +2101,12 @@ int FFmpeg_Transcoder::add_stream(AVCodecID codec_id)
             // 1 = ‘lt’,
             // 2 = ‘standard’,
             // 3 = ‘hq’
-            output_codec_ctx->profile = params.m_level;
+            output_codec_ctx->profile = static_cast<int>(params.m_level);
             break;
         }
         case AV_CODEC_ID_ALAC:
         {
-            ret = prepare_codec(output_codec_ctx->priv_data, FILETYPE_ALAC);
+            ret = prepare_codec(output_codec_ctx->priv_data, FILETYPE::ALAC);
             if (ret < 0)
             {
                 Logging::error(virtname(), "Could not set profile for %1 output codec %2 (error '%3').", get_media_type_string(output_codec->type), get_codec_name(codec_id), ffmpeg_geterror(ret).c_str());
@@ -2938,7 +2938,7 @@ int FFmpeg_Transcoder::prepare_format(AVDictionary** dict, FILETYPE filetype) co
         }
     }
 
-    if (filetype == FILETYPE_MP4 || filetype == FILETYPE_PRORES || filetype == FILETYPE_TS || filetype == FILETYPE_HLS)
+    if (filetype == FILETYPE::MP4 || filetype == FILETYPE::PRORES || filetype == FILETYPE::TS || filetype == FILETYPE::HLS)
     {
         // All
         dict_set_with_check(dict, "flags:a", "+global_header", 0, virtname());
@@ -3130,12 +3130,12 @@ int FFmpeg_Transcoder::write_output_file_header()
 
     switch (m_current_format->filetype())
     {
-    case FILETYPE_WAV:
+    case FILETYPE::WAV:
     {
         ret = create_fake_wav_header();
         break;
     }
-    case FILETYPE_AIFF:
+    case FILETYPE::AIFF:
     {
         ret = create_fake_aiff_header();
         break;
@@ -3812,7 +3812,7 @@ int FFmpeg_Transcoder::decode_frame(AVPacket *pkt)
 #ifndef USE_LIBDVD
             ret = decode_video_frame(pkt, &decoded);
 #else //USE_LIBDVD
-            if (m_virtualfile->m_type != VIRTUALTYPE_DVD)
+            if (m_virtualfile->m_type != VIRTUALTYPE::DVD)
             {
                 ret = decode_video_frame(pkt, &decoded);
             }
@@ -4229,7 +4229,7 @@ void FFmpeg_Transcoder::produce_audio_dts(AVPacket *pkt)
 #if !LAVC_DEP_TICKSPERFRAME
             // This has probably long since been fixed in FFmpeg, so we remove this completly
             // instead of replacing it with updated code.
-            if (m_out.m_audio.m_codec_ctx->codec_id == AV_CODEC_ID_OPUS || m_current_format->filetype() == FILETYPE_TS || m_current_format->filetype() == FILETYPE_HLS)
+            if (m_out.m_audio.m_codec_ctx->codec_id == AV_CODEC_ID_OPUS || m_current_format->filetype() == FILETYPE::TS || m_current_format->filetype() == FILETYPE::HLS)
             {
                 /** @todo Is this a FFmpeg bug or am I too stupid? @n
                  * OPUS is a bit strange. Whatever we feed into the encoder, the result will always be floating point planar
@@ -4502,7 +4502,7 @@ int FFmpeg_Transcoder::encode_video_frame(const AVFrame *frame, int *data_presen
     {
         if (m_hwaccel_enable_enc_buffering && frame != nullptr)
         {
-            hw_frame = new FFmpeg_Frame(m_out.m_video.m_stream_idx);
+            hw_frame = new (std::nothrow) FFmpeg_Frame(m_out.m_video.m_stream_idx);
             if (hw_frame == nullptr)
             {
                 ret = AVERROR(ENOMEM);
@@ -4928,7 +4928,7 @@ void FFmpeg_Transcoder::copy_metadata(AVDictionary **metadata_out, const AVDicti
 
         dict_set_with_check(metadata_out, tag->key, value.c_str(), 0, virtname());
 
-        if (contentstream && m_out.m_filetype == FILETYPE_MP3)
+        if (contentstream && m_out.m_filetype == FILETYPE::MP3)
         {
             // For MP3 fill in ID3v1 structure
             if (!strcasecmp(tag->key, "ARTIST"))
@@ -5255,7 +5255,7 @@ int FFmpeg_Transcoder::process_single_fr(DECODER_STATUS *status)
 {
     int finished = 0;
 
-    *status = DECODER_SUCCESS;
+    *status = DECODER_STATUS::DEC_SUCCESS;
 
     try
     {
@@ -5267,7 +5267,7 @@ int FFmpeg_Transcoder::process_single_fr(DECODER_STATUS *status)
             ret = seek_frame();
             if (ret == AVERROR_EOF)
             {
-                *status = DECODER_EOF;  // Report EOF, but return no error
+                *status = DECODER_STATUS::DEC_EOF;  // Report EOF, but return no error
                 throw 0;
             }
 
@@ -5302,7 +5302,7 @@ int FFmpeg_Transcoder::process_single_fr(DECODER_STATUS *status)
 
             if (finished)
             {
-                *status = DECODER_EOF;  // Report EOF
+                *status = DECODER_STATUS::DEC_EOF;  // Report EOF
             }
         }
 
@@ -5462,12 +5462,12 @@ int FFmpeg_Transcoder::process_single_fr(DECODER_STATUS *status)
             flush_delayed_video();
             flush_delayed_subtitles();
 
-            *status = DECODER_EOF;  // Report EOF
+            *status = DECODER_STATUS::DEC_EOF;  // Report EOF
         }
     }
     catch (int _ret)
     {
-        *status = (_ret != AVERROR_EOF ? DECODER_ERROR : DECODER_EOF);   // If _ret == AVERROR_EOF, simply signal EOF
+        *status = (_ret != AVERROR_EOF ? DECODER_STATUS::DEC_ERROR : DECODER_STATUS::DEC_EOF);   // If _ret == AVERROR_EOF, simply signal EOF
         return _ret;
     }
 
@@ -5659,7 +5659,7 @@ int FFmpeg_Transcoder::start_new_segment()
     return 0;
 }
 
-BITRATE FFmpeg_Transcoder::get_prores_bitrate(int width, int height, const AVRational &framerate, bool interleaved, int profile)
+BITRATE FFmpeg_Transcoder::get_prores_bitrate(int width, int height, const AVRational &framerate, bool interleaved, PRORESLEVEL profile)
 {
     unsigned int mindist;
     size_t match = UINT_MAX;
@@ -6019,14 +6019,14 @@ bool FFmpeg_Transcoder::total_overhead(size_t *filesize, FILETYPE filetype)
     //
     //  Audio only
     //
-    case FILETYPE_MP3:
+    case FILETYPE::MP3:
     {
         // The FFmpeg API always adds an IDv2 header, size of which is unknown and
         // really hard to determine. So we simply add something reasonable (empirically determined value).
         *filesize += 250000;
         break;
     }
-    case FILETYPE_WAV:
+    case FILETYPE::WAV:
     {
         // This could actually precise, but yet the FFmpeg API always adds an IDv2 header,
         // size of which is unknown and really hard to determine. The header is small, ~30 bytes,
@@ -6034,50 +6034,50 @@ bool FFmpeg_Transcoder::total_overhead(size_t *filesize, FILETYPE filetype)
         *filesize += sizeof(WAV_HEADER) + sizeof(WAV_LIST_HEADER) + sizeof(WAV_DATA_HEADER);
         break;
     }
-    case FILETYPE_AIFF:
+    case FILETYPE::AIFF:
     {
         // These two "chunks" will always be there, others may be there, may be not. Their
         // size is hard to precalculate and small (~100 bytes), so we disregard the rest.
         *filesize += sizeof(AIFF_FORMCHUNK) + sizeof(AIFF_COMMONCHUNK);
         break;
     }
-    case FILETYPE_OPUS:
-    case FILETYPE_ALAC:
-    case FILETYPE_FLAC:
+    case FILETYPE::OPUS:
+    case FILETYPE::ALAC:
+    case FILETYPE::FLAC:
     {
         break;
     }
         //
         // Video
         //
-    case FILETYPE_TS:
-    case FILETYPE_HLS:
+    case FILETYPE::TS:
+    case FILETYPE::HLS:
     {
         *filesize += 1600000;   // empirically determined value
         break;
     }
-    case FILETYPE_MP4:
-    case FILETYPE_OGG:
-    case FILETYPE_WEBM:
-    case FILETYPE_MOV:
-    case FILETYPE_PRORES:
-    case FILETYPE_MKV:
+    case FILETYPE::MP4:
+    case FILETYPE::OGG:
+    case FILETYPE::WEBM:
+    case FILETYPE::MOV:
+    case FILETYPE::PRORES:
+    case FILETYPE::MKV:
     {
         break;
     }
         //
         // Stills
         //
-    case FILETYPE_PNG:
-    case FILETYPE_JPG:
-    case FILETYPE_BMP:
+    case FILETYPE::PNG:
+    case FILETYPE::JPG:
+    case FILETYPE::BMP:
     {
         break;
     }
         //
         // Invalid
         //
-    case FILETYPE_UNKNOWN:
+    case FILETYPE::UNKNOWN:
     {
         success = false;
         break;
@@ -7067,22 +7067,22 @@ int FFmpeg_Transcoder::get_hw_decoder_name(AVCodecID codec_id, std::string *code
 
     switch (params.m_hwaccel_dec_API)
     {
-    case HWACCELAPI_VAAPI:
+    case HWACCELAPI::VAAPI:
     {
         ret = get_hw_vaapi_codec_name(codec_id, &codec_name_buf);
         break;
     }
-    case HWACCELAPI_MMAL:
+    case HWACCELAPI::MMAL:
     {
         ret = get_hw_mmal_decoder_name(codec_id, &codec_name_buf);
         break;
     }
-        //case HWACCELAPI_V4L2M2M:
+        //case HWACCELAPI::V4L2M2M:
         //{
         //    ret = get_hw_v4l2m2m_decoder_name(codec_id, &codec_name_buf);
         //    break;
         //}
-    case HWACCELAPI_NONE:
+    case HWACCELAPI::NONE:
     default:
     {
         ret = AVERROR_DECODER_NOT_FOUND;
@@ -7112,22 +7112,22 @@ int FFmpeg_Transcoder::get_hw_encoder_name(AVCodecID codec_id, std::string *code
 
     switch (params.m_hwaccel_enc_API)
     {
-    case HWACCELAPI_VAAPI:
+    case HWACCELAPI::VAAPI:
     {
         ret = get_hw_vaapi_codec_name(codec_id, &codec_name_buf);
         break;
     }
-    case HWACCELAPI_OMX:
+    case HWACCELAPI::OMX:
     {
         ret = get_hw_omx_encoder_name(codec_id, &codec_name_buf);
         break;
     }
-        //case HWACCELAPI_V4L2M2M:
+        //case HWACCELAPI::V4L2M2M:
         //{
         //    ret = get_hw_v4l2m2m_encoder_name(codec_id, &codec_name_buf);
         //    break;
         //}
-    case HWACCELAPI_NONE:
+    case HWACCELAPI::NONE:
     default:
     {
         ret = AVERROR_DECODER_NOT_FOUND;

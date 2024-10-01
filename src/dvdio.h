@@ -55,12 +55,12 @@ class DvdIO : public FileIO
       * we simply continue. At the end of chapters we may stop continue to
       * the end of a title
       */
-    typedef enum DSITYPE
+    enum class DSITYPE
     {
-        DSITYPE_CONTINUE,                                       /**< @brief Chapter continues */
-        DSITYPE_EOF_CHAPTER,                                    /**< @brief End of chapter */
-        DSITYPE_EOF_TITLE                                       /**< @brief End of title */
-    } DSITYPE;
+        CONTINUE,       /**< @brief Chapter continues */
+        EOF_CHAPTER,    /**< @brief End of chapter */
+        EOF_TITLE       /**< @brief End of title */
+    };
 
 public:
     /**

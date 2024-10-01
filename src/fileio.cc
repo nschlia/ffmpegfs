@@ -64,24 +64,24 @@ FileIO * FileIO::alloc(VIRTUALTYPE type)
 {
     switch (type)
     {
-    case VIRTUALTYPE_DISK:
+    case VIRTUALTYPE::DISK:
     {
         return new(std::nothrow) DiskIO;
     }
 #ifdef USE_LIBVCD
-    case VIRTUALTYPE_VCD:
+    case VIRTUALTYPE::VCD:
     {
         return new(std::nothrow) VcdIO;
     }
 #endif // USE_LIBVCD
 #ifdef USE_LIBDVD
-    case VIRTUALTYPE_DVD:
+    case VIRTUALTYPE::DVD:
     {
         return new(std::nothrow) DvdIO;
     }
 #endif // USE_LIBDVD
 #ifdef USE_LIBBLURAY
-    case VIRTUALTYPE_BLURAY:
+    case VIRTUALTYPE::BLURAY:
     {
         return new(std::nothrow) BlurayIO;
     }

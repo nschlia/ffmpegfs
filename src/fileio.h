@@ -87,23 +87,23 @@ typedef IMAGE_FRAME *LPIMAGE_FRAME;             /**< @brief Pointer to const ver
 
 /** @brief Virtual file types enum
  */
-typedef enum VIRTUALTYPE
+enum class VIRTUALTYPE
 {
-    VIRTUALTYPE_PASSTHROUGH,                                        /**< @brief passthrough file, not used */
-    VIRTUALTYPE_DISK,                                               /**< @brief Regular disk file to transcode */
-    VIRTUALTYPE_SCRIPT,                                             /**< @brief Virtual script */
+    PASSTHROUGH,                                        /**< @brief passthrough file, not used */
+    DISK,                                               /**< @brief Regular disk file to transcode */
+    SCRIPT,                                             /**< @brief Virtual script */
 #ifdef USE_LIBVCD
-    VIRTUALTYPE_VCD,                                                /**< @brief Video CD file */
+    VCD,                                                /**< @brief Video CD file */
 #endif // USE_LIBVCD
 #ifdef USE_LIBDVD
-    VIRTUALTYPE_DVD,                                                /**< @brief DVD file */
+    DVD,                                                /**< @brief DVD file */
 #endif // USE_LIBDVD
 #ifdef USE_LIBBLURAY
-    VIRTUALTYPE_BLURAY,                                             /**< @brief Blu-ray disk file */
+    BLURAY,                                             /**< @brief Blu-ray disk file */
 #endif // USE_LIBBLURAY
 
-    VIRTUALTYPE_BUFFER,                                             /**< @brief Buffer file */
-} VIRTUALTYPE;
+    BUFFER,                                             /**< @brief Buffer file */
+};
 typedef VIRTUALTYPE const *LPCVIRTUALTYPE;                          /**< @brief Pointer version of VIRTUALTYPE */
 typedef VIRTUALTYPE LPVIRTUALTYPE;                                  /**< @brief Pointer to const version of VIRTUALTYPE */
 
@@ -121,7 +121,7 @@ typedef VIRTUALTYPE LPVIRTUALTYPE;                                  /**< @brief 
 typedef struct VIRTUALFILE
 {
     VIRTUALFILE()
-        : m_type(VIRTUALTYPE_DISK)
+        : m_type(VIRTUALTYPE::DISK)
         , m_flags(VIRTUALFLAG_NONE)
         , m_format_idx(0)
         , m_full_title(false)

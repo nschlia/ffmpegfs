@@ -27,7 +27,6 @@
  * From BullysPLayer Copyright (C) 1984-2024 by Oblivion Software/Norbert Schlia
  */
 
-#include "ffmpegfs.h"
 #include "vcdentries.h"
 #include "vcdutils.h"
 
@@ -61,8 +60,8 @@ void VcdEntries::clear()
 {
     m_file_date     = -1;
     m_id.clear();
-    m_type          = VCDTYPE_UNKNOWN;
-    m_profile_tag   = VCDPROFILETAG_UNKNOWN;
+    m_type          = VCDTYPE::UNKNOWN;
+    m_profile_tag   = VCDPROFILETAG::UNKNOWN;
     m_chapters.clear();
     m_disk_path.clear();
     m_duration      = 0;
@@ -87,7 +86,7 @@ int VcdEntries::load_file(const std::string & path)
     {
         VCDENTRY    vcdentry;
         struct stat stbuf;
-        int         num_entries = 0;
+        uint32_t    num_entries = 0;
 
         fpi = fopen(fullname.c_str(), "rb");
         if (fpi == nullptr)
@@ -109,14 +108,14 @@ int VcdEntries::load_file(const std::string & path)
             throw static_cast<int>(ferror(fpi));
         }
 
-        m_id            = VCDUTILS::convert_txt2string(reinterpret_cast<const char *>(vcdentry.m_ID), sizeof(vcdentry.m_ID));
+        m_id            = VCDUTILS::convert_txt2string(reinterpret_cast<const char *>(vcdentry.m_ID.data()), vcdentry.m_ID.size());
         m_type          = static_cast<VCDTYPE>(vcdentry.m_type);
         m_profile_tag   = static_cast<VCDPROFILETAG>(vcdentry.m_profile_tag);
         num_entries     = htons(vcdentry.m_num_entries);
         m_duration      = 0;
 
         int sec = BCD2DEC(vcdentry.m_chapter[0].m_msf.m_min) * 60 + BCD2DEC(vcdentry.m_chapter[0].m_msf.m_sec);
-        for (int chapter_no = 0, total = num_entries; chapter_no < total; chapter_no++)
+        for (uint32_t chapter_no = 0, total = num_entries; chapter_no < total; chapter_no++)
         {
             if (chapter_no && BCD2DEC(vcdentry.m_chapter[chapter_no].m_msf.m_min) * 60 + BCD2DEC(vcdentry.m_chapter[chapter_no].m_msf.m_sec) - sec < 1)
             {
@@ -215,7 +214,7 @@ int VcdEntries::scan_chapters()
                 // Locate the first sync bytes
                 SEEKRES res = seek_sync(fpi, SYNC);
 
-                if (res != SEEKRES_FOUND)
+                if (res != SEEKRES::FOUND)
                 {
                     throw static_cast<int>(EIO);
                 }
@@ -320,7 +319,7 @@ VcdEntries::SEEKRES VcdEntries::seek_sync(FILE *fpi, const std::array<char, 12> 
     // Read first char
     if (fread(&ch, 1, 1, fpi) != 1)
     {
-        return SEEKRES_NOTFOUND;
+        return SEEKRES::NOTFOUND;
     }
 
     for (size_t n = 1; n <= sync.size(); n++)
@@ -345,11 +344,11 @@ VcdEntries::SEEKRES VcdEntries::seek_sync(FILE *fpi, const std::array<char, 12> 
 
         if (fread(&ch, 1, 1, fpi) != 1)
         {
-            return SEEKRES_NOTFOUND;
+            return SEEKRES::NOTFOUND;
         }
     }
 
-    return SEEKRES_FOUND;
+    return SEEKRES::FOUND;
 }
 
 time_t VcdEntries::get_file_date() const

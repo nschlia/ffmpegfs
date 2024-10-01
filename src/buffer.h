@@ -133,7 +133,7 @@ public:
     virtual ~Buffer();
     /**
      * @brief Get type of this virtual file.
-     * @return Returns VIRTUALTYPE_BUFFER.
+     * @return Returns VIRTUALTYPE::BUFFER.
      */
     virtual VIRTUALTYPE     type() const override;
     /**

@@ -765,7 +765,7 @@ bool Cache::read_info(LPCACHE_INFO cache_info)
     cache_info->m_encoded_filesize      = 0;
     cache_info->m_video_frame_count     = 0;
     cache_info->m_segment_count         = 0;
-    cache_info->m_result                = RESULTCODE_NONE;
+    cache_info->m_result                = RESULTCODE::NONE;
     cache_info->m_error                 = false;
     cache_info->m_errno                 = 0;
     cache_info->m_averror               = 0;
@@ -794,7 +794,7 @@ bool Cache::read_info(LPCACHE_INFO cache_info)
             throw false;
         }
 
-        if (SQLITE_OK != (ret = sqlite3_bind_text(m_cacheidx_select_stmt, 2, cache_info->m_desttype, -1, nullptr)))
+        if (SQLITE_OK != (ret = sqlite3_bind_text(m_cacheidx_select_stmt, 2, cache_info->m_desttype.data(), -1, nullptr)))
         {
             Logging::error(m_cacheidx_file, "SQLite3 select error binding 'desttype': (%1) %2", ret, sqlite3_errstr(ret));
             throw false;
@@ -808,7 +808,7 @@ bool Cache::read_info(LPCACHE_INFO cache_info)
             if (text != nullptr)
             {
                 cache_info->m_desttype[0] = '\0';
-                strncat(cache_info->m_desttype, text, sizeof(cache_info->m_desttype) - 1);
+                strncat(cache_info->m_desttype.data(), text, cache_info->m_desttype.size() - 1);
             }
             //cache_info->m_enable_ismv        = sqlite3_column_int(m_cacheidx_select_stmt, 1);
             cache_info->m_audiobitrate          = sqlite3_column_int(m_cacheidx_select_stmt, 2);
@@ -886,7 +886,7 @@ bool Cache::write_info(LPCCACHE_INFO cache_info)
         assert(sqlite3_bind_parameter_count(m_cacheidx_insert_stmt) == 22);
 
         SQLBINDTXT(1, cache_info->m_destfile.c_str());
-        SQLBINDTXT(2, cache_info->m_desttype);
+        SQLBINDTXT(2, cache_info->m_desttype.data());
         //SQLBINDNUM(sqlite3_bind_int,  3,  cache_info->m_enable_ismv);
         SQLBINDNUM(sqlite3_bind_int,    3,  enable_ismv_dummy);
         SQLBINDNUM(sqlite3_bind_int64,  4,  cache_info->m_audiobitrate);
@@ -900,7 +900,7 @@ bool Cache::write_info(LPCCACHE_INFO cache_info)
         SQLBINDNUM(sqlite3_bind_int64,  12, static_cast<sqlite3_int64>(cache_info->m_encoded_filesize));
         SQLBINDNUM(sqlite3_bind_int,    13, static_cast<int32_t>(cache_info->m_video_frame_count));
         SQLBINDNUM(sqlite3_bind_int,    14, static_cast<int32_t>(cache_info->m_segment_count));
-        SQLBINDNUM(sqlite3_bind_int,    15, cache_info->m_result);
+        SQLBINDNUM(sqlite3_bind_int,    15, static_cast<int32_t>(cache_info->m_result));
         SQLBINDNUM(sqlite3_bind_int,    16, cache_info->m_error);
         SQLBINDNUM(sqlite3_bind_int,    17, cache_info->m_errno);
         SQLBINDNUM(sqlite3_bind_int,    18, cache_info->m_averror);
@@ -1004,7 +1004,7 @@ void Cache::close_index()
 
 Cache_Entry* Cache::create_entry(LPVIRTUALFILE virtualfile, const std::string & desttype)
 {
-    //Cache_Entry* cache_entry = new(std::nothrow) Cache_Entry(this, filename);
+    //Cache_Entry* cache_entry = new (std::nothrow) Cache_Entry(this, filename);
     Cache_Entry* cache_entry = Cache_Entry::create(this, virtualfile);
     if (cache_entry == nullptr)
     {
@@ -1031,7 +1031,7 @@ bool Cache::delete_entry(Cache_Entry ** cache_entry, int flags)
         // If CACHE_CLOSE_FREE is set, also free memory
         if (CACHE_CHECK_BIT(CACHE_CLOSE_FREE, flags))
         {
-            m_cache.erase(make_pair((*cache_entry)->m_cache_info.m_destfile, (*cache_entry)->m_cache_info.m_desttype));
+            m_cache.erase(make_pair((*cache_entry)->m_cache_info.m_destfile, (*cache_entry)->m_cache_info.m_desttype.data()));
 
             deleted = (*cache_entry)->destroy();
             *cache_entry = nullptr;

@@ -185,8 +185,8 @@ const FFmpeg_Profiles::PROFILE_LIST_VEC FFmpeg_Profiles::m_profile =
     // MP4 Container
     // ****************************************************************************************************************
     {
-        FILETYPE_MP4,
-        PROFILE_DEFAULT,
+        FILETYPE::MP4,
+        PROFILE::DEFAULT,
         //! @brief No opimisations, just plain mp4. MP4 codec options.
         {
             // -profile:v high -level 3.1 - REQUIRED FOR PLAYBACK UNDER WIN7. (Partially or totally overwritten by profile!)
@@ -205,8 +205,8 @@ const FFmpeg_Profiles::PROFILE_LIST_VEC FFmpeg_Profiles::m_profile =
     },
     // ----------------------------------------------------------------------------------------------------------------
     {
-        FILETYPE_MP4,
-        PROFILE_MP4_FF,
+        FILETYPE::MP4,
+        PROFILE::MP4_FF,
         //! @brief Firefox profile: MP4 codec options.
         //!  Use: -movflags +empty_moov @n
         //!       -frag_duration 1000000  (for audio files only) @n
@@ -229,8 +229,8 @@ const FFmpeg_Profiles::PROFILE_LIST_VEC FFmpeg_Profiles::m_profile =
     },
     // ----------------------------------------------------------------------------------------------------------------
     {
-        FILETYPE_MP4,
-        PROFILE_MP4_EDGE,
+        FILETYPE::MP4,
+        PROFILE::MP4_EDGE,
         //!
         //! @brief MS Edge profile: MP4 codec options.
         //! Use: -movflags +faststart+empty_moov+separate_moof -frag_duration 1000000 @n
@@ -252,8 +252,8 @@ const FFmpeg_Profiles::PROFILE_LIST_VEC FFmpeg_Profiles::m_profile =
     },
     // ----------------------------------------------------------------------------------------------------------------
     {
-        FILETYPE_MP4,
-        PROFILE_MP4_IE,
+        FILETYPE::MP4,
+        PROFILE::MP4_IE,
         //!
         //! @brief MS Internet Explorer profile: MP4 codec options.
         //!
@@ -276,8 +276,8 @@ const FFmpeg_Profiles::PROFILE_LIST_VEC FFmpeg_Profiles::m_profile =
     },
     // ----------------------------------------------------------------------------------------------------------------
     {
-        FILETYPE_MP4,
-        PROFILE_MP4_CHROME,
+        FILETYPE::MP4,
+        PROFILE::MP4_CHROME,
         //!
         //! @brief Google Chrome profile: MP4 codec options.
         //!
@@ -296,8 +296,8 @@ const FFmpeg_Profiles::PROFILE_LIST_VEC FFmpeg_Profiles::m_profile =
     },
     // ----------------------------------------------------------------------------------------------------------------
     {
-        FILETYPE_MP4,
-        PROFILE_MP4_SAFARI,
+        FILETYPE::MP4,
+        PROFILE::MP4_SAFARI,
         //!
         //! @brief Apple Safari profile: MP4 codec options.
         //! Safari uses Quicktime for playback. Files must be suitable for playback with Quicktime.
@@ -315,8 +315,8 @@ const FFmpeg_Profiles::PROFILE_LIST_VEC FFmpeg_Profiles::m_profile =
     },
     // ----------------------------------------------------------------------------------------------------------------
     {
-        FILETYPE_MP4,
-        PROFILE_MP4_OPERA,
+        FILETYPE::MP4,
+        PROFILE::MP4_OPERA,
         //!
         //! @brief Opera profile: MP4 codec options.
         //!
@@ -334,8 +334,8 @@ const FFmpeg_Profiles::PROFILE_LIST_VEC FFmpeg_Profiles::m_profile =
     },
     // ----------------------------------------------------------------------------------------------------------------
     {
-        FILETYPE_MP4,
-        PROFILE_MP4_MAXTHON,
+        FILETYPE::MP4,
+        PROFILE::MP4_MAXTHON,
         //!
         //! @brief Maxthon profile: MP4 codec options.
         //!
@@ -361,8 +361,8 @@ const FFmpeg_Profiles::PROFILE_LIST_VEC FFmpeg_Profiles::m_profile =
     // ****************************************************************************************************************
 
     {
-        FILETYPE_MOV,
-        PROFILE_MOV_DEFAULT,
+        FILETYPE::MOV,
+        PROFILE::MOV_DEFAULT,
         //!
         //! @brief Basic MOV profile: MOV codec options.
         //!
@@ -383,8 +383,8 @@ const FFmpeg_Profiles::PROFILE_LIST_VEC FFmpeg_Profiles::m_profile =
     // ****************************************************************************************************************
 
     {
-        FILETYPE_PRORES,
-        PROFILE_PRORES_DEFAULT,
+        FILETYPE::PRORES,
+        PROFILE::PRORES_DEFAULT,
         //!
         //! @brief ProRes profile: ProRes/MOV codec options.
         //!
@@ -403,8 +403,8 @@ const FFmpeg_Profiles::PROFILE_LIST_VEC FFmpeg_Profiles::m_profile =
     // ****************************************************************************************************************
 
     {
-        FILETYPE_ALAC,
-        PROFILE_ALAC_DEFAULT,
+        FILETYPE::ALAC,
+        PROFILE::ALAC_DEFAULT,
         //!
         //! @brief ALAC profile: ProRes/ALAC codec options.
         //!
@@ -424,8 +424,8 @@ const FFmpeg_Profiles::PROFILE_LIST_VEC FFmpeg_Profiles::m_profile =
     // ****************************************************************************************************************
 
     {
-        FILETYPE_HLS,
-        PROFILE_HLS_DEFAULT,
+        FILETYPE::HLS,
+        PROFILE::HLS_DEFAULT,
         //!
         //! @brief HLS/ts codec options.
         //!
@@ -484,8 +484,8 @@ const FFmpeg_Profiles::PROFILE_LIST_VEC FFmpeg_Profiles::m_profile =
     //! *******************************************************************************************************************
     //!
     {
-        FILETYPE_WEBM,
-        PROFILE_WEBM_DEFAULT,
+        FILETYPE::WEBM,
+        PROFILE::WEBM_DEFAULT,
         //!
         //! @brief WebM codec options.
         //!

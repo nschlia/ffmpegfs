@@ -48,7 +48,7 @@ Cache_Entry::Cache_Entry(Cache *owner, LPVIRTUALFILE virtualfile)
     m_cache_info.m_destfile = virtualfile->m_destfile;
 
     m_cache_info.m_desttype[0] = '\0';
-    strncat(m_cache_info.m_desttype, params.current_format(virtualfile)->desttype().c_str(), sizeof(m_cache_info.m_desttype) - 1);
+    strncat(m_cache_info.m_desttype.data(), params.current_format(virtualfile)->desttype().c_str(), m_cache_info.m_desttype.size() - 1);
 
     m_buffer = new(std::nothrow) Buffer;
 
@@ -101,7 +101,7 @@ void Cache_Entry::clear(bool fetch_file_time /*= true*/)
     m_cache_info.m_predicted_filesize   = 0;
     m_cache_info.m_encoded_filesize     = 0;
     m_cache_info.m_video_frame_count    = 0;
-    m_cache_info.m_result               = RESULTCODE_NONE;
+    m_cache_info.m_result               = RESULTCODE::NONE;
     m_cache_info.m_error                = false;
     m_cache_info.m_errno                = 0;
     m_cache_info.m_averror              = 0;
@@ -142,7 +142,7 @@ bool Cache_Entry::write_info()
 
 bool Cache_Entry::delete_info()
 {
-    return m_owner->delete_info(filename(), m_cache_info.m_desttype);
+    return m_owner->delete_info(filename(), m_cache_info.m_desttype.data());
 }
 
 bool Cache_Entry::update_access(bool update_database /*= false*/)
@@ -188,7 +188,7 @@ bool Cache_Entry::openio(bool create_cache /*= true*/)
         erase_cache = true;
     }
 
-    Logging::trace(filename(), "The last transcode was completed. Result %1 Erasing cache: %2.", m_cache_info.m_result, erase_cache);
+    Logging::trace(filename(), "The last transcode was completed. Result %1 Erasing cache: %2.", static_cast<int>(m_cache_info.m_result), erase_cache);
 
     // Store access time
     update_access(true);
@@ -436,20 +436,20 @@ unsigned int Cache_Entry::read_count() const
 
 bool Cache_Entry::is_finished() const
 {
-    return (m_cache_info.m_result != RESULTCODE_NONE);
+    return (m_cache_info.m_result != RESULTCODE::NONE);
 }
 
 bool Cache_Entry::is_finished_incomplete() const
 {
-    return (m_cache_info.m_result == RESULTCODE_FINISHED_INCOMPLETE);
+    return (m_cache_info.m_result == RESULTCODE::FINISHED_INCOMPLETE);
 }
 
 bool Cache_Entry::is_finished_success() const
 {
-    return (m_cache_info.m_result == RESULTCODE_FINISHED_SUCCESS);
+    return (m_cache_info.m_result == RESULTCODE::FINISHED_SUCCESS);
 }
 
 bool Cache_Entry::is_finished_error() const
 {
-    return (m_cache_info.m_result == RESULTCODE_FINISHED_ERROR);
+    return (m_cache_info.m_result == RESULTCODE::FINISHED_ERROR);
 }

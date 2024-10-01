@@ -74,7 +74,7 @@ DvdIO::~DvdIO()
 
 VIRTUALTYPE DvdIO::type() const
 {
-    return VIRTUALTYPE_DVD;
+    return VIRTUALTYPE::DVD;
 }
 
 size_t DvdIO::bufsize() const
@@ -439,7 +439,7 @@ size_t DvdIO::demux_pes(uint8_t *out, const uint8_t *in, size_t len) const
 DvdIO::DSITYPE DvdIO::handle_DSI(void *_dsi_pack, size_t * cur_output_size, unsigned int *next_block, uint8_t *data)
 {
     dsi_t * dsi_pack = reinterpret_cast<dsi_t*>(_dsi_pack);
-    DSITYPE dsitype = DSITYPE_CONTINUE;
+    DSITYPE dsitype = DSITYPE::CONTINUE;
     bool end_of_cell;
 
     navRead_DSI(dsi_pack, &data[DSI_START_BYTE]);
@@ -507,7 +507,7 @@ DvdIO::DSITYPE DvdIO::handle_DSI(void *_dsi_pack, size_t * cur_output_size, unsi
         if (m_next_cell >= m_cur_pgc->nr_of_cells)
         {
             *next_block = 0;
-            dsitype = DSITYPE_EOF_TITLE;
+            dsitype = DSITYPE::EOF_TITLE;
         }
         else
         {
@@ -517,7 +517,7 @@ DvdIO::DSITYPE DvdIO::handle_DSI(void *_dsi_pack, size_t * cur_output_size, unsi
 
             if (m_cur_cell >= m_end_cell)
             {
-                dsitype = DSITYPE_EOF_CHAPTER;
+                dsitype = DSITYPE::EOF_CHAPTER;
             }
 
             *next_block = m_cur_pgc->cell_playback[m_cur_cell].first_sector;
@@ -604,7 +604,7 @@ size_t DvdIO::readio(void * data, size_t size)
             ssize_t maxlen;
 
             // Read NAV packet.
-            maxlen = DVDReadBlocks(m_dvd_title, static_cast<int>(m_cur_block), 1, m_buffer);
+            maxlen = DVDReadBlocks(m_dvd_title, static_cast<int>(m_cur_block), 1, m_buffer.data());
             if (maxlen != 1)
             {
                 Logging::error(path(), "Read failed for block at %1.", m_cur_block);
@@ -612,13 +612,13 @@ size_t DvdIO::readio(void * data, size_t size)
                 return 0;
             }
 
-            if (!is_nav_pack(m_buffer))
+            if (!is_nav_pack(m_buffer.data()))
             {
                 Logging::warning(path(), "Block at %1 is probably not a NAV packet. Transcode may fail.", m_cur_block);
             }
 
             // Parse the contained dsi packet.
-            dsitype = handle_DSI(&dsi_pack, &cur_output_size, &next_block, m_buffer);
+            dsitype = handle_DSI(&dsi_pack, &cur_output_size, &next_block, m_buffer.data());
             if (m_cur_block != dsi_pack.dsi_gi.nv_pck_lbn)
             {
                 Logging::error(path(), "Read failed at %1 because current block != dsi_pack.dsi_gi.nv_pck_lbn.", m_cur_block);
@@ -636,7 +636,7 @@ size_t DvdIO::readio(void * data, size_t size)
             m_cur_block++;
 
             // Read in and output cur_output_size packs.
-            maxlen = DVDReadBlocks(m_dvd_title, static_cast<int>(m_cur_block), cur_output_size, m_buffer);
+            maxlen = DVDReadBlocks(m_dvd_title, static_cast<int>(m_cur_block), cur_output_size, m_buffer.data());
 
             if (maxlen != static_cast<int>(cur_output_size))
             {
@@ -647,7 +647,7 @@ size_t DvdIO::readio(void * data, size_t size)
 
             size_t netsize = cur_output_size * DVD_VIDEO_LB_LEN;
 
-            netsize = demux_pes(m_data, m_buffer, netsize);
+            netsize = demux_pes(m_data.data(), m_buffer.data(), netsize);
 
             if (data != nullptr)
             {
@@ -655,7 +655,7 @@ size_t DvdIO::readio(void * data, size_t size)
                 {
                     result_len = size;
 
-                    std::memcpy(data, m_data, result_len);
+                    std::memcpy(data, m_data.data(), result_len);
 
                     m_rest_size = netsize - size;
                     m_rest_pos = size;
@@ -664,7 +664,7 @@ size_t DvdIO::readio(void * data, size_t size)
                 {
                     result_len = netsize;
 
-                    std::memcpy(data, m_data, result_len);
+                    std::memcpy(data, m_data.data(), result_len);
                 }
             }
             else
@@ -685,10 +685,10 @@ size_t DvdIO::readio(void * data, size_t size)
         //break;
     }
 
-    // DSITYPE_EOF_TITLE - end of title
-    // DSITYPE_EOF_CHAPTER - end of chapter
-    if ((dsitype != DSITYPE_CONTINUE && !m_full_title) ||   // Stop at end of chapter/title
-            (dsitype == DSITYPE_EOF_TITLE))                 // Stop at end of title
+    // DSITYPE::EOF_TITLE - end of title
+    // DSITYPE::EOF_CHAPTER - end of chapter
+    if ((dsitype != DSITYPE::CONTINUE && !m_full_title) ||   // Stop at end of chapter/title
+            (dsitype == DSITYPE::EOF_TITLE))                 // Stop at end of title
     {
         m_is_eof = true;
     }

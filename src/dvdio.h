@@ -40,6 +40,8 @@
 
 #include "fileio.h"
 
+#include <array>
+
 #include <dvdread/ifo_read.h>
 
 /** @brief DVD I/O class
@@ -53,12 +55,12 @@ class DvdIO : public FileIO
       * we simply continue. At the end of chapters we may stop continue to
       * the end of a title
       */
-    typedef enum DSITYPE
+    enum class DSITYPE
     {
-        DSITYPE_CONTINUE,                                       /**< @brief Chapter continues */
-        DSITYPE_EOF_CHAPTER,                                    /**< @brief End of chapter */
-        DSITYPE_EOF_TITLE                                       /**< @brief End of title */
-    } DSITYPE;
+        CONTINUE,       /**< @brief Chapter continues */
+        EOF_CHAPTER,    /**< @brief End of chapter */
+        EOF_TITLE       /**< @brief End of title */
+    };
 
 public:
     /**
@@ -200,33 +202,33 @@ private:
     void            rewind();
 
 protected:
-    dvd_reader_t *  m_dvd;                                      /**< @brief DVD reader handle */
-    dvd_file_t *    m_dvd_title;                                /**< @brief DVD title handle */
-    ifo_handle_t *  m_vmg_file;                                 /**< @brief DVD video manager handle */
-    ifo_handle_t *  m_vts_file;                                 /**< @brief DVD video title stream handle */
-    pgc_t *         m_cur_pgc;                                  /**< @brief Current program chain */
-    int             m_start_cell;                               /**< @brief Start cell */
-    int             m_end_cell;                                 /**< @brief End cell (of title) */
-    int             m_cur_cell;                                 /**< @brief Current cell */
-    int             m_next_cell;                                /**< @brief Next cell to be processed */
-    bool            m_goto_next_cell;                           /**< @brief If logc needs to go to next cell before next read */
-    unsigned int    m_cur_block;                                /**< @brief Current processing block */
-    bool            m_is_eof;                                   /**< @brief true if at "end of file", i.e, end of chapter or title */
-    int             m_errno;                                    /**< @brief errno of last operation */
-    size_t          m_rest_size;                                /**< @brief Rest bytes in buffer */
-    size_t          m_rest_pos;                                 /**< @brief Position in buffer */
-    size_t          m_cur_pos;                                  /**< @brief Current position in virtual file */
+    dvd_reader_t *  m_dvd;                                          /**< @brief DVD reader handle */
+    dvd_file_t *    m_dvd_title;                                    /**< @brief DVD title handle */
+    ifo_handle_t *  m_vmg_file;                                     /**< @brief DVD video manager handle */
+    ifo_handle_t *  m_vts_file;                                     /**< @brief DVD video title stream handle */
+    pgc_t *         m_cur_pgc;                                      /**< @brief Current program chain */
+    int             m_start_cell;                                   /**< @brief Start cell */
+    int             m_end_cell;                                     /**< @brief End cell (of title) */
+    int             m_cur_cell;                                     /**< @brief Current cell */
+    int             m_next_cell;                                    /**< @brief Next cell to be processed */
+    bool            m_goto_next_cell;                               /**< @brief If logc needs to go to next cell before next read */
+    unsigned int    m_cur_block;                                    /**< @brief Current processing block */
+    bool            m_is_eof;                                       /**< @brief true if at "end of file", i.e, end of chapter or title */
+    int             m_errno;                                        /**< @brief errno of last operation */
+    size_t          m_rest_size;                                    /**< @brief Rest bytes in buffer */
+    size_t          m_rest_pos;                                     /**< @brief Position in buffer */
+    size_t          m_cur_pos;                                      /**< @brief Current position in virtual file */
 
-    bool            m_full_title;                               /**< @brief If true, ignore m_chapter_no and provide full track */
-    int             m_title_idx;                                /**< @brief Track index (track number - 1) */
-    int             m_chapter_idx;                              /**< @brief Chapter index (chapter number - 1) */
-    int             m_angle_idx;                                /**< @brief Selected angle index (angle number -1) */
+    bool            m_full_title;                                   /**< @brief If true, ignore m_chapter_no and provide full track */
+    int             m_title_idx;                                    /**< @brief Track index (track number - 1) */
+    int             m_chapter_idx;                                  /**< @brief Chapter index (chapter number - 1) */
+    int             m_angle_idx;                                    /**< @brief Selected angle index (angle number -1) */
 
-    unsigned char   m_data[1024 * DVD_VIDEO_LB_LEN];            /**< @brief Buffer for readio() data */
-    unsigned char   m_buffer[1024 * DVD_VIDEO_LB_LEN];          /**< @brief Buffer for data extracted from VOB file */
+    std::array<unsigned char, 1024 * DVD_VIDEO_LB_LEN>  m_data;     /**< @brief Buffer for readio() data */
+    std::array<unsigned char, 1024 * DVD_VIDEO_LB_LEN>  m_buffer;   /**< @brief Buffer for data extracted from VOB file */
 
-    int64_t         m_duration;                                 /**< @brief Track/chapter duration, in AV_TIME_BASE fractional seconds. */
-    size_t          m_size;                                     /**< @brief Size of virtual file */
+    int64_t         m_duration;                                     /**< @brief Track/chapter duration, in AV_TIME_BASE fractional seconds. */
+    size_t          m_size;                                         /**< @brief Size of virtual file */
 };
 #endif // USE_LIBDVD
 

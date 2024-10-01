@@ -51,7 +51,7 @@ BlurayIO::BlurayIO()
     , m_angle_idx(0)
     , m_duration(AV_NOPTS_VALUE)
 {
-    std::memset(&m_data, 0, sizeof(m_data));
+    m_data.fill(0);
 }
 
 BlurayIO::~BlurayIO()
@@ -61,7 +61,7 @@ BlurayIO::~BlurayIO()
 
 VIRTUALTYPE BlurayIO::type() const
 {
-    return VIRTUALTYPE_BLURAY;
+    return VIRTUALTYPE::BLURAY;
 }
 
 size_t BlurayIO::bufsize() const
@@ -71,15 +71,11 @@ size_t BlurayIO::bufsize() const
 
 int BlurayIO::openio(LPVIRTUALFILE virtualfile)
 {
-    const char *bdpath = nullptr;
     uint32_t title_count;
     uint32_t chapter_end;
-    char *keyfile = nullptr;
     BLURAY_TITLE_INFO *ti;
 
     set_virtualfile(virtualfile);
-
-    bdpath = path().c_str();
 
     if (virtualfile != nullptr)
     {
@@ -100,32 +96,33 @@ int BlurayIO::openio(LPVIRTUALFILE virtualfile)
 
     chapter_end = m_chapter_idx + 1;
 
-    Logging::debug(bdpath, "Opening input Blu-ray.");
+    Logging::debug(path(), "Opening input Blu-ray.");
 
-    m_bd = bd_open(bdpath, keyfile);
+    m_bd = bd_open(path().c_str(), nullptr);
+
     if (m_bd == nullptr)
     {
-        Logging::error(bdpath, "Failed to open disc.");
+        Logging::error(path(), "Failed to open disc.");
         return 1;
     }
 
     title_count = bd_get_titles(m_bd, TITLES_RELEVANT, 0);
     if (title_count == 0)
     {
-        Logging::error(bdpath, "There were no titles found.");
+        Logging::error(path(), "There were no titles found.");
         return 1;
     }
 
     if (!bd_select_title(m_bd, m_title_idx))
     {
-        Logging::error(bdpath, "The Blu-ray title no. %1 could not be opened.", m_title_idx);
+        Logging::error(path(), "The Blu-ray title no. %1 could not be opened.", m_title_idx);
         return 1;
     }
     ti = bd_get_title_info(m_bd, m_title_idx, m_angle_idx);
 
     if (m_angle_idx >= ti->angle_count)
     {
-        Logging::warning(bdpath, "The angle %1 is greater than the angle count %2. Using angle 1.", m_angle_idx + 1, ti->angle_count);
+        Logging::warning(path(), "The angle %1 is greater than the angle count %2. Using angle 1.", m_angle_idx + 1, ti->angle_count);
         m_angle_idx = 0;
     }
 
@@ -133,7 +130,7 @@ int BlurayIO::openio(LPVIRTUALFILE virtualfile)
 
     if (m_chapter_idx >= ti->chapter_count)
     {
-        Logging::error(bdpath, "The first chapter %1 is greater than the chapter count %2.", m_chapter_idx + 1, ti->chapter_count);
+        Logging::error(path(), "The first chapter %1 is greater than the chapter count %2.", m_chapter_idx + 1, ti->chapter_count);
         return 1;
     }
 
@@ -202,7 +199,7 @@ size_t BlurayIO::readio(void * data, size_t size)
             maxsize = static_cast<int>(m_end_pos - m_cur_pos);
         }
 
-        int res = bd_read(m_bd, m_data, maxsize);
+        int res = bd_read(m_bd, m_data.data(), maxsize);
         if (res < 0)
         {
             Logging::error(path(), "bd_read has failed.");
@@ -216,7 +213,7 @@ size_t BlurayIO::readio(void * data, size_t size)
         if (bytes > size)
         {
             result_len = size;
-            std::memcpy(data, m_data, result_len);
+            std::memcpy(data, m_data.data(), result_len);
 
             m_rest_size = bytes - size;
             m_rest_pos = size;
@@ -224,7 +221,7 @@ size_t BlurayIO::readio(void * data, size_t size)
         else
         {
             result_len = bytes;
-            std::memcpy(data, m_data, result_len);
+            std::memcpy(data, m_data.data(), result_len);
         }
     }
 

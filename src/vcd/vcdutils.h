@@ -30,6 +30,8 @@
 
 #pragma once
 
+#include "vcd/vcdchapter.h"
+
 #include <string>
 #include <array>
 
@@ -41,8 +43,7 @@
  */
 #define     VCD_MAX_CHAPTERS    500
 
-#pragma pack(push)
-#pragma pack(1)
+#pragma pack(push, 1)
 
 /** @brief Video CD MSF time format
  *
@@ -73,7 +74,7 @@ typedef const VCDCHAPTER * LPCVCDCHAPTER;   /**< @brief Pointer to const version
  */
 typedef struct VCDENTRIES
 {
-    char        m_ID[8];                    /**< @brief 8 Bytes: ID "ENTRYVCD" or "ENTRYSVD" */
+    std::array<char, 8> m_ID;                    /**< @brief 8 Bytes: ID "ENTRYVCD" or "ENTRYSVD" */
     /** @brief 1 Byte: CD type
      *
      * 1 for VCD 1.0, VCD 1.1, SVCD 1.0 and HQVCD @n
@@ -100,12 +101,13 @@ typedef struct VCDENTRIES
      * 1 Byte: Tracknummer @n
      * 3 Byte: Adresse MSF
      */
-    VCDCHAPTER  m_chapter[VCD_MAX_CHAPTERS];
+    std::array<VCDCHAPTER, VCD_MAX_CHAPTERS>    m_chapter;
 
-    uint8_t     reserved[36];               /**< @brief RESERVED, must be 0x00 */
+    std::array<uint8_t, 36> reserved;       /**< @brief RESERVED, must be 0x00 */
 
 } VCDENTRY, *LPVCDENTRIES;                  /**< @brief Pointer version of VCDENTRY */
 typedef const VCDENTRY * LPCVCDENTRIES;     /**< @brief Pointer to const version of VCDENTRY */
+
 #pragma pack(pop)
 
 extern const std::array<char, 12> SYNC;     /**< @brief Chapter synchronisation in S/VCD mpeg/dat files (12 byte: 0x00FFFFFFFFFFFFFFFFFFFF00) */
@@ -145,13 +147,13 @@ int         locate_video(const std::string & path, int track_no, std::string & f
  * @param[in] type - 1: VCD 1.0, VCD 1.1, SVCD 1.0, HQVCD, 2: VCD 2.0
  * @return Disk type as a human readable string.
  */
-std::string get_type_str(int type);
+std::string get_type_str(VCDTYPE type);
 /**
  * @brief Profile as a human readable string.
  * @param[in] tag - 1: VCD 1.0, VCD 2.0, SVCD, HQVCD, 2: VCD 1.1
  * @return Returns profile as a human readable string.
  */
-std::string get_profile_tag_str(int tag);
+std::string get_profile_tag_str(VCDPROFILETAG tag);
 /**
  * @brief Check if  fullname is a directory. Remove the filename if necessary.
  * @note Really checks if fullname is a path even if the trailing slash is missing.

@@ -80,17 +80,17 @@ FFMPEGFS_PARAMS::FFMPEGFS_PARAMS()
     , m_audio_codec(AV_CODEC_ID_NONE)                   // default: use predefined option
     , m_video_codec(AV_CODEC_ID_NONE)                   // default: use predefined option
 
-    , m_autocopy(AUTOCOPY_OFF)                          // default: off
-    , m_recodesame(RECODESAME_NO)                       // default: off
-    , m_profile(PROFILE_DEFAULT)                        // default: no profile
-    , m_level(PRORESLEVEL_NONE)                         // default: no level
+    , m_autocopy(AUTOCOPY::OFF)                          // default: off
+    , m_recodesame(RECODESAME::NO)                       // default: off
+    , m_profile(PROFILE::DEFAULT)                        // default: no profile
+    , m_level(PRORESLEVEL::NONE)                         // default: no level
 
     // Format
     // Audio
     , m_audiobitrate(128*1024)                          // default: 128 kBit
     , m_audiosamplerate(44100)                          // default: 44.1 kHz
     , m_audiochannels(2)                                // default: 2 channels
-    , m_sample_fmt(SAMPLE_FMT_DONTCARE)                 // default: use source format
+    , m_sample_fmt(SAMPLE_FMT::FMT_DONTCARE)            // default: use source format
 
     // Video
     , m_videobitrate(2*1024*1024)                       // default: 2 MBit
@@ -100,9 +100,9 @@ FFMPEGFS_PARAMS::FFMPEGFS_PARAMS()
     , m_segment_duration(10 * AV_TIME_BASE)             // default: 10 seconds
     , m_min_seek_time_diff(30 * AV_TIME_BASE)           // default: 30 seconds
     // Hardware acceleration
-    , m_hwaccel_enc_API(HWACCELAPI_NONE)                // default: Use software encoder
+    , m_hwaccel_enc_API(HWACCELAPI::NONE)                // default: Use software encoder
     , m_hwaccel_enc_device_type(AV_HWDEVICE_TYPE_NONE)  // default: Use software encoder
-    , m_hwaccel_dec_API(HWACCELAPI_NONE)                // default: Use software encoder
+    , m_hwaccel_dec_API(HWACCELAPI::NONE)               // default: Use software encoder
     , m_hwaccel_dec_device_type(AV_HWDEVICE_TYPE_NONE)  // default: Use software decoder
     , m_hwaccel_dec_blocked(nullptr)                    // default: No blocked encoders
 
@@ -138,8 +138,8 @@ FFMPEGFS_PARAMS::FFMPEGFS_PARAMS()
     , m_decoding_errors(0)                              // default: ignore errors
     , m_min_dvd_chapter_duration(1)                     // default: 1 second
     , m_oldnamescheme(0)                                // default: new scheme
-    , m_include_extensions(new MATCHVEC)				// default: empty list
-    , m_hide_extensions(new MATCHVEC)                  	// default: empty list
+    , m_include_extensions(new (std::nothrow) MATCHVEC)	// default: empty list
+    , m_hide_extensions(new (std::nothrow) MATCHVEC)    // default: empty list
     , m_win_smb_fix(1)                                  // default: fix enabled
 {
 }
@@ -231,7 +231,7 @@ FFMPEGFS_PARAMS& FFMPEGFS_PARAMS::operator=(const FFMPEGFS_PARAMS & other) noexc
 
 bool FFMPEGFS_PARAMS::smart_transcode() const
 {
-    return (ffmpeg_format[1].filetype() != FILETYPE_UNKNOWN && ffmpeg_format[0].filetype() != ffmpeg_format[1].filetype());
+    return (ffmpeg_format[FORMAT::AUDIO].filetype() != FILETYPE::UNKNOWN && ffmpeg_format[FORMAT::VIDEO].filetype() != ffmpeg_format[FORMAT::AUDIO].filetype());
 }
 
 const FFmpegfs_Format *FFMPEGFS_PARAMS::current_format(LPCVIRTUALFILE virtualfile) const
@@ -243,7 +243,7 @@ const FFmpegfs_Format *FFMPEGFS_PARAMS::current_format(LPCVIRTUALFILE virtualfil
     return &ffmpeg_format[virtualfile->m_format_idx];
 }
 
-enum
+enum    // enum class or typedef here is not compatible with Fuse API
 {
     KEY_HELP,
     KEY_VERSION,
@@ -486,11 +486,11 @@ const static VIDEOCODEC_MAP videocodec_map
   */
 static const AUTOCOPY_MAP autocopy_map
 {
-    { "OFF",            AUTOCOPY_OFF },
-    { "MATCH",          AUTOCOPY_MATCH },
-    { "MATCHLIMIT",     AUTOCOPY_MATCHLIMIT },
-    { "STRICT",         AUTOCOPY_STRICT },
-    { "STRICTLIMIT",    AUTOCOPY_STRICTLIMIT },
+    { "OFF",            AUTOCOPY::OFF },
+    { "MATCH",          AUTOCOPY::MATCH },
+    { "MATCHLIMIT",     AUTOCOPY::MATCHLIMIT },
+    { "STRICT",         AUTOCOPY::STRICT },
+    { "STRICTLIMIT",    AUTOCOPY::STRICTLIMIT },
 };
 
 /**
@@ -498,17 +498,17 @@ static const AUTOCOPY_MAP autocopy_map
   */
 static const PROFILE_MAP profile_map
 {
-    { "NONE",           PROFILE_DEFAULT },
+    { "NONE",           PROFILE::DEFAULT },
 
     // MP4
 
-    { "FF",             PROFILE_MP4_FF },
-    { "EDGE",           PROFILE_MP4_EDGE },
-    { "IE",             PROFILE_MP4_IE },
-    { "CHROME",         PROFILE_MP4_CHROME },
-    { "SAFARI",         PROFILE_MP4_SAFARI },
-    { "OPERA",          PROFILE_MP4_OPERA },
-    { "MAXTHON",        PROFILE_MP4_MAXTHON },
+    { "FF",             PROFILE::MP4_FF },
+    { "EDGE",           PROFILE::MP4_EDGE },
+    { "IE",             PROFILE::MP4_IE },
+    { "CHROME",         PROFILE::MP4_CHROME },
+    { "SAFARI",         PROFILE::MP4_SAFARI },
+    { "OPERA",          PROFILE::MP4_OPERA },
+    { "MAXTHON",        PROFILE::MP4_MAXTHON },
 
     // WEBM
 };
@@ -519,10 +519,10 @@ static const PROFILE_MAP profile_map
 static const LEVEL_MAP prores_level_map
 {
     // ProRes
-    { "PROXY",          PRORESLEVEL_PRORES_PROXY },
-    { "LT",             PRORESLEVEL_PRORES_LT },
-    { "STANDARD",       PRORESLEVEL_PRORES_STANDARD },
-    { "HQ",             PRORESLEVEL_PRORES_HQ },
+    { "PROXY",          PRORESLEVEL::PRORES_PROXY },
+    { "LT",             PRORESLEVEL::PRORES_LT },
+    { "STANDARD",       PRORESLEVEL::PRORES_STANDARD },
+    { "HQ",             PRORESLEVEL::PRORES_HQ },
 };
 
 /**
@@ -531,8 +531,8 @@ static const LEVEL_MAP prores_level_map
 static const RECODESAME_MAP recode_map
 {
     // Recode to same format
-    { "NO",             RECODESAME_NO },
-    { "YES",            RECODESAME_YES },
+    { "NO",             RECODESAME::NO },
+    { "YES",            RECODESAME::YES },
 };
 
 /**
@@ -545,44 +545,44 @@ static const RECODESAME_MAP recode_map
   */
 static HWACCEL_MAP hwaccel_map
 {
-    { "NONE",           { true,     HWACCELAPI_NONE,            AV_HWDEVICE_TYPE_NONE } },
+    { "NONE",           { true,     HWACCELAPI::NONE,            AV_HWDEVICE_TYPE_NONE } },
 
     // **** Supported by Linux ****
 
-    { "VAAPI",          { true,     HWACCELAPI_VAAPI,           AV_HWDEVICE_TYPE_NONE } },  // Video Acceleration API (VA-API), https://trac.ffmpeg.org/wiki/Hardware/VAAPI
+    { "VAAPI",          { true,     HWACCELAPI::VAAPI,           AV_HWDEVICE_TYPE_NONE } },  // Video Acceleration API (VA-API), https://trac.ffmpeg.org/wiki/Hardware/VAAPI
 
     // RaspberryPi
 
-    { "MMAL",           { true,     HWACCELAPI_MMAL,            AV_HWDEVICE_TYPE_NONE } },  // Multimedia Abstraction Layer by Broadcom. Encoding only.
-    { "OMX",            { true,     HWACCELAPI_OMX,             AV_HWDEVICE_TYPE_NONE } },  // OpenMAX (Open Media Acceleration). Decoding only.
+    { "MMAL",           { true,     HWACCELAPI::MMAL,            AV_HWDEVICE_TYPE_NONE } },  // Multimedia Abstraction Layer by Broadcom. Encoding only.
+    { "OMX",            { true,     HWACCELAPI::OMX,             AV_HWDEVICE_TYPE_NONE } },  // OpenMAX (Open Media Acceleration). Decoding only.
 
     #if 0
     // Additional formats
-    { "CUDA",           { false,    HWACCELAPI_CUDA,            AV_HWDEVICE_TYPE_NONE } },  // Compute Unified Device Architecture, see https://developer.nvidia.com/ffmpeg and https://en.wikipedia.org/wiki/CUDA
-    { "V4L2M2M",        { false,    HWACCELAPI_V4L2M2M,         AV_HWDEVICE_TYPE_NONE } },  // v4l2 mem to mem (Video4linux)
-    { "VDPAU",          { false,    HWACCELAPI_VDPAU,           AV_HWDEVICE_TYPE_NONE } },  // Video Decode and Presentation API for Unix, see https://en.wikipedia.org/wiki/VDPAU
-    { "QSV",            { false,    HWACCELAPI_QSV,             AV_HWDEVICE_TYPE_NONE } },  // QuickSync, see https://trac.ffmpeg.org/wiki/Hardware/QuickSync
-    { "OPENCL",         { false,    HWACCELAPI_OPENCL,          AV_HWDEVICE_TYPE_NONE } },  // Open Standard for Parallel Programming of Heterogeneous Systems, see https://trac.ffmpeg.org/wiki/HWAccelIntro#OpenCL
+    { "CUDA",           { false,    HWACCELAPI::CUDA,            AV_HWDEVICE_TYPE_NONE } },  // Compute Unified Device Architecture, see https://developer.nvidia.com/ffmpeg and https://en.wikipedia.org/wiki/CUDA
+    { "V4L2M2M",        { false,    HWACCELAPI::V4L2M2M,         AV_HWDEVICE_TYPE_NONE } },  // v4l2 mem to mem (Video4linux)
+    { "VDPAU",          { false,    HWACCELAPI::VDPAU,           AV_HWDEVICE_TYPE_NONE } },  // Video Decode and Presentation API for Unix, see https://en.wikipedia.org/wiki/VDPAU
+    { "QSV",            { false,    HWACCELAPI::QSV,             AV_HWDEVICE_TYPE_NONE } },  // QuickSync, see https://trac.ffmpeg.org/wiki/Hardware/QuickSync
+    { "OPENCL",         { false,    HWACCELAPI::OPENCL,          AV_HWDEVICE_TYPE_NONE } },  // Open Standard for Parallel Programming of Heterogeneous Systems, see https://trac.ffmpeg.org/wiki/HWAccelIntro#OpenCL
     #if HAVE_VULKAN_HWACCEL
-    { "VULKAN",         { false,    HWACCELAPI_VULKAN,          AV_HWDEVICE_TYPE_NONE } },  // Low-overhead, cross-platform 3D graphics and computing API, requires Libavutil >= 56.30.100, see https://en.wikipedia.org/wiki/Vulkan_(API)
+    { "VULKAN",         { false,    HWACCELAPI::VULKAN,          AV_HWDEVICE_TYPE_NONE } },  // Low-overhead, cross-platform 3D graphics and computing API, requires Libavutil >= 56.30.100, see https://en.wikipedia.org/wiki/Vulkan_(API)
     #endif // HAVE_VULKAN_HWACCEL
     #if __APPLE__
     // MacOS, not supported
-    { "VIDEOTOOLBOX",   { false,    HWACCELAPI_VIDEOTOOLBOX,    AV_HWDEVICE_TYPE_NONE } },  // https://trac.ffmpeg.org/wiki/HWAccelIntro#VideoToolbox
+    { "VIDEOTOOLBOX",   { false,    HWACCELAPI::VIDEOTOOLBOX,    AV_HWDEVICE_TYPE_NONE } },  // https://trac.ffmpeg.org/wiki/HWAccelIntro#VideoToolbox
     #endif
     #if __ANDROID__
     // Android
-    { "MEDIACODEC",     { false,    HWACCELAPI_MEDIACODEC,      AV_HWDEVICE_TYPE_NONE } },  // See https://developer.android.com/reference/android/media/MediaCodec
+    { "MEDIACODEC",     { false,    HWACCELAPI::MEDIACODEC,      AV_HWDEVICE_TYPE_NONE } },  // See https://developer.android.com/reference/android/media/MediaCodec
     #endif
     #if _WIN32
     // **** Not supported ****
 
     // Digital Rights Management
-    { "DRM",            { false,    HWACCELAPI_DRM,             AV_HWDEVICE_TYPE_NONE } },
+    { "DRM",            { false,    HWACCELAPI::DRM,             AV_HWDEVICE_TYPE_NONE } },
 
     // Windows only, not supported
-    { "DXVA2",          { false,    HWACCELAPI_DXVA2,           AV_HWDEVICE_TYPE_NONE } },  // Direct3D 9 / DXVA2
-    { "D3D11VA",        { false,    HWACCELAPI_D3D11VA,         AV_HWDEVICE_TYPE_NONE } },  // Direct3D 11
+    { "DXVA2",          { false,    HWACCELAPI::DXVA2,           AV_HWDEVICE_TYPE_NONE } },  // Direct3D 9 / DXVA2
+    { "D3D11VA",        { false,    HWACCELAPI::D3D11VA,         AV_HWDEVICE_TYPE_NONE } },  // Direct3D 11
     #endif
     #endif
 };
@@ -608,16 +608,16 @@ static const CODEC_MAP hwaccel_codec_map
  */
 static const SAMPLE_FMT_MAP sample_fmt_map
 {
-    { "0",      SAMPLE_FMT_DONTCARE },
-    { "8",      SAMPLE_FMT_8 },
-    { "16",     SAMPLE_FMT_16 },
-    { "24",     SAMPLE_FMT_24 },
-    { "32",     SAMPLE_FMT_32 },
-    { "64",     SAMPLE_FMT_64 },
-    { "F16",    SAMPLE_FMT_F16 },
-    { "F24",    SAMPLE_FMT_F24 },
-    { "F32",    SAMPLE_FMT_F32 },
-    { "F64",    SAMPLE_FMT_F64 },
+    { "0",      SAMPLE_FMT::FMT_DONTCARE },
+    { "8",      SAMPLE_FMT::FMT_8 },
+    { "16",     SAMPLE_FMT::FMT_16 },
+    { "24",     SAMPLE_FMT::FMT_24 },
+    { "32",     SAMPLE_FMT::FMT_32 },
+    { "64",     SAMPLE_FMT::FMT_64 },
+    { "F16",    SAMPLE_FMT::FMT_F16 },
+    { "F24",    SAMPLE_FMT::FMT_F24 },
+    { "F32",    SAMPLE_FMT::FMT_F32 },
+    { "F64",    SAMPLE_FMT::FMT_F64 },
 };
 
 static int          get_bitrate(const std::string & arg, BITRATE *bitrate);
@@ -830,7 +830,7 @@ static int get_sampleformat(const std::string & arg, SAMPLE_FMT * sample_fmt)
 {
     size_t pos = arg.find('=');
 
-    *sample_fmt = SAMPLE_FMT_DONTCARE;
+    *sample_fmt = SAMPLE_FMT::FMT_DONTCARE;
 
     if (pos != std::string::npos)
     {
@@ -1545,7 +1545,7 @@ static int get_hwaccel_dec_blocked(const std::string & arg, HWACCEL_BLOCKED_MAP 
 
         if (*hwaccel_dec_blocked == nullptr)
         {
-            *hwaccel_dec_blocked = new HWACCEL_BLOCKED_MAP;
+            *hwaccel_dec_blocked = new (std::nothrow) HWACCEL_BLOCKED_MAP;
         }
 
         if (!std::getline(data, codec, ':'))
@@ -2011,11 +2011,11 @@ static int ffmpegfs_opt_proc(__attribute__((unused)) void* data, const char* arg
  */
 static bool set_defaults()
 {
-    if (ffmpeg_format[0].video_codec() == AV_CODEC_ID_PRORES)
+    if (ffmpeg_format[FORMAT::VIDEO].video_codec() == AV_CODEC_ID_PRORES)
     {
-        if (params.m_level == PRORESLEVEL_NONE)
+        if (params.m_level == PRORESLEVEL::NONE)
         {
-            params.m_level = PRORESLEVEL_PRORES_HQ;
+            params.m_level = PRORESLEVEL::PRORES_HQ;
         }
     }
 
@@ -2055,33 +2055,33 @@ static void print_params()
     Logging::trace(nullptr, "Base Path         : %1", params.m_basepath.c_str());
     Logging::trace(nullptr, "Mount Path        : %1", params.m_mountpath.c_str());
     Logging::trace(nullptr, "--------- Format ---------");
-    if (ffmpeg_format[1].filetype() != FILETYPE_UNKNOWN)
+    if (ffmpeg_format[FORMAT::AUDIO].filetype() != FILETYPE::UNKNOWN)
     {
-        Logging::trace(nullptr, "Audio File Type   : %1", ffmpeg_format[1].desttype().c_str());
-        if (ffmpeg_format[1].audio_codec() != AV_CODEC_ID_NONE)
+        Logging::trace(nullptr, "Audio File Type   : %1", ffmpeg_format[FORMAT::AUDIO].desttype().c_str());
+        if (ffmpeg_format[FORMAT::AUDIO].audio_codec() != AV_CODEC_ID_NONE)
         {
-            Logging::trace(nullptr, "Audio Codec       : %1 (%2)", get_codec_name(ffmpeg_format[1].audio_codec(), false), get_codec_name(ffmpeg_format[1].audio_codec(), true));
+            Logging::trace(nullptr, "Audio Codec       : %1 (%2)", get_codec_name(ffmpeg_format[FORMAT::AUDIO].audio_codec(), false), get_codec_name(ffmpeg_format[FORMAT::AUDIO].audio_codec(), true));
         }
-        Logging::trace(nullptr, "Video File Type   : %1", ffmpeg_format[0].desttype().c_str());
-        if (ffmpeg_format[0].audio_codec() != AV_CODEC_ID_NONE)
+        Logging::trace(nullptr, "Video File Type   : %1", ffmpeg_format[FORMAT::VIDEO].desttype().c_str());
+        if (ffmpeg_format[FORMAT::VIDEO].audio_codec() != AV_CODEC_ID_NONE)
         {
-            Logging::trace(nullptr, "Audio Codec       : %1 (%2)", get_codec_name(ffmpeg_format[0].audio_codec(), false), get_codec_name(ffmpeg_format[0].audio_codec(), true));
+            Logging::trace(nullptr, "Audio Codec       : %1 (%2)", get_codec_name(ffmpeg_format[FORMAT::VIDEO].audio_codec(), false), get_codec_name(ffmpeg_format[FORMAT::VIDEO].audio_codec(), true));
         }
-        if (ffmpeg_format[0].video_codec() != AV_CODEC_ID_NONE)
+        if (ffmpeg_format[FORMAT::VIDEO].video_codec() != AV_CODEC_ID_NONE)
         {
-            Logging::trace(nullptr, "Video Codec       : %1 (%2)", get_codec_name(ffmpeg_format[0].video_codec(), false), get_codec_name(ffmpeg_format[0].video_codec(), true));
+            Logging::trace(nullptr, "Video Codec       : %1 (%2)", get_codec_name(ffmpeg_format[FORMAT::VIDEO].video_codec(), false), get_codec_name(ffmpeg_format[FORMAT::VIDEO].video_codec(), true));
         }
     }
     else
     {
-        Logging::trace(nullptr, "File Type         : %1", ffmpeg_format[0].desttype().c_str());
-        if (ffmpeg_format[0].audio_codec() != AV_CODEC_ID_NONE)
+        Logging::trace(nullptr, "File Type         : %1", ffmpeg_format[FORMAT::VIDEO].desttype().c_str());
+        if (ffmpeg_format[FORMAT::VIDEO].audio_codec() != AV_CODEC_ID_NONE)
         {
-            Logging::trace(nullptr, "Audio Codec       : %1 (%2)", get_codec_name(ffmpeg_format[0].audio_codec(), false), get_codec_name(ffmpeg_format[0].audio_codec(), true));
+            Logging::trace(nullptr, "Audio Codec       : %1 (%2)", get_codec_name(ffmpeg_format[FORMAT::VIDEO].audio_codec(), false), get_codec_name(ffmpeg_format[FORMAT::VIDEO].audio_codec(), true));
         }
-        if (ffmpeg_format[0].video_codec() != AV_CODEC_ID_NONE)
+        if (ffmpeg_format[FORMAT::VIDEO].video_codec() != AV_CODEC_ID_NONE)
         {
-            Logging::trace(nullptr, "Video Codec       : %1 (%2)", get_codec_name(ffmpeg_format[0].video_codec(), false), get_codec_name(ffmpeg_format[0].video_codec(), true));
+            Logging::trace(nullptr, "Video Codec       : %1 (%2)", get_codec_name(ffmpeg_format[FORMAT::VIDEO].video_codec(), false), get_codec_name(ffmpeg_format[FORMAT::VIDEO].video_codec(), true));
         }
     }
     Logging::trace(nullptr, "Smart Transcode   : %1", params.smart_transcode() ? "yes" : "no");
@@ -2092,16 +2092,16 @@ static void print_params()
     Logging::trace(nullptr, "Include Extensions: %1", implode(*params.m_include_extensions).c_str());
     Logging::trace(nullptr, "Hide Extensions   : %1", implode(*params.m_hide_extensions).c_str());
     Logging::trace(nullptr, "--------- Audio ---------");
-    Logging::trace(nullptr, "Codecs            : %1+%2", get_codec_name(ffmpeg_format[0].audio_codec(), true), get_codec_name(ffmpeg_format[1].audio_codec(), true));
+    Logging::trace(nullptr, "Codecs            : %1+%2", get_codec_name(ffmpeg_format[FORMAT::VIDEO].audio_codec(), true), get_codec_name(ffmpeg_format[FORMAT::AUDIO].audio_codec(), true));
     Logging::trace(nullptr, "Bitrate           : %1", format_bitrate(params.m_audiobitrate).c_str());
     Logging::trace(nullptr, "Sample Rate       : %1", format_samplerate(params.m_audiosamplerate).c_str());
     Logging::trace(nullptr, "Max. Channels     : %1", params.m_audiochannels);
-    if (params.m_sample_fmt != SAMPLE_FMT_DONTCARE)
+    if (params.m_sample_fmt != SAMPLE_FMT::FMT_DONTCARE)
     {
         Logging::trace(nullptr, "Sample Format     : %1", get_sampleformat_text(params.m_sample_fmt).c_str());
     }
     Logging::trace(nullptr, "--------- Video ---------");
-    Logging::trace(nullptr, "Codec             : %1", get_codec_name(ffmpeg_format[0].video_codec(), true));
+    Logging::trace(nullptr, "Codec             : %1", get_codec_name(ffmpeg_format[FORMAT::VIDEO].video_codec(), true));
     Logging::trace(nullptr, "Bitrate           : %1", format_bitrate(params.m_videobitrate).c_str());
     Logging::trace(nullptr, "Dimension         : width=%1 height=%2", format_number(params.m_videowidth).c_str(), format_number(params.m_videoheight).c_str());
     Logging::trace(nullptr, "Deinterlace       : %1", params.m_deinterlace ? "yes" : "no");
@@ -2473,7 +2473,7 @@ int main(int argc, char *argv[])
     // Check if sample format is supported
     for (const FFmpegfs_Format & fmt : ffmpeg_format)
     {
-        if (fmt.filetype() != FILETYPE_UNKNOWN && !fmt.is_sample_fmt_supported())
+        if (fmt.filetype() != FILETYPE::UNKNOWN && !fmt.is_sample_fmt_supported())
         {
             std::fprintf(stderr, "INVALID PARAMETER: %s does not support the sample format %s\n\n", fmt.desttype().c_str(), get_sampleformat_text(params.m_sample_fmt).c_str());
             std::fprintf(stderr, "Supported formats: %s\n\n", fmt.sample_fmt_list().c_str());
@@ -2484,7 +2484,7 @@ int main(int argc, char *argv[])
     // Check if audio or video codec is supported
     for (const FFmpegfs_Format & fmt : ffmpeg_format)
     {
-        if (fmt.filetype() != FILETYPE_UNKNOWN)
+        if (fmt.filetype() != FILETYPE::UNKNOWN)
         {
             if (params.m_audio_codec != AV_CODEC_ID_NONE && !fmt.is_audio_codec_supported(params.m_audio_codec))
             {

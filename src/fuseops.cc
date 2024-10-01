@@ -89,17 +89,17 @@ static int                          ffmpegfs_release(const char *path, struct fu
 static void *                       ffmpegfs_init(struct fuse_conn_info *conn);
 static void                         ffmpegfs_destroy(__attribute__((unused)) void * p);
 
-static FILENAME_MAP         filenames;          /**< @brief Map files to virtual files */
-static RFILENAME_MAP        rfilenames;         /**< @brief Reverse map virtual files to real files */
-static std::vector<char>    script_file;        /**< @brief Buffer for the virtual script if enabled */
+static FILENAME_MAP             filenames;          /**< @brief Map files to virtual files */
+static RFILENAME_MAP            rfilenames;         /**< @brief Reverse map virtual files to real files */
+static std::vector<char>        script_file;        /**< @brief Buffer for the virtual script if enabled */
 
-static struct sigaction     oldHandler;         /**< @brief Saves old SIGINT handler to restore on shutdown */
+static struct sigaction         oldHandler;         /**< @brief Saves old SIGINT handler to restore on shutdown */
 
-bool                        docker_client;      /**< @brief True if running inside a Docker container */
+bool                            docker_client;      /**< @brief True if running inside a Docker container */
 
-fuse_operations             ffmpegfs_ops;       /**< @brief FUSE file system operations */
+fuse_operations                 ffmpegfs_ops;       /**< @brief FUSE file system operations */
 
-thread_pool*                tp;                 /**< @brief Thread pool object */
+std::unique_ptr<thread_pool>    tp;                 /**< @brief Thread pool object */
 
 /**
  * @brief Check if a file should be treated passthrough, i.e. bitmaps etc.
@@ -1370,7 +1370,7 @@ static void *ffmpegfs_init(struct fuse_conn_info *conn)
 
     if (tp == nullptr)
     {
-        tp = new(std::nothrow)thread_pool(params.m_max_threads);
+        tp = std::make_unique<thread_pool>(params.m_max_threads);
     }
 
     tp->init();
@@ -1395,7 +1395,7 @@ static void ffmpegfs_destroy(__attribute__((unused)) void * p)
     if (tp != nullptr)
     {
         tp->tear_down();
-        save_delete(&tp);
+        tp.reset();
     }
 
     script_file.clear();
@@ -1804,7 +1804,7 @@ int load_path(const std::string & path, const struct stat *statbuf, void *buf, f
 
             std::string cachefile;
 
-            Buffer::make_cachefile_name(cachefile, virtualfile->m_destfile, params.current_format(virtualfile)->fileext(), false);
+            Buffer::make_cachefile_name(&cachefile, virtualfile->m_destfile, params.current_format(virtualfile)->fileext(), false);
 
             struct stat stbuf2;
             if (!lstat(cachefile.c_str(), &stbuf2))
@@ -2056,7 +2056,7 @@ static int make_hls_fileset(void * buf, fuse_fill_dir_t filler, const std::strin
             filename.append(".");
             filename.append(segment_name);
 
-            Buffer::make_cachefile_name(cachefile, filename, params.current_format(virtualfile)->fileext(), false);
+            Buffer::make_cachefile_name(&cachefile, filename, params.current_format(virtualfile)->fileext(), false);
 
             if (!lstat(cachefile.c_str(), &stbuf))
             {

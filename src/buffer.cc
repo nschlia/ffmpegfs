@@ -198,7 +198,7 @@ bool Buffer::init(bool erase_cache)
 
                 for (uint32_t segment_no = 1; segment_no <= virtualfile()->get_segment_count(); segment_no++)
                 {
-                    make_cachefile_name(m_ci[segment_no - 1].m_cachefile, filename() + "." + make_filename(segment_no, params.current_format(virtualfile())->fileext()), params.current_format(virtualfile())->fileext(), false);
+                    make_cachefile_name(&m_ci[segment_no - 1].m_cachefile, filename() + "." + make_filename(segment_no, params.current_format(virtualfile())->fileext()), params.current_format(virtualfile())->fileext(), false);
                 }
             }
             else
@@ -213,11 +213,11 @@ bool Buffer::init(bool erase_cache)
             // All other formats: create just a single segment.
             m_ci.resize(1);
 
-            make_cachefile_name(m_ci[0].m_cachefile, filename(), params.current_format(virtualfile())->fileext(), false);
+            make_cachefile_name(&m_ci[0].m_cachefile, filename(), params.current_format(virtualfile())->fileext(), false);
             if ((virtualfile()->m_flags & VIRTUALFLAG_FRAME))
             {
                 // Create extra index cash for frame sets only
-                make_cachefile_name(m_ci[0].m_cachefile_idx, filename(), params.current_format(virtualfile())->fileext(), true);
+                make_cachefile_name(&m_ci[0].m_cachefile_idx, filename(), params.current_format(virtualfile())->fileext(), true);
             }
         }
 
@@ -225,7 +225,7 @@ bool Buffer::init(bool erase_cache)
         m_cur_ci = &m_ci[0];
 
         // Create the path to the cache file. All paths are the same, so this is required only once.
-        char *cachefiletmp = new_strdup(m_ci[0].m_cachefile);
+        std::shared_ptr<char[]> cachefiletmp = new_strdup(m_ci[0].m_cachefile);
 
         if (cachefiletmp == nullptr)
         {
@@ -234,15 +234,12 @@ bool Buffer::init(bool erase_cache)
             throw false;
         }
 
-        if (mktree(dirname(cachefiletmp), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH) && errno != EEXIST)
+        if (mktree(dirname(cachefiletmp.get()), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH) && errno != EEXIST)
         {
             Logging::error(m_ci[0].m_cachefile, "Error creating cache directory: (%1) %2", errno, strerror(errno));
-            delete [] cachefiletmp;
             throw false;
         }
         errno = 0;  // reset EEXIST, error can safely be ignored here
-
-        delete [] cachefiletmp;
 
 #if __cplusplus >= 202002L
         // C++20 (and later) code
@@ -975,24 +972,24 @@ const std::string & Buffer::cachefile(uint32_t segment_no) const
     return ci->m_cachefile;
 }
 
-const std::string & Buffer::make_cachefile_name(std::string & cachefile, const std::string & filename, const std::string & fileext, bool is_idx)
+const std::string & Buffer::make_cachefile_name(std::string * cachefile, const std::string & filename, const std::string & fileext, bool is_idx)
 {
     transcoder_cache_path(cachefile);
 
-    cachefile += params.m_mountpath;
-    cachefile += filename;
+    *cachefile += params.m_mountpath;
+    *cachefile += filename;
 
     if (is_idx)
     {
-        cachefile += ".idx.";
+        *cachefile += ".idx.";
     }
     else
     {
-        cachefile += ".cache.";
+        *cachefile += ".cache.";
     }
-    cachefile += fileext;
+    *cachefile += fileext;
 
-    return cachefile;
+    return *cachefile;
 }
 
 bool Buffer::remove_file(const std::string & filename)

@@ -57,14 +57,14 @@ typedef struct THREAD_DATA
     std::condition_variable m_thread_running_cond;          /**< @brief Condition when thread is running */
     std::atomic_bool        m_thread_running_lock_guard;    /**< @brief Lock guard to avoid spurious or missed unlocks */
     bool                    m_initialised;                  /**< @brief True when this object is completely initialised */
-    void *                  m_arg;                          /**< @brief Opaque argument pointer. Will not be freed by child thread. */
+    Cache_Entry *           m_cache_entry;                  /**< @brief Cache entry object. Will not be freed by child thread. */
 } THREAD_DATA;
 
-static Cache *              cache;                          /**< @brief Global cache manager object */
-static std::atomic_bool     thread_exit;                    /**< @brief Used for shutdown: if true, forcibly exit all threads */
+static std::unique_ptr<Cache>   cache;                      /**< @brief Global cache manager object */
+static std::atomic_bool         thread_exit;                /**< @brief Used for shutdown: if true, forcibly exit all threads */
 
-static bool transcode(THREAD_DATA *thread_data, Cache_Entry *cache_entry, FFmpeg_Transcoder & transcoder, bool *timeout);
-static int  transcoder_thread(THREAD_DATA *thread_data);
+static bool transcode(std::shared_ptr<THREAD_DATA> thread_data, Cache_Entry *cache_entry, FFmpeg_Transcoder & transcoder, bool *timeout);
+static int  transcoder_thread(std::shared_ptr<THREAD_DATA> thread_data);
 static bool transcode_until(Cache_Entry* cache_entry, size_t offset, size_t len, uint32_t segment_no);
 static int  transcode_finish(Cache_Entry* cache_entry, FFmpeg_Transcoder & transcoder);
 
@@ -153,7 +153,7 @@ static bool transcode_until(Cache_Entry* cache_entry, size_t offset, size_t len,
  * @param[in] transcoder - Current FFmpeg_Transcoder object.
  * @return On success, returns 0; on error, a negative AVERROR value.
  */
-static int transcode_finish(Cache_Entry* cache_entry, FFmpeg_Transcoder &transcoder)
+static int transcode_finish(Cache_Entry* cache_entry, FFmpeg_Transcoder & transcoder)
 {
     int res = transcoder.encode_finish();
     if (res < 0)
@@ -192,38 +192,38 @@ static int transcode_finish(Cache_Entry* cache_entry, FFmpeg_Transcoder &transco
     return 0;
 }
 
-void transcoder_cache_path(std::string & path)
+void transcoder_cache_path(std::string * path)
 {
     if (params.m_cachepath.size())
     {
-        path = params.m_cachepath;
+        *path = params.m_cachepath;
     }
     else
     {
         if (geteuid() == 0)
         {
             // Running as root
-            path = "/var/cache";
+            *path = "/var/cache";
         }
         else
         {
             // Running as regular user, put cache in home dir
             if (const char* cache_home = std::getenv("XDG_CACHE_HOME"))
             {
-                path = cache_home;
+                *path = cache_home;
             }
             else
             {
-                expand_path(&path, "~/.cache");
+                expand_path(path, "~/.cache");
             }
         }
     }
 
-    append_sep(&path);
+    append_sep(path);
 
-    path += PACKAGE;
+    *path += PACKAGE;
 
-    append_sep(&path);
+    append_sep(path);
 }
 
 bool transcoder_init()
@@ -231,7 +231,7 @@ bool transcoder_init()
     if (cache == nullptr)
     {
         Logging::debug(nullptr, "Creating new media file cache.");
-        cache = new(std::nothrow) Cache;
+        cache = std::make_unique<Cache>();
         if (cache == nullptr)
         {
             Logging::error(nullptr, "Unable to create new media file cache. Out of memory.");
@@ -250,13 +250,11 @@ bool transcoder_init()
 
 void transcoder_free()
 {
-    Cache *p1 = cache;
-    cache = nullptr;
-
-    if (p1 != nullptr)
+    if (cache != nullptr)
     {
+        cache.reset();
+
         Logging::debug(nullptr, "Deleting media file cache.");
-        delete p1;
     }
 }
 
@@ -407,10 +405,10 @@ Cache_Entry* transcoder_new(LPVIRTUALFILE virtualfile, bool begin_transcode)
                 // Must decode the file, otherwise simply use cache
                 cache_entry->m_is_decoding                  = true;
 
-                THREAD_DATA* thread_data                    = new(std::nothrow) THREAD_DATA;
+                std::shared_ptr<THREAD_DATA> thread_data = std::make_unique<THREAD_DATA>();
 
                 thread_data->m_initialised                  = false;
-                thread_data->m_arg                          = cache_entry;
+                thread_data->m_cache_entry                  = cache_entry;
                 thread_data->m_thread_running_lock_guard    = false;
 
                 {
@@ -774,7 +772,7 @@ bool transcoder_cache_clear()
  * @param[out] timeout - True if transcoding timed out, false if not
  * @return On success, returns true; on error, returns false
  */
-static bool transcode(THREAD_DATA *thread_data, Cache_Entry *cache_entry, FFmpeg_Transcoder & transcoder, bool *timeout)
+static bool transcode(std::shared_ptr<THREAD_DATA> thread_data, Cache_Entry *cache_entry, FFmpeg_Transcoder & transcoder, bool *timeout)
 {
     int averror = 0;
     int syserror = 0;
@@ -828,7 +826,7 @@ static bool transcode(THREAD_DATA *thread_data, Cache_Entry *cache_entry, FFmpeg
             throw (static_cast<int>(errno));
         }
 
-        averror = transcoder.open_output_file(cache_entry->m_buffer);
+        averror = transcoder.open_output_file(cache_entry->m_buffer.get());
         if (averror < 0)
         {
             throw (static_cast<int>(errno));
@@ -995,12 +993,12 @@ static bool transcode(THREAD_DATA *thread_data, Cache_Entry *cache_entry, FFmpeg
 
 /**
  * @brief Transcoding thread
- * @param[in] thread_data - Corresponding Cache_Entry object.
+ * @param[in] thread_data - Corresponding thread data object.
  * @returns Returns 0 on success; or errno code on error.
  */
-static int transcoder_thread(THREAD_DATA *thread_data)
+static int transcoder_thread(std::shared_ptr<THREAD_DATA> thread_data)
 {
-    Cache_Entry *cache_entry = static_cast<Cache_Entry *>(thread_data->m_arg);
+    Cache_Entry * cache_entry = thread_data->m_cache_entry;
     FFmpeg_Transcoder transcoder;
     bool timeout = false;
     bool success = true;
@@ -1086,7 +1084,7 @@ static int transcoder_thread(THREAD_DATA *thread_data)
         cache->closeio(&cache_entry, timeout ? CACHE_CLOSE_DELETE : CACHE_CLOSE_NOOPT);
     }
 
-    delete thread_data;
+    thread_data.reset();
 
     errno = _errno;
 

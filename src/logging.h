@@ -445,7 +445,7 @@ protected:
     friend Logger Log(LOGLEVEL loglevel, const std::string & filename);
     friend Logger;                                                          /**< @brief Make logger class our friend */
 
-    static Logging*                 m_logging;                              /**< @brief Reference to self, Logging is a singleton */
+    static std::unique_ptr<Logging> m_logging;                              /**< @brief Reference to self, Logging is a singleton */
     static std::recursive_mutex     m_mutex;                                /**< @brief Access mutex */
     std::ofstream                   m_logfile;                              /**< @brief Log file object for writing to disk */
     const LOGLEVEL                  m_max_level;                            /**< @brief The maximum level of log output to write. */

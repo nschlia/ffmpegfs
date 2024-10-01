@@ -59,9 +59,9 @@
 #define COLOUR_WHITE        "\033[1;37m"        /**< @brief ANSI ESC for white foreground */
 #define COLOUR_RESET        "\033[0m"           /**< @brief ANSI ESC to reset the foreground colour */
 
-Logging* Logging::m_logging;
+std::unique_ptr<Logging>    Logging::m_logging;
 
-std::recursive_mutex Logging::m_mutex;
+std::recursive_mutex        Logging::m_mutex;
 
 const std::map<Logging::LOGLEVEL, int> Logging::Logger::m_syslog_level_map =
 {
@@ -154,7 +154,7 @@ Logging::Logger::~Logger()
         {
             std::string cachepath;
 
-            transcoder_cache_path(cachepath);
+            transcoder_cache_path(&cachepath);
 
             if (replace_start(&filename, cachepath + params.m_mountpath + params.m_basepath))
             {
@@ -215,7 +215,7 @@ bool Logging::init_logging(const std::string & logfile, LOGLEVEL max_level, bool
         return false;
     }
 
-    m_logging = new(std::nothrow) Logging(logfile, max_level, to_stderr, to_syslog);
+    m_logging = std::make_unique<Logging>(logfile, max_level, to_stderr, to_syslog);
     if (m_logging == nullptr)
     {
         return false;   // Out of memory...

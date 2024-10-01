@@ -60,35 +60,35 @@ FileIO::FileIO()
 
 }
 
-FileIO * FileIO::alloc(VIRTUALTYPE type)
+std::shared_ptr<FileIO> FileIO::alloc(VIRTUALTYPE type)
 {
     switch (type)
     {
     case VIRTUALTYPE::DISK:
     {
-        return new(std::nothrow) DiskIO;
+        return std::make_shared<DiskIO>();
     }
 #ifdef USE_LIBVCD
     case VIRTUALTYPE::VCD:
     {
-        return new(std::nothrow) VcdIO;
+        return std::make_shared<VcdIO>();
     }
 #endif // USE_LIBVCD
 #ifdef USE_LIBDVD
     case VIRTUALTYPE::DVD:
     {
-        return new(std::nothrow) DvdIO;
+        return std::make_shared<DvdIO>();
     }
 #endif // USE_LIBDVD
 #ifdef USE_LIBBLURAY
     case VIRTUALTYPE::BLURAY:
     {
-        return new(std::nothrow) BlurayIO;
+        return std::make_shared<BlurayIO>();
     }
 #endif // USE_LIBBLURAY
     default:
     {
-        return new(std::nothrow) DiskIO;
+        return std::make_shared<DiskIO>();
     }
     }
 }

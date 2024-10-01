@@ -50,7 +50,7 @@ Cache_Entry::Cache_Entry(Cache *owner, LPVIRTUALFILE virtualfile)
     m_cache_info.m_desttype[0] = '\0';
     strncat(m_cache_info.m_desttype.data(), params.current_format(virtualfile)->desttype().c_str(), m_cache_info.m_desttype.size() - 1);
 
-    m_buffer = new(std::nothrow) Buffer;
+    m_buffer = std::make_unique<Buffer>();
 
     if (m_buffer != nullptr)
     {
@@ -65,8 +65,6 @@ Cache_Entry::Cache_Entry(Cache *owner, LPVIRTUALFILE virtualfile)
 Cache_Entry::~Cache_Entry()
 {
     std::unique_lock<std::recursive_mutex> lock_active_mutex(m_active_mutex);
-
-    delete m_buffer;
 
     unlock();
 

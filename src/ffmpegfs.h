@@ -176,14 +176,14 @@ extern struct FFMPEGFS_PARAMS
      * @brief Check for smart transcode mode
      * @return true if smart transcode is active, false if not
      */
-    bool                smart_transcode() const;
+    bool                    smart_transcode() const;
 
     /**
      * @brief Get FFmpegfs_Format for a virtual file.
      * @param[in] virtualfile - VIRTUALFILE struct of a file.
      * @return On success, returns pointer to format. On error, returns nullptr.
      */
-    const FFmpegfs_Format *current_format(LPCVIRTUALFILE virtualfile) const;
+    const FFmpegfs_Format * current_format(LPCVIRTUALFILE virtualfile) const;
 
     /**
      * @brief Make copy from other FFMPEGFS_PARAMS object.
@@ -256,8 +256,8 @@ extern struct FFMPEGFS_PARAMS
     int                     m_decoding_errors;              /**< @brief Break transcoding on decoding error */
     int                     m_min_dvd_chapter_duration;     /**< @brief Min. DVD chapter duration. Shorter chapters will be ignored. */
     int                     m_oldnamescheme;                /**< @brief Use old output name scheme, can create duplicate filenames */
-    MATCHVEC*               m_include_extensions;           /**< @brief Set of extensions to include. If empty, include all. Must be a pointer as the fuse API cannot handle advanced c++ objects. */
-    MATCHVEC*               m_hide_extensions;              /**< @brief Set of extensions to block/hide. Must be a pointer as the fuse API cannot handle advanced c++ objects. */
+    std::unique_ptr<MATCHVEC>   m_include_extensions;           /**< @brief Set of extensions to include. If empty, include all. Must be a pointer as the fuse API cannot handle advanced c++ objects. */
+    std::unique_ptr<MATCHVEC>   m_hide_extensions;              /**< @brief Set of extensions to block/hide. Must be a pointer as the fuse API cannot handle advanced c++ objects. */
     // Experimental options
     int                     m_win_smb_fix;                  /**< @brief Experimental Windows fix for access to EOF at file open */
 } params;                                                   /**< @brief Command line parameters */
@@ -275,7 +275,7 @@ class thread_pool;
 /**
  * @brief Thread pool object
  */
-extern thread_pool*     tp;
+extern std::unique_ptr<thread_pool> tp;
 
 /**
  * @brief Initialise FUSE operation structure.
@@ -287,7 +287,7 @@ void            init_fuse_ops();
  * @brief Get transcoder cache path.
  * @param[out] path - Path to transcoder cache.
  */
-void            transcoder_cache_path(std::string & path);
+void            transcoder_cache_path(std::string *path);
 /**
  * @brief Initialise transcoder, create cache.
  * @return Returns true on success; false on error. Check errno for details.

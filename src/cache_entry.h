@@ -268,7 +268,7 @@ protected:
     LPVIRTUALFILE           m_virtualfile;                  /**< @brief Underlying virtual file object */
 
 public:
-    Buffer *                m_buffer;                       /**< @brief Buffer object */
+    std::unique_ptr<Buffer> m_buffer;                       /**< @brief Buffer object */
     std::atomic_bool        m_is_decoding;                  /**< @brief true while file is decoding */
     std::recursive_mutex    m_active_mutex;                 /**< @brief Mutex while thread is active */
     std::recursive_mutex    m_restart_mutex;               	/**< @brief Mutex while thread is restarted */

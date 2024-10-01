@@ -215,7 +215,7 @@ public:
      *
      * @return On success, returns 0; on error, a negative AVERROR value.
      */
-    int                         open_input_file(LPVIRTUALFILE virtualfile, FileIO * fio = nullptr);
+    int                         open_input_file(LPVIRTUALFILE virtualfile, std::shared_ptr<FileIO> fio = nullptr);
     /**
      * @brief Open output file. Data will actually be written to buffer and copied by FUSE when accessed.
      * @param[in] buffer - Cache buffer to be written.
@@ -1226,8 +1226,7 @@ protected:
     int                         foreach_subtitle_file(const std::string& search_path, const std::regex& regex, int depth, const std::function<int (const std::string &, const std::optional<std::string> &)> & f);
 
 private:
-    FileIO *                    m_fileio;                       /**< @brief FileIO object of input file */
-    bool                        m_close_fileio;                 /**< @brief If we own the FileIO object, we may close it in the end. */
+    std::shared_ptr<FileIO>     m_fileio;                       /**< @brief FileIO object of input file */
     time_t                      m_mtime;                        /**< @brief Modified time of input file */
     std::recursive_mutex        m_seek_to_fifo_mutex;           /**< @brief Access mutex for seek FIFO */
     std::queue<uint32_t>        m_seek_to_fifo;                 /**< @brief Stack of seek requests. Will be processed FIFO */

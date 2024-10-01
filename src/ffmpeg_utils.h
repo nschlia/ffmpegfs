@@ -590,7 +590,7 @@ const std::string & append_ext(std::string * filepath, const std::string & ext);
  * @param[in] str - String to duplicate.
  * @return Copy of the input string. Remember to delete the allocated memory.
  */
-char *              new_strdup(const std::string & str);
+std::shared_ptr<char[]> new_strdup(const std::string & str);
 /**
  * @brief Get FFmpeg error string for errnum. Internally calls av_strerror().
  * @param[in] errnum - FFmpeg error code.

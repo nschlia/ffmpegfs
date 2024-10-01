@@ -47,6 +47,7 @@
 #include <vector>
 #include <map>
 #include <cstring>
+#include <memory>
 #include <array>
 
 // Disable annoying warnings outside our code
@@ -275,7 +276,7 @@ public:
      * @return Upon successful completion, #FileIO of the requested type.
      * On error, (out of memory), it returns a nullptr.
      */
-    static FileIO *     alloc(VIRTUALTYPE type);
+    static std::shared_ptr<FileIO> alloc(VIRTUALTYPE type);
 
     /**
      * @brief Get type of the virtual file.

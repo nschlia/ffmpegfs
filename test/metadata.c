@@ -21,9 +21,14 @@
 
 #include <stdio.h>
 
+// Disable annoying warnings outside our code
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wconversion"
+#pragma GCC diagnostic ignored "-Wsign-conversion"
 #include <libavformat/avformat.h>
 #include <libavutil/dict.h>
 #include <libavutil/ffversion.h>
+#pragma GCC diagnostic pop
 
 int main (int argc, char **argv)
 {

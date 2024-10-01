@@ -21,14 +21,18 @@
  */
 
 #include <stdio.h>
+
+// Disable annoying warnings outside our code
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wconversion"
+#pragma GCC diagnostic ignored "-Wsign-conversion"
 #include <libavcodec/avcodec.h>
 #include <libavformat/avformat.h>
 #include <libavutil/opt.h>
-
 #include <libswresample/swresample.h>
-
 // For LIBAVFILTER_VERSION_INT
 #include <libavfilter/avfilter.h>
+#pragma GCC diagnostic pop
 
 #include <chromaprint.h>
 

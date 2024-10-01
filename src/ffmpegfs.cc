@@ -138,8 +138,8 @@ FFMPEGFS_PARAMS::FFMPEGFS_PARAMS()
     , m_decoding_errors(0)                              // default: ignore errors
     , m_min_dvd_chapter_duration(1)                     // default: 1 second
     , m_oldnamescheme(0)                                // default: new scheme
-    , m_include_extensions(new MATCHVEC)				// default: empty list
-    , m_hide_extensions(new MATCHVEC)                  	// default: empty list
+    , m_include_extensions(new (std::nothrow) MATCHVEC)	// default: empty list
+    , m_hide_extensions(new (std::nothrow) MATCHVEC)    // default: empty list
     , m_win_smb_fix(1)                                  // default: fix enabled
 {
 }
@@ -1545,7 +1545,7 @@ static int get_hwaccel_dec_blocked(const std::string & arg, HWACCEL_BLOCKED_MAP 
 
         if (*hwaccel_dec_blocked == nullptr)
         {
-            *hwaccel_dec_blocked = new HWACCEL_BLOCKED_MAP;
+            *hwaccel_dec_blocked = new (std::nothrow) HWACCEL_BLOCKED_MAP;
         }
 
         if (!std::getline(data, codec, ':'))

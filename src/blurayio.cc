@@ -71,15 +71,11 @@ size_t BlurayIO::bufsize() const
 
 int BlurayIO::openio(LPVIRTUALFILE virtualfile)
 {
-    const char *bdpath = nullptr;
     uint32_t title_count;
     uint32_t chapter_end;
-    char *keyfile = nullptr;
     BLURAY_TITLE_INFO *ti;
 
     set_virtualfile(virtualfile);
-
-    bdpath = path().c_str();
 
     if (virtualfile != nullptr)
     {
@@ -100,32 +96,33 @@ int BlurayIO::openio(LPVIRTUALFILE virtualfile)
 
     chapter_end = m_chapter_idx + 1;
 
-    Logging::debug(bdpath, "Opening input Blu-ray.");
+    Logging::debug(path(), "Opening input Blu-ray.");
 
-    m_bd = bd_open(bdpath, keyfile);
+    m_bd = bd_open(path().c_str(), nullptr);
+
     if (m_bd == nullptr)
     {
-        Logging::error(bdpath, "Failed to open disc.");
+        Logging::error(path(), "Failed to open disc.");
         return 1;
     }
 
     title_count = bd_get_titles(m_bd, TITLES_RELEVANT, 0);
     if (title_count == 0)
     {
-        Logging::error(bdpath, "There were no titles found.");
+        Logging::error(path(), "There were no titles found.");
         return 1;
     }
 
     if (!bd_select_title(m_bd, m_title_idx))
     {
-        Logging::error(bdpath, "The Blu-ray title no. %1 could not be opened.", m_title_idx);
+        Logging::error(path(), "The Blu-ray title no. %1 could not be opened.", m_title_idx);
         return 1;
     }
     ti = bd_get_title_info(m_bd, m_title_idx, m_angle_idx);
 
     if (m_angle_idx >= ti->angle_count)
     {
-        Logging::warning(bdpath, "The angle %1 is greater than the angle count %2. Using angle 1.", m_angle_idx + 1, ti->angle_count);
+        Logging::warning(path(), "The angle %1 is greater than the angle count %2. Using angle 1.", m_angle_idx + 1, ti->angle_count);
         m_angle_idx = 0;
     }
 
@@ -133,7 +130,7 @@ int BlurayIO::openio(LPVIRTUALFILE virtualfile)
 
     if (m_chapter_idx >= ti->chapter_count)
     {
-        Logging::error(bdpath, "The first chapter %1 is greater than the chapter count %2.", m_chapter_idx + 1, ti->chapter_count);
+        Logging::error(path(), "The first chapter %1 is greater than the chapter count %2.", m_chapter_idx + 1, ti->chapter_count);
         return 1;
     }
 

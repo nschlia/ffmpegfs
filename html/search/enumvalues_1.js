@@ -1,9 +1,5 @@
 var searchData=
 [
-  ['decoder_5feof_0',['DECODER_EOF',['../ffmpeg__transcoder_8h.html#ac7b7ff5fbecde5342c9a7b05c2b6af7ca708747b91ea0c8d656d7e87c9a194c28',1,'ffmpeg_transcoder.h']]],
-  ['decoder_5ferror_1',['DECODER_ERROR',['../ffmpeg__transcoder_8h.html#ac7b7ff5fbecde5342c9a7b05c2b6af7ca2a40c8026f25eaa7d935a885d318b64f',1,'ffmpeg_transcoder.h']]],
-  ['decoder_5fsuccess_2',['DECODER_SUCCESS',['../ffmpeg__transcoder_8h.html#ac7b7ff5fbecde5342c9a7b05c2b6af7ca6ab6f2908dbad682ce39b38dcbbb7332',1,'ffmpeg_transcoder.h']]],
-  ['dsitype_5fcontinue_3',['DSITYPE_CONTINUE',['../classDvdIO.html#a67e523c39d9270988f2cbc1955335577a8fbb498376479712618aa936a8abd8c6',1,'DvdIO']]],
-  ['dsitype_5feof_5fchapter_4',['DSITYPE_EOF_CHAPTER',['../classDvdIO.html#a67e523c39d9270988f2cbc1955335577a4946363932f4e72b51a1e87d1680e07e',1,'DvdIO']]],
-  ['dsitype_5feof_5ftitle_5',['DSITYPE_EOF_TITLE',['../classDvdIO.html#a67e523c39d9270988f2cbc1955335577a7ea3e954f638d9079e0a034824e14c37',1,'DvdIO']]]
+  ['bluray_0',['BLURAY',['../fileio_8h.html#a1199d38534b11312b0210e527499a805a8c364e35c7d38a14177407811e7e0ac2',1,'fileio.h']]],
+  ['buffer_1',['BUFFER',['../fileio_8h.html#a1199d38534b11312b0210e527499a805a17de626bcae5109bb2f7a66dfc4a8a1d',1,'fileio.h']]]
 ];

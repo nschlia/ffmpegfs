@@ -229,9 +229,9 @@ Protected Attributes</h2></td></tr>
 <tr class="memitem:a93531af779cb809f16162a26053667d8"><td class="memItemLeft" align="right" valign="top">unsigned&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classBlurayIO.html#a93531af779cb809f16162a26053667d8">m_angle_idx</a></td></tr>
 <tr class="memdesc:a93531af779cb809f16162a26053667d8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Selected angle index (angle number -1)  <a href="classBlurayIO.html#a93531af779cb809f16162a26053667d8">More...</a><br /></td></tr>
 <tr class="separator:a93531af779cb809f16162a26053667d8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6c5b36972e9fbbc3a23d3aaeffe2e72a"><td class="memItemLeft" align="right" valign="top">uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classBlurayIO.html#a6c5b36972e9fbbc3a23d3aaeffe2e72a">m_data</a> [192 *1024]</td></tr>
-<tr class="memdesc:a6c5b36972e9fbbc3a23d3aaeffe2e72a"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classBuffer.html" title="The Buffer class.">Buffer</a> for <a class="el" href="classBlurayIO.html#a061898e98c2ea43871b4637b5ea2454d" title="Read data from file.">readio()</a> data.  <a href="classBlurayIO.html#a6c5b36972e9fbbc3a23d3aaeffe2e72a">More...</a><br /></td></tr>
-<tr class="separator:a6c5b36972e9fbbc3a23d3aaeffe2e72a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a09a215288fc8afa7c94fc59c0792fad4"><td class="memItemLeft" align="right" valign="top">std::array&lt; uint8_t, 192 *1024 &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classBlurayIO.html#a09a215288fc8afa7c94fc59c0792fad4">m_data</a></td></tr>
+<tr class="memdesc:a09a215288fc8afa7c94fc59c0792fad4"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classBuffer.html" title="The Buffer class.">Buffer</a> for <a class="el" href="classBlurayIO.html#a061898e98c2ea43871b4637b5ea2454d" title="Read data from file.">readio()</a> data.  <a href="classBlurayIO.html#a09a215288fc8afa7c94fc59c0792fad4">More...</a><br /></td></tr>
+<tr class="separator:a09a215288fc8afa7c94fc59c0792fad4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a34be6f6e276f4f59eef2029234ee2af0"><td class="memItemLeft" align="right" valign="top">int64_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classBlurayIO.html#a34be6f6e276f4f59eef2029234ee2af0">m_duration</a></td></tr>
 <tr class="memdesc:a34be6f6e276f4f59eef2029234ee2af0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Track/chapter duration, in AV_TIME_BASE fractional seconds.  <a href="classBlurayIO.html#a34be6f6e276f4f59eef2029234ee2af0">More...</a><br /></td></tr>
 <tr class="separator:a34be6f6e276f4f59eef2029234ee2af0"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -245,9 +245,9 @@ Private Member Functions</h2></td></tr>
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="inherited" name="inherited"></a>
 Additional Inherited Members</h2></td></tr>
 <tr class="inherit_header pub_static_methods_classFileIO"><td colspan="2" onclick="javascript:toggleInherit('pub_static_methods_classFileIO')"><img src="closed.png" alt="-"/>&#160;Static Public Member Functions inherited from <a class="el" href="classFileIO.html">FileIO</a></td></tr>
-<tr class="memitem:ab67ef47f0295909426a82d9fb29afa9e inherit pub_static_methods_classFileIO"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="classFileIO.html">FileIO</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFileIO.html#ab67ef47f0295909426a82d9fb29afa9e">alloc</a> (<a class="el" href="fileio_8h.html#a1199d38534b11312b0210e527499a805">VIRTUALTYPE</a> <a class="el" href="classFileIO.html#a6b56f0b1fcf994ff403335463d0eca9b">type</a>)</td></tr>
-<tr class="memdesc:ab67ef47f0295909426a82d9fb29afa9e inherit pub_static_methods_classFileIO"><td class="mdescLeft">&#160;</td><td class="mdescRight">Allocate the correct object for <a class="el" href="classFileIO.html#a6b56f0b1fcf994ff403335463d0eca9b" title="Get type of the virtual file.">type()</a>.  <a href="classFileIO.html#ab67ef47f0295909426a82d9fb29afa9e">More...</a><br /></td></tr>
-<tr class="separator:ab67ef47f0295909426a82d9fb29afa9e inherit pub_static_methods_classFileIO"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aba153ce9ccee07c5c038da50ad505e7f inherit pub_static_methods_classFileIO"><td class="memItemLeft" align="right" valign="top">static std::shared_ptr&lt; <a class="el" href="classFileIO.html">FileIO</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFileIO.html#aba153ce9ccee07c5c038da50ad505e7f">alloc</a> (<a class="el" href="fileio_8h.html#a1199d38534b11312b0210e527499a805">VIRTUALTYPE</a> <a class="el" href="classFileIO.html#a6b56f0b1fcf994ff403335463d0eca9b">type</a>)</td></tr>
+<tr class="memdesc:aba153ce9ccee07c5c038da50ad505e7f inherit pub_static_methods_classFileIO"><td class="mdescLeft">&#160;</td><td class="mdescRight">Allocate the correct object for <a class="el" href="classFileIO.html#a6b56f0b1fcf994ff403335463d0eca9b" title="Get type of the virtual file.">type()</a>.  <a href="classFileIO.html#aba153ce9ccee07c5c038da50ad505e7f">More...</a><br /></td></tr>
+<tr class="separator:aba153ce9ccee07c5c038da50ad505e7f inherit pub_static_methods_classFileIO"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pro_methods_classFileIO"><td colspan="2" onclick="javascript:toggleInherit('pro_methods_classFileIO')"><img src="closed.png" alt="-"/>&#160;Protected Member Functions inherited from <a class="el" href="classFileIO.html">FileIO</a></td></tr>
 <tr class="memitem:a6596a9c65d31ef13a09d1fa162e76bba inherit pro_methods_classFileIO"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFileIO.html#a6596a9c65d31ef13a09d1fa162e76bba">set_virtualfile</a> (<a class="el" href="fileio_8h.html#ae8356f209b2b74cc385a8d7551f1f27a">LPVIRTUALFILE</a> <a class="el" href="classFileIO.html#a2e330b909423f2118b8482732f50986a">virtualfile</a>)</td></tr>
 <tr class="memdesc:a6596a9c65d31ef13a09d1fa162e76bba inherit pro_methods_classFileIO"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the virtual file object.  <a href="classFileIO.html#a6596a9c65d31ef13a09d1fa162e76bba">More...</a><br /></td></tr>
@@ -256,7 +256,7 @@ Additional Inherited Members</h2></td></tr>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p >Blu-ray I/O class. </p>
 
-<p class="definition">Definition at line <a class="el" href="blurayio_8h_source.html#l00048">48</a> of file <a class="el" href="blurayio_8h_source.html">blurayio.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="blurayio_8h_source.html#l00050">50</a> of file <a class="el" href="blurayio_8h_source.html">blurayio.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a8aad79c35d668e0d6ddf2d07f5257b98" name="a8aad79c35d668e0d6ddf2d07f5257b98"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a8aad79c35d668e0d6ddf2d07f5257b98">&#9670;&nbsp;</a></span>BlurayIO()</h2>
@@ -283,9 +283,9 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Create <a class="el" href="classBlurayIO.html" title="Blu-ray I/O class.">BlurayIO</a> object. </p>
 
-<p class="definition">Definition at line <a class="el" href="blurayio_8cc_source.html#l00040">40</a> of file <a class="el" href="blurayio_8cc_source.html">blurayio.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="blurayio_8cc_source.html#l00039">39</a> of file <a class="el" href="blurayio_8cc_source.html">blurayio.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="blurayio_8h_source.html#l00156">m_data</a>.</p>
+<p class="reference">References <a class="el" href="blurayio_8h_source.html#l00158">m_data</a>.</p>
 
 </div>
 </div>
@@ -314,9 +314,9 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Free <a class="el" href="classBlurayIO.html" title="Blu-ray I/O class.">BlurayIO</a> object. </p>
 
-<p class="definition">Definition at line <a class="el" href="blurayio_8cc_source.html#l00058">58</a> of file <a class="el" href="blurayio_8cc_source.html">blurayio.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="blurayio_8cc_source.html#l00057">57</a> of file <a class="el" href="blurayio_8cc_source.html">blurayio.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="blurayio_8cc_source.html#l00310">pvt_close()</a>.</p>
+<p class="reference">References <a class="el" href="blurayio_8cc_source.html#l00306">pvt_close()</a>.</p>
 
 </div>
 </div>
@@ -349,9 +349,9 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Implements <a class="el" href="classFileIO.html#a9ef072d7a6f475c0b185c3912d828342">FileIO</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="blurayio_8cc_source.html#l00068">68</a> of file <a class="el" href="blurayio_8cc_source.html">blurayio.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="blurayio_8cc_source.html#l00067">67</a> of file <a class="el" href="blurayio_8cc_source.html">blurayio.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="blurayio_8h_source.html#l00156">m_data</a>.</p>
+<p class="reference">References <a class="el" href="blurayio_8h_source.html#l00158">m_data</a>.</p>
 
 </div>
 </div>
@@ -382,9 +382,9 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Implements <a class="el" href="classFileIO.html#a68b26eb8099ac2b8b8d56d247b775d3a">FileIO</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="blurayio_8cc_source.html#l00305">305</a> of file <a class="el" href="blurayio_8cc_source.html">blurayio.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="blurayio_8cc_source.html#l00301">301</a> of file <a class="el" href="blurayio_8cc_source.html">blurayio.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="blurayio_8cc_source.html#l00310">pvt_close()</a>.</p>
+<p class="reference">References <a class="el" href="blurayio_8cc_source.html#l00306">pvt_close()</a>.</p>
 
 </div>
 </div>
@@ -416,9 +416,9 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Implements <a class="el" href="classFileIO.html#aaffdefd15fa7c5e54a9733b1770c8bcd">FileIO</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="blurayio_8cc_source.html#l00240">240</a> of file <a class="el" href="blurayio_8cc_source.html">blurayio.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="blurayio_8cc_source.html#l00236">236</a> of file <a class="el" href="blurayio_8cc_source.html">blurayio.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="blurayio_8h_source.html#l00158">m_duration</a>.</p>
+<p class="reference">References <a class="el" href="blurayio_8h_source.html#l00160">m_duration</a>.</p>
 
 </div>
 </div>
@@ -450,9 +450,9 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Implements <a class="el" href="classFileIO.html#ad7bf956d13e66a11644c30c4b2b7d0ee">FileIO</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="blurayio_8cc_source.html#l00300">300</a> of file <a class="el" href="blurayio_8cc_source.html">blurayio.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="blurayio_8cc_source.html#l00296">296</a> of file <a class="el" href="blurayio_8cc_source.html">blurayio.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="blurayio_8h_source.html#l00147">m_cur_pos</a>, and <a class="el" href="blurayio_8h_source.html#l00149">m_end_pos</a>.</p>
+<p class="reference">References <a class="el" href="blurayio_8h_source.html#l00149">m_cur_pos</a>, and <a class="el" href="blurayio_8h_source.html#l00151">m_end_pos</a>.</p>
 
 </div>
 </div>
@@ -484,9 +484,9 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Implements <a class="el" href="classFileIO.html#a705727f41def56f0d14c631514d3b115">FileIO</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="blurayio_8cc_source.html#l00235">235</a> of file <a class="el" href="blurayio_8cc_source.html">blurayio.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="blurayio_8cc_source.html#l00231">231</a> of file <a class="el" href="blurayio_8cc_source.html">blurayio.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="blurayio_8h_source.html#l00144">m_errno</a>.</p>
+<p class="reference">References <a class="el" href="blurayio_8h_source.html#l00146">m_errno</a>.</p>
 
 </div>
 </div>
@@ -526,9 +526,9 @@ On error, an nonzero value is returned and errno is set to indicate the error. <
 
 <p>Implements <a class="el" href="classFileIO.html#ac493dfa50e5cbc392c29feaccf4d9ce4">FileIO</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="blurayio_8cc_source.html#l00073">73</a> of file <a class="el" href="blurayio_8cc_source.html">blurayio.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="blurayio_8cc_source.html#l00072">72</a> of file <a class="el" href="blurayio_8cc_source.html">blurayio.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="logging_8h_source.html#l00182">Logging::debug()</a>, <a class="el" href="logging_8h_source.html#l00239">Logging::error()</a>, <a class="el" href="blurayio_8h_source.html#l00154">m_angle_idx</a>, <a class="el" href="fileio_8h_source.html#l00213">VIRTUALFILE::BLURAY_CHAPTER::m_angle_no</a>, <a class="el" href="blurayio_8h_source.html#l00141">m_bd</a>, <a class="el" href="structVIRTUALFILE.html#aa8a92f9f5a8b1be87c4310636aaa3b32">VIRTUALFILE::m_bluray</a>, <a class="el" href="blurayio_8h_source.html#l00153">m_chapter_idx</a>, <a class="el" href="fileio_8h_source.html#l00212">VIRTUALFILE::BLURAY_CHAPTER::m_chapter_no</a>, <a class="el" href="blurayio_8h_source.html#l00158">m_duration</a>, <a class="el" href="fileio_8h_source.html#l00154">VIRTUALFILE::m_duration</a>, <a class="el" href="blurayio_8h_source.html#l00149">m_end_pos</a>, <a class="el" href="blurayio_8h_source.html#l00151">m_full_title</a>, <a class="el" href="fileio_8h_source.html#l00153">VIRTUALFILE::m_full_title</a>, <a class="el" href="blurayio_8h_source.html#l00146">m_rest_pos</a>, <a class="el" href="blurayio_8h_source.html#l00145">m_rest_size</a>, <a class="el" href="blurayio_8h_source.html#l00148">m_start_pos</a>, <a class="el" href="blurayio_8h_source.html#l00152">m_title_idx</a>, <a class="el" href="fileio_8h_source.html#l00210">VIRTUALFILE::BLURAY_CHAPTER::m_title_no</a>, <a class="el" href="fileio_8cc_source.html#l00119">FileIO::path()</a>, <a class="el" href="fileio_8cc_source.html#l00097">FileIO::set_virtualfile()</a>, <a class="el" href="fileio_8cc_source.html#l00114">FileIO::virtualfile()</a>, and <a class="el" href="logging_8h_source.html#l00220">Logging::warning()</a>.</p>
+<p class="reference">References <a class="el" href="logging_8h_source.html#l00182">Logging::debug()</a>, <a class="el" href="logging_8h_source.html#l00239">Logging::error()</a>, <a class="el" href="blurayio_8h_source.html#l00156">m_angle_idx</a>, <a class="el" href="fileio_8h_source.html#l00215">VIRTUALFILE::BLURAY_CHAPTER::m_angle_no</a>, <a class="el" href="blurayio_8h_source.html#l00143">m_bd</a>, <a class="el" href="structVIRTUALFILE.html#aa8a92f9f5a8b1be87c4310636aaa3b32">VIRTUALFILE::m_bluray</a>, <a class="el" href="blurayio_8h_source.html#l00155">m_chapter_idx</a>, <a class="el" href="fileio_8h_source.html#l00214">VIRTUALFILE::BLURAY_CHAPTER::m_chapter_no</a>, <a class="el" href="blurayio_8h_source.html#l00160">m_duration</a>, <a class="el" href="fileio_8h_source.html#l00156">VIRTUALFILE::m_duration</a>, <a class="el" href="blurayio_8h_source.html#l00151">m_end_pos</a>, <a class="el" href="blurayio_8h_source.html#l00153">m_full_title</a>, <a class="el" href="fileio_8h_source.html#l00155">VIRTUALFILE::m_full_title</a>, <a class="el" href="blurayio_8h_source.html#l00148">m_rest_pos</a>, <a class="el" href="blurayio_8h_source.html#l00147">m_rest_size</a>, <a class="el" href="blurayio_8h_source.html#l00150">m_start_pos</a>, <a class="el" href="blurayio_8h_source.html#l00154">m_title_idx</a>, <a class="el" href="fileio_8h_source.html#l00212">VIRTUALFILE::BLURAY_CHAPTER::m_title_no</a>, <a class="el" href="fileio_8cc_source.html#l00118">FileIO::path()</a>, <a class="el" href="fileio_8cc_source.html#l00096">FileIO::set_virtualfile()</a>, <a class="el" href="fileio_8cc_source.html#l00113">FileIO::virtualfile()</a>, and <a class="el" href="logging_8h_source.html#l00220">Logging::warning()</a>.</p>
 
 </div>
 </div>
@@ -557,11 +557,11 @@ On error, an nonzero value is returned and errno is set to indicate the error. <
 
 <p>Close virtual file. Non-virtual version to be safely called from constructor/destructor. </p>
 
-<p class="definition">Definition at line <a class="el" href="blurayio_8cc_source.html#l00310">310</a> of file <a class="el" href="blurayio_8cc_source.html">blurayio.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="blurayio_8cc_source.html#l00306">306</a> of file <a class="el" href="blurayio_8cc_source.html">blurayio.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="blurayio_8h_source.html#l00141">m_bd</a>.</p>
+<p class="reference">References <a class="el" href="blurayio_8h_source.html#l00143">m_bd</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="blurayio_8cc_source.html#l00305">closeio()</a>, and <a class="el" href="blurayio_8cc_source.html#l00058">~BlurayIO()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="blurayio_8cc_source.html#l00301">closeio()</a>, and <a class="el" href="blurayio_8cc_source.html#l00057">~BlurayIO()</a>.</p>
 
 </div>
 </div>
@@ -614,9 +614,9 @@ If at end of file, 0 may be returned but errno not set. <a class="el" href="clas
 
 <p>Implements <a class="el" href="classFileIO.html#a4b032367f4419b94afaad96a2c2d38d1">FileIO</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="blurayio_8cc_source.html#l00175">175</a> of file <a class="el" href="blurayio_8cc_source.html">blurayio.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="blurayio_8cc_source.html#l00171">171</a> of file <a class="el" href="blurayio_8cc_source.html">blurayio.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="logging_8h_source.html#l00239">Logging::error()</a>, <a class="el" href="blurayio_8h_source.html#l00141">m_bd</a>, <a class="el" href="blurayio_8h_source.html#l00147">m_cur_pos</a>, <a class="el" href="blurayio_8h_source.html#l00156">m_data</a>, <a class="el" href="blurayio_8h_source.html#l00149">m_end_pos</a>, <a class="el" href="blurayio_8h_source.html#l00146">m_rest_pos</a>, <a class="el" href="blurayio_8h_source.html#l00145">m_rest_size</a>, <a class="el" href="fileio_8cc_source.html#l00119">FileIO::path()</a>, and <a class="el" href="blurayio_8cc_source.html#l00245">size()</a>.</p>
+<p class="reference">References <a class="el" href="logging_8h_source.html#l00239">Logging::error()</a>, <a class="el" href="blurayio_8h_source.html#l00143">m_bd</a>, <a class="el" href="blurayio_8h_source.html#l00149">m_cur_pos</a>, <a class="el" href="blurayio_8h_source.html#l00158">m_data</a>, <a class="el" href="blurayio_8h_source.html#l00151">m_end_pos</a>, <a class="el" href="blurayio_8h_source.html#l00148">m_rest_pos</a>, <a class="el" href="blurayio_8h_source.html#l00147">m_rest_size</a>, <a class="el" href="fileio_8cc_source.html#l00118">FileIO::path()</a>, and <a class="el" href="blurayio_8cc_source.html#l00241">size()</a>.</p>
 
 </div>
 </div>
@@ -671,9 +671,9 @@ On error, the value -1 is returned and errno is set to indicate the error. </dd>
 
 <p>Implements <a class="el" href="classFileIO.html#a0171ca18c497a09971e22cc5c381304b">FileIO</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="blurayio_8cc_source.html#l00255">255</a> of file <a class="el" href="blurayio_8cc_source.html">blurayio.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="blurayio_8cc_source.html#l00251">251</a> of file <a class="el" href="blurayio_8cc_source.html">blurayio.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="blurayio_8h_source.html#l00141">m_bd</a>, <a class="el" href="blurayio_8h_source.html#l00147">m_cur_pos</a>, <a class="el" href="blurayio_8h_source.html#l00149">m_end_pos</a>, and <a class="el" href="blurayio_8h_source.html#l00148">m_start_pos</a>.</p>
+<p class="reference">References <a class="el" href="blurayio_8h_source.html#l00143">m_bd</a>, <a class="el" href="blurayio_8h_source.html#l00149">m_cur_pos</a>, <a class="el" href="blurayio_8h_source.html#l00151">m_end_pos</a>, and <a class="el" href="blurayio_8h_source.html#l00150">m_start_pos</a>.</p>
 
 </div>
 </div>
@@ -705,11 +705,11 @@ On error, the value -1 is returned and errno is set to indicate the error. </dd>
 
 <p>Implements <a class="el" href="classFileIO.html#a28df61747de114001d67ef6abad2ca7d">FileIO</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="blurayio_8cc_source.html#l00245">245</a> of file <a class="el" href="blurayio_8cc_source.html">blurayio.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="blurayio_8cc_source.html#l00241">241</a> of file <a class="el" href="blurayio_8cc_source.html">blurayio.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="blurayio_8h_source.html#l00149">m_end_pos</a>, and <a class="el" href="blurayio_8h_source.html#l00148">m_start_pos</a>.</p>
+<p class="reference">References <a class="el" href="blurayio_8h_source.html#l00151">m_end_pos</a>, and <a class="el" href="blurayio_8h_source.html#l00150">m_start_pos</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="blurayio_8cc_source.html#l00175">readio()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="blurayio_8cc_source.html#l00171">readio()</a>.</p>
 
 </div>
 </div>
@@ -741,9 +741,9 @@ On error, the value -1 is returned and errno is set to indicate the error. </dd>
 
 <p>Implements <a class="el" href="classFileIO.html#a3a40140f766ff539cde0da854a1a9526">FileIO</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="blurayio_8cc_source.html#l00250">250</a> of file <a class="el" href="blurayio_8cc_source.html">blurayio.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="blurayio_8cc_source.html#l00246">246</a> of file <a class="el" href="blurayio_8cc_source.html">blurayio.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="blurayio_8h_source.html#l00141">m_bd</a>, and <a class="el" href="blurayio_8h_source.html#l00148">m_start_pos</a>.</p>
+<p class="reference">References <a class="el" href="blurayio_8h_source.html#l00143">m_bd</a>, and <a class="el" href="blurayio_8h_source.html#l00150">m_start_pos</a>.</p>
 
 </div>
 </div>
@@ -775,9 +775,9 @@ On error, the value -1 is returned and errno is set to indicate the error. </dd>
 
 <p>Implements <a class="el" href="classFileIO.html#a6b56f0b1fcf994ff403335463d0eca9b">FileIO</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="blurayio_8cc_source.html#l00063">63</a> of file <a class="el" href="blurayio_8cc_source.html">blurayio.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="blurayio_8cc_source.html#l00062">62</a> of file <a class="el" href="blurayio_8cc_source.html">blurayio.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="fileio_8h_source.html#l00101">VIRTUALTYPE_BLURAY</a>.</p>
+<p class="reference">References <a class="el" href="fileio_8h.html#a1199d38534b11312b0210e527499a805a8c364e35c7d38a14177407811e7e0ac2">BLURAY</a>.</p>
 
 </div>
 </div>
@@ -804,9 +804,9 @@ On error, the value -1 is returned and errno is set to indicate the error. </dd>
 
 <p>Selected angle index (angle number -1) </p>
 
-<p class="definition">Definition at line <a class="el" href="blurayio_8h_source.html#l00154">154</a> of file <a class="el" href="blurayio_8h_source.html">blurayio.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="blurayio_8h_source.html#l00156">156</a> of file <a class="el" href="blurayio_8h_source.html">blurayio.h</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="blurayio_8cc_source.html#l00073">openio()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="blurayio_8cc_source.html#l00072">openio()</a>.</p>
 
 </div>
 </div>
@@ -832,9 +832,9 @@ On error, the value -1 is returned and errno is set to indicate the error. </dd>
 
 <p>Blu-ray disk handle. </p>
 
-<p class="definition">Definition at line <a class="el" href="blurayio_8h_source.html#l00141">141</a> of file <a class="el" href="blurayio_8h_source.html">blurayio.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="blurayio_8h_source.html#l00143">143</a> of file <a class="el" href="blurayio_8h_source.html">blurayio.h</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="blurayio_8cc_source.html#l00073">openio()</a>, <a class="el" href="blurayio_8cc_source.html#l00310">pvt_close()</a>, <a class="el" href="blurayio_8cc_source.html#l00175">readio()</a>, <a class="el" href="blurayio_8cc_source.html#l00255">seek()</a>, and <a class="el" href="blurayio_8cc_source.html#l00250">tell()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="blurayio_8cc_source.html#l00072">openio()</a>, <a class="el" href="blurayio_8cc_source.html#l00306">pvt_close()</a>, <a class="el" href="blurayio_8cc_source.html#l00171">readio()</a>, <a class="el" href="blurayio_8cc_source.html#l00251">seek()</a>, and <a class="el" href="blurayio_8cc_source.html#l00246">tell()</a>.</p>
 
 </div>
 </div>
@@ -860,9 +860,9 @@ On error, the value -1 is returned and errno is set to indicate the error. </dd>
 
 <p>Chapter index (chapter number - 1) </p>
 
-<p class="definition">Definition at line <a class="el" href="blurayio_8h_source.html#l00153">153</a> of file <a class="el" href="blurayio_8h_source.html">blurayio.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="blurayio_8h_source.html#l00155">155</a> of file <a class="el" href="blurayio_8h_source.html">blurayio.h</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="blurayio_8cc_source.html#l00073">openio()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="blurayio_8cc_source.html#l00072">openio()</a>.</p>
 
 </div>
 </div>
@@ -888,14 +888,14 @@ On error, the value -1 is returned and errno is set to indicate the error. </dd>
 
 <p>Current position in virtual file. </p>
 
-<p class="definition">Definition at line <a class="el" href="blurayio_8h_source.html#l00147">147</a> of file <a class="el" href="blurayio_8h_source.html">blurayio.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="blurayio_8h_source.html#l00149">149</a> of file <a class="el" href="blurayio_8h_source.html">blurayio.h</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="blurayio_8cc_source.html#l00300">eof()</a>, <a class="el" href="blurayio_8cc_source.html#l00175">readio()</a>, and <a class="el" href="blurayio_8cc_source.html#l00255">seek()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="blurayio_8cc_source.html#l00296">eof()</a>, <a class="el" href="blurayio_8cc_source.html#l00171">readio()</a>, and <a class="el" href="blurayio_8cc_source.html#l00251">seek()</a>.</p>
 
 </div>
 </div>
-<a id="a6c5b36972e9fbbc3a23d3aaeffe2e72a" name="a6c5b36972e9fbbc3a23d3aaeffe2e72a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6c5b36972e9fbbc3a23d3aaeffe2e72a">&#9670;&nbsp;</a></span>m_data</h2>
+<a id="a09a215288fc8afa7c94fc59c0792fad4" name="a09a215288fc8afa7c94fc59c0792fad4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a09a215288fc8afa7c94fc59c0792fad4">&#9670;&nbsp;</a></span>m_data</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -904,7 +904,7 @@ On error, the value -1 is returned and errno is set to indicate the error. </dd>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">uint8_t BlurayIO::m_data[192 *1024]</td>
+          <td class="memname">std::array&lt;uint8_t, 192 * 1024&gt; BlurayIO::m_data</td>
         </tr>
       </table>
   </td>
@@ -916,9 +916,9 @@ On error, the value -1 is returned and errno is set to indicate the error. </dd>
 
 <p><a class="el" href="classBuffer.html" title="The Buffer class.">Buffer</a> for <a class="el" href="classBlurayIO.html#a061898e98c2ea43871b4637b5ea2454d" title="Read data from file.">readio()</a> data. </p>
 
-<p class="definition">Definition at line <a class="el" href="blurayio_8h_source.html#l00156">156</a> of file <a class="el" href="blurayio_8h_source.html">blurayio.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="blurayio_8h_source.html#l00158">158</a> of file <a class="el" href="blurayio_8h_source.html">blurayio.h</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="blurayio_8cc_source.html#l00040">BlurayIO()</a>, <a class="el" href="blurayio_8cc_source.html#l00068">bufsize()</a>, and <a class="el" href="blurayio_8cc_source.html#l00175">readio()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="blurayio_8cc_source.html#l00039">BlurayIO()</a>, <a class="el" href="blurayio_8cc_source.html#l00067">bufsize()</a>, and <a class="el" href="blurayio_8cc_source.html#l00171">readio()</a>.</p>
 
 </div>
 </div>
@@ -944,9 +944,9 @@ On error, the value -1 is returned and errno is set to indicate the error. </dd>
 
 <p>Track/chapter duration, in AV_TIME_BASE fractional seconds. </p>
 
-<p class="definition">Definition at line <a class="el" href="blurayio_8h_source.html#l00158">158</a> of file <a class="el" href="blurayio_8h_source.html">blurayio.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="blurayio_8h_source.html#l00160">160</a> of file <a class="el" href="blurayio_8h_source.html">blurayio.h</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="blurayio_8cc_source.html#l00240">duration()</a>, and <a class="el" href="blurayio_8cc_source.html#l00073">openio()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="blurayio_8cc_source.html#l00236">duration()</a>, and <a class="el" href="blurayio_8cc_source.html#l00072">openio()</a>.</p>
 
 </div>
 </div>
@@ -972,9 +972,9 @@ On error, the value -1 is returned and errno is set to indicate the error. </dd>
 
 <p>End offset in bytes (not including this byte) </p>
 
-<p class="definition">Definition at line <a class="el" href="blurayio_8h_source.html#l00149">149</a> of file <a class="el" href="blurayio_8h_source.html">blurayio.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="blurayio_8h_source.html#l00151">151</a> of file <a class="el" href="blurayio_8h_source.html">blurayio.h</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="blurayio_8cc_source.html#l00300">eof()</a>, <a class="el" href="blurayio_8cc_source.html#l00073">openio()</a>, <a class="el" href="blurayio_8cc_source.html#l00175">readio()</a>, <a class="el" href="blurayio_8cc_source.html#l00255">seek()</a>, and <a class="el" href="blurayio_8cc_source.html#l00245">size()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="blurayio_8cc_source.html#l00296">eof()</a>, <a class="el" href="blurayio_8cc_source.html#l00072">openio()</a>, <a class="el" href="blurayio_8cc_source.html#l00171">readio()</a>, <a class="el" href="blurayio_8cc_source.html#l00251">seek()</a>, and <a class="el" href="blurayio_8cc_source.html#l00241">size()</a>.</p>
 
 </div>
 </div>
@@ -1000,9 +1000,9 @@ On error, the value -1 is returned and errno is set to indicate the error. </dd>
 
 <p>Last errno. </p>
 
-<p class="definition">Definition at line <a class="el" href="blurayio_8h_source.html#l00144">144</a> of file <a class="el" href="blurayio_8h_source.html">blurayio.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="blurayio_8h_source.html#l00146">146</a> of file <a class="el" href="blurayio_8h_source.html">blurayio.h</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="blurayio_8cc_source.html#l00235">error()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="blurayio_8cc_source.html#l00231">error()</a>.</p>
 
 </div>
 </div>
@@ -1028,9 +1028,9 @@ On error, the value -1 is returned and errno is set to indicate the error. </dd>
 
 <p>If true, ignore m_chapter_no and provide full track. </p>
 
-<p class="definition">Definition at line <a class="el" href="blurayio_8h_source.html#l00151">151</a> of file <a class="el" href="blurayio_8h_source.html">blurayio.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="blurayio_8h_source.html#l00153">153</a> of file <a class="el" href="blurayio_8h_source.html">blurayio.h</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="blurayio_8cc_source.html#l00073">openio()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="blurayio_8cc_source.html#l00072">openio()</a>.</p>
 
 </div>
 </div>
@@ -1056,7 +1056,7 @@ On error, the value -1 is returned and errno is set to indicate the error. </dd>
 
 <p>true if at end of virtual file </p>
 
-<p class="definition">Definition at line <a class="el" href="blurayio_8h_source.html#l00143">143</a> of file <a class="el" href="blurayio_8h_source.html">blurayio.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="blurayio_8h_source.html#l00145">145</a> of file <a class="el" href="blurayio_8h_source.html">blurayio.h</a>.</p>
 
 </div>
 </div>
@@ -1082,9 +1082,9 @@ On error, the value -1 is returned and errno is set to indicate the error. </dd>
 
 <p>Position in buffer. </p>
 
-<p class="definition">Definition at line <a class="el" href="blurayio_8h_source.html#l00146">146</a> of file <a class="el" href="blurayio_8h_source.html">blurayio.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="blurayio_8h_source.html#l00148">148</a> of file <a class="el" href="blurayio_8h_source.html">blurayio.h</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="blurayio_8cc_source.html#l00073">openio()</a>, and <a class="el" href="blurayio_8cc_source.html#l00175">readio()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="blurayio_8cc_source.html#l00072">openio()</a>, and <a class="el" href="blurayio_8cc_source.html#l00171">readio()</a>.</p>
 
 </div>
 </div>
@@ -1110,9 +1110,9 @@ On error, the value -1 is returned and errno is set to indicate the error. </dd>
 
 <p>Rest bytes in buffer. </p>
 
-<p class="definition">Definition at line <a class="el" href="blurayio_8h_source.html#l00145">145</a> of file <a class="el" href="blurayio_8h_source.html">blurayio.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="blurayio_8h_source.html#l00147">147</a> of file <a class="el" href="blurayio_8h_source.html">blurayio.h</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="blurayio_8cc_source.html#l00073">openio()</a>, and <a class="el" href="blurayio_8cc_source.html#l00175">readio()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="blurayio_8cc_source.html#l00072">openio()</a>, and <a class="el" href="blurayio_8cc_source.html#l00171">readio()</a>.</p>
 
 </div>
 </div>
@@ -1138,9 +1138,9 @@ On error, the value -1 is returned and errno is set to indicate the error. </dd>
 
 <p>Start offset in bytes. </p>
 
-<p class="definition">Definition at line <a class="el" href="blurayio_8h_source.html#l00148">148</a> of file <a class="el" href="blurayio_8h_source.html">blurayio.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="blurayio_8h_source.html#l00150">150</a> of file <a class="el" href="blurayio_8h_source.html">blurayio.h</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="blurayio_8cc_source.html#l00073">openio()</a>, <a class="el" href="blurayio_8cc_source.html#l00255">seek()</a>, <a class="el" href="blurayio_8cc_source.html#l00245">size()</a>, and <a class="el" href="blurayio_8cc_source.html#l00250">tell()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="blurayio_8cc_source.html#l00072">openio()</a>, <a class="el" href="blurayio_8cc_source.html#l00251">seek()</a>, <a class="el" href="blurayio_8cc_source.html#l00241">size()</a>, and <a class="el" href="blurayio_8cc_source.html#l00246">tell()</a>.</p>
 
 </div>
 </div>
@@ -1166,9 +1166,9 @@ On error, the value -1 is returned and errno is set to indicate the error. </dd>
 
 <p>Track index (track number - 1) </p>
 
-<p class="definition">Definition at line <a class="el" href="blurayio_8h_source.html#l00152">152</a> of file <a class="el" href="blurayio_8h_source.html">blurayio.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="blurayio_8h_source.html#l00154">154</a> of file <a class="el" href="blurayio_8h_source.html">blurayio.h</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="blurayio_8cc_source.html#l00073">openio()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="blurayio_8cc_source.html#l00072">openio()</a>.</p>
 
 </div>
 </div>

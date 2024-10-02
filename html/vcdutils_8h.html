@@ -79,16 +79,19 @@ $(function() {
 
 <p>S/VCD utility functions.  
 <a href="#details">More...</a></p>
-<div class="textblock"><code>#include &lt;string&gt;</code><br />
+<div class="textblock"><code>#include &quot;<a class="el" href="vcdchapter_8h_source.html">vcd/vcdchapter.h</a>&quot;</code><br />
+<code>#include &lt;string&gt;</code><br />
 <code>#include &lt;array&gt;</code><br />
 </div><div class="textblock"><div class="dynheader">
 Include dependency graph for vcdutils.h:</div>
 <div class="dyncontent">
 <div class="center"><img src="vcdutils_8h__incl.png" border="0" usemap="#asrc_2vcd_2vcdutils_8h" alt=""/></div>
 <map name="asrc_2vcd_2vcdutils_8h" id="asrc_2vcd_2vcdutils_8h">
-<area shape="rect" title="S/VCD utility functions." alt="" coords="9,5,134,32"/>
-<area shape="rect" title=" " alt="" coords="5,80,60,107"/>
-<area shape="rect" title=" " alt="" coords="85,80,135,107"/>
+<area shape="rect" title="S/VCD utility functions." alt="" coords="102,5,227,32"/>
+<area shape="rect" href="vcdchapter_8h.html" title="S/VCD VcdChapter class." alt="" coords="5,80,127,107"/>
+<area shape="rect" title=" " alt="" coords="129,155,184,181"/>
+<area shape="rect" title=" " alt="" coords="202,80,253,107"/>
+<area shape="rect" title=" " alt="" coords="35,155,97,181"/>
 </map>
 </div>
 </div><div class="textblock"><div class="dynheader">
@@ -178,12 +181,12 @@ Functions</h2></td></tr>
 <tr class="memitem:a123536c5ee83780358812049a9b98834"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceVCDUTILS.html#a123536c5ee83780358812049a9b98834">VCDUTILS::locate_video</a> (const std::string &amp;path, int track_no, std::string &amp;fullname)</td></tr>
 <tr class="memdesc:a123536c5ee83780358812049a9b98834"><td class="mdescLeft">&#160;</td><td class="mdescRight">Locate AVSEQ*DAT/MPEG video file for track_no.  <a href="namespaceVCDUTILS.html#a123536c5ee83780358812049a9b98834">More...</a><br /></td></tr>
 <tr class="separator:a123536c5ee83780358812049a9b98834"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa7cf6f87142373d428e418419c9e8d66"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceVCDUTILS.html#aa7cf6f87142373d428e418419c9e8d66">VCDUTILS::get_type_str</a> (int type)</td></tr>
-<tr class="memdesc:aa7cf6f87142373d428e418419c9e8d66"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return disk type as a human readable string.  <a href="namespaceVCDUTILS.html#aa7cf6f87142373d428e418419c9e8d66">More...</a><br /></td></tr>
-<tr class="separator:aa7cf6f87142373d428e418419c9e8d66"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3f175a980cce03847e6e78129a5726a4"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceVCDUTILS.html#a3f175a980cce03847e6e78129a5726a4">VCDUTILS::get_profile_tag_str</a> (int tag)</td></tr>
-<tr class="memdesc:a3f175a980cce03847e6e78129a5726a4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Profile as a human readable string.  <a href="namespaceVCDUTILS.html#a3f175a980cce03847e6e78129a5726a4">More...</a><br /></td></tr>
-<tr class="separator:a3f175a980cce03847e6e78129a5726a4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a96497f309741f5abc12b98df44cdc6d1"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceVCDUTILS.html#a96497f309741f5abc12b98df44cdc6d1">VCDUTILS::get_type_str</a> (<a class="el" href="vcdchapter_8h.html#a5cb9c1a9dff84842852994972a52bd2b">VCDTYPE</a> type)</td></tr>
+<tr class="memdesc:a96497f309741f5abc12b98df44cdc6d1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return disk type as a human readable string.  <a href="namespaceVCDUTILS.html#a96497f309741f5abc12b98df44cdc6d1">More...</a><br /></td></tr>
+<tr class="separator:a96497f309741f5abc12b98df44cdc6d1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afc78fb9f8f9d157ea1a891934eea1546"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceVCDUTILS.html#afc78fb9f8f9d157ea1a891934eea1546">VCDUTILS::get_profile_tag_str</a> (<a class="el" href="vcdchapter_8h.html#aacf9570a503c1d7d6bc60a80243c9578">VCDPROFILETAG</a> tag)</td></tr>
+<tr class="memdesc:afc78fb9f8f9d157ea1a891934eea1546"><td class="mdescLeft">&#160;</td><td class="mdescRight">Profile as a human readable string.  <a href="namespaceVCDUTILS.html#afc78fb9f8f9d157ea1a891934eea1546">More...</a><br /></td></tr>
+<tr class="separator:afc78fb9f8f9d157ea1a891934eea1546"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a394354e787de56c0f518b901d89a4c13"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceVCDUTILS.html#a394354e787de56c0f518b901d89a4c13">VCDUTILS::get_directory</a> (const std::string &amp;fullname, std::string *directory)</td></tr>
 <tr class="memdesc:a394354e787de56c0f518b901d89a4c13"><td class="mdescLeft">&#160;</td><td class="mdescRight">Check if fullname is a directory. Remove the filename if necessary.  <a href="namespaceVCDUTILS.html#a394354e787de56c0f518b901d89a4c13">More...</a><br /></td></tr>
 <tr class="separator:a394354e787de56c0f518b901d89a4c13"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -219,7 +222,7 @@ From BullysPLayer Copyright (C) 1984-2024 by Oblivion Software/Norbert Schlia </
 </div><div class="memdoc">
 <p >Convert BCD value to hex </p>
 
-<p class="definition">Definition at line <a class="el" href="vcdutils_8h_source.html#l00038">38</a> of file <a class="el" href="vcdutils_8h_source.html">vcdutils.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vcdutils_8h_source.html#l00040">40</a> of file <a class="el" href="vcdutils_8h_source.html">vcdutils.h</a>.</p>
 
 </div>
 </div>
@@ -236,7 +239,7 @@ From BullysPLayer Copyright (C) 1984-2024 by Oblivion Software/Norbert Schlia </
 </div><div class="memdoc">
 <p >Max. number of chapters on video CD </p>
 
-<p class="definition">Definition at line <a class="el" href="vcdutils_8h_source.html#l00042">42</a> of file <a class="el" href="vcdutils_8h_source.html">vcdutils.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vcdutils_8h_source.html#l00044">44</a> of file <a class="el" href="vcdutils_8h_source.html">vcdutils.h</a>.</p>
 
 </div>
 </div>
@@ -255,7 +258,7 @@ From BullysPLayer Copyright (C) 1984-2024 by Oblivion Software/Norbert Schlia </
 
 <p>Pointer to const version of <a class="el" href="structVCDCHAPTER.html" title="Video CD chapter.">VCDCHAPTER</a>. </p>
 
-<p class="definition">Definition at line <a class="el" href="vcdutils_8h_source.html#l00070">70</a> of file <a class="el" href="vcdutils_8h_source.html">vcdutils.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vcdutils_8h_source.html#l00071">71</a> of file <a class="el" href="vcdutils_8h_source.html">vcdutils.h</a>.</p>
 
 </div>
 </div>
@@ -273,7 +276,7 @@ From BullysPLayer Copyright (C) 1984-2024 by Oblivion Software/Norbert Schlia </
 
 <p>Pointer to const version of VCDENTRY. </p>
 
-<p class="definition">Definition at line <a class="el" href="vcdutils_8h_source.html#l00108">108</a> of file <a class="el" href="vcdutils_8h_source.html">vcdutils.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vcdutils_8h_source.html#l00109">109</a> of file <a class="el" href="vcdutils_8h_source.html">vcdutils.h</a>.</p>
 
 </div>
 </div>
@@ -291,7 +294,7 @@ From BullysPLayer Copyright (C) 1984-2024 by Oblivion Software/Norbert Schlia </
 
 <p>Pointer to const version of <a class="el" href="structVCDMSF.html" title="Video CD MSF time format.">VCDMSF</a>. </p>
 
-<p class="definition">Definition at line <a class="el" href="vcdutils_8h_source.html#l00060">60</a> of file <a class="el" href="vcdutils_8h_source.html">vcdutils.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vcdutils_8h_source.html#l00061">61</a> of file <a class="el" href="vcdutils_8h_source.html">vcdutils.h</a>.</p>
 
 </div>
 </div>
@@ -337,9 +340,9 @@ From BullysPLayer Copyright (C) 1984-2024 by Oblivion Software/Norbert Schlia </
 <p>Chapter synchronisation in S/VCD mpeg/dat files (12 byte: 0x00FFFFFFFFFFFFFFFFFFFF00) </p>
 <p >Sync bytes for a Video CD sector. </p>
 
-<p class="definition">Definition at line <a class="el" href="vcdentries_8cc_source.html#l00045">45</a> of file <a class="el" href="vcdentries_8cc_source.html">vcdentries.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vcdentries_8cc_source.html#l00044">44</a> of file <a class="el" href="vcdentries_8cc_source.html">vcdentries.cc</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="vcdchapter_8cc_source.html#l00076">VcdChapter::readio()</a>, and <a class="el" href="vcdentries_8cc_source.html#l00161">VcdEntries::scan_chapters()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="vcdchapter_8cc_source.html#l00076">VcdChapter::readio()</a>, and <a class="el" href="vcdentries_8cc_source.html#l00160">VcdEntries::scan_chapters()</a>.</p>
 
 </div>
 </div>

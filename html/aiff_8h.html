@@ -77,13 +77,15 @@ $(function() {
 <p>AIFF file structures <a href="http://paulbourke.net/dataformats/audio/">http://paulbourke.net/dataformats/audio/</a>.  
 <a href="#details">More...</a></p>
 <div class="textblock"><code>#include &lt;stdint.h&gt;</code><br />
+<code>#include &lt;array&gt;</code><br />
 </div><div class="textblock"><div class="dynheader">
 Include dependency graph for aiff.h:</div>
 <div class="dyncontent">
 <div class="center"><img src="aiff_8h__incl.png" border="0" usemap="#asrc_2aiff_8h" alt=""/></div>
 <map name="asrc_2aiff_8h" id="asrc_2aiff_8h">
-<area shape="rect" title="AIFF file structures http://paulbourke.net/dataformats/audio/." alt="" coords="5,5,79,32"/>
-<area shape="rect" title=" " alt="" coords="9,80,75,107"/>
+<area shape="rect" title="AIFF file structures http://paulbourke.net/dataformats/audio/." alt="" coords="43,5,116,32"/>
+<area shape="rect" title=" " alt="" coords="5,80,71,107"/>
+<area shape="rect" title=" " alt="" coords="95,80,146,107"/>
 </map>
 </div>
 </div><div class="textblock"><div class="dynheader">
@@ -137,9 +139,9 @@ Macros</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="typedef-members" name="typedef-members"></a>
 Typedefs</h2></td></tr>
-<tr class="memitem:af83f3471a7a94b914e566c3a4918c4bb"><td class="memItemLeft" align="right" valign="top">typedef uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="aiff_8h.html#af83f3471a7a94b914e566c3a4918c4bb">AIFF_ID</a>[4]</td></tr>
-<tr class="memdesc:af83f3471a7a94b914e566c3a4918c4bb"><td class="mdescLeft">&#160;</td><td class="mdescRight">AIFF fourcc ID.  <a href="aiff_8h.html#af83f3471a7a94b914e566c3a4918c4bb">More...</a><br /></td></tr>
-<tr class="separator:af83f3471a7a94b914e566c3a4918c4bb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a414f111c2fb95fc5b1196e71daa69716"><td class="memItemLeft" align="right" valign="top">typedef std::array&lt; uint8_t, 4 &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="aiff_8h.html#a414f111c2fb95fc5b1196e71daa69716">AIFF_ID</a></td></tr>
+<tr class="memdesc:a414f111c2fb95fc5b1196e71daa69716"><td class="mdescLeft">&#160;</td><td class="mdescRight">AIFF fourcc ID.  <a href="aiff_8h.html#a414f111c2fb95fc5b1196e71daa69716">More...</a><br /></td></tr>
+<tr class="separator:a414f111c2fb95fc5b1196e71daa69716"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p >AIFF file structures <a href="http://paulbourke.net/dataformats/audio/">http://paulbourke.net/dataformats/audio/</a>. </p>
@@ -162,7 +164,7 @@ Typedefs</h2></td></tr>
 
 <p>ckID for Annotation Chunk. </p>
 
-<p class="definition">Definition at line <a class="el" href="aiff_8h_source.html#l00096">96</a> of file <a class="el" href="aiff_8h_source.html">aiff.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="aiff_8h_source.html#l00097">97</a> of file <a class="el" href="aiff_8h_source.html">aiff.h</a>.</p>
 
 </div>
 </div>
@@ -180,7 +182,7 @@ Typedefs</h2></td></tr>
 
 <p>ckID for Author Chunk. </p>
 
-<p class="definition">Definition at line <a class="el" href="aiff_8h_source.html#l00094">94</a> of file <a class="el" href="aiff_8h_source.html">aiff.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="aiff_8h_source.html#l00095">95</a> of file <a class="el" href="aiff_8h_source.html">aiff.h</a>.</p>
 
 </div>
 </div>
@@ -198,7 +200,7 @@ Typedefs</h2></td></tr>
 
 <p>ckID for Common Chunk </p>
 
-<p class="definition">Definition at line <a class="el" href="aiff_8h_source.html#l00066">66</a> of file <a class="el" href="aiff_8h_source.html">aiff.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="aiff_8h_source.html#l00067">67</a> of file <a class="el" href="aiff_8h_source.html">aiff.h</a>.</p>
 
 </div>
 </div>
@@ -216,7 +218,7 @@ Typedefs</h2></td></tr>
 
 <p>ckID for Copyright Chunk. </p>
 
-<p class="definition">Definition at line <a class="el" href="aiff_8h_source.html#l00095">95</a> of file <a class="el" href="aiff_8h_source.html">aiff.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="aiff_8h_source.html#l00096">96</a> of file <a class="el" href="aiff_8h_source.html">aiff.h</a>.</p>
 
 </div>
 </div>
@@ -234,7 +236,7 @@ Typedefs</h2></td></tr>
 
 <p>ckID for Form Chunk </p>
 
-<p class="definition">Definition at line <a class="el" href="aiff_8h_source.html#l00044">44</a> of file <a class="el" href="aiff_8h_source.html">aiff.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="aiff_8h_source.html#l00045">45</a> of file <a class="el" href="aiff_8h_source.html">aiff.h</a>.</p>
 
 </div>
 </div>
@@ -252,7 +254,7 @@ Typedefs</h2></td></tr>
 
 <p>ckID for Name Chunk. </p>
 
-<p class="definition">Definition at line <a class="el" href="aiff_8h_source.html#l00093">93</a> of file <a class="el" href="aiff_8h_source.html">aiff.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="aiff_8h_source.html#l00094">94</a> of file <a class="el" href="aiff_8h_source.html">aiff.h</a>.</p>
 
 </div>
 </div>
@@ -270,26 +272,26 @@ Typedefs</h2></td></tr>
 
 <p>ckID for Sound Data Chunk </p>
 
-<p class="definition">Definition at line <a class="el" href="aiff_8h_source.html#l00080">80</a> of file <a class="el" href="aiff_8h_source.html">aiff.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="aiff_8h_source.html#l00081">81</a> of file <a class="el" href="aiff_8h_source.html">aiff.h</a>.</p>
 
 </div>
 </div>
 <h2 class="groupheader">Typedef Documentation</h2>
-<a id="af83f3471a7a94b914e566c3a4918c4bb" name="af83f3471a7a94b914e566c3a4918c4bb"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af83f3471a7a94b914e566c3a4918c4bb">&#9670;&nbsp;</a></span>AIFF_ID</h2>
+<a id="a414f111c2fb95fc5b1196e71daa69716" name="a414f111c2fb95fc5b1196e71daa69716"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a414f111c2fb95fc5b1196e71daa69716">&#9670;&nbsp;</a></span>AIFF_ID</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">typedef uint8_t AIFF_ID[4]</td>
+          <td class="memname">typedef std::array&lt;uint8_t, 4&gt; <a class="el" href="aiff_8h.html#a414f111c2fb95fc5b1196e71daa69716">AIFF_ID</a></td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 <p>AIFF fourcc ID. </p>
 
-<p class="definition">Definition at line <a class="el" href="aiff_8h_source.html#l00042">42</a> of file <a class="el" href="aiff_8h_source.html">aiff.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="aiff_8h_source.html#l00043">43</a> of file <a class="el" href="aiff_8h_source.html">aiff.h</a>.</p>
 
 </div>
 </div>

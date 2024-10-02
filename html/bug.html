@@ -66,7 +66,7 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 <div class="textblock"><dl class="reflist">
-<dt>Member <a class="el" href="classFFmpeg__Transcoder.html#a556a0c7071ee2e8e249ef35eb7c64ec7">FFmpeg_Transcoder::open_input_file</a>  (LPVIRTUALFILE virtualfile, <a class="el" href="classFileIO.html" title="Base class for I/O.">FileIO</a> *fio=nullptr)</dt>
+<dt>Member <a class="el" href="classFFmpeg__Transcoder.html#ae28f1a0a0cd9b6545fe836144b9cb071">FFmpeg_Transcoder::open_input_file</a>  (LPVIRTUALFILE virtualfile, std::shared_ptr&lt; FileIO &gt; fio=nullptr)</dt>
 <dd><a class="anchor" id="_bug000001"></a>Fix memory leak: Probably in FFmpeg API av_probe_input_buffer2(), the av_reallocp is missing a matching free() call... <br  />
 <br  />
 102,400 bytes in 1 blocks are definitely lost in loss record 248 of 249 <br  />

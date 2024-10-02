@@ -1,8 +1,6 @@
 var searchData=
 [
-  ['autocopy_5fmatch_0',['AUTOCOPY_MATCH',['../ffmpeg__utils_8h.html#a9f52e92802157988535f346ada53af14ac8a90f2d6c11bc2c81c9ed2bea82250b',1,'ffmpeg_utils.h']]],
-  ['autocopy_5fmatchlimit_1',['AUTOCOPY_MATCHLIMIT',['../ffmpeg__utils_8h.html#a9f52e92802157988535f346ada53af14ab8874350e6c2640ac95c7de21b9914ab',1,'ffmpeg_utils.h']]],
-  ['autocopy_5foff_2',['AUTOCOPY_OFF',['../ffmpeg__utils_8h.html#a9f52e92802157988535f346ada53af14a0a3ae48552dae74e70a3a04af4c57158',1,'ffmpeg_utils.h']]],
-  ['autocopy_5fstrict_3',['AUTOCOPY_STRICT',['../ffmpeg__utils_8h.html#a9f52e92802157988535f346ada53af14ad0aca341de296b19da1dd7d401afe66d',1,'ffmpeg_utils.h']]],
-  ['autocopy_5fstrictlimit_4',['AUTOCOPY_STRICTLIMIT',['../ffmpeg__utils_8h.html#a9f52e92802157988535f346ada53af14a82cb22eb977225b692fe69438fd933a9',1,'ffmpeg_utils.h']]]
+  ['alac_5fdefault_0',['ALAC_DEFAULT',['../ffmpeg__utils_8h.html#a6ce4239c2af8f4c6f9d39f22b516af22a164a034b8a8c206373dce39df03b2e63',1,'ffmpeg_utils.h']]],
+  ['ascii_1',['ASCII',['../ffmpeg__utils_8h.html#a74264d463df100ce3989a4b75e6a40faad2cd8253361a9c732d21ca1d336599cc',1,'ffmpeg_utils.h']]],
+  ['audio_2',['AUDIO',['../ffmpeg__utils_8h.html#ab6b2a49c1b32ffa1d955a22d4cfaf255ad45d481f1c1a6029ce6a398e52e53bfd',1,'ffmpeg_utils.h']]]
 ];

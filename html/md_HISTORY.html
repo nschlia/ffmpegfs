@@ -65,24 +65,30 @@ $(function() {
   <div class="headertitle"><div class="title">History </div></div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><p ><b>New in 2.16 (2024-06-10):</b></p>
+<div class="textblock"><p ><b>New in 2.17 (2024-08-XX):</b></p>
 <ul>
-<li>Bugfix: Closes <a href="https://github.com/nschlia/ffmpegfs/issues/160">#160</a>: Fix build with FFmpeg 7.0. <a href="https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=1072412">Debian Bug #1072412</a>. write_packet() now with const buffer as of Libavformat 61+.</li>
+<li><b>Bugfix:</b> Wrong error message fixed when an invalid audio/video codec was selected. The message should rather say "unsupported codec" instead of talking about "sample format not supported.".</li>
+<li><b>Bugfix:</b> Issue <a href="https://github.com/nschlia/ffmpegfs/issues/162">#162</a>: If not present, add time stamps to the copied streams.</li>
+<li>Changed quality from 34 to 40 for hardware encoded video streams to create slightly smaller files.</li>
+</ul>
+<p ><b>New in 2.16 (2024-06-10):</b></p>
+<ul>
+<li><b>Bugfix:</b> Issue <a href="https://github.com/nschlia/ffmpegfs/issues/160">#160</a>: Fix build with FFmpeg 7.0. <a href="https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=1072412">Debian Bug #1072412</a>. write_packet() now with const buffer as of Libavformat 61+.</li>
 <li>Fixed deprecation: 2014-05-18 - 68c0518 / fd05602 - lavc 55.63.100 / 55.52.0 - avcodec.h Add avcodec_free_context(). From now on it should be used for freeing AVCodecContext.</li>
 <li>Fixed deprecation: 2023-05-15 - 7d1d61cc5f5 - lavc 60 - avcodec.h Depreate AVCodecContext.ticks_per_frame in favor of AVCodecContext.framerate (encoding) and AV_CODEC_PROP_FIELDS (decoding).</li>
 </ul>
 <p ><b>New in 2.15 (2024-02-03):</b></p>
 <ul>
 <li><b>Bugfix:</b> Issue <a href="https://github.com/nschlia/ffmpegfs/issues/151">#151</a>: Fixed autocopy STRICT never triggers for video streams</li>
-<li><b>Bugfix:</b> Closes <a href="https://github.com/nschlia/ffmpegfs/issues/153">#153</a>: The &ndash;include_extensions parameter now contains a description, which was previously missing from the manual and online help.</li>
+<li><b>Bugfix:</b> Issue <a href="https://github.com/nschlia/ffmpegfs/issues/153">#153</a>: The &ndash;include_extensions parameter now contains a description, which was previously missing from the manual and online help.</li>
 <li><b>Issue</b> <a href="https://github.com/nschlia/ffmpegfs/issues/149">#149</a>: 2023-05-04 - xxxxxxxxxx - lavu 58.7.100 - frame.h Deprecate AVFrame.interlaced_frame, AVFrame.top_field_first, and AVFrame.key_frame. Add AV_FRAME_FLAG_INTERLACED, AV_FRAME_FLAG_TOP_FIELD_FIRST, and AV_FRAME_FLAG_KEY flags as replacement.</li>
 <li><b>Issue</b> <a href="https://github.com/nschlia/ffmpegfs/issues/149">#149</a>: 2023-05-04 - xxxxxxxxxx - lavu 58.7.100 - frame.h Deprecate AVFrame.interlaced_frame, AVFrame.top_field_first, and AVFrame.key_frame. Add AV_FRAME_FLAG_INTERLACED, AV_FRAME_FLAG_TOP_FIELD_FIRST, and AV_FRAME_FLAG_KEY flags as replacement.</li>
 <li><b>Issue</b> <a href="https://github.com/nschlia/ffmpegfs/issues/149">#149</a>: 2021-09-20 - dd846bc4a91 - lavc 59.8.100 - avcodec.h codec.h Deprecate AV_CODEC_FLAG_TRUNCATED and AV_CODEC_CAP_TRUNCATED, as they are redundant with parsers.</li>
-<li>Closes <a href="https://github.com/nschlia/ffmpegfs/issues/136">#136</a>: The CMake build files have been removed. Support was never more than experimental, and CMake lacks a good uninstall option. Will stick to automake system from now on.</li>
+<li>Issue <a href="https://github.com/nschlia/ffmpegfs/issues/136">#136</a>: The CMake build files have been removed. Support was never more than experimental, and CMake lacks a good uninstall option. Will stick to automake system from now on.</li>
 </ul>
 <p ><b>New in 2.14 (2023-06-15):</b></p>
 <ul>
-<li><b>Bugfix:</b> Closes <a href="https://github.com/nschlia/ffmpegfs/issues/141">#141</a>: Improved memory management by allocating several times the average size of allocations. This prevents obtaining tiny portions over and over again. Additionally, after the file is opened, grab the entire expected memory block rather than doing a tiny allocation initially, followed by a larger allocation.</li>
+<li><b>Bugfix:</b> Issue <a href="https://github.com/nschlia/ffmpegfs/issues/141">#141</a>: Improved memory management by allocating several times the average size of allocations. This prevents obtaining tiny portions over and over again. Additionally, after the file is opened, grab the entire expected memory block rather than doing a tiny allocation initially, followed by a larger allocation.</li>
 <li><b>Bugfix:</b> Avoid race conditions that cause the inter-process semaphore creation to fail for the second process.</li>
 <li><b>Bugfix:</b> Issue <a href="https://github.com/nschlia/ffmpegfs/issues/119">#119</a>: If a seek request is still open after EOF, restart transcoding.</li>
 <li><b>Bugfix:</b> Issue <a href="https://github.com/nschlia/ffmpegfs/issues/119">#119</a>: To prevent frame/segment creation errors, the frame set and HLS code has been updated.</li>
@@ -105,9 +111,9 @@ $(function() {
 <p ><b>New in 2.13 (2023-01-15):</b></p>
 <ul>
 <li><b>Feature:</b> Added &ndash;prebuffer_time parameter. Files will be decoded until the buffer contains the specified playing time, allowing playback to start smoothly without lags. Works similar to &ndash;prebuffer_size but gives better control because it does not depend on the bit rate. An example: when set to 25 seconds for HLS transcoding, this will make sure that at least 2 complete segments will be available once the file is released and visible.</li>
-<li><b>Feature:</b> Closes <a href="https://github.com/nschlia/ffmpegfs/issues/140">#140</a>: Filtering the files that will be encoded has been added. A comma-separated list of extensions is specified by the <em>—include_extensions</em> parameter. These file extensions are the only ones that will be transcoded. The entries support shell wildcard patterns.</li>
+<li><b>Feature:</b> Issue <a href="https://github.com/nschlia/ffmpegfs/issues/140">#140</a>: Filtering the files that will be encoded has been added. A comma-separated list of extensions is specified by the <em>—include_extensions</em> parameter. These file extensions are the only ones that will be transcoded. The entries support shell wildcard patterns.</li>
 <li><b>Feature:</b> The &ndash;hide_extensions parameter syntax has been extended. The entries now support shell wildcard patterns.</li>
-<li><b>Bugfix:</b> Closes <a href="https://github.com/nschlia/ffmpegfs/issues/139">#139</a>: Additional files could be added using the <em>—extensions</em> parameter. However, this is no longer necessary; in the past, a file's extension determined whether or not it would be transcoded. Files with unknown extensions would be ignored. The extension is no longer important because FFmpegfs now examines all input files and recognises transcodable files by the format. The outdated <em>—extensions</em> argument was removed without substitution.</li>
+<li><b>Bugfix:</b> Issue <a href="https://github.com/nschlia/ffmpegfs/issues/139">#139</a>: Additional files could be added using the <em>—extensions</em> parameter. However, this is no longer necessary; in the past, a file's extension determined whether or not it would be transcoded. Files with unknown extensions would be ignored. The extension is no longer important because FFmpegfs now examines all input files and recognises transcodable files by the format. The outdated <em>—extensions</em> argument was removed without substitution.</li>
 <li><b>Bugfix:</b> Fixed crash when <a class="el" href="ffmpeg__utils_8h.html#a46d38ea5258c96af692914e3098e5bad" title="Combine array of strings into comma separated list.">implode()</a> function was called with an empty string. Happened with Windows GCC 11.3.0 only.</li>
 </ul>
 <h2><a class="anchor" id="autotoc_md52"></a>

@@ -76,9 +76,9 @@ $(function() {
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
-<tr class="memitem:acbdcab7200bd70d19525d84658ae2304"><td class="memItemLeft" align="right" valign="top">uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structWAV__DATA__HEADER.html#acbdcab7200bd70d19525d84658ae2304">m_data_header</a> [4]</td></tr>
-<tr class="memdesc:acbdcab7200bd70d19525d84658ae2304"><td class="mdescLeft">&#160;</td><td class="mdescRight">Contains "data" (0x64617461 big-endian form).  <a href="structWAV__DATA__HEADER.html#acbdcab7200bd70d19525d84658ae2304">More...</a><br /></td></tr>
-<tr class="separator:acbdcab7200bd70d19525d84658ae2304"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a74cd051946fe952dd0e70603ebdeaea2"><td class="memItemLeft" align="right" valign="top">std::array&lt; uint8_t, 4 &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structWAV__DATA__HEADER.html#a74cd051946fe952dd0e70603ebdeaea2">m_data_header</a></td></tr>
+<tr class="memdesc:a74cd051946fe952dd0e70603ebdeaea2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Contains "data" (0x64617461 big-endian form).  <a href="structWAV__DATA__HEADER.html#a74cd051946fe952dd0e70603ebdeaea2">More...</a><br /></td></tr>
+<tr class="separator:a74cd051946fe952dd0e70603ebdeaea2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a85dbff7b7233bcf76006e46d146b3896"><td class="memItemLeft" align="right" valign="top">uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structWAV__DATA__HEADER.html#a85dbff7b7233bcf76006e46d146b3896">m_data_bytes</a></td></tr>
 <tr class="memdesc:a85dbff7b7233bcf76006e46d146b3896"><td class="mdescLeft">&#160;</td><td class="mdescRight">Number of bytes in data. Number of samples * num_channels * bit_depth / 8.  <a href="structWAV__DATA__HEADER.html#a85dbff7b7233bcf76006e46d146b3896">More...</a><br /></td></tr>
 <tr class="separator:a85dbff7b7233bcf76006e46d146b3896"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -87,7 +87,7 @@ Public Attributes</h2></td></tr>
 <div class="textblock"><p >WAVE data header structure. </p>
 <dl class="section note"><dt>Note</dt><dd>All numeric values are in big-endian format. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="wave_8h_source.html#l00118">118</a> of file <a class="el" href="wave_8h_source.html">wave.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="wave_8h_source.html#l00128">128</a> of file <a class="el" href="wave_8h_source.html">wave.h</a>.</p>
 </div><h2 class="groupheader">Member Data Documentation</h2>
 <a id="a85dbff7b7233bcf76006e46d146b3896" name="a85dbff7b7233bcf76006e46d146b3896"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a85dbff7b7233bcf76006e46d146b3896">&#9670;&nbsp;</a></span>m_data_bytes</h2>
@@ -103,27 +103,27 @@ Public Attributes</h2></td></tr>
 
 <p>Number of bytes in data. Number of samples * num_channels * bit_depth / 8. </p>
 
-<p class="definition">Definition at line <a class="el" href="wave_8h_source.html#l00121">121</a> of file <a class="el" href="wave_8h_source.html">wave.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="wave_8h_source.html#l00131">131</a> of file <a class="el" href="wave_8h_source.html">wave.h</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ffmpeg__transcoder_8cc_source.html#l02978">FFmpeg_Transcoder::create_fake_wav_header()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="ffmpeg__transcoder_8cc_source.html#l02948">FFmpeg_Transcoder::create_fake_wav_header()</a>.</p>
 
 </div>
 </div>
-<a id="acbdcab7200bd70d19525d84658ae2304" name="acbdcab7200bd70d19525d84658ae2304"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#acbdcab7200bd70d19525d84658ae2304">&#9670;&nbsp;</a></span>m_data_header</h2>
+<a id="a74cd051946fe952dd0e70603ebdeaea2" name="a74cd051946fe952dd0e70603ebdeaea2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a74cd051946fe952dd0e70603ebdeaea2">&#9670;&nbsp;</a></span>m_data_header</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">uint8_t WAV_DATA_HEADER::m_data_header[4]</td>
+          <td class="memname">std::array&lt;uint8_t, 4&gt; WAV_DATA_HEADER::m_data_header</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 <p>Contains "data" (0x64617461 big-endian form). </p>
 
-<p class="definition">Definition at line <a class="el" href="wave_8h_source.html#l00120">120</a> of file <a class="el" href="wave_8h_source.html">wave.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="wave_8h_source.html#l00130">130</a> of file <a class="el" href="wave_8h_source.html">wave.h</a>.</p>
 
 </div>
 </div>

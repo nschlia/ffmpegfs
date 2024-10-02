@@ -1,9 +1,8 @@
 <map id="src/transcode.h" name="src/transcode.h">
-<area shape="rect" id="node1" title="File transcoder interface (for use with by FUSE)" alt="" coords="407,5,519,32"/>
+<area shape="rect" id="node1" title="File transcoder interface (for use with by FUSE)" alt="" coords="339,5,451,32"/>
 <area shape="rect" id="node2" href="$blurayparser_8cc.html" title="Blu&#45;ray disk parser implementation." alt="" coords="5,80,137,107"/>
 <area shape="rect" id="node3" href="$cuesheetparser_8cc.html" title="Cue sheet parser implementation." alt="" coords="161,80,312,107"/>
 <area shape="rect" id="node4" href="$dvdparser_8cc.html" title="dvdparser class implementation" alt="" coords="336,80,455,107"/>
 <area shape="rect" id="node5" href="$fuseops_8cc.html" title="Fuse operations implementation." alt="" coords="479,80,587,107"/>
 <area shape="rect" id="node6" href="$transcode_8cc.html" title="File transcoder interface implementation." alt="" coords="611,80,729,107"/>
-<area shape="rect" id="node7" href="$vcdparser_8cc.html" title="Video/Super Video CD parser implementation." alt="" coords="753,80,872,107"/>
 </map>

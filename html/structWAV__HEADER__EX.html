@@ -85,15 +85,15 @@ Public Attributes</h2></td></tr>
 <tr class="memitem:ab92917b9300c5391d9e61c8213e54446"><td class="memItemLeft" align="right" valign="top">uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structWAV__HEADER__EX.html#ab92917b9300c5391d9e61c8213e54446">m_channel_mask</a></td></tr>
 <tr class="memdesc:ab92917b9300c5391d9e61c8213e54446"><td class="mdescLeft">&#160;</td><td class="mdescRight">Channel Mask 4 32-bit unsigned integer.  <a href="structWAV__HEADER__EX.html#ab92917b9300c5391d9e61c8213e54446">More...</a><br /></td></tr>
 <tr class="separator:ab92917b9300c5391d9e61c8213e54446"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0dec19a13eff9b5560ced3a2cdae5d23"><td class="memItemLeft" align="right" valign="top">uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structWAV__HEADER__EX.html#a0dec19a13eff9b5560ced3a2cdae5d23">m_sub_format_guid</a> [16]</td></tr>
-<tr class="memdesc:a0dec19a13eff9b5560ced3a2cdae5d23"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sub Format GUID 16 16-byte GUID.  <a href="structWAV__HEADER__EX.html#a0dec19a13eff9b5560ced3a2cdae5d23">More...</a><br /></td></tr>
-<tr class="separator:a0dec19a13eff9b5560ced3a2cdae5d23"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8106b4ac329faa9488c2fb7d30d817fb"><td class="memItemLeft" align="right" valign="top">std::array&lt; uint8_t, 16 &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structWAV__HEADER__EX.html#a8106b4ac329faa9488c2fb7d30d817fb">m_sub_format_guid</a></td></tr>
+<tr class="memdesc:a8106b4ac329faa9488c2fb7d30d817fb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sub Format GUID 16 16-byte GUID.  <a href="structWAV__HEADER__EX.html#a8106b4ac329faa9488c2fb7d30d817fb">More...</a><br /></td></tr>
+<tr class="separator:a8106b4ac329faa9488c2fb7d30d817fb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p >WAVE extended header structure. </p>
 <dl class="section note"><dt>Note</dt><dd>All numeric values are in big-endian format. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="wave_8h_source.html#l00082">82</a> of file <a class="el" href="wave_8h_source.html">wave.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="wave_8h_source.html#l00086">86</a> of file <a class="el" href="wave_8h_source.html">wave.h</a>.</p>
 </div><h2 class="groupheader">Member Data Documentation</h2>
 <a id="ab92917b9300c5391d9e61c8213e54446" name="ab92917b9300c5391d9e61c8213e54446"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ab92917b9300c5391d9e61c8213e54446">&#9670;&nbsp;</a></span>m_channel_mask</h2>
@@ -109,7 +109,7 @@ Public Attributes</h2></td></tr>
 
 <p>Channel Mask 4 32-bit unsigned integer. </p>
 
-<p class="definition">Definition at line <a class="el" href="wave_8h_source.html#l00086">86</a> of file <a class="el" href="wave_8h_source.html">wave.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="wave_8h_source.html#l00090">90</a> of file <a class="el" href="wave_8h_source.html">wave.h</a>.</p>
 
 </div>
 </div>
@@ -127,25 +127,25 @@ Public Attributes</h2></td></tr>
 
 <p>Extension Size 2 16-bit unsigned integer (value 22) </p>
 
-<p class="definition">Definition at line <a class="el" href="wave_8h_source.html#l00084">84</a> of file <a class="el" href="wave_8h_source.html">wave.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="wave_8h_source.html#l00088">88</a> of file <a class="el" href="wave_8h_source.html">wave.h</a>.</p>
 
 </div>
 </div>
-<a id="a0dec19a13eff9b5560ced3a2cdae5d23" name="a0dec19a13eff9b5560ced3a2cdae5d23"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a0dec19a13eff9b5560ced3a2cdae5d23">&#9670;&nbsp;</a></span>m_sub_format_guid</h2>
+<a id="a8106b4ac329faa9488c2fb7d30d817fb" name="a8106b4ac329faa9488c2fb7d30d817fb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8106b4ac329faa9488c2fb7d30d817fb">&#9670;&nbsp;</a></span>m_sub_format_guid</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">uint8_t WAV_HEADER_EX::m_sub_format_guid[16]</td>
+          <td class="memname">std::array&lt;uint8_t, 16&gt; WAV_HEADER_EX::m_sub_format_guid</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 <p>Sub Format GUID 16 16-byte GUID. </p>
 
-<p class="definition">Definition at line <a class="el" href="wave_8h_source.html#l00087">87</a> of file <a class="el" href="wave_8h_source.html">wave.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="wave_8h_source.html#l00091">91</a> of file <a class="el" href="wave_8h_source.html">wave.h</a>.</p>
 
 </div>
 </div>
@@ -163,7 +163,7 @@ Public Attributes</h2></td></tr>
 
 <p>Valid Bits Per Sample 2 16-bit unsigned integer. </p>
 
-<p class="definition">Definition at line <a class="el" href="wave_8h_source.html#l00085">85</a> of file <a class="el" href="wave_8h_source.html">wave.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="wave_8h_source.html#l00089">89</a> of file <a class="el" href="wave_8h_source.html">wave.h</a>.</p>
 
 </div>
 </div>

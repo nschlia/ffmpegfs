@@ -97,20 +97,17 @@ News</h1>
 Windows Version</h2>
 <p >A Windows version of FFmpegfs has frequently been requested; see issue <a href="https://github.com/nschlia/ffmpegfs/issues/76">#76</a> for more information. In essence, this failed because Windows doesn't support Fuse. I discovered <a href="https://winfsp.dev/">WinFSP</a>, which offers everything necessary.</p>
 <p >To see what's been done so far, checkout the <a href="https://github.com/nschlia/ffmpegfs/tree/windows">windows</a> branch.</p>
+<p ><b>New in 2.17 (2024-08-XX):</b></p>
+<ul>
+<li><b>Bugfix:</b> Wrong error message fixed when an invalid audio/video codec was selected. The message should rather say "unsupported codec" instead of talking about "sample format not supported.".</li>
+<li><b>Bugfix:</b> Issue <a href="https://github.com/nschlia/ffmpegfs/issues/162">#162</a>: If not present, add time stamps to the copied streams.</li>
+<li>Changed quality from 34 to 40 for hardware encoded video streams to create slightly smaller files.</li>
+</ul>
 <p ><b>New in 2.16 (2024-06-10):</b></p>
 <ul>
 <li><b>Bugfix:</b> Closes <a href="https://github.com/nschlia/ffmpegfs/issues/160">#160</a>: Fix build with FFmpeg 7.0. <a href="https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=1072412">Debian Bug #1072412</a>. write_packet() now with const buffer as of Libavformat 61+.</li>
 <li><b>Fixed deprecation:</b> 2014-05-18 - 68c0518 / fd05602 - lavc 55.63.100 / 55.52.0 - avcodec.h Add avcodec_free_context(). From now on it should be used for freeing AVCodecContext.</li>
 <li><b>Fixed deprecation:</b> 2023-05-15 - 7d1d61cc5f5 - lavc 60 - avcodec.h Depreate AVCodecContext.ticks_per_frame in favor of AVCodecContext.framerate (encoding) and AV_CODEC_PROP_FIELDS (decoding).</li>
-</ul>
-<p ><b>New in 2.15 (2024-02-03):</b></p>
-<ul>
-<li><b>Bugfix:</b> Issue <a href="https://github.com/nschlia/ffmpegfs/issues/151">#151</a>: Fixed autocopy STRICT never triggers for video streams</li>
-<li><b>Bugfix:</b> Closes <a href="https://github.com/nschlia/ffmpegfs/issues/153">#153</a>: The &ndash;include_extensions parameter now contains a description, which was previously missing from the manual and online help.</li>
-<li><b>Issue</b> <a href="https://github.com/nschlia/ffmpegfs/issues/149">#149</a>: 2023-05-04 - xxxxxxxxxx - lavu 58.7.100 - frame.h Deprecate AVFrame.interlaced_frame, AVFrame.top_field_first, and AVFrame.key_frame. Add AV_FRAME_FLAG_INTERLACED, AV_FRAME_FLAG_TOP_FIELD_FIRST, and AV_FRAME_FLAG_KEY flags as replacement.</li>
-<li><b>Issue</b> <a href="https://github.com/nschlia/ffmpegfs/issues/149">#149</a>: 2023-05-04 - xxxxxxxxxx - lavu 58.7.100 - frame.h Deprecate AVFrame.interlaced_frame, AVFrame.top_field_first, and AVFrame.key_frame. Add AV_FRAME_FLAG_INTERLACED, AV_FRAME_FLAG_TOP_FIELD_FIRST, and AV_FRAME_FLAG_KEY flags as replacement.</li>
-<li><b>Issue</b> <a href="https://github.com/nschlia/ffmpegfs/issues/149">#149</a>: 2021-09-20 - dd846bc4a91 - lavc 59.8.100 - avcodec.h codec.h Deprecate AV_CODEC_FLAG_TRUNCATED and AV_CODEC_CAP_TRUNCATED, as they are redundant with parsers.</li>
-<li>Closes <a href="https://github.com/nschlia/ffmpegfs/issues/136">#136</a>: The CMake build files have been removed. Support was never more than experimental, and CMake lacks a good uninstall option. Will stick to automake system from now on.</li>
 </ul>
 <h1><a class="anchor" id="autotoc_md6"></a>
 Full History</h1>

@@ -92,6 +92,9 @@ Collaboration diagram for Cache:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
 Classes</h2></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCache_1_1sqlite__t.html">sqlite_t</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">The <a class="el" href="classCache_1_1sqlite__t.html" title="The sqlite_t class Wrapper for sqlite3 struct to make use of std::shared_ptr.">sqlite_t</a> class Wrapper for sqlite3 struct to make use of std::shared_ptr.  <a href="classCache_1_1sqlite__t.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structCache_1_1TABLE__COLUMNS.html">TABLE_COLUMNS</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Column definition of sql table.  <a href="structCache_1_1TABLE__COLUMNS.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -179,7 +182,7 @@ Protected Member Functions</h2></td></tr>
 <tr class="memitem:a7744d75dbc8e89832f8924a28c408124"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCache.html#a7744d75dbc8e89832f8924a28c408124">close_index</a> ()</td></tr>
 <tr class="memdesc:a7744d75dbc8e89832f8924a28c408124"><td class="mdescLeft">&#160;</td><td class="mdescRight">Close cache index.  <a href="classCache.html#a7744d75dbc8e89832f8924a28c408124">More...</a><br /></td></tr>
 <tr class="separator:a7744d75dbc8e89832f8924a28c408124"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a53f4b5912f34b90d9d8a236db7df3c13"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCache.html#a53f4b5912f34b90d9d8a236db7df3c13">expanded_sql</a> (sqlite3_stmt *pStmt)</td></tr>
+<tr class="memitem:a53f4b5912f34b90d9d8a236db7df3c13"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCache.html#a53f4b5912f34b90d9d8a236db7df3c13">expanded_sql</a> (<a class="el" href="cache_8h.html#af2a033da1327cdd77f0a174a09aedd0c">sqlite3_stmt</a> *pStmt)</td></tr>
 <tr class="memdesc:a53f4b5912f34b90d9d8a236db7df3c13"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get expanded SQL string for a statement.  <a href="classCache.html#a53f4b5912f34b90d9d8a236db7df3c13">More...</a><br /></td></tr>
 <tr class="separator:a53f4b5912f34b90d9d8a236db7df3c13"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a43c73dbd65faed9ab8472c5764302171"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCache.html#a43c73dbd65faed9ab8472c5764302171">prepare_stmts</a> ()</td></tr>
@@ -227,21 +230,9 @@ Private Attributes</h2></td></tr>
 <tr class="memitem:ababe98aa1869037cd29227f8b13940d2"><td class="memItemLeft" align="right" valign="top">std::recursive_mutex&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCache.html#ababe98aa1869037cd29227f8b13940d2">m_mutex</a></td></tr>
 <tr class="memdesc:ababe98aa1869037cd29227f8b13940d2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Access mutex.  <a href="classCache.html#ababe98aa1869037cd29227f8b13940d2">More...</a><br /></td></tr>
 <tr class="separator:ababe98aa1869037cd29227f8b13940d2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a71fba1b02a2458dad66b81a74164e42b"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCache.html#a71fba1b02a2458dad66b81a74164e42b">m_cacheidx_file</a></td></tr>
-<tr class="memdesc:a71fba1b02a2458dad66b81a74164e42b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Name of SQLite cache index database.  <a href="classCache.html#a71fba1b02a2458dad66b81a74164e42b">More...</a><br /></td></tr>
-<tr class="separator:a71fba1b02a2458dad66b81a74164e42b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a256d777b722e65cc3e8f41b5c99b32e5"><td class="memItemLeft" align="right" valign="top">sqlite3 *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCache.html#a256d777b722e65cc3e8f41b5c99b32e5">m_cacheidx_db</a></td></tr>
-<tr class="memdesc:a256d777b722e65cc3e8f41b5c99b32e5"><td class="mdescLeft">&#160;</td><td class="mdescRight">SQLite handle of cache index database.  <a href="classCache.html#a256d777b722e65cc3e8f41b5c99b32e5">More...</a><br /></td></tr>
-<tr class="separator:a256d777b722e65cc3e8f41b5c99b32e5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9edda804c66170d65b76764f3c132549"><td class="memItemLeft" align="right" valign="top">sqlite3_stmt *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCache.html#a9edda804c66170d65b76764f3c132549">m_cacheidx_select_stmt</a></td></tr>
-<tr class="memdesc:a9edda804c66170d65b76764f3c132549"><td class="mdescLeft">&#160;</td><td class="mdescRight">Prepared select statement.  <a href="classCache.html#a9edda804c66170d65b76764f3c132549">More...</a><br /></td></tr>
-<tr class="separator:a9edda804c66170d65b76764f3c132549"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3513cf3b7c5a845a6604309997ab0e64"><td class="memItemLeft" align="right" valign="top">sqlite3_stmt *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCache.html#a3513cf3b7c5a845a6604309997ab0e64">m_cacheidx_insert_stmt</a></td></tr>
-<tr class="memdesc:a3513cf3b7c5a845a6604309997ab0e64"><td class="mdescLeft">&#160;</td><td class="mdescRight">Prepared insert statement.  <a href="classCache.html#a3513cf3b7c5a845a6604309997ab0e64">More...</a><br /></td></tr>
-<tr class="separator:a3513cf3b7c5a845a6604309997ab0e64"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5370871315f50ba2548db29f22e522fc"><td class="memItemLeft" align="right" valign="top">sqlite3_stmt *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCache.html#a5370871315f50ba2548db29f22e522fc">m_cacheidx_delete_stmt</a></td></tr>
-<tr class="memdesc:a5370871315f50ba2548db29f22e522fc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Prepared delete statement.  <a href="classCache.html#a5370871315f50ba2548db29f22e522fc">More...</a><br /></td></tr>
-<tr class="separator:a5370871315f50ba2548db29f22e522fc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5fb705e5bea7484aaeefa1572eff8770"><td class="memItemLeft" align="right" valign="top">std::unique_ptr&lt; <a class="el" href="classCache_1_1sqlite__t.html">sqlite_t</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCache.html#a5fb705e5bea7484aaeefa1572eff8770">m_cacheidx_db</a></td></tr>
+<tr class="memdesc:a5fb705e5bea7484aaeefa1572eff8770"><td class="mdescLeft">&#160;</td><td class="mdescRight">SQLite handle of cache index database.  <a href="classCache.html#a5fb705e5bea7484aaeefa1572eff8770">More...</a><br /></td></tr>
+<tr class="separator:a5fb705e5bea7484aaeefa1572eff8770"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3fd3953c124b02fd403eaf0118447b1d"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classCache.html#a4f3c9b84bf787abaeb94bd753d938566">cache_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCache.html#a3fd3953c124b02fd403eaf0118447b1d">m_cache</a></td></tr>
 <tr class="memdesc:a3fd3953c124b02fd403eaf0118447b1d"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classCache.html" title="The Cache class.">Cache</a> file (memory mapped file)  <a href="classCache.html#a3fd3953c124b02fd403eaf0118447b1d">More...</a><br /></td></tr>
 <tr class="separator:a3fd3953c124b02fd403eaf0118447b1d"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -269,7 +260,7 @@ Friends</h2></td></tr>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p >The <a class="el" href="classCache.html" title="The Cache class.">Cache</a> class. </p>
 
-<p class="definition">Definition at line <a class="el" href="cache_8h_source.html#l00101">101</a> of file <a class="el" href="cache_8h_source.html">cache.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cache_8h_source.html#l00104">104</a> of file <a class="el" href="cache_8h_source.html">cache.h</a>.</p>
 </div><h2 class="groupheader">Member Typedef Documentation</h2>
 <a id="a6121c1f3fe6fa2f49c0e09dd7a38508e" name="a6121c1f3fe6fa2f49c0e09dd7a38508e"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a6121c1f3fe6fa2f49c0e09dd7a38508e">&#9670;&nbsp;</a></span>cache_key_t</h2>
@@ -293,7 +284,7 @@ Friends</h2></td></tr>
 
 <p>Filenames and destination types. </p>
 
-<p class="definition">Definition at line <a class="el" href="cache_8h_source.html#l00103">103</a> of file <a class="el" href="cache_8h_source.html">cache.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cache_8h_source.html#l00106">106</a> of file <a class="el" href="cache_8h_source.html">cache.h</a>.</p>
 
 </div>
 </div>
@@ -319,7 +310,7 @@ Friends</h2></td></tr>
 
 <p>Map of cache entries. </p>
 
-<p class="definition">Definition at line <a class="el" href="cache_8h_source.html#l00104">104</a> of file <a class="el" href="cache_8h_source.html">cache.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cache_8h_source.html#l00107">107</a> of file <a class="el" href="cache_8h_source.html">cache.h</a>.</p>
 
 </div>
 </div>
@@ -337,7 +328,7 @@ Friends</h2></td></tr>
 
 <p>Pointer version of <a class="el" href="structCache_1_1TABLE__COLUMNS.html" title="Column definition of sql table.">TABLE_COLUMNS</a>. </p>
 
-<p class="definition">Definition at line <a class="el" href="cache_8h_source.html#l00125">125</a> of file <a class="el" href="cache_8h_source.html">cache.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cache_8h_source.html#l00128">128</a> of file <a class="el" href="cache_8h_source.html">cache.h</a>.</p>
 
 </div>
 </div>
@@ -355,7 +346,7 @@ Friends</h2></td></tr>
 
 <p>Pointer version of <a class="el" href="structCache_1_1TABLE__DEF.html" title="Definition of sql table.">TABLE_DEF</a>. </p>
 
-<p class="definition">Definition at line <a class="el" href="cache_8h_source.html#l00114">114</a> of file <a class="el" href="cache_8h_source.html">cache.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cache_8h_source.html#l00117">117</a> of file <a class="el" href="cache_8h_source.html">cache.h</a>.</p>
 
 </div>
 </div>
@@ -373,7 +364,7 @@ Friends</h2></td></tr>
 
 <p>Pointer version of TABLECOLUMNS_VEC. </p>
 
-<p class="definition">Definition at line <a class="el" href="cache_8h_source.html#l00129">129</a> of file <a class="el" href="cache_8h_source.html">cache.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cache_8h_source.html#l00132">132</a> of file <a class="el" href="cache_8h_source.html">cache.h</a>.</p>
 
 </div>
 </div>
@@ -391,7 +382,7 @@ Friends</h2></td></tr>
 
 <p>Pointer to const version of <a class="el" href="structCache_1_1TABLE__COLUMNS.html" title="Column definition of sql table.">TABLE_COLUMNS</a>. </p>
 
-<p class="definition">Definition at line <a class="el" href="cache_8h_source.html#l00126">126</a> of file <a class="el" href="cache_8h_source.html">cache.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cache_8h_source.html#l00129">129</a> of file <a class="el" href="cache_8h_source.html">cache.h</a>.</p>
 
 </div>
 </div>
@@ -409,7 +400,7 @@ Friends</h2></td></tr>
 
 <p>Pointer to const version of <a class="el" href="structCache_1_1TABLE__DEF.html" title="Definition of sql table.">TABLE_DEF</a>. </p>
 
-<p class="definition">Definition at line <a class="el" href="cache_8h_source.html#l00115">115</a> of file <a class="el" href="cache_8h_source.html">cache.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cache_8h_source.html#l00118">118</a> of file <a class="el" href="cache_8h_source.html">cache.h</a>.</p>
 
 </div>
 </div>
@@ -427,7 +418,7 @@ Friends</h2></td></tr>
 
 <p>Pointer to const version of TABLECOLUMNS_VEC. </p>
 
-<p class="definition">Definition at line <a class="el" href="cache_8h_source.html#l00130">130</a> of file <a class="el" href="cache_8h_source.html">cache.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cache_8h_source.html#l00133">133</a> of file <a class="el" href="cache_8h_source.html">cache.h</a>.</p>
 
 </div>
 </div>
@@ -445,7 +436,7 @@ Friends</h2></td></tr>
 
 <p>Table columns array. </p>
 
-<p class="definition">Definition at line <a class="el" href="cache_8h_source.html#l00128">128</a> of file <a class="el" href="cache_8h_source.html">cache.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cache_8h_source.html#l00131">131</a> of file <a class="el" href="cache_8h_source.html">cache.h</a>.</p>
 
 </div>
 </div>
@@ -475,7 +466,7 @@ Friends</h2></td></tr>
 
 <p>Construct <a class="el" href="classCache.html" title="The Cache class.">Cache</a> object. </p>
 
-<p class="definition">Definition at line <a class="el" href="cache_8cc_source.html#l00110">110</a> of file <a class="el" href="cache_8cc_source.html">cache.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cache_8cc_source.html#l00138">138</a> of file <a class="el" href="cache_8cc_source.html">cache.cc</a>.</p>
 
 </div>
 </div>
@@ -504,9 +495,9 @@ Friends</h2></td></tr>
 
 <p>Destruct <a class="el" href="classCache.html" title="The Cache class.">Cache</a> object. </p>
 
-<p class="definition">Definition at line <a class="el" href="cache_8cc_source.html#l00118">118</a> of file <a class="el" href="cache_8cc_source.html">cache.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cache_8cc_source.html#l00142">142</a> of file <a class="el" href="cache_8cc_source.html">cache.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="cache_8cc_source.html#l00998">close_index()</a>, and <a class="el" href="cache_8h_source.html#l00336">m_cache</a>.</p>
+<p class="reference">References <a class="el" href="cache_8cc_source.html#l01031">close_index()</a>, and <a class="el" href="cache_8h_source.html#l00382">m_cache</a>.</p>
 
 </div>
 </div>
@@ -537,11 +528,11 @@ Friends</h2></td></tr>
 <p>Begin a database transactio.n. </p>
 <dl class="section return"><dt>Returns</dt><dd>Returns true on success; false on error. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="cache_8cc_source.html#l00279">279</a> of file <a class="el" href="cache_8cc_source.html">cache.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cache_8cc_source.html#l00303">303</a> of file <a class="el" href="cache_8cc_source.html">cache.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="logging_8h_source.html#l00239">Logging::error()</a>, <a class="el" href="cache_8h_source.html#l00332">m_cacheidx_db</a>, and <a class="el" href="cache_8h_source.html#l00331">m_cacheidx_file</a>.</p>
+<p class="reference">References <a class="el" href="logging_8h_source.html#l00239">Logging::error()</a>, and <a class="el" href="cache_8h_source.html#l00380">m_cacheidx_db</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="cache_8cc_source.html#l00587">load_index()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="cache_8cc_source.html#l00611">load_index()</a>.</p>
 
 </div>
 </div>
@@ -589,11 +580,11 @@ Friends</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Returns true of version is OK, false if upgrade is needed. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="cache_8cc_source.html#l00225">225</a> of file <a class="el" href="cache_8cc_source.html">cache.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cache_8cc_source.html#l00249">249</a> of file <a class="el" href="cache_8cc_source.html">cache.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="cache_8cc_source.html#l00252">cmp_version()</a>, <a class="el" href="cache_8h_source.html#l00048">DB_MIN_VERSION_MAJOR</a>, <a class="el" href="cache_8h_source.html#l00049">DB_MIN_VERSION_MINOR</a>, <a class="el" href="logging_8h_source.html#l00239">Logging::error()</a>, <a class="el" href="cache_8h_source.html#l00332">m_cacheidx_db</a>, and <a class="el" href="cache_8h_source.html#l00331">m_cacheidx_file</a>.</p>
+<p class="reference">References <a class="el" href="cache_8cc_source.html#l00276">cmp_version()</a>, <a class="el" href="cache_8h_source.html#l00048">DB_MIN_VERSION_MAJOR</a>, <a class="el" href="cache_8h_source.html#l00049">DB_MIN_VERSION_MINOR</a>, <a class="el" href="logging_8h_source.html#l00239">Logging::error()</a>, and <a class="el" href="cache_8h_source.html#l00380">m_cacheidx_db</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="cache_8cc_source.html#l00587">load_index()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="cache_8cc_source.html#l00611">load_index()</a>.</p>
 
 </div>
 </div>
@@ -615,9 +606,7 @@ Friends</h2></td></tr>
 <p>Clear cache: deletes all entries. </p>
 <dl class="section return"><dt>Returns</dt><dd>Returns true on success; false on error. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="cache_8cc_source.html#l01344">1344</a> of file <a class="el" href="cache_8cc_source.html">cache.cc</a>.</p>
-
-<p class="reference">Referenced by <a class="el" href="transcode_8cc_source.html#l00757">transcoder_cache_clear()</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cache_8cc_source.html#l01365">1365</a> of file <a class="el" href="cache_8cc_source.html">cache.cc</a>.</p>
 
 </div>
 </div>
@@ -646,9 +635,11 @@ Friends</h2></td></tr>
 
 <p>Close cache index. </p>
 
-<p class="definition">Definition at line <a class="el" href="cache_8cc_source.html#l00998">998</a> of file <a class="el" href="cache_8cc_source.html">cache.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cache_8cc_source.html#l01031">1031</a> of file <a class="el" href="cache_8cc_source.html">cache.cc</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="cache_8cc_source.html#l00118">~Cache()</a>.</p>
+<p class="reference">References <a class="el" href="logging_8h_source.html#l00239">Logging::error()</a>, and <a class="el" href="cache_8h_source.html#l00380">m_cacheidx_db</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="cache_8cc_source.html#l00142">~Cache()</a>.</p>
 
 </div>
 </div>
@@ -689,11 +680,9 @@ Friends</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Returns true if the object was deleted; false if not. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="cache_8cc_source.html#l01072">1072</a> of file <a class="el" href="cache_8cc_source.html">cache.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cache_8cc_source.html#l01093">1093</a> of file <a class="el" href="cache_8cc_source.html">cache.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="logging_8h_source.html#l00163">Logging::trace()</a>.</p>
-
-<p class="reference">Referenced by <a class="el" href="transcode_8cc_source.html#l00720">transcoder_delete()</a>, <a class="el" href="transcode_8cc_source.html#l00355">transcoder_new()</a>, and <a class="el" href="transcode_8cc_source.html#l01001">transcoder_thread()</a>.</p>
 
 </div>
 </div>
@@ -755,9 +744,9 @@ Friends</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Returns +1 if left version is larger then right, 0 if versions are the same, -1 if right version is larger than left. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="cache_8cc_source.html#l00252">252</a> of file <a class="el" href="cache_8cc_source.html">cache.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cache_8cc_source.html#l00276">276</a> of file <a class="el" href="cache_8cc_source.html">cache.cc</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="cache_8cc_source.html#l00225">check_min_version()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="cache_8cc_source.html#l00249">check_min_version()</a>.</p>
 
 </div>
 </div>
@@ -805,11 +794,11 @@ Friends</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Returns true if table exists, false if not. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="cache_8cc_source.html#l00194">194</a> of file <a class="el" href="cache_8cc_source.html">cache.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cache_8cc_source.html#l00218">218</a> of file <a class="el" href="cache_8cc_source.html">cache.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="logging_8h_source.html#l00239">Logging::error()</a>, <a class="el" href="cache_8h_source.html#l00332">m_cacheidx_db</a>, and <a class="el" href="cache_8h_source.html#l00331">m_cacheidx_file</a>.</p>
+<p class="reference">References <a class="el" href="logging_8h_source.html#l00239">Logging::error()</a>, and <a class="el" href="cache_8h_source.html#l00380">m_cacheidx_db</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="cache_8cc_source.html#l00367">upgrade_db()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="cache_8cc_source.html#l00391">upgrade_db()</a>.</p>
 
 </div>
 </div>
@@ -857,7 +846,7 @@ Friends</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>On success, returns pointer to a <a class="el" href="classCache__Entry.html" title="The Cache_Entry class.">Cache_Entry</a>. On error, returns nullptr. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="cache_8cc_source.html#l01015">1015</a> of file <a class="el" href="cache_8cc_source.html">cache.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cache_8cc_source.html#l01036">1036</a> of file <a class="el" href="cache_8cc_source.html">cache.cc</a>.</p>
 
 </div>
 </div>
@@ -898,11 +887,11 @@ Friends</h2></td></tr>
 <p>Create cache_entry table. </p>
 <dl class="section return"><dt>Returns</dt><dd>Returns true on success; false on error. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="cache_8cc_source.html#l00327">327</a> of file <a class="el" href="cache_8cc_source.html">cache.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cache_8cc_source.html#l00351">351</a> of file <a class="el" href="cache_8cc_source.html">cache.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="logging_8h_source.html#l00239">Logging::error()</a>, <a class="el" href="cache_8h_source.html#l00332">m_cacheidx_db</a>, and <a class="el" href="cache_8h_source.html#l00331">m_cacheidx_file</a>.</p>
+<p class="reference">References <a class="el" href="logging_8h_source.html#l00239">Logging::error()</a>, and <a class="el" href="cache_8h_source.html#l00380">m_cacheidx_db</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="cache_8cc_source.html#l00587">load_index()</a>, and <a class="el" href="cache_8cc_source.html#l00367">upgrade_db()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="cache_8cc_source.html#l00611">load_index()</a>, and <a class="el" href="cache_8cc_source.html#l00391">upgrade_db()</a>.</p>
 
 </div>
 </div>
@@ -950,9 +939,9 @@ Friends</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Returns true if the object was deleted; false if not. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="cache_8cc_source.html#l01030">1030</a> of file <a class="el" href="cache_8cc_source.html">cache.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cache_8cc_source.html#l01051">1051</a> of file <a class="el" href="cache_8cc_source.html">cache.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="buffer_8h_source.html#l00043">CACHE_CHECK_BIT</a>, <a class="el" href="buffer_8h_source.html#l00046">CACHE_CLOSE_FREE</a>, and <a class="el" href="cache_8h_source.html#l00336">m_cache</a>.</p>
+<p class="reference">References <a class="el" href="buffer_8h_source.html#l00043">CACHE_CHECK_BIT</a>, <a class="el" href="buffer_8h_source.html#l00046">CACHE_CLOSE_FREE</a>, and <a class="el" href="cache_8h_source.html#l00382">m_cache</a>.</p>
 
 </div>
 </div>
@@ -1000,9 +989,9 @@ Friends</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Returns true on success; false on error. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="cache_8cc_source.html#l00945">945</a> of file <a class="el" href="cache_8cc_source.html">cache.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cache_8cc_source.html#l00978">978</a> of file <a class="el" href="cache_8cc_source.html">cache.cc</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="cache__entry_8cc_source.html#l00143">Cache_Entry::delete_info()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="cache__entry_8cc_source.html#l00141">Cache_Entry::delete_info()</a>.</p>
 
 </div>
 </div>
@@ -1032,11 +1021,11 @@ Friends</h2></td></tr>
 <p>End a database transaction. </p>
 <dl class="section return"><dt>Returns</dt><dd>Returns true on success; false on error. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="cache_8cc_source.html#l00295">295</a> of file <a class="el" href="cache_8cc_source.html">cache.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cache_8cc_source.html#l00319">319</a> of file <a class="el" href="cache_8cc_source.html">cache.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="logging_8h_source.html#l00239">Logging::error()</a>, <a class="el" href="cache_8h_source.html#l00332">m_cacheidx_db</a>, and <a class="el" href="cache_8h_source.html#l00331">m_cacheidx_file</a>.</p>
+<p class="reference">References <a class="el" href="logging_8h_source.html#l00239">Logging::error()</a>, and <a class="el" href="cache_8h_source.html#l00380">m_cacheidx_db</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="cache_8cc_source.html#l00587">load_index()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="cache_8cc_source.html#l00611">load_index()</a>.</p>
 
 </div>
 </div>
@@ -1052,7 +1041,7 @@ Friends</h2></td></tr>
         <tr>
           <td class="memname">std::string Cache::expanded_sql </td>
           <td>(</td>
-          <td class="paramtype">sqlite3_stmt *&#160;</td>
+          <td class="paramtype"><a class="el" href="cache_8h.html#af2a033da1327cdd77f0a174a09aedd0c">sqlite3_stmt</a> *&#160;</td>
           <td class="paramname"><em>pStmt</em></td><td>)</td>
           <td></td>
         </tr>
@@ -1073,7 +1062,7 @@ Friends</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Returns the SQL string bound to the statement handle. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="cache_8cc_source.html#l01416">1416</a> of file <a class="el" href="cache_8cc_source.html">cache.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cache_8cc_source.html#l01437">1437</a> of file <a class="el" href="cache_8cc_source.html">cache.cc</a>.</p>
 
 </div>
 </div>
@@ -1095,11 +1084,9 @@ Friends</h2></td></tr>
 <p>Load cache index from disk. </p>
 <dl class="section return"><dt>Returns</dt><dd>Returns true on success; false on error. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="cache_8cc_source.html#l00587">587</a> of file <a class="el" href="cache_8cc_source.html">cache.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cache_8cc_source.html#l00611">611</a> of file <a class="el" href="cache_8cc_source.html">cache.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="ffmpeg__utils_8cc_source.html#l00994">append_filename()</a>, <a class="el" href="cache_8cc_source.html#l00279">begin_transaction()</a>, <a class="el" href="cache_8cc_source.html#l00225">check_min_version()</a>, <a class="el" href="cache_8cc_source.html#l00327">create_table_cache_entry()</a>, <a class="el" href="cache_8h_source.html#l00042">DB_BASE_VERSION_MAJOR</a>, <a class="el" href="cache_8h_source.html#l00043">DB_BASE_VERSION_MINOR</a>, <a class="el" href="cache_8h_source.html#l00048">DB_MIN_VERSION_MAJOR</a>, <a class="el" href="cache_8h_source.html#l00049">DB_MIN_VERSION_MINOR</a>, <a class="el" href="cache_8h_source.html#l00045">DB_VERSION_MAJOR</a>, <a class="el" href="cache_8h_source.html#l00046">DB_VERSION_MINOR</a>, <a class="el" href="logging_8h_source.html#l00182">Logging::debug()</a>, <a class="el" href="cache_8cc_source.html#l00295">end_transaction()</a>, <a class="el" href="logging_8h_source.html#l00239">Logging::error()</a>, <a class="el" href="cache_8h_source.html#l00332">m_cacheidx_db</a>, <a class="el" href="cache_8h_source.html#l00331">m_cacheidx_file</a>, <a class="el" href="cache_8h_source.html#l00324">m_columns_cache_entry</a>, <a class="el" href="cache_8h_source.html#l00328">m_columns_version</a>, <a class="el" href="cache_8h_source.html#l00322">m_table_cache_entry</a>, <a class="el" href="cache_8h_source.html#l00326">m_table_version</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l01376">mktree()</a>, <a class="el" href="cache_8cc_source.html#l00131">prepare_stmts()</a>, <a class="el" href="cache_8cc_source.html#l00041">sqlite3_errstr</a>, <a class="el" href="cache_8cc_source.html#l00165">table_exists()</a>, <a class="el" href="cache_8cc_source.html#l00045">TOSTRING</a>, <a class="el" href="transcode_8cc_source.html#l00195">transcoder_cache_path()</a>, <a class="el" href="cache_8cc_source.html#l00367">upgrade_db()</a>, and <a class="el" href="logging_8h_source.html#l00220">Logging::warning()</a>.</p>
-
-<p class="reference">Referenced by <a class="el" href="transcode_8cc_source.html#l00229">transcoder_init()</a>.</p>
+<p class="reference">References <a class="el" href="ffmpeg__utils_8cc_source.html#l00993">append_filename()</a>, <a class="el" href="cache_8cc_source.html#l00303">begin_transaction()</a>, <a class="el" href="cache_8cc_source.html#l00249">check_min_version()</a>, <a class="el" href="cache_8cc_source.html#l00351">create_table_cache_entry()</a>, <a class="el" href="cache_8h_source.html#l00042">DB_BASE_VERSION_MAJOR</a>, <a class="el" href="cache_8h_source.html#l00043">DB_BASE_VERSION_MINOR</a>, <a class="el" href="cache_8h_source.html#l00048">DB_MIN_VERSION_MAJOR</a>, <a class="el" href="cache_8h_source.html#l00049">DB_MIN_VERSION_MINOR</a>, <a class="el" href="cache_8h_source.html#l00045">DB_VERSION_MAJOR</a>, <a class="el" href="cache_8h_source.html#l00046">DB_VERSION_MINOR</a>, <a class="el" href="logging_8h_source.html#l00182">Logging::debug()</a>, <a class="el" href="cache_8cc_source.html#l00319">end_transaction()</a>, <a class="el" href="logging_8h_source.html#l00239">Logging::error()</a>, <a class="el" href="cache_8h_source.html#l00380">m_cacheidx_db</a>, <a class="el" href="cache_8h_source.html#l00374">m_columns_cache_entry</a>, <a class="el" href="cache_8h_source.html#l00376">m_columns_version</a>, <a class="el" href="cache_8h_source.html#l00373">m_table_cache_entry</a>, <a class="el" href="cache_8h_source.html#l00375">m_table_version</a>, <a class="el" href="ffmpeg__utils_8cc_source.html#l01376">mktree()</a>, <a class="el" href="cache_8cc_source.html#l00155">prepare_stmts()</a>, <a class="el" href="cache_8cc_source.html#l00042">sqlite3_errstr</a>, <a class="el" href="cache_8cc_source.html#l00189">table_exists()</a>, <a class="el" href="cache_8cc_source.html#l00046">TOSTRING</a>, <a class="el" href="transcode_8cc_source.html#l00195">transcoder_cache_path()</a>, <a class="el" href="cache_8cc_source.html#l00391">upgrade_db()</a>, and <a class="el" href="logging_8h_source.html#l00220">Logging::warning()</a>.</p>
 
 </div>
 </div>
@@ -1129,9 +1116,7 @@ Friends</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Returns true on success; false on error. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="cache_8cc_source.html#l01328">1328</a> of file <a class="el" href="cache_8cc_source.html">cache.cc</a>.</p>
-
-<p class="reference">Referenced by <a class="el" href="transcode_8cc_source.html#l00777">transcode()</a>, and <a class="el" href="transcode_8cc_source.html#l00745">transcoder_cache_maintenance()</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cache_8cc_source.html#l01349">1349</a> of file <a class="el" href="cache_8cc_source.html">cache.cc</a>.</p>
 
 </div>
 </div>
@@ -1161,11 +1146,9 @@ Friends</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>On success, returns pointer to a <a class="el" href="classCache__Entry.html" title="The Cache_Entry class.">Cache_Entry</a>. On error, returns nullptr. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="cache_8cc_source.html#l01054">1054</a> of file <a class="el" href="cache_8cc_source.html">cache.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cache_8cc_source.html#l01075">1075</a> of file <a class="el" href="cache_8cc_source.html">cache.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="fileio_8h_source.html#l00148">VIRTUALFILE::m_destfile</a>, and <a class="el" href="logging_8h_source.html#l00163">Logging::trace()</a>.</p>
-
-<p class="reference">Referenced by <a class="el" href="transcode_8cc_source.html#l00263">transcoder_cached_filesize()</a>, <a class="el" href="transcode_8cc_source.html#l00355">transcoder_new()</a>, and <a class="el" href="transcode_8cc_source.html#l00290">transcoder_set_filesize()</a>.</p>
+<p class="reference">References <a class="el" href="fileio_8h_source.html#l00150">VIRTUALFILE::m_destfile</a>, and <a class="el" href="logging_8h_source.html#l00163">Logging::trace()</a>.</p>
 
 </div>
 </div>
@@ -1195,11 +1178,11 @@ Friends</h2></td></tr>
 <p>Prepare all SQL statements. </p>
 <dl class="section return"><dt>Returns</dt><dd>Returns true on success, false on error. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="cache_8cc_source.html#l00131">131</a> of file <a class="el" href="cache_8cc_source.html">cache.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cache_8cc_source.html#l00155">155</a> of file <a class="el" href="cache_8cc_source.html">cache.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="logging_8h_source.html#l00239">Logging::error()</a>, <a class="el" href="cache_8h_source.html#l00332">m_cacheidx_db</a>, <a class="el" href="cache_8h_source.html#l00335">m_cacheidx_delete_stmt</a>, <a class="el" href="cache_8h_source.html#l00331">m_cacheidx_file</a>, <a class="el" href="cache_8h_source.html#l00334">m_cacheidx_insert_stmt</a>, and <a class="el" href="cache_8h_source.html#l00333">m_cacheidx_select_stmt</a>.</p>
+<p class="reference">References <a class="el" href="logging_8h_source.html#l00239">Logging::error()</a>, and <a class="el" href="cache_8h_source.html#l00380">m_cacheidx_db</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="cache_8cc_source.html#l00587">load_index()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="cache_8cc_source.html#l00611">load_index()</a>.</p>
 
 </div>
 </div>
@@ -1221,7 +1204,7 @@ Friends</h2></td></tr>
 <p>Prune cache entries to keep cache size within limit. </p>
 <dl class="section return"><dt>Returns</dt><dd>Returns true on success; false on error. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="cache_8cc_source.html#l01158">1158</a> of file <a class="el" href="cache_8cc_source.html">cache.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cache_8cc_source.html#l01179">1179</a> of file <a class="el" href="cache_8cc_source.html">cache.cc</a>.</p>
 
 </div>
 </div>
@@ -1244,7 +1227,7 @@ Friends</h2></td></tr>
 <p>Prune cache entries to ensure disk space. </p>
 <dl class="section return"><dt>Returns</dt><dd>Returns true on success; false on error. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="cache_8cc_source.html#l01236">1236</a> of file <a class="el" href="cache_8cc_source.html">cache.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cache_8cc_source.html#l01257">1257</a> of file <a class="el" href="cache_8cc_source.html">cache.cc</a>.</p>
 
 </div>
 </div>
@@ -1266,7 +1249,7 @@ Friends</h2></td></tr>
 <p>Prune expired cache entries. </p>
 <dl class="section return"><dt>Returns</dt><dd>Returns true on success; false on error. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="cache_8cc_source.html#l01096">1096</a> of file <a class="el" href="cache_8cc_source.html">cache.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cache_8cc_source.html#l01117">1117</a> of file <a class="el" href="cache_8cc_source.html">cache.cc</a>.</p>
 
 </div>
 </div>
@@ -1303,11 +1286,11 @@ Friends</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Returns true on success; false on error. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="cache_8cc_source.html#l00752">752</a> of file <a class="el" href="cache_8cc_source.html">cache.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cache_8cc_source.html#l00785">785</a> of file <a class="el" href="cache_8cc_source.html">cache.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="logging_8h_source.html#l00239">Logging::error()</a>, <a class="el" href="cache_8h_source.html#l00088">CACHE_INFO::m_access_time</a>, <a class="el" href="cache_8h_source.html#l00072">CACHE_INFO::m_audiobitrate</a>, <a class="el" href="cache_8h_source.html#l00073">CACHE_INFO::m_audiosamplerate</a>, <a class="el" href="cache_8h_source.html#l00086">CACHE_INFO::m_averror</a>, <a class="el" href="cache_8h_source.html#l00331">m_cacheidx_file</a>, <a class="el" href="cache_8h_source.html#l00333">m_cacheidx_select_stmt</a>, <a class="el" href="cache_8h_source.html#l00087">CACHE_INFO::m_creation_time</a>, <a class="el" href="cache_8h_source.html#l00077">CACHE_INFO::m_deinterlace</a>, <a class="el" href="cache_8h_source.html#l00070">CACHE_INFO::m_destfile</a>, <a class="el" href="cache_8h_source.html#l00071">CACHE_INFO::m_desttype</a>, <a class="el" href="cache_8h_source.html#l00078">CACHE_INFO::m_duration</a>, <a class="el" href="cache_8h_source.html#l00080">CACHE_INFO::m_encoded_filesize</a>, <a class="el" href="cache_8h_source.html#l00085">CACHE_INFO::m_errno</a>, <a class="el" href="cache_8h_source.html#l00084">CACHE_INFO::m_error</a>, <a class="el" href="cache_8h_source.html#l00090">CACHE_INFO::m_file_size</a>, <a class="el" href="cache_8h_source.html#l00089">CACHE_INFO::m_file_time</a>, <a class="el" href="cache_8h_source.html#l00330">m_mutex</a>, <a class="el" href="cache_8h_source.html#l00079">CACHE_INFO::m_predicted_filesize</a>, <a class="el" href="cache_8h_source.html#l00083">CACHE_INFO::m_result</a>, <a class="el" href="cache_8h_source.html#l00082">CACHE_INFO::m_segment_count</a>, <a class="el" href="cache_8h_source.html#l00081">CACHE_INFO::m_video_frame_count</a>, <a class="el" href="cache_8h_source.html#l00074">CACHE_INFO::m_videobitrate</a>, <a class="el" href="cache_8h_source.html#l00076">CACHE_INFO::m_videoheight</a>, <a class="el" href="cache_8h_source.html#l00075">CACHE_INFO::m_videowidth</a>, <a class="el" href="cache_8h_source.html#l00056">RESULTCODE_NONE</a>, and <a class="el" href="cache_8cc_source.html#l00041">sqlite3_errstr</a>.</p>
+<p class="reference">References <a class="el" href="logging_8h_source.html#l00239">Logging::error()</a>, <a class="el" href="cache_8h_source.html#l00091">CACHE_INFO::m_access_time</a>, <a class="el" href="cache_8h_source.html#l00075">CACHE_INFO::m_audiobitrate</a>, <a class="el" href="cache_8h_source.html#l00076">CACHE_INFO::m_audiosamplerate</a>, <a class="el" href="cache_8h_source.html#l00089">CACHE_INFO::m_averror</a>, <a class="el" href="cache_8h_source.html#l00380">m_cacheidx_db</a>, <a class="el" href="cache_8h_source.html#l00090">CACHE_INFO::m_creation_time</a>, <a class="el" href="cache_8h_source.html#l00080">CACHE_INFO::m_deinterlace</a>, <a class="el" href="cache_8h_source.html#l00073">CACHE_INFO::m_destfile</a>, <a class="el" href="cache_8h_source.html#l00074">CACHE_INFO::m_desttype</a>, <a class="el" href="cache_8h_source.html#l00081">CACHE_INFO::m_duration</a>, <a class="el" href="cache_8h_source.html#l00083">CACHE_INFO::m_encoded_filesize</a>, <a class="el" href="cache_8h_source.html#l00088">CACHE_INFO::m_errno</a>, <a class="el" href="cache_8h_source.html#l00087">CACHE_INFO::m_error</a>, <a class="el" href="cache_8h_source.html#l00093">CACHE_INFO::m_file_size</a>, <a class="el" href="cache_8h_source.html#l00092">CACHE_INFO::m_file_time</a>, <a class="el" href="cache_8h_source.html#l00378">m_mutex</a>, <a class="el" href="cache_8h_source.html#l00082">CACHE_INFO::m_predicted_filesize</a>, <a class="el" href="cache_8h_source.html#l00086">CACHE_INFO::m_result</a>, <a class="el" href="cache_8h_source.html#l00085">CACHE_INFO::m_segment_count</a>, <a class="el" href="cache_8h_source.html#l00084">CACHE_INFO::m_video_frame_count</a>, <a class="el" href="cache_8h_source.html#l00077">CACHE_INFO::m_videobitrate</a>, <a class="el" href="cache_8h_source.html#l00079">CACHE_INFO::m_videoheight</a>, <a class="el" href="cache_8h_source.html#l00078">CACHE_INFO::m_videowidth</a>, <a class="el" href="cache_8h.html#a4a32a646521d02ddc7897ffabe261429ab50339a10e1de285ac99d4c3990b8693">NONE</a>, and <a class="el" href="cache_8cc_source.html#l00042">sqlite3_errstr</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="cache__entry_8cc_source.html#l00133">Cache_Entry::read_info()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="cache__entry_8cc_source.html#l00131">Cache_Entry::read_info()</a>.</p>
 
 </div>
 </div>
@@ -1347,7 +1330,7 @@ Friends</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Returns true on success; false on error. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="cache_8cc_source.html#l01397">1397</a> of file <a class="el" href="cache_8cc_source.html">cache.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cache_8cc_source.html#l01418">1418</a> of file <a class="el" href="cache_8cc_source.html">cache.cc</a>.</p>
 
 </div>
 </div>
@@ -1377,9 +1360,9 @@ Friends</h2></td></tr>
 <p>Rollback a database transaction. </p>
 <dl class="section return"><dt>Returns</dt><dd>Returns true on success; false on error. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="cache_8cc_source.html#l00311">311</a> of file <a class="el" href="cache_8cc_source.html">cache.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cache_8cc_source.html#l00335">335</a> of file <a class="el" href="cache_8cc_source.html">cache.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="logging_8h_source.html#l00239">Logging::error()</a>, <a class="el" href="cache_8h_source.html#l00332">m_cacheidx_db</a>, and <a class="el" href="cache_8h_source.html#l00331">m_cacheidx_file</a>.</p>
+<p class="reference">References <a class="el" href="logging_8h_source.html#l00239">Logging::error()</a>, and <a class="el" href="cache_8h_source.html#l00380">m_cacheidx_db</a>.</p>
 
 </div>
 </div>
@@ -1416,11 +1399,11 @@ Friends</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Returns true if table exists, false if not. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="cache_8cc_source.html#l00165">165</a> of file <a class="el" href="cache_8cc_source.html">cache.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cache_8cc_source.html#l00189">189</a> of file <a class="el" href="cache_8cc_source.html">cache.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="logging_8h_source.html#l00239">Logging::error()</a>, <a class="el" href="cache_8h_source.html#l00332">m_cacheidx_db</a>, and <a class="el" href="cache_8h_source.html#l00331">m_cacheidx_file</a>.</p>
+<p class="reference">References <a class="el" href="logging_8h_source.html#l00239">Logging::error()</a>, and <a class="el" href="cache_8h_source.html#l00380">m_cacheidx_db</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="cache_8cc_source.html#l00587">load_index()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="cache_8cc_source.html#l00611">load_index()</a>.</p>
 
 </div>
 </div>
@@ -1468,11 +1451,11 @@ Friends</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Returns true on success; false on error. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="cache_8cc_source.html#l00367">367</a> of file <a class="el" href="cache_8cc_source.html">cache.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cache_8cc_source.html#l00391">391</a> of file <a class="el" href="cache_8cc_source.html">cache.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="cache_8cc_source.html#l00194">column_exists()</a>, <a class="el" href="cache_8cc_source.html#l00327">create_table_cache_entry()</a>, <a class="el" href="cache_8h_source.html#l00045">DB_VERSION_MAJOR</a>, <a class="el" href="cache_8h_source.html#l00046">DB_VERSION_MINOR</a>, <a class="el" href="logging_8h_source.html#l00182">Logging::debug()</a>, <a class="el" href="logging_8h_source.html#l00239">Logging::error()</a>, <a class="el" href="logging_8h_source.html#l00201">Logging::info()</a>, <a class="el" href="cache_8h_source.html#l00332">m_cacheidx_db</a>, <a class="el" href="cache_8h_source.html#l00331">m_cacheidx_file</a>, <a class="el" href="cache_8h_source.html#l00324">m_columns_cache_entry</a>, <a class="el" href="cache_8h_source.html#l00322">m_table_cache_entry</a>, <a class="el" href="cache_8h_source.html#l00111">Cache::TABLE_DEF::name</a>, and <a class="el" href="cache_8cc_source.html#l00045">TOSTRING</a>.</p>
+<p class="reference">References <a class="el" href="cache_8cc_source.html#l00218">column_exists()</a>, <a class="el" href="cache_8cc_source.html#l00351">create_table_cache_entry()</a>, <a class="el" href="cache_8h_source.html#l00045">DB_VERSION_MAJOR</a>, <a class="el" href="cache_8h_source.html#l00046">DB_VERSION_MINOR</a>, <a class="el" href="logging_8h_source.html#l00182">Logging::debug()</a>, <a class="el" href="logging_8h_source.html#l00239">Logging::error()</a>, <a class="el" href="logging_8h_source.html#l00201">Logging::info()</a>, <a class="el" href="cache_8h_source.html#l00380">m_cacheidx_db</a>, <a class="el" href="cache_8h_source.html#l00374">m_columns_cache_entry</a>, <a class="el" href="cache_8h_source.html#l00373">m_table_cache_entry</a>, <a class="el" href="cache_8h_source.html#l00114">Cache::TABLE_DEF::name</a>, and <a class="el" href="cache_8cc_source.html#l00046">TOSTRING</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="cache_8cc_source.html#l00587">load_index()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="cache_8cc_source.html#l00611">load_index()</a>.</p>
 
 </div>
 </div>
@@ -1509,9 +1492,9 @@ Friends</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Returns true on success; false on error. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="cache_8cc_source.html#l00879">879</a> of file <a class="el" href="cache_8cc_source.html">cache.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cache_8cc_source.html#l00912">912</a> of file <a class="el" href="cache_8cc_source.html">cache.cc</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="cache__entry_8cc_source.html#l00148">Cache_Entry::update_access()</a>, and <a class="el" href="cache__entry_8cc_source.html#l00138">Cache_Entry::write_info()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="cache__entry_8cc_source.html#l00146">Cache_Entry::update_access()</a>, and <a class="el" href="cache__entry_8cc_source.html#l00136">Cache_Entry::write_info()</a>.</p>
 
 </div>
 </div>
@@ -1536,7 +1519,7 @@ Friends</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cache_8h_source.html#l00132">132</a> of file <a class="el" href="cache_8h_source.html">cache.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cache_8h_source.html#l00135">135</a> of file <a class="el" href="cache_8h_source.html">cache.h</a>.</p>
 
 </div>
 </div>
@@ -1563,14 +1546,14 @@ Friends</h2></td></tr>
 
 <p><a class="el" href="classCache.html" title="The Cache class.">Cache</a> file (memory mapped file) </p>
 
-<p class="definition">Definition at line <a class="el" href="cache_8h_source.html#l00336">336</a> of file <a class="el" href="cache_8h_source.html">cache.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cache_8h_source.html#l00382">382</a> of file <a class="el" href="cache_8h_source.html">cache.h</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="cache_8cc_source.html#l01030">delete_entry()</a>, and <a class="el" href="cache_8cc_source.html#l00118">~Cache()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="cache_8cc_source.html#l01051">delete_entry()</a>, and <a class="el" href="cache_8cc_source.html#l00142">~Cache()</a>.</p>
 
 </div>
 </div>
-<a id="a256d777b722e65cc3e8f41b5c99b32e5" name="a256d777b722e65cc3e8f41b5c99b32e5"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a256d777b722e65cc3e8f41b5c99b32e5">&#9670;&nbsp;</a></span>m_cacheidx_db</h2>
+<a id="a5fb705e5bea7484aaeefa1572eff8770" name="a5fb705e5bea7484aaeefa1572eff8770"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5fb705e5bea7484aaeefa1572eff8770">&#9670;&nbsp;</a></span>m_cacheidx_db</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1579,7 +1562,7 @@ Friends</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">sqlite3* Cache::m_cacheidx_db</td>
+          <td class="memname">std::unique_ptr&lt;<a class="el" href="classCache_1_1sqlite__t.html">sqlite_t</a>&gt; Cache::m_cacheidx_db</td>
         </tr>
       </table>
   </td>
@@ -1591,121 +1574,9 @@ Friends</h2></td></tr>
 
 <p>SQLite handle of cache index database. </p>
 
-<p class="definition">Definition at line <a class="el" href="cache_8h_source.html#l00332">332</a> of file <a class="el" href="cache_8h_source.html">cache.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cache_8h_source.html#l00380">380</a> of file <a class="el" href="cache_8h_source.html">cache.h</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="cache_8cc_source.html#l00279">begin_transaction()</a>, <a class="el" href="cache_8cc_source.html#l00225">check_min_version()</a>, <a class="el" href="cache_8cc_source.html#l00194">column_exists()</a>, <a class="el" href="cache_8cc_source.html#l00327">create_table_cache_entry()</a>, <a class="el" href="cache_8cc_source.html#l00295">end_transaction()</a>, <a class="el" href="cache_8cc_source.html#l00587">load_index()</a>, <a class="el" href="cache_8cc_source.html#l00131">prepare_stmts()</a>, <a class="el" href="cache_8cc_source.html#l00311">rollback_transaction()</a>, <a class="el" href="cache_8cc_source.html#l00165">table_exists()</a>, and <a class="el" href="cache_8cc_source.html#l00367">upgrade_db()</a>.</p>
-
-</div>
-</div>
-<a id="a5370871315f50ba2548db29f22e522fc" name="a5370871315f50ba2548db29f22e522fc"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5370871315f50ba2548db29f22e522fc">&#9670;&nbsp;</a></span>m_cacheidx_delete_stmt</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">sqlite3_stmt* Cache::m_cacheidx_delete_stmt</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Prepared delete statement. </p>
-
-<p class="definition">Definition at line <a class="el" href="cache_8h_source.html#l00335">335</a> of file <a class="el" href="cache_8h_source.html">cache.h</a>.</p>
-
-<p class="reference">Referenced by <a class="el" href="cache_8cc_source.html#l00131">prepare_stmts()</a>.</p>
-
-</div>
-</div>
-<a id="a71fba1b02a2458dad66b81a74164e42b" name="a71fba1b02a2458dad66b81a74164e42b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a71fba1b02a2458dad66b81a74164e42b">&#9670;&nbsp;</a></span>m_cacheidx_file</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::string Cache::m_cacheidx_file</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Name of SQLite cache index database. </p>
-
-<p class="definition">Definition at line <a class="el" href="cache_8h_source.html#l00331">331</a> of file <a class="el" href="cache_8h_source.html">cache.h</a>.</p>
-
-<p class="reference">Referenced by <a class="el" href="cache_8cc_source.html#l00279">begin_transaction()</a>, <a class="el" href="cache_8cc_source.html#l00225">check_min_version()</a>, <a class="el" href="cache_8cc_source.html#l00194">column_exists()</a>, <a class="el" href="cache_8cc_source.html#l00327">create_table_cache_entry()</a>, <a class="el" href="cache_8cc_source.html#l00295">end_transaction()</a>, <a class="el" href="cache_8cc_source.html#l00587">load_index()</a>, <a class="el" href="cache_8cc_source.html#l00131">prepare_stmts()</a>, <a class="el" href="cache_8cc_source.html#l00752">read_info()</a>, <a class="el" href="cache_8cc_source.html#l00311">rollback_transaction()</a>, <a class="el" href="cache_8cc_source.html#l00165">table_exists()</a>, and <a class="el" href="cache_8cc_source.html#l00367">upgrade_db()</a>.</p>
-
-</div>
-</div>
-<a id="a3513cf3b7c5a845a6604309997ab0e64" name="a3513cf3b7c5a845a6604309997ab0e64"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3513cf3b7c5a845a6604309997ab0e64">&#9670;&nbsp;</a></span>m_cacheidx_insert_stmt</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">sqlite3_stmt* Cache::m_cacheidx_insert_stmt</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Prepared insert statement. </p>
-
-<p class="definition">Definition at line <a class="el" href="cache_8h_source.html#l00334">334</a> of file <a class="el" href="cache_8h_source.html">cache.h</a>.</p>
-
-<p class="reference">Referenced by <a class="el" href="cache_8cc_source.html#l00131">prepare_stmts()</a>.</p>
-
-</div>
-</div>
-<a id="a9edda804c66170d65b76764f3c132549" name="a9edda804c66170d65b76764f3c132549"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9edda804c66170d65b76764f3c132549">&#9670;&nbsp;</a></span>m_cacheidx_select_stmt</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">sqlite3_stmt* Cache::m_cacheidx_select_stmt</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Prepared select statement. </p>
-
-<p class="definition">Definition at line <a class="el" href="cache_8h_source.html#l00333">333</a> of file <a class="el" href="cache_8h_source.html">cache.h</a>.</p>
-
-<p class="reference">Referenced by <a class="el" href="cache_8cc_source.html#l00131">prepare_stmts()</a>, and <a class="el" href="cache_8cc_source.html#l00752">read_info()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="cache_8cc_source.html#l00303">begin_transaction()</a>, <a class="el" href="cache_8cc_source.html#l00249">check_min_version()</a>, <a class="el" href="cache_8cc_source.html#l01031">close_index()</a>, <a class="el" href="cache_8cc_source.html#l00218">column_exists()</a>, <a class="el" href="cache_8cc_source.html#l00351">create_table_cache_entry()</a>, <a class="el" href="cache_8cc_source.html#l00319">end_transaction()</a>, <a class="el" href="cache_8cc_source.html#l00611">load_index()</a>, <a class="el" href="cache_8cc_source.html#l00155">prepare_stmts()</a>, <a class="el" href="cache_8cc_source.html#l00785">read_info()</a>, <a class="el" href="cache_8cc_source.html#l00335">rollback_transaction()</a>, <a class="el" href="cache_8cc_source.html#l00189">table_exists()</a>, and <a class="el" href="cache_8cc_source.html#l00391">upgrade_db()</a>.</p>
 
 </div>
 </div>
@@ -1731,9 +1602,9 @@ Friends</h2></td></tr>
 
 <p>Columns of table "cache_entry". </p>
 
-<p class="definition">Definition at line <a class="el" href="cache_8h_source.html#l00324">324</a> of file <a class="el" href="cache_8h_source.html">cache.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cache_8h_source.html#l00374">374</a> of file <a class="el" href="cache_8h_source.html">cache.h</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="cache_8cc_source.html#l00587">load_index()</a>, and <a class="el" href="cache_8cc_source.html#l00367">upgrade_db()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="cache_8cc_source.html#l00611">load_index()</a>, and <a class="el" href="cache_8cc_source.html#l00391">upgrade_db()</a>.</p>
 
 </div>
 </div>
@@ -1764,9 +1635,9 @@ Friends</h2></td></tr>
 </div><!-- fragment -->
 <p>Columns of table "version". </p>
 
-<p class="definition">Definition at line <a class="el" href="cache_8h_source.html#l00328">328</a> of file <a class="el" href="cache_8h_source.html">cache.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cache_8h_source.html#l00376">376</a> of file <a class="el" href="cache_8h_source.html">cache.h</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="cache_8cc_source.html#l00587">load_index()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="cache_8cc_source.html#l00611">load_index()</a>.</p>
 
 </div>
 </div>
@@ -1792,9 +1663,9 @@ Friends</h2></td></tr>
 
 <p>Access mutex. </p>
 
-<p class="definition">Definition at line <a class="el" href="cache_8h_source.html#l00330">330</a> of file <a class="el" href="cache_8h_source.html">cache.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cache_8h_source.html#l00378">378</a> of file <a class="el" href="cache_8h_source.html">cache.h</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="cache_8cc_source.html#l00752">read_info()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="cache_8cc_source.html#l00785">read_info()</a>.</p>
 
 </div>
 </div>
@@ -1831,9 +1702,9 @@ Friends</h2></td></tr>
 </div><!-- fragment -->
 <p>Definition and indexes of table "cache_entry". </p>
 
-<p class="definition">Definition at line <a class="el" href="cache_8h_source.html#l00322">322</a> of file <a class="el" href="cache_8h_source.html">cache.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cache_8h_source.html#l00373">373</a> of file <a class="el" href="cache_8h_source.html">cache.h</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="cache_8cc_source.html#l00587">load_index()</a>, and <a class="el" href="cache_8cc_source.html#l00367">upgrade_db()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="cache_8cc_source.html#l00611">load_index()</a>, and <a class="el" href="cache_8cc_source.html#l00391">upgrade_db()</a>.</p>
 
 </div>
 </div>
@@ -1868,9 +1739,9 @@ Friends</h2></td></tr>
 </div><!-- fragment -->
 <p>Definition and indexes of table "version". </p>
 
-<p class="definition">Definition at line <a class="el" href="cache_8h_source.html#l00326">326</a> of file <a class="el" href="cache_8h_source.html">cache.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cache_8h_source.html#l00375">375</a> of file <a class="el" href="cache_8h_source.html">cache.h</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="cache_8cc_source.html#l00587">load_index()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="cache_8cc_source.html#l00611">load_index()</a>.</p>
 
 </div>
 </div>

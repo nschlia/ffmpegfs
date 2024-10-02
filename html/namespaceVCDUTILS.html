@@ -82,12 +82,12 @@ Functions</h2></td></tr>
 <tr class="memitem:a123536c5ee83780358812049a9b98834"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceVCDUTILS.html#a123536c5ee83780358812049a9b98834">locate_video</a> (const std::string &amp;path, int track_no, std::string &amp;fullname)</td></tr>
 <tr class="memdesc:a123536c5ee83780358812049a9b98834"><td class="mdescLeft">&#160;</td><td class="mdescRight">Locate AVSEQ*DAT/MPEG video file for track_no.  <a href="namespaceVCDUTILS.html#a123536c5ee83780358812049a9b98834">More...</a><br /></td></tr>
 <tr class="separator:a123536c5ee83780358812049a9b98834"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa7cf6f87142373d428e418419c9e8d66"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceVCDUTILS.html#aa7cf6f87142373d428e418419c9e8d66">get_type_str</a> (int type)</td></tr>
-<tr class="memdesc:aa7cf6f87142373d428e418419c9e8d66"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return disk type as a human readable string.  <a href="namespaceVCDUTILS.html#aa7cf6f87142373d428e418419c9e8d66">More...</a><br /></td></tr>
-<tr class="separator:aa7cf6f87142373d428e418419c9e8d66"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3f175a980cce03847e6e78129a5726a4"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceVCDUTILS.html#a3f175a980cce03847e6e78129a5726a4">get_profile_tag_str</a> (int tag)</td></tr>
-<tr class="memdesc:a3f175a980cce03847e6e78129a5726a4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Profile as a human readable string.  <a href="namespaceVCDUTILS.html#a3f175a980cce03847e6e78129a5726a4">More...</a><br /></td></tr>
-<tr class="separator:a3f175a980cce03847e6e78129a5726a4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a96497f309741f5abc12b98df44cdc6d1"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceVCDUTILS.html#a96497f309741f5abc12b98df44cdc6d1">get_type_str</a> (<a class="el" href="vcdchapter_8h.html#a5cb9c1a9dff84842852994972a52bd2b">VCDTYPE</a> type)</td></tr>
+<tr class="memdesc:a96497f309741f5abc12b98df44cdc6d1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return disk type as a human readable string.  <a href="namespaceVCDUTILS.html#a96497f309741f5abc12b98df44cdc6d1">More...</a><br /></td></tr>
+<tr class="separator:a96497f309741f5abc12b98df44cdc6d1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afc78fb9f8f9d157ea1a891934eea1546"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceVCDUTILS.html#afc78fb9f8f9d157ea1a891934eea1546">get_profile_tag_str</a> (<a class="el" href="vcdchapter_8h.html#aacf9570a503c1d7d6bc60a80243c9578">VCDPROFILETAG</a> tag)</td></tr>
+<tr class="memdesc:afc78fb9f8f9d157ea1a891934eea1546"><td class="mdescLeft">&#160;</td><td class="mdescRight">Profile as a human readable string.  <a href="namespaceVCDUTILS.html#afc78fb9f8f9d157ea1a891934eea1546">More...</a><br /></td></tr>
+<tr class="separator:afc78fb9f8f9d157ea1a891934eea1546"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a394354e787de56c0f518b901d89a4c13"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceVCDUTILS.html#a394354e787de56c0f518b901d89a4c13">get_directory</a> (const std::string &amp;fullname, std::string *directory)</td></tr>
 <tr class="memdesc:a394354e787de56c0f518b901d89a4c13"><td class="mdescLeft">&#160;</td><td class="mdescRight">Check if fullname is a directory. Remove the filename if necessary.  <a href="namespaceVCDUTILS.html#a394354e787de56c0f518b901d89a4c13">More...</a><br /></td></tr>
 <tr class="separator:a394354e787de56c0f518b901d89a4c13"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -138,11 +138,11 @@ Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Converted text </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="vcdutils_8cc_source.html#l00040">40</a> of file <a class="el" href="vcdutils_8cc_source.html">vcdutils.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vcdutils_8cc_source.html#l00041">41</a> of file <a class="el" href="vcdutils_8cc_source.html">vcdutils.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="ffmpeg__utils_8cc_source.html#l01812">trim()</a>.</p>
+<p class="reference">References <a class="el" href="ffmpeg__utils_8cc_source.html#l01810">trim()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="vcdentries_8cc_source.html#l00071">VcdEntries::load_file()</a>, and <a class="el" href="vcdinfo_8cc_source.html#l00127">VcdInfo::load_file()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="vcdentries_8cc_source.html#l00070">VcdEntries::load_file()</a>, and <a class="el" href="vcdinfo_8cc_source.html#l00129">VcdInfo::load_file()</a>.</p>
 
 </div>
 </div>
@@ -182,16 +182,16 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="vcdutils_8cc_source.html#l00152">152</a> of file <a class="el" href="vcdutils_8cc_source.html">vcdutils.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vcdutils_8cc_source.html#l00151">151</a> of file <a class="el" href="vcdutils_8cc_source.html">vcdutils.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="ffmpeg__utils_8cc_source.html#l00984">append_sep()</a>, and <a class="el" href="ffmpeg__utils_8cc_source.html#l01013">remove_filename()</a>.</p>
+<p class="reference">References <a class="el" href="ffmpeg__utils_8cc_source.html#l00983">append_sep()</a>, and <a class="el" href="ffmpeg__utils_8cc_source.html#l01012">remove_filename()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="vcdentries_8cc_source.html#l00071">VcdEntries::load_file()</a>, and <a class="el" href="vcdinfo_8cc_source.html#l00127">VcdInfo::load_file()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="vcdentries_8cc_source.html#l00070">VcdEntries::load_file()</a>, and <a class="el" href="vcdinfo_8cc_source.html#l00129">VcdInfo::load_file()</a>.</p>
 
 </div>
 </div>
-<a id="a3f175a980cce03847e6e78129a5726a4" name="a3f175a980cce03847e6e78129a5726a4"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3f175a980cce03847e6e78129a5726a4">&#9670;&nbsp;</a></span>get_profile_tag_str()</h2>
+<a id="afc78fb9f8f9d157ea1a891934eea1546" name="afc78fb9f8f9d157ea1a891934eea1546"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afc78fb9f8f9d157ea1a891934eea1546">&#9670;&nbsp;</a></span>get_profile_tag_str()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -199,7 +199,7 @@ Functions</h2></td></tr>
         <tr>
           <td class="memname">std::string VCDUTILS::get_profile_tag_str </td>
           <td>(</td>
-          <td class="paramtype">int&#160;</td>
+          <td class="paramtype"><a class="el" href="vcdchapter_8h.html#aacf9570a503c1d7d6bc60a80243c9578">VCDPROFILETAG</a>&#160;</td>
           <td class="paramname"><em>tag</em></td><td>)</td>
           <td></td>
         </tr>
@@ -215,14 +215,16 @@ Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Returns profile as a human readable string. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="vcdutils_8cc_source.html#l00133">133</a> of file <a class="el" href="vcdutils_8cc_source.html">vcdutils.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vcdutils_8cc_source.html#l00132">132</a> of file <a class="el" href="vcdutils_8cc_source.html">vcdutils.cc</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="vcdentries_8cc_source.html#l00380">VcdEntries::get_profile_tag_str()</a>, and <a class="el" href="vcdinfo_8cc_source.html#l00214">VcdInfo::get_profile_tag_str()</a>.</p>
+<p class="reference">References <a class="el" href="vcdchapter_8h.html#aacf9570a503c1d7d6bc60a80243c9578a323967318ad48f7ab79daab4402a4842">VCD_10_20_SVCD_HQVCD</a>, and <a class="el" href="vcdchapter_8h.html#aacf9570a503c1d7d6bc60a80243c9578a742afa328f6d89cfc330d9181f147836">VCD_11</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="vcdentries_8cc_source.html#l00379">VcdEntries::get_profile_tag_str()</a>, and <a class="el" href="vcdinfo_8cc_source.html#l00215">VcdInfo::get_profile_tag_str()</a>.</p>
 
 </div>
 </div>
-<a id="aa7cf6f87142373d428e418419c9e8d66" name="aa7cf6f87142373d428e418419c9e8d66"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa7cf6f87142373d428e418419c9e8d66">&#9670;&nbsp;</a></span>get_type_str()</h2>
+<a id="a96497f309741f5abc12b98df44cdc6d1" name="a96497f309741f5abc12b98df44cdc6d1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a96497f309741f5abc12b98df44cdc6d1">&#9670;&nbsp;</a></span>get_type_str()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -230,7 +232,7 @@ Functions</h2></td></tr>
         <tr>
           <td class="memname">std::string VCDUTILS::get_type_str </td>
           <td>(</td>
-          <td class="paramtype">int&#160;</td>
+          <td class="paramtype"><a class="el" href="vcdchapter_8h.html#a5cb9c1a9dff84842852994972a52bd2b">VCDTYPE</a>&#160;</td>
           <td class="paramname"><em>type</em></td><td>)</td>
           <td></td>
         </tr>
@@ -246,9 +248,11 @@ Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Disk type as a human readable string. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="vcdutils_8cc_source.html#l00112">112</a> of file <a class="el" href="vcdutils_8cc_source.html">vcdutils.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vcdutils_8cc_source.html#l00111">111</a> of file <a class="el" href="vcdutils_8cc_source.html">vcdutils.cc</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="vcdentries_8cc_source.html#l00370">VcdEntries::get_type_str()</a>, and <a class="el" href="vcdinfo_8cc_source.html#l00204">VcdInfo::get_type_str()</a>.</p>
+<p class="reference">References <a class="el" href="vcdchapter_8h.html#a5cb9c1a9dff84842852994972a52bd2ba209ae3d6d7a3cc7de9a731ae14ee2f6e">VCD_10_11_SVCD_10_HQVCD</a>, and <a class="el" href="vcdchapter_8h.html#a5cb9c1a9dff84842852994972a52bd2ba2bf1691b71e784ba47472647f37af8bc">VCD_20</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="vcdentries_8cc_source.html#l00369">VcdEntries::get_type_str()</a>, and <a class="el" href="vcdinfo_8cc_source.html#l00205">VcdInfo::get_type_str()</a>.</p>
 
 </div>
 </div>
@@ -302,9 +306,9 @@ Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>true if path contains a S/VCD, false if not. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="vcdutils_8cc_source.html#l00065">65</a> of file <a class="el" href="vcdutils_8cc_source.html">vcdutils.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vcdutils_8cc_source.html#l00064">64</a> of file <a class="el" href="vcdutils_8cc_source.html">vcdutils.cc</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="vcdentries_8cc_source.html#l00071">VcdEntries::load_file()</a>, and <a class="el" href="vcdinfo_8cc_source.html#l00127">VcdInfo::load_file()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="vcdentries_8cc_source.html#l00070">VcdEntries::load_file()</a>, and <a class="el" href="vcdinfo_8cc_source.html#l00129">VcdInfo::load_file()</a>.</p>
 
 </div>
 </div>
@@ -351,11 +355,11 @@ Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>If successful, it returns 0 or errno if not. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="vcdutils_8cc_source.html#l00089">89</a> of file <a class="el" href="vcdutils_8cc_source.html">vcdutils.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vcdutils_8cc_source.html#l00088">88</a> of file <a class="el" href="vcdutils_8cc_source.html">vcdutils.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="ffmpeg__utils_8h_source.html#l00728">strsprintf()</a>.</p>
+<p class="reference">References <a class="el" href="ffmpeg__utils_8h_source.html#l00737">strsprintf()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="vcdio_8cc_source.html#l00068">VcdIO::openio()</a>, and <a class="el" href="vcdentries_8cc_source.html#l00161">VcdEntries::scan_chapters()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="vcdio_8cc_source.html#l00067">VcdIO::openio()</a>, and <a class="el" href="vcdentries_8cc_source.html#l00160">VcdEntries::scan_chapters()</a>.</p>
 
 </div>
 </div>

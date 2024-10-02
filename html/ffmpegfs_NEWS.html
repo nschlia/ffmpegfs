@@ -67,6 +67,15 @@ $(function() {
 <div class="contents">
 <div class="textblock"><div class="fragment"><div class="line">FFmpegfs NEWS</div>
 <div class="line"> </div>
+<div class="line">Important changes in 2.17 (2024-08-XX):</div>
+<div class="line"> </div>
+<div class="line">* Bugfix: Wrong error message fixed when an invalid audio/video codec was</div>
+<div class="line">  selected. The message should rather say &quot;unsupported codec&quot; instead of</div>
+<div class="line">  talking about &quot;sample format not supported.&quot;.</div>
+<div class="line">* Bugfix: Issue #162: If not present, add time stamps to the copied streams.</div>
+<div class="line">* Changed quality from 34 to 40 for hardware encoded video streams to create</div>
+<div class="line">  slightly smaller files.</div>
+<div class="line"> </div>
 <div class="line">Important changes in 2.16 (2024-06-10):</div>
 <div class="line"> </div>
 <div class="line">* Bugfix: Closes#1072412: Fix build with FFmpeg 7.0. write_packet() now with</div>
@@ -83,7 +92,7 @@ $(function() {
 <div class="line">Important changes in 2.15 (2024-02-03):</div>
 <div class="line"> </div>
 <div class="line">* Bugfix: Issue #151: Fixed autocopy STRICT never triggers for video streams</div>
-<div class="line">* Bugfix: Closes #153: The --include_extensions parameter now contains a</div>
+<div class="line">* Bugfix: Issue #153: The --include_extensions parameter now contains a</div>
 <div class="line">  description, which was previously missing from the manual and online help.</div>
 <div class="line">* Issue #149: 2023-05-04 - xxxxxxxxxx - lavu 58.7.100 - frame.h</div>
 <div class="line">  Deprecate AVFrame.interlaced_frame, AVFrame.top_field_first, and</div>
@@ -98,13 +107,13 @@ $(function() {
 <div class="line">* Issue #149: 2021-09-20 - dd846bc4a91 - lavc 59.8.100 - avcodec.h codec.h</div>
 <div class="line">  Deprecate AV_CODEC_FLAG_TRUNCATED and AV_CODEC_CAP_TRUNCATED,</div>
 <div class="line">  as they are redundant with parsers.</div>
-<div class="line">* Closes #136: The CMake build files have been removed. Support was never more</div>
+<div class="line">* Issue #136: The CMake build files have been removed. Support was never more</div>
 <div class="line">  than experimental, and CMake lacks a good uninstall option. Will stick to</div>
 <div class="line">  automake system from now on.</div>
 <div class="line"> </div>
 <div class="line">Important changes in 2.14 (2023-06-15):</div>
 <div class="line"> </div>
-<div class="line">* Bugfix: Closes #141: Improved memory management by allocating several times the</div>
+<div class="line">* Bugfix: Issue #141: Improved memory management by allocating several times the</div>
 <div class="line">  average size of allocations. This prevents obtaining tiny portions over and over</div>
 <div class="line">  again. Additionally, after the file is opened, grab the entire expected memory</div>
 <div class="line">  block rather than doing a tiny allocation initially, followed by a larger</div>
@@ -150,14 +159,14 @@ $(function() {
 <div class="line">  because it does not depend on the bit rate. An example: when set to</div>
 <div class="line">  25 seconds for HLS transcoding, this will make sure that at least 2 complete</div>
 <div class="line">  segments will be available once the file is released and visible.</div>
-<div class="line">* Feature: Closes #140: Filtering the files that will be encoded has been</div>
+<div class="line">* Feature: Issue #140: Filtering the files that will be encoded has been</div>
 <div class="line">  added. A comma-separated list of extensions is specified by the</div>
 <div class="line">  --include_extensions parameter. These file extensions are the only ones that</div>
 <div class="line">  will be transcoded.</div>
 <div class="line">  The entries support shell wildcard patterns.</div>
 <div class="line">* Feature: The --hide_extensions parameter syntax has been extended. The</div>
 <div class="line">  entries now support shell wildcard patterns.</div>
-<div class="line">* Bugfix: Closes #139: Additional files could be added using the --extensions</div>
+<div class="line">* Bugfix: Issue #139: Additional files could be added using the --extensions</div>
 <div class="line">  parameter. However, this is no longer necessary; in the past, a file&#39;s</div>
 <div class="line">  extension determined whether or not it would be transcoded. Files with</div>
 <div class="line">  unknown extensions would be ignored. The extension is no longer important</div>

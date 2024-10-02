@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['profile_0',['PROFILE',['../ffmpeg__utils_8h.html#a6ce4239c2af8f4c6f9d39f22b516af22',1,'ffmpeg_utils.h']]],
-  ['proreslevel_1',['PRORESLEVEL',['../ffmpeg__utils_8h.html#a0c5736abf631a3d93a9768f059b6cfda',1,'ffmpeg_utils.h']]]
+  ['loglevel_0',['LOGLEVEL',['../classLogging.html#afedd719fe29d8c925e8246c0a7ab90fc',1,'Logging']]]
 ];

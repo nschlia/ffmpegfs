@@ -14,7 +14,7 @@ var searchData=
   ['add_5fsubtitle_5fstreams_11',['add_subtitle_streams',['../classFFmpeg__Transcoder.html#a96ed62701c42f8f76ce16d3c79b940cb',1,'FFmpeg_Transcoder']]],
   ['age_12',['age',['../classCache__Entry.html#a294bcda65b5a78e1bc2fdd4a789ec65a',1,'Cache_Entry']]],
   ['albumart_5fsupported_13',['albumart_supported',['../classFFmpegfs__Format.html#a504a706b33b76fef7b9cfdc2113bbba3',1,'FFmpegfs_Format']]],
-  ['alloc_14',['alloc',['../classFileIO.html#ab67ef47f0295909426a82d9fb29afa9e',1,'FileIO']]],
+  ['alloc_14',['alloc',['../classFileIO.html#aba153ce9ccee07c5c038da50ad505e7f',1,'FileIO']]],
   ['alloc_5fpicture_15',['alloc_picture',['../classFFmpeg__Transcoder.html#a8f11f9e84745323aab9860906f1f8df4',1,'FFmpeg_Transcoder']]],
   ['alloc_5fsubtitle_16',['alloc_subtitle',['../classFFmpeg__Subtitle.html#aa077610310690f4c5c0bc315e32c0b59',1,'FFmpeg_Subtitle']]],
   ['append_5fbasepath_17',['append_basepath',['../ffmpeg__utils_8h.html#acdbad6f18e0debc2b2eea1edf9e28d00',1,'append_basepath(std::string *origpath, const char *path):&#160;ffmpeg_utils.cc'],['../ffmpeg__utils_8cc.html#acdbad6f18e0debc2b2eea1edf9e28d00',1,'append_basepath(std::string *origpath, const char *path):&#160;ffmpeg_utils.cc']]],

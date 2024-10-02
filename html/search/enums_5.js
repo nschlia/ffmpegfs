@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['loglevel_0',['LOGLEVEL',['../classLogging.html#afedd719fe29d8c925e8246c0a7ab90fc',1,'Logging']]]
+  ['hwaccelapi_0',['HWACCELAPI',['../ffmpegfs_8h.html#aac9e4eee778bb6a9e6476d602b1c2d6c',1,'ffmpegfs.h']]],
+  ['hwaccelmode_1',['HWACCELMODE',['../classFFmpeg__Transcoder.html#a069bfc8760dc23399d2f9a044aeacf51',1,'FFmpeg_Transcoder']]]
 ];

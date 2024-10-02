@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['encoding_0',['ENCODING',['../ffmpeg__utils_8h.html#a74264d463df100ce3989a4b75e6a40fa',1,'ffmpeg_utils.h']]]
+  ['decoder_5fstatus_0',['DECODER_STATUS',['../ffmpeg__transcoder_8h.html#ac7b7ff5fbecde5342c9a7b05c2b6af7c',1,'ffmpeg_transcoder.h']]],
+  ['dsitype_1',['DSITYPE',['../classDvdIO.html#a67e523c39d9270988f2cbc1955335577',1,'DvdIO']]]
 ];

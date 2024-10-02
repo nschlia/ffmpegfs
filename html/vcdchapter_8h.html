@@ -93,13 +93,16 @@ This graph shows which files directly or indirectly include this file:</div>
 <div class="dyncontent">
 <div class="center"><img src="vcdchapter_8h__dep__incl.png" border="0" usemap="#asrc_2vcd_2vcdchapter_8hdep" alt=""/></div>
 <map name="asrc_2vcd_2vcdchapter_8hdep" id="asrc_2vcd_2vcdchapter_8hdep">
-<area shape="rect" title="S/VCD VcdChapter class." alt="" coords="179,5,321,32"/>
-<area shape="rect" href="vcdchapter_8cc.html" title="S/VCD VcdChapter class implementation." alt="" coords="5,80,156,107"/>
-<area shape="rect" href="vcdentries_8h.html" title="S/VCD VcdEntries class." alt="" coords="180,80,320,107"/>
-<area shape="rect" href="vcdinfo_8h.html" title="S/VCD VcdInfo class." alt="" coords="345,80,467,107"/>
-<area shape="rect" href="vcdentries_8cc.html" title="S/VCD VcdEntries class implementation." alt="" coords="23,155,170,181"/>
-<area shape="rect" href="vcdparser_8cc.html" title="Video/Super Video CD parser implementation." alt="" coords="195,155,313,181"/>
-<area shape="rect" href="vcdinfo_8cc.html" title="S/VCD VcdInfo class implementation." alt="" coords="341,155,471,181"/>
+<area shape="rect" title="S/VCD VcdChapter class." alt="" coords="459,5,601,32"/>
+<area shape="rect" href="vcdchapter_8cc.html" title="S/VCD VcdChapter class implementation." alt="" coords="320,155,471,181"/>
+<area shape="rect" href="vcdentries_8h.html" title="S/VCD VcdEntries class." alt="" coords="152,80,292,107"/>
+<area shape="rect" href="vcdinfo_8h.html" title="S/VCD VcdInfo class." alt="" coords="617,80,739,107"/>
+<area shape="rect" href="vcdutils_8cc.html" title="S/VCD utility functions implementation." alt="" coords="767,155,899,181"/>
+<area shape="rect" href="vcdutils_8h.html" title="S/VCD utility functions." alt="" coords="467,80,593,107"/>
+<area shape="rect" href="vcdentries_8cc.html" title="S/VCD VcdEntries class implementation." alt="" coords="149,155,295,181"/>
+<area shape="rect" href="vcdparser_8cc.html" title="Video/Super Video CD parser implementation." alt="" coords="5,155,124,181"/>
+<area shape="rect" href="vcdinfo_8cc.html" title="S/VCD VcdInfo class implementation." alt="" coords="613,155,743,181"/>
+<area shape="rect" href="vcdio_8cc.html" title="VcdIO class implementation." alt="" coords="495,155,589,181"/>
 </map>
 </div>
 </div>
@@ -113,24 +116,20 @@ Classes</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="typedef-members" name="typedef-members"></a>
 Typedefs</h2></td></tr>
-<tr class="memitem:af18fd4311ef80990d713301e523fe851"><td class="memItemLeft" align="right" valign="top">typedef enum <a class="el" href="vcdchapter_8h.html#a5cb9c1a9dff84842852994972a52bd2b">VCDTYPE</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vcdchapter_8h.html#af18fd4311ef80990d713301e523fe851">VCDTYPE</a></td></tr>
-<tr class="separator:af18fd4311ef80990d713301e523fe851"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a912498f8d01bcb29352c36fc82e5731a"><td class="memItemLeft" align="right" valign="top">typedef enum <a class="el" href="vcdchapter_8h.html#aacf9570a503c1d7d6bc60a80243c9578">VCDPROFILETAG</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vcdchapter_8h.html#a912498f8d01bcb29352c36fc82e5731a">VCDPROFILETAG</a></td></tr>
-<tr class="separator:a912498f8d01bcb29352c36fc82e5731a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a974ad6f048352c2402590ac801ed16c7"><td class="memItemLeft" align="right" valign="top">typedef struct <a class="el" href="structVCDCHAPTER.html">VCDCHAPTER</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vcdchapter_8h.html#a974ad6f048352c2402590ac801ed16c7">VCDCHAPTER</a></td></tr>
 <tr class="memdesc:a974ad6f048352c2402590ac801ed16c7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Video CD chapter forward declaration.  <a href="vcdchapter_8h.html#a974ad6f048352c2402590ac801ed16c7">More...</a><br /></td></tr>
 <tr class="separator:a974ad6f048352c2402590ac801ed16c7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="enum-members" name="enum-members"></a>
 Enumerations</h2></td></tr>
-<tr class="memitem:a5cb9c1a9dff84842852994972a52bd2b"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vcdchapter_8h.html#a5cb9c1a9dff84842852994972a52bd2b">VCDTYPE</a> { <a class="el" href="vcdchapter_8h.html#a5cb9c1a9dff84842852994972a52bd2ba51bf92539a204761a24565a361841495">VCDTYPE_UNKNOWN</a> = -1
-, <a class="el" href="vcdchapter_8h.html#a5cb9c1a9dff84842852994972a52bd2baf082a3b68192b8ac6ed8a8418ff18a9f">VCDTYPE_VCD_10_11_SVCD_10_HQVCD</a> = 1
-, <a class="el" href="vcdchapter_8h.html#a5cb9c1a9dff84842852994972a52bd2ba1672d880bdc67c4904da87b44df4f059">VCDTYPE_VCD_20</a> = 2
+<tr class="memitem:a5cb9c1a9dff84842852994972a52bd2b"><td class="memItemLeft" align="right" valign="top">enum class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vcdchapter_8h.html#a5cb9c1a9dff84842852994972a52bd2b">VCDTYPE</a> { <a class="el" href="vcdchapter_8h.html#a5cb9c1a9dff84842852994972a52bd2ba696b031073e74bf2cb98e5ef201d4aa3">UNKNOWN</a> = -1
+, <a class="el" href="vcdchapter_8h.html#a5cb9c1a9dff84842852994972a52bd2ba209ae3d6d7a3cc7de9a731ae14ee2f6e">VCD_10_11_SVCD_10_HQVCD</a> = 1
+, <a class="el" href="vcdchapter_8h.html#a5cb9c1a9dff84842852994972a52bd2ba2bf1691b71e784ba47472647f37af8bc">VCD_20</a> = 2
  }</td></tr>
 <tr class="separator:a5cb9c1a9dff84842852994972a52bd2b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aacf9570a503c1d7d6bc60a80243c9578"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vcdchapter_8h.html#aacf9570a503c1d7d6bc60a80243c9578">VCDPROFILETAG</a> { <a class="el" href="vcdchapter_8h.html#aacf9570a503c1d7d6bc60a80243c9578a8e5209a06e72474b4df6fa199beb28f6">VCDPROFILETAG_UNKNOWN</a> = -1
-, <a class="el" href="vcdchapter_8h.html#aacf9570a503c1d7d6bc60a80243c9578a1cfe848e42fdd1a69028da1ba2946623">VCDPROFILETAG_VCD_10_20_SVCD_HQVCD</a> = 0
-, <a class="el" href="vcdchapter_8h.html#aacf9570a503c1d7d6bc60a80243c9578a55f717b8a408ce143af2a196c6889fe7">VCDPROFILETAG_VCD_11</a> = 1
+<tr class="memitem:aacf9570a503c1d7d6bc60a80243c9578"><td class="memItemLeft" align="right" valign="top">enum class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vcdchapter_8h.html#aacf9570a503c1d7d6bc60a80243c9578">VCDPROFILETAG</a> { <a class="el" href="vcdchapter_8h.html#aacf9570a503c1d7d6bc60a80243c9578a696b031073e74bf2cb98e5ef201d4aa3">UNKNOWN</a> = -1
+, <a class="el" href="vcdchapter_8h.html#aacf9570a503c1d7d6bc60a80243c9578a323967318ad48f7ab79daab4402a4842">VCD_10_20_SVCD_HQVCD</a> = 0
+, <a class="el" href="vcdchapter_8h.html#aacf9570a503c1d7d6bc60a80243c9578a742afa328f6d89cfc330d9181f147836">VCD_11</a> = 1
  }</td></tr>
 <tr class="separator:aacf9570a503c1d7d6bc60a80243c9578"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
@@ -160,55 +159,33 @@ From BullysPLayer Copyright (C) 1984-2024 by Oblivion Software/Norbert Schlia </
 
 </div>
 </div>
-<a id="a912498f8d01bcb29352c36fc82e5731a" name="a912498f8d01bcb29352c36fc82e5731a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a912498f8d01bcb29352c36fc82e5731a">&#9670;&nbsp;</a></span>VCDPROFILETAG</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">typedef enum <a class="el" href="vcdchapter_8h.html#aacf9570a503c1d7d6bc60a80243c9578">VCDPROFILETAG</a> <a class="el" href="vcdchapter_8h.html#aacf9570a503c1d7d6bc60a80243c9578">VCDPROFILETAG</a></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<p >S/VCD profile tag </p>
-
-</div>
-</div>
-<a id="af18fd4311ef80990d713301e523fe851" name="af18fd4311ef80990d713301e523fe851"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af18fd4311ef80990d713301e523fe851">&#9670;&nbsp;</a></span>VCDTYPE</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">typedef enum <a class="el" href="vcdchapter_8h.html#a5cb9c1a9dff84842852994972a52bd2b">VCDTYPE</a> <a class="el" href="vcdchapter_8h.html#a5cb9c1a9dff84842852994972a52bd2b">VCDTYPE</a></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<p >S/VCD type </p>
-
-</div>
-</div>
 <h2 class="groupheader">Enumeration Type Documentation</h2>
 <a id="aacf9570a503c1d7d6bc60a80243c9578" name="aacf9570a503c1d7d6bc60a80243c9578"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#aacf9570a503c1d7d6bc60a80243c9578">&#9670;&nbsp;</a></span>VCDPROFILETAG</h2>
 
 <div class="memitem">
 <div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">enum <a class="el" href="vcdchapter_8h.html#aacf9570a503c1d7d6bc60a80243c9578">VCDPROFILETAG</a></td>
+          <td class="memname">enum class <a class="el" href="vcdchapter_8h.html#aacf9570a503c1d7d6bc60a80243c9578">VCDPROFILETAG</a></td>
         </tr>
       </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">strong</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
 <p >S/VCD profile tag </p>
 <table class="fieldtable">
-<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="aacf9570a503c1d7d6bc60a80243c9578a8e5209a06e72474b4df6fa199beb28f6" name="aacf9570a503c1d7d6bc60a80243c9578a8e5209a06e72474b4df6fa199beb28f6"></a>VCDPROFILETAG_UNKNOWN&#160;</td><td class="fielddoc"><p >unknown file tag </p>
+<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="aacf9570a503c1d7d6bc60a80243c9578a696b031073e74bf2cb98e5ef201d4aa3" name="aacf9570a503c1d7d6bc60a80243c9578a696b031073e74bf2cb98e5ef201d4aa3"></a>UNKNOWN&#160;</td><td class="fielddoc"><p >unknown file tag </p>
 </td></tr>
-<tr><td class="fieldname"><a id="aacf9570a503c1d7d6bc60a80243c9578a1cfe848e42fdd1a69028da1ba2946623" name="aacf9570a503c1d7d6bc60a80243c9578a1cfe848e42fdd1a69028da1ba2946623"></a>VCDPROFILETAG_VCD_10_20_SVCD_HQVCD&#160;</td><td class="fielddoc"><p >VCD 1.0, VCD 2.0, SVCD und HQVCD. </p>
+<tr><td class="fieldname"><a id="aacf9570a503c1d7d6bc60a80243c9578a323967318ad48f7ab79daab4402a4842" name="aacf9570a503c1d7d6bc60a80243c9578a323967318ad48f7ab79daab4402a4842"></a>VCD_10_20_SVCD_HQVCD&#160;</td><td class="fielddoc"><p >VCD 1.0, VCD 2.0, SVCD und HQVCD. </p>
 </td></tr>
-<tr><td class="fieldname"><a id="aacf9570a503c1d7d6bc60a80243c9578a55f717b8a408ce143af2a196c6889fe7" name="aacf9570a503c1d7d6bc60a80243c9578a55f717b8a408ce143af2a196c6889fe7"></a>VCDPROFILETAG_VCD_11&#160;</td><td class="fielddoc"><p >VCD 1.1. </p>
+<tr><td class="fieldname"><a id="aacf9570a503c1d7d6bc60a80243c9578a742afa328f6d89cfc330d9181f147836" name="aacf9570a503c1d7d6bc60a80243c9578a742afa328f6d89cfc330d9181f147836"></a>VCD_11&#160;</td><td class="fielddoc"><p >VCD 1.1. </p>
 </td></tr>
 </table>
 
@@ -221,19 +198,27 @@ From BullysPLayer Copyright (C) 1984-2024 by Oblivion Software/Norbert Schlia </
 
 <div class="memitem">
 <div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">enum <a class="el" href="vcdchapter_8h.html#a5cb9c1a9dff84842852994972a52bd2b">VCDTYPE</a></td>
+          <td class="memname">enum class <a class="el" href="vcdchapter_8h.html#a5cb9c1a9dff84842852994972a52bd2b">VCDTYPE</a></td>
         </tr>
       </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">strong</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
 <p >S/VCD type </p>
 <table class="fieldtable">
-<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="a5cb9c1a9dff84842852994972a52bd2ba51bf92539a204761a24565a361841495" name="a5cb9c1a9dff84842852994972a52bd2ba51bf92539a204761a24565a361841495"></a>VCDTYPE_UNKNOWN&#160;</td><td class="fielddoc"><p >unknown type </p>
+<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="a5cb9c1a9dff84842852994972a52bd2ba696b031073e74bf2cb98e5ef201d4aa3" name="a5cb9c1a9dff84842852994972a52bd2ba696b031073e74bf2cb98e5ef201d4aa3"></a>UNKNOWN&#160;</td><td class="fielddoc"><p >unknown type </p>
 </td></tr>
-<tr><td class="fieldname"><a id="a5cb9c1a9dff84842852994972a52bd2baf082a3b68192b8ac6ed8a8418ff18a9f" name="a5cb9c1a9dff84842852994972a52bd2baf082a3b68192b8ac6ed8a8418ff18a9f"></a>VCDTYPE_VCD_10_11_SVCD_10_HQVCD&#160;</td><td class="fielddoc"><p >VCD 1.0, VCD 1.1, SVCD 1.0 und HQVCD. </p>
+<tr><td class="fieldname"><a id="a5cb9c1a9dff84842852994972a52bd2ba209ae3d6d7a3cc7de9a731ae14ee2f6e" name="a5cb9c1a9dff84842852994972a52bd2ba209ae3d6d7a3cc7de9a731ae14ee2f6e"></a>VCD_10_11_SVCD_10_HQVCD&#160;</td><td class="fielddoc"><p >VCD 1.0, VCD 1.1, SVCD 1.0 und HQVCD. </p>
 </td></tr>
-<tr><td class="fieldname"><a id="a5cb9c1a9dff84842852994972a52bd2ba1672d880bdc67c4904da87b44df4f059" name="a5cb9c1a9dff84842852994972a52bd2ba1672d880bdc67c4904da87b44df4f059"></a>VCDTYPE_VCD_20&#160;</td><td class="fielddoc"><p >VCD 2.0. </p>
+<tr><td class="fieldname"><a id="a5cb9c1a9dff84842852994972a52bd2ba2bf1691b71e784ba47472647f37af8bc" name="a5cb9c1a9dff84842852994972a52bd2ba2bf1691b71e784ba47472647f37af8bc"></a>VCD_20&#160;</td><td class="fielddoc"><p >VCD 2.0. </p>
 </td></tr>
 </table>
 

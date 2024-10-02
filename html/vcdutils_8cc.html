@@ -76,6 +76,7 @@ $(function() {
 <p>S/VCD utility functions implementation.  
 <a href="#details">More...</a></p>
 <div class="textblock"><code>#include &quot;<a class="el" href="ffmpegfs_8h_source.html">ffmpegfs.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="vcdchapter_8h_source.html">vcd/vcdchapter.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="vcdutils_8h_source.html">vcdutils.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="ffmpeg__utils_8h_source.html">ffmpeg_utils.h</a>&quot;</code><br />
 <code>#include &lt;cstring&gt;</code><br />
@@ -86,27 +87,30 @@ Include dependency graph for vcdutils.cc:</div>
 <div class="dyncontent">
 <div class="center"><img src="vcdutils_8cc__incl.png" border="0" usemap="#asrc_2vcd_2vcdutils_8cc" alt=""/></div>
 <map name="asrc_2vcd_2vcdutils_8cc" id="asrc_2vcd_2vcdutils_8cc">
-<area shape="rect" title="S/VCD utility functions implementation." alt="" coords="865,5,997,32"/>
-<area shape="rect" href="ffmpegfs_8h.html" title="Main include for FFmpegfs project." alt="" coords="535,80,619,107"/>
-<area shape="rect" href="ffmpeg__utils_8h.html" title="Various FFmpegfs utility functions." alt="" coords="525,155,629,181"/>
-<area shape="rect" title=" " alt="" coords="1088,229,1168,256"/>
-<area shape="rect" title=" " alt="" coords="1192,229,1253,256"/>
-<area shape="rect" href="vcdutils_8h.html" title="S/VCD utility functions." alt="" coords="771,155,850,181"/>
-<area shape="rect" title=" " alt="" coords="1061,80,1129,107"/>
-<area shape="rect" title=" " alt="" coords="349,155,408,181"/>
-<area shape="rect" title=" " alt="" coords="432,155,501,181"/>
-<area shape="rect" href="fileio_8h.html" title="FileIO class." alt="" coords="874,155,934,181"/>
-<area shape="rect" href="ffmpeg__compat_8h.html" title="FFmpeg API compatibility." alt="" coords="5,229,128,256"/>
-<area shape="rect" title=" " alt="" coords="802,229,857,256"/>
-<area shape="rect" title=" " alt="" coords="719,229,777,256"/>
-<area shape="rect" title=" " alt="" coords="153,229,207,256"/>
-<area shape="rect" title=" " alt="" coords="232,229,272,256"/>
-<area shape="rect" title=" " alt="" coords="644,229,695,256"/>
-<area shape="rect" title=" " alt="" coords="297,229,359,256"/>
-<area shape="rect" title=" " alt="" coords="383,229,443,256"/>
-<area shape="rect" title=" " alt="" coords="468,229,620,256"/>
-<area shape="rect" title=" " alt="" coords="881,229,927,256"/>
-<area shape="rect" title=" " alt="" coords="952,229,1064,256"/>
+<area shape="rect" title="S/VCD utility functions implementation." alt="" coords="861,5,993,32"/>
+<area shape="rect" href="ffmpegfs_8h.html" title="Main include for FFmpegfs project." alt="" coords="442,80,526,107"/>
+<area shape="rect" href="ffmpeg__utils_8h.html" title="Various FFmpegfs utility functions." alt="" coords="875,155,979,181"/>
+<area shape="rect" title=" " alt="" coords="5,229,85,256"/>
+<area shape="rect" title=" " alt="" coords="411,229,472,256"/>
+<area shape="rect" href="vcdchapter_8h.html" title="S/VCD VcdChapter class." alt="" coords="1219,155,1341,181"/>
+<area shape="rect" href="vcdutils_8h.html" title="S/VCD utility functions." alt="" coords="977,80,1055,107"/>
+<area shape="rect" title=" " alt="" coords="1131,80,1199,107"/>
+<area shape="rect" title=" " alt="" coords="371,155,429,181"/>
+<area shape="rect" title=" " alt="" coords="277,155,347,181"/>
+<area shape="rect" href="fileio_8h.html" title="FileIO class." alt="" coords="454,155,514,181"/>
+<area shape="rect" href="ffmpeg__compat_8h.html" title="FFmpeg API compatibility." alt="" coords="755,229,877,256"/>
+<area shape="rect" title=" " alt="" coords="1291,229,1346,256"/>
+<area shape="rect" title=" " alt="" coords="496,229,555,256"/>
+<area shape="rect" title=" " alt="" coords="977,229,1031,256"/>
+<area shape="rect" title=" " alt="" coords="1056,229,1096,256"/>
+<area shape="rect" title=" " alt="" coords="901,229,952,256"/>
+<area shape="rect" title=" " alt="" coords="1121,229,1183,256"/>
+<area shape="rect" title=" " alt="" coords="1207,229,1267,256"/>
+<area shape="rect" title=" " alt="" coords="579,229,731,256"/>
+<area shape="rect" title=" " alt="" coords="110,229,157,256"/>
+<area shape="rect" title=" " alt="" coords="181,229,251,256"/>
+<area shape="rect" title=" " alt="" coords="275,229,387,256"/>
+<area shape="rect" title=" " alt="" coords="1371,229,1432,256"/>
 </map>
 </div>
 </div>
@@ -129,12 +133,12 @@ Functions</h2></td></tr>
 <tr class="memitem:a123536c5ee83780358812049a9b98834"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceVCDUTILS.html#a123536c5ee83780358812049a9b98834">VCDUTILS::locate_video</a> (const std::string &amp;path, int track_no, std::string &amp;fullname)</td></tr>
 <tr class="memdesc:a123536c5ee83780358812049a9b98834"><td class="mdescLeft">&#160;</td><td class="mdescRight">Locate AVSEQ*DAT/MPEG video file for track_no.  <a href="namespaceVCDUTILS.html#a123536c5ee83780358812049a9b98834">More...</a><br /></td></tr>
 <tr class="separator:a123536c5ee83780358812049a9b98834"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa7cf6f87142373d428e418419c9e8d66"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceVCDUTILS.html#aa7cf6f87142373d428e418419c9e8d66">VCDUTILS::get_type_str</a> (int type)</td></tr>
-<tr class="memdesc:aa7cf6f87142373d428e418419c9e8d66"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return disk type as a human readable string.  <a href="namespaceVCDUTILS.html#aa7cf6f87142373d428e418419c9e8d66">More...</a><br /></td></tr>
-<tr class="separator:aa7cf6f87142373d428e418419c9e8d66"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3f175a980cce03847e6e78129a5726a4"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceVCDUTILS.html#a3f175a980cce03847e6e78129a5726a4">VCDUTILS::get_profile_tag_str</a> (int tag)</td></tr>
-<tr class="memdesc:a3f175a980cce03847e6e78129a5726a4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Profile as a human readable string.  <a href="namespaceVCDUTILS.html#a3f175a980cce03847e6e78129a5726a4">More...</a><br /></td></tr>
-<tr class="separator:a3f175a980cce03847e6e78129a5726a4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a96497f309741f5abc12b98df44cdc6d1"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceVCDUTILS.html#a96497f309741f5abc12b98df44cdc6d1">VCDUTILS::get_type_str</a> (<a class="el" href="vcdchapter_8h.html#a5cb9c1a9dff84842852994972a52bd2b">VCDTYPE</a> type)</td></tr>
+<tr class="memdesc:a96497f309741f5abc12b98df44cdc6d1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return disk type as a human readable string.  <a href="namespaceVCDUTILS.html#a96497f309741f5abc12b98df44cdc6d1">More...</a><br /></td></tr>
+<tr class="separator:a96497f309741f5abc12b98df44cdc6d1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afc78fb9f8f9d157ea1a891934eea1546"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceVCDUTILS.html#afc78fb9f8f9d157ea1a891934eea1546">VCDUTILS::get_profile_tag_str</a> (<a class="el" href="vcdchapter_8h.html#aacf9570a503c1d7d6bc60a80243c9578">VCDPROFILETAG</a> tag)</td></tr>
+<tr class="memdesc:afc78fb9f8f9d157ea1a891934eea1546"><td class="mdescLeft">&#160;</td><td class="mdescRight">Profile as a human readable string.  <a href="namespaceVCDUTILS.html#afc78fb9f8f9d157ea1a891934eea1546">More...</a><br /></td></tr>
+<tr class="separator:afc78fb9f8f9d157ea1a891934eea1546"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a394354e787de56c0f518b901d89a4c13"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceVCDUTILS.html#a394354e787de56c0f518b901d89a4c13">VCDUTILS::get_directory</a> (const std::string &amp;fullname, std::string *directory)</td></tr>
 <tr class="memdesc:a394354e787de56c0f518b901d89a4c13"><td class="mdescLeft">&#160;</td><td class="mdescRight">Check if fullname is a directory. Remove the filename if necessary.  <a href="namespaceVCDUTILS.html#a394354e787de56c0f518b901d89a4c13">More...</a><br /></td></tr>
 <tr class="separator:a394354e787de56c0f518b901d89a4c13"><td class="memSeparator" colspan="2">&#160;</td></tr>

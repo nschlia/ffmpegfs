@@ -79,24 +79,25 @@ $(function() {
 <a href="#details">More...</a></p>
 <div class="textblock"><code>#include &quot;<a class="el" href="buffer_8h_source.html">buffer.h</a>&quot;</code><br />
 <code>#include &lt;map&gt;</code><br />
-<code>#include &lt;sqlite3.h&gt;</code><br />
+<code>#include &lt;memory&gt;</code><br />
 </div><div class="textblock"><div class="dynheader">
 Include dependency graph for cache.h:</div>
 <div class="dyncontent">
 <div class="center"><img src="cache_8h__incl.png" border="0" usemap="#asrc_2cache_8h" alt=""/></div>
 <map name="asrc_2cache_8h" id="asrc_2cache_8h">
-<area shape="rect" title="Data cache management." alt="" coords="459,5,549,32"/>
-<area shape="rect" href="buffer_8h.html" title="Buffer class." alt="" coords="285,80,350,107"/>
-<area shape="rect" title=" " alt="" coords="494,229,541,256"/>
-<area shape="rect" title=" " alt="" coords="542,80,613,107"/>
-<area shape="rect" href="fileio_8h.html" title="FileIO class." alt="" coords="203,155,263,181"/>
+<area shape="rect" title="Data cache management." alt="" coords="547,5,637,32"/>
+<area shape="rect" href="buffer_8h.html" title="Buffer class." alt="" coords="297,80,362,107"/>
+<area shape="rect" title=" " alt="" coords="569,229,615,256"/>
+<area shape="rect" title=" " alt="" coords="640,229,709,256"/>
+<area shape="rect" href="fileio_8h.html" title="FileIO class." alt="" coords="367,155,427,181"/>
 <area shape="rect" title=" " alt="" coords="5,229,64,256"/>
-<area shape="rect" title=" " alt="" coords="288,155,347,181"/>
-<area shape="rect" title=" " alt="" coords="371,155,440,181"/>
-<area shape="rect" title=" " alt="" coords="88,229,168,256"/>
-<area shape="rect" title=" " alt="" coords="193,229,247,256"/>
-<area shape="rect" title=" " alt="" coords="272,229,333,256"/>
-<area shape="rect" title=" " alt="" coords="357,229,469,256"/>
+<area shape="rect" title=" " alt="" coords="140,155,199,181"/>
+<area shape="rect" title=" " alt="" coords="223,155,292,181"/>
+<area shape="rect" title=" " alt="" coords="224,229,304,256"/>
+<area shape="rect" title=" " alt="" coords="329,229,383,256"/>
+<area shape="rect" title=" " alt="" coords="408,229,469,256"/>
+<area shape="rect" title=" " alt="" coords="493,229,544,256"/>
+<area shape="rect" title=" " alt="" coords="88,229,200,256"/>
 </map>
 </div>
 </div><div class="textblock"><div class="dynheader">
@@ -129,6 +130,9 @@ Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structCache_1_1TABLE__COLUMNS.html">Cache::TABLE_COLUMNS</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Column definition of sql table.  <a href="structCache_1_1TABLE__COLUMNS.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCache_1_1sqlite__t.html">Cache::sqlite_t</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">The <a class="el" href="classCache_1_1sqlite__t.html" title="The sqlite_t class Wrapper for sqlite3 struct to make use of std::shared_ptr.">sqlite_t</a> class Wrapper for sqlite3 struct to make use of std::shared_ptr.  <a href="classCache_1_1sqlite__t.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="define-members" name="define-members"></a>
 Macros</h2></td></tr>
@@ -153,10 +157,12 @@ Macros</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="typedef-members" name="typedef-members"></a>
 Typedefs</h2></td></tr>
-<tr class="memitem:ae3197d536ab5f4461eee6ea5d1f4422d"><td class="memItemLeft" align="right" valign="top"><a id="ae3197d536ab5f4461eee6ea5d1f4422d" name="ae3197d536ab5f4461eee6ea5d1f4422d"></a>
-typedef enum <a class="el" href="cache_8h.html#a4a32a646521d02ddc7897ffabe261429">RESULTCODE</a>&#160;</td><td class="memItemRight" valign="bottom"><b>RESULTCODE</b></td></tr>
-<tr class="memdesc:ae3197d536ab5f4461eee6ea5d1f4422d"><td class="mdescLeft">&#160;</td><td class="mdescRight">RESULTCODE of transcoding operation. <br /></td></tr>
-<tr class="separator:ae3197d536ab5f4461eee6ea5d1f4422d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0ef6f2646262c8a9b24368d8ac140f69"><td class="memItemLeft" align="right" valign="top">typedef struct <a class="el" href="cache_8h.html#a0ef6f2646262c8a9b24368d8ac140f69">sqlite3</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="cache_8h.html#a0ef6f2646262c8a9b24368d8ac140f69">sqlite3</a></td></tr>
+<tr class="memdesc:a0ef6f2646262c8a9b24368d8ac140f69"><td class="mdescLeft">&#160;</td><td class="mdescRight">Forward declaration of sqlite3 handle.  <a href="cache_8h.html#a0ef6f2646262c8a9b24368d8ac140f69">More...</a><br /></td></tr>
+<tr class="separator:a0ef6f2646262c8a9b24368d8ac140f69"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af2a033da1327cdd77f0a174a09aedd0c"><td class="memItemLeft" align="right" valign="top">typedef struct <a class="el" href="cache_8h.html#af2a033da1327cdd77f0a174a09aedd0c">sqlite3_stmt</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="cache_8h.html#af2a033da1327cdd77f0a174a09aedd0c">sqlite3_stmt</a></td></tr>
+<tr class="memdesc:af2a033da1327cdd77f0a174a09aedd0c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Forward declaration of sqlite3 statement handle.  <a href="cache_8h.html#af2a033da1327cdd77f0a174a09aedd0c">More...</a><br /></td></tr>
+<tr class="separator:af2a033da1327cdd77f0a174a09aedd0c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6160ebca564a87cacb194b9a900900f8"><td class="memItemLeft" align="right" valign="top">typedef <a class="el" href="cache_8h.html#a4a32a646521d02ddc7897ffabe261429">RESULTCODE</a> const  *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="cache_8h.html#a6160ebca564a87cacb194b9a900900f8">LPCRESULTCODE</a></td></tr>
 <tr class="memdesc:a6160ebca564a87cacb194b9a900900f8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pointer version of RESULTCODE.  <a href="cache_8h.html#a6160ebca564a87cacb194b9a900900f8">More...</a><br /></td></tr>
 <tr class="separator:a6160ebca564a87cacb194b9a900900f8"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -176,10 +182,10 @@ typedef struct <a class="el" href="structCACHE__INFO.html">CACHE_INFO</a>&#160;<
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="enum-members" name="enum-members"></a>
 Enumerations</h2></td></tr>
-<tr class="memitem:a4a32a646521d02ddc7897ffabe261429"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="cache_8h.html#a4a32a646521d02ddc7897ffabe261429">RESULTCODE</a> { <a class="el" href="cache_8h.html#a4a32a646521d02ddc7897ffabe261429a6c85be0ed112d98d9046deef75d26080">RESULTCODE_NONE</a>
-, <a class="el" href="cache_8h.html#a4a32a646521d02ddc7897ffabe261429a770644d53978dad1686fc8fcb104ba0b">RESULTCODE_FINISHED_INCOMPLETE</a>
-, <a class="el" href="cache_8h.html#a4a32a646521d02ddc7897ffabe261429a663fa5cef7058322a1748c850a002fea">RESULTCODE_FINISHED_SUCCESS</a>
-, <a class="el" href="cache_8h.html#a4a32a646521d02ddc7897ffabe261429ad83f042cc398d1e2fe8f53dc6fef1d88">RESULTCODE_FINISHED_ERROR</a>
+<tr class="memitem:a4a32a646521d02ddc7897ffabe261429"><td class="memItemLeft" align="right" valign="top">enum class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="cache_8h.html#a4a32a646521d02ddc7897ffabe261429">RESULTCODE</a> { <a class="el" href="cache_8h.html#a4a32a646521d02ddc7897ffabe261429ab50339a10e1de285ac99d4c3990b8693">NONE</a>
+, <a class="el" href="cache_8h.html#a4a32a646521d02ddc7897ffabe261429a677faa2b5f198d066c6e6586f7719a80">FINISHED_INCOMPLETE</a>
+, <a class="el" href="cache_8h.html#a4a32a646521d02ddc7897ffabe261429ad98329da71a28c7b7b7dd89fe4909c40">FINISHED_SUCCESS</a>
+, <a class="el" href="cache_8h.html#a4a32a646521d02ddc7897ffabe261429a5c1d181657e67c30f957694666499641">FINISHED_ERROR</a>
  }</td></tr>
 <tr class="memdesc:a4a32a646521d02ddc7897ffabe261429"><td class="mdescLeft">&#160;</td><td class="mdescRight">RESULTCODE of transcoding operation.  <a href="cache_8h.html#a4a32a646521d02ddc7897ffabe261429">More...</a><br /></td></tr>
 <tr class="separator:a4a32a646521d02ddc7897ffabe261429"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -314,7 +320,7 @@ Enumerations</h2></td></tr>
 
 <p>Pointer to const version of <a class="el" href="structCACHE__INFO.html" title="Cache information block.">CACHE_INFO</a>. </p>
 
-<p class="definition">Definition at line <a class="el" href="cache_8h_source.html#l00094">94</a> of file <a class="el" href="cache_8h_source.html">cache.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cache_8h_source.html#l00097">97</a> of file <a class="el" href="cache_8h_source.html">cache.h</a>.</p>
 
 </div>
 </div>
@@ -332,7 +338,7 @@ Enumerations</h2></td></tr>
 
 <p>Pointer version of <a class="el" href="structCACHE__INFO.html" title="Cache information block.">CACHE_INFO</a>. </p>
 
-<p class="definition">Definition at line <a class="el" href="cache_8h_source.html#l00093">93</a> of file <a class="el" href="cache_8h_source.html">cache.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cache_8h_source.html#l00096">96</a> of file <a class="el" href="cache_8h_source.html">cache.h</a>.</p>
 
 </div>
 </div>
@@ -350,7 +356,7 @@ Enumerations</h2></td></tr>
 
 <p>Pointer version of RESULTCODE. </p>
 
-<p class="definition">Definition at line <a class="el" href="cache_8h_source.html#l00061">61</a> of file <a class="el" href="cache_8h_source.html">cache.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cache_8h_source.html#l00064">64</a> of file <a class="el" href="cache_8h_source.html">cache.h</a>.</p>
 
 </div>
 </div>
@@ -368,7 +374,43 @@ Enumerations</h2></td></tr>
 
 <p>Pointer to const version of RESULTCODE. </p>
 
-<p class="definition">Definition at line <a class="el" href="cache_8h_source.html#l00062">62</a> of file <a class="el" href="cache_8h_source.html">cache.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cache_8h_source.html#l00065">65</a> of file <a class="el" href="cache_8h_source.html">cache.h</a>.</p>
+
+</div>
+</div>
+<a id="a0ef6f2646262c8a9b24368d8ac140f69" name="a0ef6f2646262c8a9b24368d8ac140f69"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0ef6f2646262c8a9b24368d8ac140f69">&#9670;&nbsp;</a></span>sqlite3</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef struct <a class="el" href="cache_8h.html#a0ef6f2646262c8a9b24368d8ac140f69">sqlite3</a> <a class="el" href="cache_8h.html#a0ef6f2646262c8a9b24368d8ac140f69">sqlite3</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Forward declaration of sqlite3 handle. </p>
+
+<p class="definition">Definition at line <a class="el" href="cache_8h_source.html#l00051">51</a> of file <a class="el" href="cache_8h_source.html">cache.h</a>.</p>
+
+</div>
+</div>
+<a id="af2a033da1327cdd77f0a174a09aedd0c" name="af2a033da1327cdd77f0a174a09aedd0c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af2a033da1327cdd77f0a174a09aedd0c">&#9670;&nbsp;</a></span>sqlite3_stmt</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef struct <a class="el" href="cache_8h.html#af2a033da1327cdd77f0a174a09aedd0c">sqlite3_stmt</a> <a class="el" href="cache_8h.html#af2a033da1327cdd77f0a174a09aedd0c">sqlite3_stmt</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Forward declaration of sqlite3 statement handle. </p>
+
+<p class="definition">Definition at line <a class="el" href="cache_8h_source.html#l00052">52</a> of file <a class="el" href="cache_8h_source.html">cache.h</a>.</p>
 
 </div>
 </div>
@@ -378,26 +420,34 @@ Enumerations</h2></td></tr>
 
 <div class="memitem">
 <div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">enum <a class="el" href="cache_8h.html#a4a32a646521d02ddc7897ffabe261429">RESULTCODE</a></td>
+          <td class="memname">enum class <a class="el" href="cache_8h.html#a4a32a646521d02ddc7897ffabe261429">RESULTCODE</a></td>
         </tr>
       </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">strong</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
 
 <p>RESULTCODE of transcoding operation. </p>
 <table class="fieldtable">
-<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="a4a32a646521d02ddc7897ffabe261429a6c85be0ed112d98d9046deef75d26080" name="a4a32a646521d02ddc7897ffabe261429a6c85be0ed112d98d9046deef75d26080"></a>RESULTCODE_NONE&#160;</td><td class="fielddoc"><p >No result code available. </p>
+<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="a4a32a646521d02ddc7897ffabe261429ab50339a10e1de285ac99d4c3990b8693" name="a4a32a646521d02ddc7897ffabe261429ab50339a10e1de285ac99d4c3990b8693"></a>NONE&#160;</td><td class="fielddoc"><p >No result code available. </p>
 </td></tr>
-<tr><td class="fieldname"><a id="a4a32a646521d02ddc7897ffabe261429a770644d53978dad1686fc8fcb104ba0b" name="a4a32a646521d02ddc7897ffabe261429a770644d53978dad1686fc8fcb104ba0b"></a>RESULTCODE_FINISHED_INCOMPLETE&#160;</td><td class="fielddoc"><p >Transcode finished, but incomplete. </p>
+<tr><td class="fieldname"><a id="a4a32a646521d02ddc7897ffabe261429a677faa2b5f198d066c6e6586f7719a80" name="a4a32a646521d02ddc7897ffabe261429a677faa2b5f198d066c6e6586f7719a80"></a>FINISHED_INCOMPLETE&#160;</td><td class="fielddoc"><p >Transcode finished, but incomplete. </p>
 </td></tr>
-<tr><td class="fieldname"><a id="a4a32a646521d02ddc7897ffabe261429a663fa5cef7058322a1748c850a002fea" name="a4a32a646521d02ddc7897ffabe261429a663fa5cef7058322a1748c850a002fea"></a>RESULTCODE_FINISHED_SUCCESS&#160;</td><td class="fielddoc"><p >Transcode finished successfully. </p>
+<tr><td class="fieldname"><a id="a4a32a646521d02ddc7897ffabe261429ad98329da71a28c7b7b7dd89fe4909c40" name="a4a32a646521d02ddc7897ffabe261429ad98329da71a28c7b7b7dd89fe4909c40"></a>FINISHED_SUCCESS&#160;</td><td class="fielddoc"><p >Transcode finished successfully. </p>
 </td></tr>
-<tr><td class="fieldname"><a id="a4a32a646521d02ddc7897ffabe261429ad83f042cc398d1e2fe8f53dc6fef1d88" name="a4a32a646521d02ddc7897ffabe261429ad83f042cc398d1e2fe8f53dc6fef1d88"></a>RESULTCODE_FINISHED_ERROR&#160;</td><td class="fielddoc"><p >Transcode finished with error. </p>
+<tr><td class="fieldname"><a id="a4a32a646521d02ddc7897ffabe261429a5c1d181657e67c30f957694666499641" name="a4a32a646521d02ddc7897ffabe261429a5c1d181657e67c30f957694666499641"></a>FINISHED_ERROR&#160;</td><td class="fielddoc"><p >Transcode finished with error. </p>
 </td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="cache_8h_source.html#l00054">54</a> of file <a class="el" href="cache_8h_source.html">cache.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cache_8h_source.html#l00057">57</a> of file <a class="el" href="cache_8h_source.html">cache.h</a>.</p>
 
 </div>
 </div>

@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['sample_5ffmt_0',['SAMPLE_FMT',['../ffmpeg__utils_8h.html#acdafcfc53b15956e9d95e785b37fb657',1,'ffmpeg_utils.h']]],
-  ['seekres_1',['SEEKRES',['../classVcdEntries.html#ac7683310baea553a144f280b024dcba9',1,'VcdEntries']]]
+  ['recodesame_0',['RECODESAME',['../ffmpeg__utils_8h.html#a159188f600c1d902a8b6bf081bc989aa',1,'ffmpeg_utils.h']]],
+  ['resultcode_1',['RESULTCODE',['../cache_8h.html#a4a32a646521d02ddc7897ffabe261429',1,'cache.h']]]
 ];

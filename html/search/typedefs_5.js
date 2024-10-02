@@ -1,9 +1,6 @@
 var searchData=
 [
-  ['ffmpegfs_5fformat_5farr_0',['FFMPEGFS_FORMAT_ARR',['../ffmpeg__utils_8h.html#a0d4c5f9cf9ec19b14c3884bacf495bca',1,'ffmpeg_utils.h']]],
-  ['filename_5fmap_1',['FILENAME_MAP',['../fuseops_8cc.html#ae586c5090d2e2c9105075061b0b8c6e9',1,'fuseops.cc']]],
-  ['filetype_2',['FILETYPE',['../ffmpeg__utils_8h.html#a4b9d2c6326833769300dc38e641bf286',1,'ffmpeg_utils.h']]],
-  ['filetype_5fmap_3',['FILETYPE_MAP',['../ffmpeg__utils_8cc.html#a4c2c7951dfb898598cc6ebf1b3837493',1,'ffmpeg_utils.cc']]],
-  ['format_4',['FORMAT',['../structFormat__Options.html#a07f1b98b4f2310f7f2941c7647da8c7d',1,'Format_Options']]],
-  ['format_5fmap_5',['FORMAT_MAP',['../structFormat__Options.html#abaaa9bc7dd414a1ec4639490b396724c',1,'Format_Options']]]
+  ['hwaccel_0',['HWACCEL',['../ffmpegfs_8cc.html#af4c82ee6fa3c2a7e0ab32e84fd593f18',1,'ffmpegfs.cc']]],
+  ['hwaccel_5fblocked_5fmap_1',['HWACCEL_BLOCKED_MAP',['../ffmpegfs_8h.html#ac4ee1571355b2e61e5b47fc6e8d26183',1,'ffmpegfs.h']]],
+  ['hwaccel_5fmap_2',['HWACCEL_MAP',['../ffmpegfs_8cc.html#a1784850429821a3f973bb5437a139c44',1,'ffmpegfs.cc']]]
 ];

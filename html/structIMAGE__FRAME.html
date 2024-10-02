@@ -76,9 +76,9 @@ $(function() {
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
-<tr class="memitem:a524de909fb415a41c2966a77fb530683"><td class="memItemLeft" align="right" valign="top">char&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structIMAGE__FRAME.html#a524de909fb415a41c2966a77fb530683">m_tag</a> [8]</td></tr>
-<tr class="memdesc:a524de909fb415a41c2966a77fb530683"><td class="mdescLeft">&#160;</td><td class="mdescRight">Start tag, always ascii "IMGFRAME".  <a href="structIMAGE__FRAME.html#a524de909fb415a41c2966a77fb530683">More...</a><br /></td></tr>
-<tr class="separator:a524de909fb415a41c2966a77fb530683"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9c9e205732f539fdf4959d6a9af8de7d"><td class="memItemLeft" align="right" valign="top">std::array&lt; char, 8 &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structIMAGE__FRAME.html#a9c9e205732f539fdf4959d6a9af8de7d">m_tag</a></td></tr>
+<tr class="memdesc:a9c9e205732f539fdf4959d6a9af8de7d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Start tag, always ascii "IMGFRAME".  <a href="structIMAGE__FRAME.html#a9c9e205732f539fdf4959d6a9af8de7d">More...</a><br /></td></tr>
+<tr class="separator:a9c9e205732f539fdf4959d6a9af8de7d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a522ade92bd9c0860976049454c3b3c77"><td class="memItemLeft" align="right" valign="top">uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structIMAGE__FRAME.html#a522ade92bd9c0860976049454c3b3c77">m_frame_no</a></td></tr>
 <tr class="memdesc:a522ade92bd9c0860976049454c3b3c77"><td class="mdescLeft">&#160;</td><td class="mdescRight">Number of the frame image. 0 if not yet decoded.  <a href="structIMAGE__FRAME.html#a522ade92bd9c0860976049454c3b3c77">More...</a><br /></td></tr>
 <tr class="separator:a522ade92bd9c0860976049454c3b3c77"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -88,16 +88,16 @@ Public Attributes</h2></td></tr>
 <tr class="memitem:a1e99227c26eb31fa79f7b5066bccef96"><td class="memItemLeft" align="right" valign="top">uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structIMAGE__FRAME.html#a1e99227c26eb31fa79f7b5066bccef96">m_size</a></td></tr>
 <tr class="memdesc:a1e99227c26eb31fa79f7b5066bccef96"><td class="mdescLeft">&#160;</td><td class="mdescRight">Image size in bytes.  <a href="structIMAGE__FRAME.html#a1e99227c26eb31fa79f7b5066bccef96">More...</a><br /></td></tr>
 <tr class="separator:a1e99227c26eb31fa79f7b5066bccef96"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac40ed49fc9ad1bf029c489ae3b5ee2eb"><td class="memItemLeft" align="right" valign="top">uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structIMAGE__FRAME.html#ac40ed49fc9ad1bf029c489ae3b5ee2eb">m_reserved</a> [8]</td></tr>
-<tr class="memdesc:ac40ed49fc9ad1bf029c489ae3b5ee2eb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reserved. Pad structure to 32 bytes.  <a href="structIMAGE__FRAME.html#ac40ed49fc9ad1bf029c489ae3b5ee2eb">More...</a><br /></td></tr>
-<tr class="separator:ac40ed49fc9ad1bf029c489ae3b5ee2eb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4dde0df3810c0e4c4330a81215f07c56"><td class="memItemLeft" align="right" valign="top">std::array&lt; uint8_t, 8 &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structIMAGE__FRAME.html#a4dde0df3810c0e4c4330a81215f07c56">m_reserved</a></td></tr>
+<tr class="memdesc:a4dde0df3810c0e4c4330a81215f07c56"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reserved. Pad structure to 32 bytes.  <a href="structIMAGE__FRAME.html#a4dde0df3810c0e4c4330a81215f07c56">More...</a><br /></td></tr>
+<tr class="separator:a4dde0df3810c0e4c4330a81215f07c56"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p >Image frame header. </p>
 <p >This image frame header will always start at an 8K boundary of the cache.</p>
 <p >It can be used to find the next image by seeking an 8K block starting with the tag. </p>
 
-<p class="definition">Definition at line <a class="el" href="fileio_8h_source.html#l00074">74</a> of file <a class="el" href="fileio_8h_source.html">fileio.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fileio_8h_source.html#l00076">76</a> of file <a class="el" href="fileio_8h_source.html">fileio.h</a>.</p>
 </div><h2 class="groupheader">Member Data Documentation</h2>
 <a id="a522ade92bd9c0860976049454c3b3c77" name="a522ade92bd9c0860976049454c3b3c77"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a522ade92bd9c0860976049454c3b3c77">&#9670;&nbsp;</a></span>m_frame_no</h2>
@@ -113,9 +113,9 @@ Public Attributes</h2></td></tr>
 
 <p>Number of the frame image. 0 if not yet decoded. </p>
 
-<p class="definition">Definition at line <a class="el" href="fileio_8h_source.html#l00077">77</a> of file <a class="el" href="fileio_8h_source.html">fileio.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fileio_8h_source.html#l00079">79</a> of file <a class="el" href="fileio_8h_source.html">fileio.h</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="buffer_8cc_source.html#l00691">Buffer::write_frame()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="buffer_8cc_source.html#l00695">Buffer::write_frame()</a>.</p>
 
 </div>
 </div>
@@ -133,27 +133,27 @@ Public Attributes</h2></td></tr>
 
 <p>Offset in index file. </p>
 
-<p class="definition">Definition at line <a class="el" href="fileio_8h_source.html#l00078">78</a> of file <a class="el" href="fileio_8h_source.html">fileio.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fileio_8h_source.html#l00080">80</a> of file <a class="el" href="fileio_8h_source.html">fileio.h</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="buffer_8cc_source.html#l00691">Buffer::write_frame()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="buffer_8cc_source.html#l00695">Buffer::write_frame()</a>.</p>
 
 </div>
 </div>
-<a id="ac40ed49fc9ad1bf029c489ae3b5ee2eb" name="ac40ed49fc9ad1bf029c489ae3b5ee2eb"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac40ed49fc9ad1bf029c489ae3b5ee2eb">&#9670;&nbsp;</a></span>m_reserved</h2>
+<a id="a4dde0df3810c0e4c4330a81215f07c56" name="a4dde0df3810c0e4c4330a81215f07c56"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4dde0df3810c0e4c4330a81215f07c56">&#9670;&nbsp;</a></span>m_reserved</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">uint8_t IMAGE_FRAME::m_reserved[8]</td>
+          <td class="memname">std::array&lt;uint8_t, 8&gt; IMAGE_FRAME::m_reserved</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 <p>Reserved. Pad structure to 32 bytes. </p>
 
-<p class="definition">Definition at line <a class="el" href="fileio_8h_source.html#l00080">80</a> of file <a class="el" href="fileio_8h_source.html">fileio.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fileio_8h_source.html#l00082">82</a> of file <a class="el" href="fileio_8h_source.html">fileio.h</a>.</p>
 
 </div>
 </div>
@@ -171,29 +171,29 @@ Public Attributes</h2></td></tr>
 
 <p>Image size in bytes. </p>
 
-<p class="definition">Definition at line <a class="el" href="fileio_8h_source.html#l00079">79</a> of file <a class="el" href="fileio_8h_source.html">fileio.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fileio_8h_source.html#l00081">81</a> of file <a class="el" href="fileio_8h_source.html">fileio.h</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="buffer_8cc_source.html#l00691">Buffer::write_frame()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="buffer_8cc_source.html#l00695">Buffer::write_frame()</a>.</p>
 
 </div>
 </div>
-<a id="a524de909fb415a41c2966a77fb530683" name="a524de909fb415a41c2966a77fb530683"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a524de909fb415a41c2966a77fb530683">&#9670;&nbsp;</a></span>m_tag</h2>
+<a id="a9c9e205732f539fdf4959d6a9af8de7d" name="a9c9e205732f539fdf4959d6a9af8de7d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9c9e205732f539fdf4959d6a9af8de7d">&#9670;&nbsp;</a></span>m_tag</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">char IMAGE_FRAME::m_tag[8]</td>
+          <td class="memname">std::array&lt;char, 8&gt; IMAGE_FRAME::m_tag</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 <p>Start tag, always ascii "IMGFRAME". </p>
 
-<p class="definition">Definition at line <a class="el" href="fileio_8h_source.html#l00076">76</a> of file <a class="el" href="fileio_8h_source.html">fileio.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fileio_8h_source.html#l00078">78</a> of file <a class="el" href="fileio_8h_source.html">fileio.h</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="buffer_8cc_source.html#l00691">Buffer::write_frame()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="buffer_8cc_source.html#l00695">Buffer::write_frame()</a>.</p>
 
 </div>
 </div>

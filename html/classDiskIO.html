@@ -200,9 +200,9 @@ Private Member Functions</h2></td></tr>
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="inherited" name="inherited"></a>
 Additional Inherited Members</h2></td></tr>
 <tr class="inherit_header pub_static_methods_classFileIO"><td colspan="2" onclick="javascript:toggleInherit('pub_static_methods_classFileIO')"><img src="closed.png" alt="-"/>&#160;Static Public Member Functions inherited from <a class="el" href="classFileIO.html">FileIO</a></td></tr>
-<tr class="memitem:ab67ef47f0295909426a82d9fb29afa9e inherit pub_static_methods_classFileIO"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="classFileIO.html">FileIO</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFileIO.html#ab67ef47f0295909426a82d9fb29afa9e">alloc</a> (<a class="el" href="fileio_8h.html#a1199d38534b11312b0210e527499a805">VIRTUALTYPE</a> <a class="el" href="classFileIO.html#a6b56f0b1fcf994ff403335463d0eca9b">type</a>)</td></tr>
-<tr class="memdesc:ab67ef47f0295909426a82d9fb29afa9e inherit pub_static_methods_classFileIO"><td class="mdescLeft">&#160;</td><td class="mdescRight">Allocate the correct object for <a class="el" href="classFileIO.html#a6b56f0b1fcf994ff403335463d0eca9b" title="Get type of the virtual file.">type()</a>.  <a href="classFileIO.html#ab67ef47f0295909426a82d9fb29afa9e">More...</a><br /></td></tr>
-<tr class="separator:ab67ef47f0295909426a82d9fb29afa9e inherit pub_static_methods_classFileIO"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aba153ce9ccee07c5c038da50ad505e7f inherit pub_static_methods_classFileIO"><td class="memItemLeft" align="right" valign="top">static std::shared_ptr&lt; <a class="el" href="classFileIO.html">FileIO</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFileIO.html#aba153ce9ccee07c5c038da50ad505e7f">alloc</a> (<a class="el" href="fileio_8h.html#a1199d38534b11312b0210e527499a805">VIRTUALTYPE</a> <a class="el" href="classFileIO.html#a6b56f0b1fcf994ff403335463d0eca9b">type</a>)</td></tr>
+<tr class="memdesc:aba153ce9ccee07c5c038da50ad505e7f inherit pub_static_methods_classFileIO"><td class="mdescLeft">&#160;</td><td class="mdescRight">Allocate the correct object for <a class="el" href="classFileIO.html#a6b56f0b1fcf994ff403335463d0eca9b" title="Get type of the virtual file.">type()</a>.  <a href="classFileIO.html#aba153ce9ccee07c5c038da50ad505e7f">More...</a><br /></td></tr>
+<tr class="separator:aba153ce9ccee07c5c038da50ad505e7f inherit pub_static_methods_classFileIO"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pro_methods_classFileIO"><td colspan="2" onclick="javascript:toggleInherit('pro_methods_classFileIO')"><img src="closed.png" alt="-"/>&#160;Protected Member Functions inherited from <a class="el" href="classFileIO.html">FileIO</a></td></tr>
 <tr class="memitem:a6596a9c65d31ef13a09d1fa162e76bba inherit pro_methods_classFileIO"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFileIO.html#a6596a9c65d31ef13a09d1fa162e76bba">set_virtualfile</a> (<a class="el" href="fileio_8h.html#ae8356f209b2b74cc385a8d7551f1f27a">LPVIRTUALFILE</a> <a class="el" href="classFileIO.html#a2e330b909423f2118b8482732f50986a">virtualfile</a>)</td></tr>
 <tr class="memdesc:a6596a9c65d31ef13a09d1fa162e76bba inherit pro_methods_classFileIO"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the virtual file object.  <a href="classFileIO.html#a6596a9c65d31ef13a09d1fa162e76bba">More...</a><br /></td></tr>
@@ -471,7 +471,7 @@ On error, an nonzero value is returned and errno is set to indicate the error. <
 
 <p class="definition">Definition at line <a class="el" href="diskio_8cc_source.html#l00058">58</a> of file <a class="el" href="diskio_8cc_source.html">diskio.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="logging_8h_source.html#l00182">Logging::debug()</a>, <a class="el" href="diskio_8h_source.html#l00125">m_fpi</a>, <a class="el" href="fileio_8h_source.html#l00150">VIRTUALFILE::m_origfile</a>, <a class="el" href="fileio_8cc_source.html#l00097">FileIO::set_virtualfile()</a>, and <a class="el" href="fileio_8cc_source.html#l00114">FileIO::virtualfile()</a>.</p>
+<p class="reference">References <a class="el" href="logging_8h_source.html#l00182">Logging::debug()</a>, <a class="el" href="diskio_8h_source.html#l00125">m_fpi</a>, <a class="el" href="fileio_8h_source.html#l00152">VIRTUALFILE::m_origfile</a>, <a class="el" href="fileio_8cc_source.html#l00096">FileIO::set_virtualfile()</a>, and <a class="el" href="fileio_8cc_source.html#l00113">FileIO::virtualfile()</a>.</p>
 
 </div>
 </div>
@@ -720,7 +720,7 @@ On error, the value -1 is returned and errno is set to indicate the error. </dd>
 
 <p class="definition">Definition at line <a class="el" href="diskio_8cc_source.html#l00048">48</a> of file <a class="el" href="diskio_8cc_source.html">diskio.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="fileio_8h_source.html#l00092">VIRTUALTYPE_DISK</a>.</p>
+<p class="reference">References <a class="el" href="fileio_8h.html#a1199d38534b11312b0210e527499a805a290d4b81f4e2b47d86fd1b0170e9aab7">DISK</a>.</p>
 
 </div>
 </div>

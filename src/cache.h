@@ -37,7 +37,7 @@
 #include "buffer.h"
 
 #include <map>
-#include <sqlite3.h>
+#include <memory>
 
 #define     DB_BASE_VERSION_MAJOR   1               /**< @brief The oldest database version major (Release < 1.95) */
 #define     DB_BASE_VERSION_MINOR   0               /**< @brief The oldest database version minor (Release < 1.95) */
@@ -47,6 +47,9 @@
 
 #define     DB_MIN_VERSION_MAJOR    1               /**< @brief Required database version major (required 1.95) */
 #define     DB_MIN_VERSION_MINOR    97              /**< @brief Required database version minor (required 1.95) */
+
+typedef struct sqlite3 sqlite3;                     /**< @brief Forward declaration of sqlite3 handle */
+typedef struct sqlite3_stmt sqlite3_stmt;           /**< @brief Forward declaration of sqlite3 statement handle */
 
 /**
   * @brief RESULTCODE of transcoding operation
@@ -131,6 +134,62 @@ public:
 
     friend class Cache_Entry;
 
+    /**
+     * @brief The sqlite_t class
+     * Wrapper for sqlite3 struct to make use of std::shared_ptr
+     */
+    class sqlite_t
+    {
+    public:
+        /**
+         * @brief Construct #sqlite_t object
+         * @param[in] filename  - Database filename (UTF-8)
+         * @param[in] flags     - Flags
+         * @param[in] zVfs      - Name of VFS module to use
+         */
+        explicit sqlite_t(const std::string & filename, int flags, const char *zVfs = nullptr);
+        /**
+         * @brief Free #sqlite_t object
+         */
+        virtual ~sqlite_t();
+
+        /**
+        * @brief Return code of last Sqlite operation
+        * @return Returns result code of last Sqlite operation
+        */
+        int     ret() const { return m_ret; };
+
+#ifdef HAVE_SQLITE_CACHEFLUSH
+        /**
+         * @brief Flush cache index to disk.
+         * @return Returns true on success; false on error.
+         */
+        bool    flush_index();
+#endif // HAVE_SQLITE_CACHEFLUSH
+
+        /**
+         * @brief operator sqlite_t *
+         * Default return operator.
+         * @return Returns sqlite_t handle. May be nullptr if invalid.
+         */
+        operator sqlite3*() { return m_db_handle; };
+
+        /**
+         * @brief Get current database file name
+         * @return Returns current database file name
+         */
+        const std::string & filename() const { return m_filename; };
+
+    protected:
+        int                     m_ret;                  /**< @brief Return code of last SQL operation */
+        std::string             m_filename;             /**< @brief Name of SQLite cache index database */
+        sqlite3*                m_db_handle;            /**< @brief SQLite handle of cache index database */
+    public:
+        sqlite3_stmt *          m_select_stmt;          /**< @brief Prepared select statement */
+        sqlite3_stmt *          m_insert_stmt;          /**< @brief Prepared insert statement */
+        sqlite3_stmt *          m_delete_stmt;          /**< @brief Prepared delete statement */
+    };
+
 public:
     /**
      * @brief Construct #Cache object.
@@ -164,13 +223,6 @@ public:
      * @return Returns true on success; false on error.
      */
     bool                    load_index();
-#ifdef HAVE_SQLITE_CACHEFLUSH
-    /**
-     * @brief Flush cache index to disk.
-     * @return Returns true on success; false on error.
-     */
-    bool                    flush_index();
-#endif // HAVE_SQLITE_CACHEFLUSH
     /**
      * @brief Run disk maintenance.
      *
@@ -323,13 +375,11 @@ private:
     static const TABLE_DEF          m_table_version;        /**< @brief Definition and indexes of table "version" */
     static const TABLECOLUMNS_VEC   m_columns_version;      /**< @brief Columns of table "version" */
 
-    std::recursive_mutex    m_mutex;                        /**< @brief Access mutex */
-    std::string             m_cacheidx_file;                /**< @brief Name of SQLite cache index database */
-    sqlite3*                m_cacheidx_db;                  /**< @brief SQLite handle of cache index database */
-    sqlite3_stmt *          m_cacheidx_select_stmt;         /**< @brief Prepared select statement */
-    sqlite3_stmt *          m_cacheidx_insert_stmt;         /**< @brief Prepared insert statement */
-    sqlite3_stmt *          m_cacheidx_delete_stmt;         /**< @brief Prepared delete statement */
-    cache_t                 m_cache;                        /**< @brief Cache file (memory mapped file) */
+    std::recursive_mutex            m_mutex;                /**< @brief Access mutex */
+
+    std::unique_ptr<sqlite_t>       m_cacheidx_db;          /**< @brief SQLite handle of cache index database */
+
+    cache_t                         m_cache;                /**< @brief Cache file (memory mapped file) */
 };
 
 #endif

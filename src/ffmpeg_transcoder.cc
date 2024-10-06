@@ -216,7 +216,6 @@ void FFmpeg_Transcoder::StreamRef::reset()
 #pragma GCC diagnostic ignored "-Wmissing-field-initializers"
 FFmpeg_Transcoder::FFmpeg_Transcoder()
     : m_fileio(nullptr)
-    , m_close_fileio(true)
     , m_last_seek_frame_no(0)
     , m_have_seeked(false)
     , m_skip_next_frame(false)
@@ -292,7 +291,7 @@ bool FFmpeg_Transcoder::is_open() const
     return (m_in.m_format_ctx != nullptr);
 }
 
-int FFmpeg_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, FileIO *fio)
+int FFmpeg_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, std::shared_ptr<FileIO> fio)
 {
     AVDictionary * opt = nullptr;
     int ret;
@@ -349,13 +348,11 @@ int FFmpeg_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, FileIO *fio)
     {
         // Open new file io
         m_fileio = FileIO::alloc(m_virtualfile->m_type);
-        m_close_fileio = true;  // do not close and delete
     }
     else
     {
         // Use already open file io
         m_fileio = fio;
-        m_close_fileio = false; // must not close or delete
     }
 
     if (m_fileio == nullptr)
@@ -391,7 +388,7 @@ int FFmpeg_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, FileIO *fio)
                 iobuffer,
                 static_cast<int>(m_fileio->bufsize()),
                 0,
-                static_cast<void *>(m_fileio),
+                static_cast<void *>(m_fileio.get()),
                 input_read,
                 nullptr,    // input_write
                 seek);      // input_seek
@@ -6453,11 +6450,11 @@ bool FFmpeg_Transcoder::close_input_file()
     {
         closed = true;
 
-        if (m_close_fileio && m_fileio != nullptr)
+        if (m_fileio.use_count() <= 1 && m_fileio != nullptr)
         {
             m_fileio->closeio();
-            save_delete(&m_fileio);
         }
+        m_fileio.reset();
 
         if (m_in.m_format_ctx->pb != nullptr)
         {

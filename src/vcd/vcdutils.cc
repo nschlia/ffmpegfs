@@ -28,6 +28,7 @@
  */
 
 #include "ffmpegfs.h"
+#include "vcd/vcdchapter.h"
 #include "vcdutils.h"
 #include "ffmpeg_utils.h"
 
@@ -39,17 +40,15 @@ namespace VCDUTILS
 {
 std::string convert_txt2string(const char * txt, int size, bool trimmed)
 {
-    char * buffer = new(std::nothrow) char[static_cast<size_t>(size + 1)];
+    std::unique_ptr<char[]> buffer = std::make_unique<char[]>(static_cast<size_t>(size + 1));
     std::string ret_value;
 
     if (buffer != nullptr)
     {
-        std::memcpy(buffer, txt, static_cast<size_t>(size));
-        *(buffer + size) = '\0';
+        std::memcpy(buffer.get(), txt, static_cast<size_t>(size));
+        *(buffer.get() + size) = '\0';
 
-        ret_value = buffer;
-
-        delete [] buffer;
+        ret_value = buffer.get();
     }
 
     if (trimmed)

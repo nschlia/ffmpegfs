@@ -1011,7 +1011,7 @@ const std::string & remove_sep(std::string * path)
 
 const std::string & remove_filename(std::string * filepath)
 {
-    char *p = new_strdup(*filepath);
+    std::shared_ptr<char[]> p = new_strdup(*filepath);
 
     if (p == nullptr)
     {
@@ -1019,15 +1019,15 @@ const std::string & remove_filename(std::string * filepath)
         return *filepath;
     }
 
-    *filepath = dirname(p);
-    delete [] p;
+    *filepath = dirname(p.get());
+
     append_sep(filepath);
     return *filepath;
 }
 
 const std::string & remove_path(std::string *filepath)
 {
-    char *p = new_strdup(*filepath);
+    std::shared_ptr<char[]> p = new_strdup(*filepath);
 
     if (p == nullptr)
     {
@@ -1035,8 +1035,8 @@ const std::string & remove_path(std::string *filepath)
         return *filepath;
     }
 
-    *filepath = basename(p);
-    delete [] p;
+    *filepath = basename(p.get());
+
     return *filepath;
 }
 
@@ -1118,10 +1118,10 @@ const std::string & append_ext(std::string * filepath, const std::string & ext)
     return *filepath;
 }
 
-char * new_strdup(const std::string & str)
+std::shared_ptr<char[]> new_strdup(const std::string & str)
 {
     size_t n = str.size() + 1;
-    char * p = new(std::nothrow) char[n];
+    std::shared_ptr<char[]> p(new (std::nothrow) char[n]);
 
     if (p == nullptr)
     {
@@ -1129,7 +1129,8 @@ char * new_strdup(const std::string & str)
         return nullptr;
     }
 
-    strncpy(p, str.c_str(), n);
+    strncpy(p.get(), str.c_str(), n);
+
     return p;
 }
 
@@ -1372,7 +1373,7 @@ const char * get_codec_name(AVCodecID codec_id, bool long_name)
 
 int mktree(const std::string & path, mode_t mode)
 {
-    char *buffer = new_strdup(path);
+    std::shared_ptr<char[]> buffer = new_strdup(path);
 
     if (buffer == nullptr)
     {
@@ -1381,7 +1382,7 @@ int mktree(const std::string & path, mode_t mode)
 
     std::string dir;
     char *saveptr;
-    char *p = strtok_r(buffer, "/", &saveptr);
+    char *p = strtok_r(buffer.get(), "/", &saveptr);
     int status = 0;
 
     while (p != nullptr)
@@ -1405,8 +1406,6 @@ int mktree(const std::string & path, mode_t mode)
 
         p = strtok_r(nullptr, "/", &saveptr);
     }
-
-    delete [] buffer;
 
     return status;
 }
@@ -1888,11 +1887,11 @@ const std::string & expand_path(std::string *tgt, const std::string & src)
 
 int is_mount(const std::string & path)
 {
-    char* orig_name = nullptr;
     int ret = 0;
 
     try
     {
+        std::shared_ptr<char[]> orig_name;
         struct stat file_stat;
         struct stat parent_stat;
         char * parent_name = nullptr;
@@ -1907,7 +1906,7 @@ int is_mount(const std::string & path)
         }
 
         // get the parent directory of the file
-        parent_name = dirname(orig_name);
+        parent_name = dirname(orig_name.get());
 
         // get the file's stat info
         if (-1 == stat(path.c_str(), &file_stat))
@@ -1956,8 +1955,6 @@ int is_mount(const std::string & path)
     {
         ret = _ret;
     }
-
-    delete [] orig_name;
 
     return ret;
 }

@@ -348,7 +348,7 @@ public:
      * @param[in] is_idx - If true, create an index file; otherwise, create a cache.
      * @return Returns the name of the cache/index file.
      */
-    static const std::string & make_cachefile_name(std::string &cachefile, const std::string & filename, const std::string &fileext, bool is_idx);
+    static const std::string & make_cachefile_name(std::string *cachefile, const std::string & filename, const std::string &fileext, bool is_idx);
     /**
      * @brief Remove (unlink) the file.
      * @param[in] filename - Name of the file to remove.

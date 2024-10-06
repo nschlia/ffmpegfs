@@ -36,6 +36,7 @@
 
 #include <vector>
 #include <cassert>
+#include <sqlite3.h>
 
 #ifndef HAVE_SQLITE_ERRSTR
 #define sqlite3_errstr(rc)  ""              /**< @brief If our version of SQLite hasn't go this function */
@@ -43,6 +44,33 @@
 
 #define STRINGIFY(x) #x                                                             /**< @brief Stringification helper for STRINGIFY. Not to be used separately. */
 #define TOSTRING(x) STRINGIFY(x)                                                    /**< @brief Convert a macro argument into a string constant */
+
+Cache::sqlite_t::sqlite_t(const std::string & filename, int flags, const char *zVfs)
+    : m_ret(SQLITE_OK)
+    , m_filename(filename)
+    , m_select_stmt(nullptr)
+    , m_insert_stmt(nullptr)
+    , m_delete_stmt(nullptr)
+{
+    m_ret = sqlite3_open_v2(m_filename.c_str(), &m_db_handle, flags, zVfs);
+}
+
+Cache::sqlite_t::~sqlite_t()
+{
+    if (m_db_handle != nullptr)
+    {
+#ifdef HAVE_SQLITE_CACHEFLUSH
+        flush_index();
+#endif // HAVE_SQLITE_CACHEFLUSH
+
+        sqlite3_finalize(m_select_stmt);
+        sqlite3_finalize(m_insert_stmt);
+        sqlite3_finalize(m_delete_stmt);
+
+        sqlite3_close(m_db_handle);
+    }
+    sqlite3_shutdown();
+}
 
 const Cache::TABLE_DEF Cache::m_table_cache_entry =
 {
@@ -108,10 +136,6 @@ const Cache::TABLECOLUMNS_VEC Cache::m_columns_version =
 };
 
 Cache::Cache()
-    : m_cacheidx_db(nullptr)
-    , m_cacheidx_select_stmt(nullptr)
-    , m_cacheidx_insert_stmt(nullptr)
-    , m_cacheidx_delete_stmt(nullptr)
 {
 }
 
@@ -137,25 +161,25 @@ bool Cache::prepare_stmts()
             "(filename, desttype, enable_ismv, audiobitrate, audiosamplerate, videobitrate, videowidth, videoheight, deinterlace, duration, predicted_filesize, encoded_filesize, video_frame_count, segment_count, finished, error, errno, averror, creation_time, access_time, file_time, file_size) VALUES\n"
             "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, datetime(?, 'unixepoch'), datetime(?, 'unixepoch'), datetime(?, 'unixepoch'), ?);\n";
 
-    if (SQLITE_OK != (ret = sqlite3_prepare_v2(m_cacheidx_db, sql, -1, &m_cacheidx_insert_stmt, nullptr)))
+    if (SQLITE_OK != (ret = sqlite3_prepare_v2(*m_cacheidx_db, sql, -1, &m_cacheidx_db->m_insert_stmt, nullptr)))
     {
-        Logging::error(m_cacheidx_file, "Failed to prepare insert: (%1) %2\n%3", ret, sqlite3_errmsg(m_cacheidx_db), sql);
+        Logging::error(m_cacheidx_db->filename(), "Failed to prepare insert: (%1) %2\n%3", ret, sqlite3_errmsg(*m_cacheidx_db), sql);
         return false;
     }
 
     sql =   "SELECT desttype, enable_ismv, audiobitrate, audiosamplerate, videobitrate, videowidth, videoheight, deinterlace, duration, predicted_filesize, encoded_filesize, video_frame_count, segment_count, finished, error, errno, averror, strftime('%s', creation_time), strftime('%s', access_time), strftime('%s', file_time), file_size FROM cache_entry WHERE filename = ? AND desttype = ?;\n";
 
-    if (SQLITE_OK != (ret = sqlite3_prepare_v2(m_cacheidx_db, sql, -1, &m_cacheidx_select_stmt, nullptr)))
+    if (SQLITE_OK != (ret = sqlite3_prepare_v2(*m_cacheidx_db, sql, -1, &m_cacheidx_db->m_select_stmt, nullptr)))
     {
-        Logging::error(m_cacheidx_file, "Failed to prepare select: (%1) %2\n%3", ret, sqlite3_errmsg(m_cacheidx_db), sql);
+        Logging::error(m_cacheidx_db->filename(), "Failed to prepare select: (%1) %2\n%3", ret, sqlite3_errmsg(*m_cacheidx_db), sql);
         return false;
     }
 
     sql =   "DELETE FROM cache_entry WHERE filename = ? AND desttype = ?;\n";
 
-    if (SQLITE_OK != (ret = sqlite3_prepare_v2(m_cacheidx_db, sql, -1, &m_cacheidx_delete_stmt, nullptr)))
+    if (SQLITE_OK != (ret = sqlite3_prepare_v2(*m_cacheidx_db, sql, -1, &m_cacheidx_db->m_delete_stmt, nullptr)))
     {
-        Logging::error(m_cacheidx_file, "Failed to prepare delete: (%1) %2\n%3", ret, sqlite3_errmsg(m_cacheidx_db), sql);
+        Logging::error(m_cacheidx_db->filename(), "Failed to prepare delete: (%1) %2\n%3", ret, sqlite3_errmsg(*m_cacheidx_db), sql);
         return false;
     }
 
@@ -173,9 +197,9 @@ bool Cache::table_exists(const char *table)
     sql += table;
     sql += "'";
 
-    if (SQLITE_OK != (ret = sqlite3_prepare_v2(m_cacheidx_db, sql.c_str(), -1, &stmt, nullptr)))
+    if (SQLITE_OK != (ret = sqlite3_prepare_v2(*m_cacheidx_db, sql.c_str(), -1, &stmt, nullptr)))
     {
-        Logging::error(m_cacheidx_file, "Failed to prepare statement for table_exists: (%1) %2\n%3", ret, sqlite3_errmsg(m_cacheidx_db), sql.c_str());
+        Logging::error(m_cacheidx_db->filename(), "Failed to prepare statement for table_exists: (%1) %2\n%3", ret, sqlite3_errmsg(*m_cacheidx_db), sql.c_str());
         return false;
     }
 
@@ -204,9 +228,9 @@ bool Cache::column_exists(const char *table, const char *column)
     sql += column;
     sql += "';";
 
-    if (SQLITE_OK != (ret = sqlite3_prepare_v2(m_cacheidx_db, sql.c_str(), -1, &stmt, nullptr)))
+    if (SQLITE_OK != (ret = sqlite3_prepare_v2(*m_cacheidx_db, sql.c_str(), -1, &stmt, nullptr)))
     {
-        Logging::error(m_cacheidx_file, "Failed to prepare statement for table_exists: (%1) %2\n%3", ret, sqlite3_errmsg(m_cacheidx_db), sql.c_str());
+        Logging::error(m_cacheidx_db->filename(), "Failed to prepare statement for table_exists: (%1) %2\n%3", ret, sqlite3_errmsg(*m_cacheidx_db), sql.c_str());
         return false;
     }
 
@@ -230,9 +254,9 @@ bool Cache::check_min_version(int *db_version_major, int *db_version_minor)
 
     sql = "SELECT db_version_major, db_version_minor FROM version;";
 
-    if (SQLITE_OK != (ret = sqlite3_prepare_v2(m_cacheidx_db, sql.c_str(), -1, &stmt, nullptr)))
+    if (SQLITE_OK != (ret = sqlite3_prepare_v2(*m_cacheidx_db, sql.c_str(), -1, &stmt, nullptr)))
     {
-        Logging::error(m_cacheidx_file, "Failed to prepare statement for check_min_version: (%1) %2\n%3", ret, sqlite3_errmsg(m_cacheidx_db), sql.c_str());
+        Logging::error(m_cacheidx_db->filename(), "Failed to prepare statement for check_min_version: (%1) %2\n%3", ret, sqlite3_errmsg(*m_cacheidx_db), sql.c_str());
         return false;
     }
 
@@ -283,9 +307,9 @@ bool Cache::begin_transaction()
     int ret;
 
     sql = "BEGIN TRANSACTION;";
-    if (SQLITE_OK != (ret = sqlite3_exec(m_cacheidx_db, sql, nullptr, nullptr, &errmsg)))
+    if (SQLITE_OK != (ret = sqlite3_exec(*m_cacheidx_db, sql, nullptr, nullptr, &errmsg)))
     {
-        Logging::error(m_cacheidx_file, "SQLite3 begin transaction failed: (%1) %2\n%3", ret, errmsg, sql);
+        Logging::error(m_cacheidx_db->filename(), "SQLite3 begin transaction failed: (%1) %2\n%3", ret, errmsg, sql);
         sqlite3_free(errmsg);
         return false;
     }
@@ -299,9 +323,9 @@ bool Cache::end_transaction()
     int ret;
 
     sql = "END TRANSACTION;";
-    if (SQLITE_OK != (ret = sqlite3_exec(m_cacheidx_db, sql, nullptr, nullptr, &errmsg)))
+    if (SQLITE_OK != (ret = sqlite3_exec(*m_cacheidx_db, sql, nullptr, nullptr, &errmsg)))
     {
-        Logging::error(m_cacheidx_file, "SQLite3 end transaction failed: (%1) %2\n%3", ret, errmsg, sql);
+        Logging::error(m_cacheidx_db->filename(), "SQLite3 end transaction failed: (%1) %2\n%3", ret, errmsg, sql);
         sqlite3_free(errmsg);
         return false;
     }
@@ -315,9 +339,9 @@ bool Cache::rollback_transaction()
     int ret;
 
     sql = "ROLLBACK;";
-    if (SQLITE_OK != (ret = sqlite3_exec(m_cacheidx_db, sql, nullptr, nullptr, &errmsg)))
+    if (SQLITE_OK != (ret = sqlite3_exec(*m_cacheidx_db, sql, nullptr, nullptr, &errmsg)))
     {
-        Logging::error(m_cacheidx_file, "SQLite3 rollback transaction failed: (%1) %2\n%3", ret, errmsg, sql);
+        Logging::error(m_cacheidx_db->filename(), "SQLite3 rollback transaction failed: (%1) %2\n%3", ret, errmsg, sql);
         sqlite3_free(errmsg);
         return false;
     }
@@ -355,9 +379,9 @@ bool Cache::create_table_cache_entry(LPCTABLE_DEF table, const TABLECOLUMNS_VEC 
     sql += "\n";
     sql += ");\n";
 
-    if (SQLITE_OK != (ret = sqlite3_exec(m_cacheidx_db, sql.c_str(), nullptr, nullptr, &errmsg)))
+    if (SQLITE_OK != (ret = sqlite3_exec(*m_cacheidx_db, sql.c_str(), nullptr, nullptr, &errmsg)))
     {
-        Logging::error(m_cacheidx_file, "SQLite3 exec error: (%1) %2\n%3", ret, errmsg, sql.c_str());
+        Logging::error(m_cacheidx_db->filename(), "SQLite3 exec error: (%1) %2\n%3", ret, errmsg, sql.c_str());
         sqlite3_free(errmsg);
         return false;
     }
@@ -375,20 +399,20 @@ bool Cache::upgrade_db(int *db_version_major, int *db_version_minor)
             std::string sql;
             int ret;
 
-            Logging::debug(m_cacheidx_file, "Adding `video_frame_count` column.");
+            Logging::debug(m_cacheidx_db->filename(), "Adding `video_frame_count` column.");
 
             // Add `video_frame_count` UNSIGNED BIG INT NOT NULL DEFAULT 0
             sql = "ALTER TABLE `";
             sql += m_table_cache_entry.name;
             sql += "` ADD COLUMN `video_frame_count` UNSIGNED BIG INT NOT NULL DEFAULT 0;\n";
-            if (SQLITE_OK != (ret = sqlite3_exec(m_cacheidx_db, sql.c_str(), nullptr, nullptr, &errmsg)))
+            if (SQLITE_OK != (ret = sqlite3_exec(*m_cacheidx_db, sql.c_str(), nullptr, nullptr, &errmsg)))
             {
-                Logging::error(m_cacheidx_file, "SQLite3 exec error adding column `video_frame_count`: (%1) %2\n%3", ret, errmsg, sql.c_str());
+                Logging::error(m_cacheidx_db->filename(), "SQLite3 exec error adding column `video_frame_count`: (%1) %2\n%3", ret, errmsg, sql.c_str());
                 sqlite3_free(errmsg);
                 return false;
             }
 
-            Logging::debug(m_cacheidx_file, "Altering `finished` from BOOLEAN to INT.");
+            Logging::debug(m_cacheidx_db->filename(), "Altering `finished` from BOOLEAN to INT.");
         }
 
         {
@@ -405,9 +429,9 @@ bool Cache::upgrade_db(int *db_version_major, int *db_version_minor)
             // 4. Delete `cache_entry_old`
 
             sql = "PRAGMA foreign_keys=off;\n";
-            if (SQLITE_OK != (ret = sqlite3_exec(m_cacheidx_db, sql.c_str(), nullptr, nullptr, &errmsg)))
+            if (SQLITE_OK != (ret = sqlite3_exec(*m_cacheidx_db, sql.c_str(), nullptr, nullptr, &errmsg)))
             {
-                Logging::error(m_cacheidx_file, "SQLite3 exec error: (%1) %2\n%3", ret, errmsg, sql.c_str());
+                Logging::error(m_cacheidx_db->filename(), "SQLite3 exec error: (%1) %2\n%3", ret, errmsg, sql.c_str());
                 sqlite3_free(errmsg);
                 return false;
             }
@@ -424,9 +448,9 @@ bool Cache::upgrade_db(int *db_version_major, int *db_version_minor)
             sql += "` RENAME TO `";
             sql += m_table_cache_entry.name;
             sql += "_old`;\n";
-            if (SQLITE_OK != (ret = sqlite3_exec(m_cacheidx_db, sql.c_str(), nullptr, nullptr, &errmsg)))
+            if (SQLITE_OK != (ret = sqlite3_exec(*m_cacheidx_db, sql.c_str(), nullptr, nullptr, &errmsg)))
             {
-                Logging::error(m_cacheidx_file, "SQLite3 exec error: (%1) %2\n%3", ret, errmsg, sql.c_str());
+                Logging::error(m_cacheidx_db->filename(), "SQLite3 exec error: (%1) %2\n%3", ret, errmsg, sql.c_str());
                 sqlite3_free(errmsg);
                 return false;
             }
@@ -435,7 +459,7 @@ bool Cache::upgrade_db(int *db_version_major, int *db_version_minor)
         // Step 2
         if (!create_table_cache_entry(&m_table_cache_entry, m_columns_cache_entry))
         {
-            Logging::error(m_cacheidx_file, "SQLite3 exec error creating 'cache_entry' table.");
+            Logging::error(m_cacheidx_db->filename(), "SQLite3 exec error creating 'cache_entry' table.");
             return false;
         }
 
@@ -467,9 +491,9 @@ bool Cache::upgrade_db(int *db_version_major, int *db_version_minor)
             sql += m_table_cache_entry.name;
             sql += "_old`;";
 
-            if (SQLITE_OK != (ret = sqlite3_exec(m_cacheidx_db, sql.c_str(), nullptr, nullptr, &errmsg)))
+            if (SQLITE_OK != (ret = sqlite3_exec(*m_cacheidx_db, sql.c_str(), nullptr, nullptr, &errmsg)))
             {
-                Logging::error(m_cacheidx_file, "SQLite3 exec error: (%1) %2\n%3", ret, errmsg, sql.c_str());
+                Logging::error(m_cacheidx_db->filename(), "SQLite3 exec error: (%1) %2\n%3", ret, errmsg, sql.c_str());
                 sqlite3_free(errmsg);
                 return false;
             }
@@ -480,16 +504,16 @@ bool Cache::upgrade_db(int *db_version_major, int *db_version_minor)
             std::string sql;
             int ret;
 
-            //    Old 0 is RESULTCODE_NONE (0)
-            //    Old 1 is RESULTCODE_FINISHED (2)
+            //    Old 0 is RESULTCODE::NONE (0)
+            //    Old 1 is RESULTCODE::FINISHED (2)
             sql = "UPDATE `";
             sql += m_table_cache_entry.name;
             sql += "`\n";
             sql += "SET `finished` = 3\n";
             sql += "WHERE `finished` = 1\n";
-            if (SQLITE_OK != (ret = sqlite3_exec(m_cacheidx_db, sql.c_str(), nullptr, nullptr, &errmsg)))
+            if (SQLITE_OK != (ret = sqlite3_exec(*m_cacheidx_db, sql.c_str(), nullptr, nullptr, &errmsg)))
             {
-                Logging::error(m_cacheidx_file, "SQLite3 exec error updating column `finished`: (%1) %2\n%3", ret, errmsg, sql.c_str());
+                Logging::error(m_cacheidx_db->filename(), "SQLite3 exec error updating column `finished`: (%1) %2\n%3", ret, errmsg, sql.c_str());
                 sqlite3_free(errmsg);
                 return false;
             }
@@ -502,17 +526,17 @@ bool Cache::upgrade_db(int *db_version_major, int *db_version_minor)
             int ret;
 
             sql = "DROP TABLE `cache_entry_old`";
-            if (SQLITE_OK != (ret = sqlite3_exec(m_cacheidx_db, sql.c_str(), nullptr, nullptr, &errmsg)))
+            if (SQLITE_OK != (ret = sqlite3_exec(*m_cacheidx_db, sql.c_str(), nullptr, nullptr, &errmsg)))
             {
-                Logging::error(m_cacheidx_file, "SQLite3 exec error adding column `video_frame_count`: (%1) %2\n%3", ret, errmsg, sql.c_str());
+                Logging::error(m_cacheidx_db->filename(), "SQLite3 exec error adding column `video_frame_count`: (%1) %2\n%3", ret, errmsg, sql.c_str());
                 sqlite3_free(errmsg);
                 return false;
             }
 
             sql = "PRAGMA foreign_keys=on;\n";
-            if (SQLITE_OK != (ret = sqlite3_exec(m_cacheidx_db, sql.c_str(), nullptr, nullptr, &errmsg)))
+            if (SQLITE_OK != (ret = sqlite3_exec(*m_cacheidx_db, sql.c_str(), nullptr, nullptr, &errmsg)))
             {
-                Logging::error(m_cacheidx_file, "SQLite3 exec error: (%1) %2\n%3", ret, errmsg, sql.c_str());
+                Logging::error(m_cacheidx_db->filename(), "SQLite3 exec error: (%1) %2\n%3", ret, errmsg, sql.c_str());
                 sqlite3_free(errmsg);
                 return false;
             }
@@ -525,15 +549,15 @@ bool Cache::upgrade_db(int *db_version_major, int *db_version_minor)
         std::string sql;
         int ret;
 
-        Logging::debug(m_cacheidx_file, "Adding `duration` column.");
+        Logging::debug(m_cacheidx_db->filename(), "Adding `duration` column.");
 
         // Add `duration` UNSIGNED BIG INT NOT NULL DEFAULT 0
         sql = "ALTER TABLE `";
         sql += m_table_cache_entry.name;
         sql += "` ADD COLUMN `duration` UNSIGNED BIG INT NOT NULL DEFAULT 0;\n";
-        if (SQLITE_OK != (ret = sqlite3_exec(m_cacheidx_db, sql.c_str(), nullptr, nullptr, &errmsg)))
+        if (SQLITE_OK != (ret = sqlite3_exec(*m_cacheidx_db, sql.c_str(), nullptr, nullptr, &errmsg)))
         {
-            Logging::error(m_cacheidx_file, "SQLite3 exec error adding column `duration`: (%1) %2\n%3", ret, errmsg, sql.c_str());
+            Logging::error(m_cacheidx_db->filename(), "SQLite3 exec error adding column `duration`: (%1) %2\n%3", ret, errmsg, sql.c_str());
             sqlite3_free(errmsg);
             return false;
         }
@@ -545,22 +569,22 @@ bool Cache::upgrade_db(int *db_version_major, int *db_version_minor)
         std::string sql;
         int ret;
 
-        Logging::debug(m_cacheidx_file, "Adding `segment_count` column.");
+        Logging::debug(m_cacheidx_db->filename(), "Adding `segment_count` column.");
 
         // Add `segment_count` UNSIGNED BIG INT NOT NULL DEFAULT 0
         sql = "ALTER TABLE `";
         sql += m_table_cache_entry.name;
         sql += "` ADD COLUMN `segment_count` UNSIGNED BIG INT NOT NULL DEFAULT 0;\n";
-        if (SQLITE_OK != (ret = sqlite3_exec(m_cacheidx_db, sql.c_str(), nullptr, nullptr, &errmsg)))
+        if (SQLITE_OK != (ret = sqlite3_exec(*m_cacheidx_db, sql.c_str(), nullptr, nullptr, &errmsg)))
         {
-            Logging::error(m_cacheidx_file, "SQLite3 exec error adding column `segment_count`: (%1) %2\n%3", ret, errmsg, sql.c_str());
+            Logging::error(m_cacheidx_db->filename(), "SQLite3 exec error adding column `segment_count`: (%1) %2\n%3", ret, errmsg, sql.c_str());
             sqlite3_free(errmsg);
             return false;
         }
     }
 
     // Update DB version
-    Logging::debug(m_cacheidx_file, "Updating version table to V%1.%2.", DB_VERSION_MAJOR, DB_VERSION_MINOR);
+    Logging::debug(m_cacheidx_db->filename(), "Updating version table to V%1.%2.", DB_VERSION_MAJOR, DB_VERSION_MINOR);
 
     {
         char *errmsg = nullptr;
@@ -568,9 +592,9 @@ bool Cache::upgrade_db(int *db_version_major, int *db_version_minor)
         int ret;
 
         sql = "UPDATE `version` SET db_version_major = " TOSTRING(DB_VERSION_MAJOR) ", db_version_minor = " TOSTRING(DB_VERSION_MINOR) ";\n";
-        if (SQLITE_OK != (ret = sqlite3_exec(m_cacheidx_db, sql, nullptr, nullptr, &errmsg)))
+        if (SQLITE_OK != (ret = sqlite3_exec(*m_cacheidx_db, sql, nullptr, nullptr, &errmsg)))
         {
-            Logging::error(m_cacheidx_file, "SQLite3 exec error: (%1) %2\n%3", ret, errmsg, sql);
+            Logging::error(m_cacheidx_db->filename(), "SQLite3 exec error: (%1) %2\n%3", ret, errmsg, sql);
             sqlite3_free(errmsg);
             return false;
         }
@@ -579,7 +603,7 @@ bool Cache::upgrade_db(int *db_version_major, int *db_version_minor)
         *db_version_minor = DB_VERSION_MINOR;
     }
 
-    Logging::info(m_cacheidx_file, "Database successfully upgraded to V%1.%2.", *db_version_major, *db_version_minor);
+    Logging::info(m_cacheidx_db->filename(), "Database successfully upgraded to V%1.%2.", *db_version_major, *db_version_minor);
 
     return true;
 }
@@ -590,54 +614,63 @@ bool Cache::load_index()
 
     try
     {
+        std::string filename;
         char *errmsg = nullptr;
         int ret;
         bool new_database = false;
         bool need_upate = false;
 
-        transcoder_cache_path(m_cacheidx_file);
+        transcoder_cache_path(&filename);
 
-        if (mktree(m_cacheidx_file, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH) && errno != EEXIST)
+        if (mktree(filename, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH) && errno != EEXIST)
         {
-            Logging::error(m_cacheidx_file, "Error creating cache directory: (%1) %2\n%3", errno, strerror(errno), m_cacheidx_file.c_str());
+            Logging::error(filename, "Error creating cache directory: (%1) %2\n%3", errno, strerror(errno), m_cacheidx_db->filename().c_str());
             throw false;
         }
 
-        append_filename(&m_cacheidx_file, "cacheidx.sqlite");
+        append_filename(&filename, "cacheidx.sqlite");
 
         // initialise engine
         if (SQLITE_OK != (ret = sqlite3_initialize()))
         {
-            Logging::error(m_cacheidx_file, "Failed to initialise SQLite3 library: (%1) %2", ret, sqlite3_errstr(ret));
+            Logging::error(filename, "Failed to initialise SQLite3 library: (%1) %2", ret, sqlite3_errstr(ret));
             throw false;
         }
 
         // open connection to a DB
-        if (SQLITE_OK != (ret = sqlite3_open_v2(m_cacheidx_file.c_str(), &m_cacheidx_db, SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE | SQLITE_OPEN_SHAREDCACHE, nullptr)))
+        m_cacheidx_db = std::make_unique<sqlite_t>(filename, SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE | SQLITE_OPEN_SHAREDCACHE);
+
+        if (m_cacheidx_db == nullptr)
         {
-            Logging::error(m_cacheidx_file, "Failed to initialise SQLite3 connection: (%1) %2", ret, sqlite3_errmsg(m_cacheidx_db));
+            Logging::error(filename, "Out of memory.");
             throw false;
         }
 
-        if (SQLITE_OK != (ret = sqlite3_busy_timeout(m_cacheidx_db, 1000)))
+        if (SQLITE_OK != (ret = m_cacheidx_db->ret()))
         {
-            Logging::error(m_cacheidx_file, "Failed to set SQLite3 busy timeout: (%1) %2", ret, sqlite3_errmsg(m_cacheidx_db));
+            Logging::error(m_cacheidx_db->filename(), "Failed to initialise SQLite3 connection: (%1) %2", ret, sqlite3_errmsg(*m_cacheidx_db));
+            throw false;
+        }
+
+        if (SQLITE_OK != (ret = sqlite3_busy_timeout(*m_cacheidx_db, 1000)))
+        {
+            Logging::error(m_cacheidx_db->filename(), "Failed to set SQLite3 busy timeout: (%1) %2", ret, sqlite3_errmsg(*m_cacheidx_db));
             throw false;
         }
 
         // Beginning with version 3.7.0 (2010-07-21), a new "Write-Ahead Log" option
         // We support Sqlite from 3.7.13 anyway
-        if (SQLITE_OK != (ret = sqlite3_exec(m_cacheidx_db, "pragma journal_mode = WAL", nullptr, nullptr, nullptr)))
+        if (SQLITE_OK != (ret = sqlite3_exec(*m_cacheidx_db, "pragma journal_mode = WAL", nullptr, nullptr, nullptr)))
         {
-            Logging::error(m_cacheidx_file, "Failed to set SQLite3 WAL mode: (%1) %2", ret, sqlite3_errmsg(m_cacheidx_db));
+            Logging::error(m_cacheidx_db->filename(), "Failed to set SQLite3 WAL mode: (%1) %2", ret, sqlite3_errmsg(*m_cacheidx_db));
             throw false;
         }
 
         // Very strange: Compare operations with =, > etc. are case sensitive, while LIKE by default ignores upper/lowercase.
         // Produces strange results when reading from a Samba drive and different cases are used...
-        if (SQLITE_OK != (ret = sqlite3_exec(m_cacheidx_db, "PRAGMA case_sensitive_like = 1;", nullptr, nullptr, nullptr)))
+        if (SQLITE_OK != (ret = sqlite3_exec(*m_cacheidx_db, "PRAGMA case_sensitive_like = 1;", nullptr, nullptr, nullptr)))
         {
-            Logging::error(m_cacheidx_file, "Failed to set SQLite3 case_sensitive_like = 1: (%1) %2", ret, sqlite3_errmsg(m_cacheidx_db));
+            Logging::error(m_cacheidx_db->filename(), "Failed to set SQLite3 case_sensitive_like = 1: (%1) %2", ret, sqlite3_errmsg(*m_cacheidx_db));
             throw false;
         }
 
@@ -652,11 +685,11 @@ bool Cache::load_index()
         // Create cache_entry table if not already existing
         if (!table_exists("cache_entry"))
         {
-            Logging::debug(m_cacheidx_file, "Creating 'cache_entry' table in database.");
+            Logging::debug(m_cacheidx_db->filename(), "Creating 'cache_entry' table in database.");
 
             if (!create_table_cache_entry(&m_table_cache_entry, m_columns_cache_entry))
             {
-                Logging::error(m_cacheidx_file, "SQLite3 exec error creating 'cache_entry' table: (%1) %2", ret, errmsg);
+                Logging::error(m_cacheidx_db->filename(), "SQLite3 exec error creating 'cache_entry' table: (%1) %2", ret, errmsg);
                 throw false;
             }
 
@@ -668,18 +701,18 @@ bool Cache::load_index()
         {
             const char * sql;
 
-            Logging::debug(m_cacheidx_file, "Creating 'version' table in database.");
+            Logging::debug(m_cacheidx_db->filename(), "Creating 'version' table in database.");
 
             if (!create_table_cache_entry(&m_table_version, m_columns_version))
             {
-                Logging::error(m_cacheidx_file, "SQLite3 exec error creating 'cache_entry' table: (%1) %2", ret, errmsg);
+                Logging::error(m_cacheidx_db->filename(), "SQLite3 exec error creating 'cache_entry' table: (%1) %2", ret, errmsg);
                 throw false;
             }
 
             sql = "INSERT INTO `version` (db_version_major, db_version_minor) VALUES (" TOSTRING(DB_VERSION_MAJOR) ", " TOSTRING(DB_VERSION_MINOR) ");\n";
-            if (SQLITE_OK != (ret = sqlite3_exec(m_cacheidx_db, sql, nullptr, nullptr, &errmsg)))
+            if (SQLITE_OK != (ret = sqlite3_exec(*m_cacheidx_db, sql, nullptr, nullptr, &errmsg)))
             {
-                Logging::error(m_cacheidx_file, "SQLite3 exec error: (%1) %2\n%3", ret, errmsg, sql);
+                Logging::error(m_cacheidx_db->filename(), "SQLite3 exec error: (%1) %2\n%3", ret, errmsg, sql);
                 sqlite3_free(errmsg);
                 throw false;
             }
@@ -697,7 +730,7 @@ bool Cache::load_index()
         if (need_upate || !check_min_version(&db_version_major, &db_version_minor))
         {
             // No version table found, or minimum version too low, do an upgrade.
-            Logging::warning(m_cacheidx_file, "Database version is %1.%2, but a least %3.%4 required. Upgrading database now.", db_version_major, db_version_minor, DB_MIN_VERSION_MAJOR, DB_MIN_VERSION_MINOR);
+            Logging::warning(m_cacheidx_db->filename(), "Database version is %1.%2, but a least %3.%4 required. Upgrading database now.", db_version_major, db_version_minor, DB_MIN_VERSION_MAJOR, DB_MIN_VERSION_MINOR);
 
             if (!upgrade_db(&db_version_major, &db_version_minor))
             {
@@ -711,7 +744,7 @@ bool Cache::load_index()
         }
 
 #ifdef HAVE_SQLITE_CACHEFLUSH
-        if (!flush_index())
+        if (!m_cacheidx_db->flush_index())
         {
             throw false;
         }
@@ -732,16 +765,16 @@ bool Cache::load_index()
 }
 
 #ifdef HAVE_SQLITE_CACHEFLUSH
-bool Cache::flush_index()
+bool Cache::sqlite_t::flush_index()
 {
-    if (m_cacheidx_db != nullptr)
+    if (m_db_handle != nullptr)
     {
         int ret;
 
         // Flush cache to disk
-        if (SQLITE_OK != (ret = sqlite3_db_cacheflush(m_cacheidx_db)))
+        if (SQLITE_OK != (ret = sqlite3_db_cacheflush(m_db_handle)))
         {
-            Logging::error(m_cacheidx_file, "SQLite3 cache flush error: (%1) %2", ret, sqlite3_errstr(ret));
+            Logging::error(m_filename, "SQLite3 cache flush error: (%1) %2", ret, sqlite3_errstr(ret));
             return false;
         }
     }
@@ -774,9 +807,9 @@ bool Cache::read_info(LPCACHE_INFO cache_info)
     cache_info->m_file_time             = 0;
     cache_info->m_file_size             = 0;
 
-    if (m_cacheidx_select_stmt == nullptr)
+    if (m_cacheidx_db->m_select_stmt == nullptr)
     {
-        Logging::error(m_cacheidx_file, "SQLite3 select statement not open.");
+        Logging::error(m_cacheidx_db->filename(), "SQLite3 select statement not open.");
         return false;
     }
 
@@ -786,54 +819,54 @@ bool Cache::read_info(LPCACHE_INFO cache_info)
     {
         int ret;
 
-        assert(sqlite3_bind_parameter_count(m_cacheidx_select_stmt) == 2);
+        assert(sqlite3_bind_parameter_count(m_cacheidx_db->m_select_stmt) == 2);
 
-        if (SQLITE_OK != (ret = sqlite3_bind_text(m_cacheidx_select_stmt, 1, cache_info->m_destfile.c_str(), -1, nullptr)))
+        if (SQLITE_OK != (ret = sqlite3_bind_text(m_cacheidx_db->m_select_stmt, 1, cache_info->m_destfile.c_str(), -1, nullptr)))
         {
-            Logging::error(m_cacheidx_file, "SQLite3 select error binding 'filename': (%1) %2", ret, sqlite3_errstr(ret));
+            Logging::error(m_cacheidx_db->filename(), "SQLite3 select error binding 'filename': (%1) %2", ret, sqlite3_errstr(ret));
             throw false;
         }
 
-        if (SQLITE_OK != (ret = sqlite3_bind_text(m_cacheidx_select_stmt, 2, cache_info->m_desttype.data(), -1, nullptr)))
+        if (SQLITE_OK != (ret = sqlite3_bind_text(m_cacheidx_db->m_select_stmt, 2, cache_info->m_desttype.data(), -1, nullptr)))
         {
-            Logging::error(m_cacheidx_file, "SQLite3 select error binding 'desttype': (%1) %2", ret, sqlite3_errstr(ret));
+            Logging::error(m_cacheidx_db->filename(), "SQLite3 select error binding 'desttype': (%1) %2", ret, sqlite3_errstr(ret));
             throw false;
         }
 
-        ret = sqlite3_step(m_cacheidx_select_stmt);
+        ret = sqlite3_step(m_cacheidx_db->m_select_stmt);
 
         if (ret == SQLITE_ROW)
         {
-            const char *text                = reinterpret_cast<const char *>(sqlite3_column_text(m_cacheidx_select_stmt, 0));
+            const char *text                = reinterpret_cast<const char *>(sqlite3_column_text(m_cacheidx_db->m_select_stmt, 0));
             if (text != nullptr)
             {
                 cache_info->m_desttype[0] = '\0';
                 strncat(cache_info->m_desttype.data(), text, cache_info->m_desttype.size() - 1);
             }
-            //cache_info->m_enable_ismv        = sqlite3_column_int(m_cacheidx_select_stmt, 1);
-            cache_info->m_audiobitrate          = sqlite3_column_int(m_cacheidx_select_stmt, 2);
-            cache_info->m_audiosamplerate       = sqlite3_column_int(m_cacheidx_select_stmt, 3);
-            cache_info->m_videobitrate          = sqlite3_column_int(m_cacheidx_select_stmt, 4);
-            cache_info->m_videowidth            = sqlite3_column_int(m_cacheidx_select_stmt, 5);
-            cache_info->m_videoheight           = sqlite3_column_int(m_cacheidx_select_stmt, 6);
-            cache_info->m_deinterlace           = sqlite3_column_int(m_cacheidx_select_stmt, 7);
-            cache_info->m_duration              = sqlite3_column_int64(m_cacheidx_select_stmt, 8);
-            cache_info->m_predicted_filesize    = static_cast<size_t>(sqlite3_column_int64(m_cacheidx_select_stmt, 9));
-            cache_info->m_encoded_filesize      = static_cast<size_t>(sqlite3_column_int64(m_cacheidx_select_stmt, 10));
-            cache_info->m_video_frame_count     = static_cast<uint32_t>(sqlite3_column_int(m_cacheidx_select_stmt, 11));
-            cache_info->m_segment_count         = static_cast<uint32_t>(sqlite3_column_int(m_cacheidx_select_stmt, 12));
-            cache_info->m_result                = static_cast<RESULTCODE>(sqlite3_column_int(m_cacheidx_select_stmt, 13));
-            cache_info->m_error                 = sqlite3_column_int(m_cacheidx_select_stmt, 14);
-            cache_info->m_errno                 = sqlite3_column_int(m_cacheidx_select_stmt, 15);
-            cache_info->m_averror               = sqlite3_column_int(m_cacheidx_select_stmt, 16);
-            cache_info->m_creation_time         = static_cast<time_t>(sqlite3_column_int64(m_cacheidx_select_stmt, 17));
-            cache_info->m_access_time           = static_cast<time_t>(sqlite3_column_int64(m_cacheidx_select_stmt, 18));
-            cache_info->m_file_time             = static_cast<time_t>(sqlite3_column_int64(m_cacheidx_select_stmt, 19));
-            cache_info->m_file_size             = static_cast<size_t>(sqlite3_column_int64(m_cacheidx_select_stmt, 20));
+            //cache_info->m_enable_ismv        = sqlite3_column_int(m_cacheidx_db->m_cacheidx_select_stmt, 1);
+            cache_info->m_audiobitrate          = sqlite3_column_int(m_cacheidx_db->m_select_stmt, 2);
+            cache_info->m_audiosamplerate       = sqlite3_column_int(m_cacheidx_db->m_select_stmt, 3);
+            cache_info->m_videobitrate          = sqlite3_column_int(m_cacheidx_db->m_select_stmt, 4);
+            cache_info->m_videowidth            = sqlite3_column_int(m_cacheidx_db->m_select_stmt, 5);
+            cache_info->m_videoheight           = sqlite3_column_int(m_cacheidx_db->m_select_stmt, 6);
+            cache_info->m_deinterlace           = sqlite3_column_int(m_cacheidx_db->m_select_stmt, 7);
+            cache_info->m_duration              = sqlite3_column_int64(m_cacheidx_db->m_select_stmt, 8);
+            cache_info->m_predicted_filesize    = static_cast<size_t>(sqlite3_column_int64(m_cacheidx_db->m_select_stmt, 9));
+            cache_info->m_encoded_filesize      = static_cast<size_t>(sqlite3_column_int64(m_cacheidx_db->m_select_stmt, 10));
+            cache_info->m_video_frame_count     = static_cast<uint32_t>(sqlite3_column_int(m_cacheidx_db->m_select_stmt, 11));
+            cache_info->m_segment_count         = static_cast<uint32_t>(sqlite3_column_int(m_cacheidx_db->m_select_stmt, 12));
+            cache_info->m_result                = static_cast<RESULTCODE>(sqlite3_column_int(m_cacheidx_db->m_select_stmt, 13));
+            cache_info->m_error                 = sqlite3_column_int(m_cacheidx_db->m_select_stmt, 14);
+            cache_info->m_errno                 = sqlite3_column_int(m_cacheidx_db->m_select_stmt, 15);
+            cache_info->m_averror               = sqlite3_column_int(m_cacheidx_db->m_select_stmt, 16);
+            cache_info->m_creation_time         = static_cast<time_t>(sqlite3_column_int64(m_cacheidx_db->m_select_stmt, 17));
+            cache_info->m_access_time           = static_cast<time_t>(sqlite3_column_int64(m_cacheidx_db->m_select_stmt, 18));
+            cache_info->m_file_time             = static_cast<time_t>(sqlite3_column_int64(m_cacheidx_db->m_select_stmt, 19));
+            cache_info->m_file_size             = static_cast<size_t>(sqlite3_column_int64(m_cacheidx_db->m_select_stmt, 20));
         }
         else if (ret != SQLITE_DONE)
         {
-            Logging::error(m_cacheidx_file, "Sqlite 3 could not step (execute) select statement: (%1) %2", ret, sqlite3_errstr(ret));
+            Logging::error(m_cacheidx_db->filename(), "Sqlite 3 could not step (execute) select statement: (%1) %2", ret, sqlite3_errstr(ret));
             throw false;
         }
     }
@@ -842,7 +875,7 @@ bool Cache::read_info(LPCACHE_INFO cache_info)
         success = _success;
     }
 
-    sqlite3_reset(m_cacheidx_select_stmt);
+    sqlite3_reset(m_cacheidx_db->m_select_stmt);
 
     if (success)
     {
@@ -853,16 +886,16 @@ bool Cache::read_info(LPCACHE_INFO cache_info)
 }
 
 #define SQLBINDTXT(idx, var) \
-    if (SQLITE_OK != (ret = sqlite3_bind_text(m_cacheidx_insert_stmt, idx, var, -1, nullptr))) \
+    if (SQLITE_OK != (ret = sqlite3_bind_text(m_cacheidx_db->m_insert_stmt, idx, var, -1, nullptr))) \
 { \
-    Logging::error(m_cacheidx_file, "SQLite3 select column #%1 error: %2\n%3", idx, ret, sqlite3_errstr(ret)); \
+    Logging::error(m_cacheidx_db->filename(), "SQLite3 select column #%1 error: %2\n%3", idx, ret, sqlite3_errstr(ret)); \
     throw false; \
     }       /**< @brief Bind text column to SQLite statement */
 
 #define SQLBINDNUM(func, idx, var) \
-    if (SQLITE_OK != (ret = func(m_cacheidx_insert_stmt, idx, var))) \
+    if (SQLITE_OK != (ret = func(m_cacheidx_db->m_insert_stmt, idx, var))) \
 { \
-    Logging::error(m_cacheidx_file, "SQLite3 select column #%1 error: %2\n%3", idx, ret, sqlite3_errstr(ret)); \
+    Logging::error(m_cacheidx_db->filename(), "SQLite3 select column #%1 error: %2\n%3", idx, ret, sqlite3_errstr(ret)); \
     throw false; \
     }       /**< @brief Bind numeric column to SQLite statement */
 
@@ -870,9 +903,9 @@ bool Cache::write_info(LPCCACHE_INFO cache_info)
 {
     bool success = true;
 
-    if (m_cacheidx_insert_stmt == nullptr)
+    if (m_cacheidx_db->m_insert_stmt == nullptr)
     {
-        Logging::error(m_cacheidx_file, "SQLite3 select statement not open.");
+        Logging::error(m_cacheidx_db->filename(), "SQLite3 select statement not open.");
         return false;
     }
 
@@ -883,7 +916,7 @@ bool Cache::write_info(LPCCACHE_INFO cache_info)
         int ret;
         bool enable_ismv_dummy = false;
 
-        assert(sqlite3_bind_parameter_count(m_cacheidx_insert_stmt) == 22);
+        assert(sqlite3_bind_parameter_count(m_cacheidx_db->m_insert_stmt) == 22);
 
         SQLBINDTXT(1, cache_info->m_destfile.c_str());
         SQLBINDTXT(2, cache_info->m_desttype.data());
@@ -909,11 +942,11 @@ bool Cache::write_info(LPCCACHE_INFO cache_info)
         SQLBINDNUM(sqlite3_bind_int64,  21, cache_info->m_file_time);
         SQLBINDNUM(sqlite3_bind_int64,  22, static_cast<sqlite3_int64>(cache_info->m_file_size));
 
-        ret = sqlite3_step(m_cacheidx_insert_stmt);
+        ret = sqlite3_step(m_cacheidx_db->m_insert_stmt);
 
         if (ret != SQLITE_DONE)
         {
-            Logging::error(m_cacheidx_file, "Sqlite 3 could not step (execute) insert statement: (%1) %2", ret, sqlite3_errstr(ret));
+            Logging::error(m_cacheidx_db->filename(), "Sqlite 3 could not step (execute) insert statement: (%1) %2", ret, sqlite3_errstr(ret));
             throw false;
         }
     }
@@ -922,7 +955,7 @@ bool Cache::write_info(LPCCACHE_INFO cache_info)
         success = _success;
     }
 
-    sqlite3_reset(m_cacheidx_insert_stmt);
+    sqlite3_reset(m_cacheidx_db->m_insert_stmt);
 
     if (success)
     {
@@ -936,9 +969,9 @@ bool Cache::delete_info(const std::string & filename, const std::string & destty
 {
     bool success = true;
 
-    if (m_cacheidx_delete_stmt == nullptr)
+    if (m_cacheidx_db->m_delete_stmt == nullptr)
     {
-        Logging::error(m_cacheidx_file, "SQLite3 delete statement not open.");
+        Logging::error(m_cacheidx_db->filename(), "SQLite3 delete statement not open.");
         return false;
     }
 
@@ -948,25 +981,25 @@ bool Cache::delete_info(const std::string & filename, const std::string & destty
     {
         int ret;
 
-        assert(sqlite3_bind_parameter_count(m_cacheidx_delete_stmt) == 2);
+        assert(sqlite3_bind_parameter_count(m_cacheidx_db->m_delete_stmt) == 2);
 
-        if (SQLITE_OK != (ret = sqlite3_bind_text(m_cacheidx_delete_stmt, 1, filename.c_str(), -1, nullptr)))
+        if (SQLITE_OK != (ret = sqlite3_bind_text(m_cacheidx_db->m_delete_stmt, 1, filename.c_str(), -1, nullptr)))
         {
-            Logging::error(m_cacheidx_file, "SQLite3 select error binding 'filename': (%1) %2", ret, sqlite3_errstr(ret));
+            Logging::error(m_cacheidx_db->filename(), "SQLite3 select error binding 'filename': (%1) %2", ret, sqlite3_errstr(ret));
             throw false;
         }
 
-        if (SQLITE_OK != (ret = sqlite3_bind_text(m_cacheidx_delete_stmt, 2, desttype.c_str(), -1, nullptr)))
+        if (SQLITE_OK != (ret = sqlite3_bind_text(m_cacheidx_db->m_delete_stmt, 2, desttype.c_str(), -1, nullptr)))
         {
-            Logging::error(m_cacheidx_file, "SQLite3 select error binding 'desttype': (%1) %2", ret, sqlite3_errstr(ret));
+            Logging::error(m_cacheidx_db->filename(), "SQLite3 select error binding 'desttype': (%1) %2", ret, sqlite3_errstr(ret));
             throw false;
         }
 
-        ret = sqlite3_step(m_cacheidx_delete_stmt);
+        ret = sqlite3_step(m_cacheidx_db->m_delete_stmt);
 
         if (ret != SQLITE_DONE)
         {
-            Logging::error(m_cacheidx_file, "Sqlite 3 could not step (execute) delete statement: (%1) %2", ret, sqlite3_errstr(ret));
+            Logging::error(m_cacheidx_db->filename(), "Sqlite 3 could not step (execute) delete statement: (%1) %2", ret, sqlite3_errstr(ret));
             throw false;
         }
     }
@@ -975,7 +1008,7 @@ bool Cache::delete_info(const std::string & filename, const std::string & destty
         success = _success;
     }
 
-    sqlite3_reset(m_cacheidx_delete_stmt);
+    sqlite3_reset(m_cacheidx_db->m_delete_stmt);
 
     if (success)
     {
@@ -987,19 +1020,7 @@ bool Cache::delete_info(const std::string & filename, const std::string & destty
 
 void Cache::close_index()
 {
-    if (m_cacheidx_db != nullptr)
-    {
-#ifdef HAVE_SQLITE_CACHEFLUSH
-        flush_index();
-#endif // HAVE_SQLITE_CACHEFLUSH
-
-        sqlite3_finalize(m_cacheidx_select_stmt);
-        sqlite3_finalize(m_cacheidx_insert_stmt);
-        sqlite3_finalize(m_cacheidx_delete_stmt);
-
-        sqlite3_close(m_cacheidx_db);
-    }
-    sqlite3_shutdown();
+    m_cacheidx_db.reset();
 }
 
 Cache_Entry* Cache::create_entry(LPVIRTUALFILE virtualfile, const std::string & desttype)
@@ -1008,7 +1029,7 @@ Cache_Entry* Cache::create_entry(LPVIRTUALFILE virtualfile, const std::string & 
     Cache_Entry* cache_entry = Cache_Entry::create(this, virtualfile);
     if (cache_entry == nullptr)
     {
-        Logging::error(m_cacheidx_file, "Out of memory creating cache entry.");
+        Logging::error(m_cacheidx_db->filename(), "Out of memory creating cache entry.");
         return nullptr;
     }
 
@@ -1096,13 +1117,13 @@ bool Cache::prune_expired()
     time_t now = time(nullptr);
     std::string sql;
 
-    Logging::trace(m_cacheidx_file, "Pruning expired cache entries older than %1...", format_time(params.m_expiry_time).c_str());
+    Logging::trace(m_cacheidx_db->filename(), "Pruning expired cache entries older than %1...", format_time(params.m_expiry_time).c_str());
 
     strsprintf(&sql, "SELECT filename, desttype, strftime('%%s', access_time) FROM cache_entry WHERE strftime('%%s', access_time) + %" FFMPEGFS_FORMAT_TIME_T " < %" FFMPEGFS_FORMAT_TIME_T ";\n", params.m_expiry_time, now);
 
     std::lock_guard<std::recursive_mutex> lock_mutex(m_mutex);
 
-    sqlite3_prepare(m_cacheidx_db, sql.c_str(), -1, &stmt, nullptr);
+    sqlite3_prepare(*m_cacheidx_db, sql.c_str(), -1, &stmt, nullptr);
 
     int ret = 0;
     while ((ret = sqlite3_step(stmt)) == SQLITE_ROW)
@@ -1115,13 +1136,13 @@ bool Cache::prune_expired()
         Logging::trace(filename, "Found %1 old entries.", format_time(now - static_cast<time_t>(sqlite3_column_int64(stmt, 2))).c_str());
     }
 
-    Logging::trace(m_cacheidx_file, "%1 expired cache entries found.", keys.size());
+    Logging::trace(m_cacheidx_db->filename(), "%1 expired cache entries found.", keys.size());
 
     if (ret == SQLITE_DONE)
     {
         for (const auto& [key, value] : keys)
         {
-            Logging::trace(m_cacheidx_file, "Pruning '%1' - Type: %2", key.c_str(), value.c_str());
+            Logging::trace(m_cacheidx_db->filename(), "Pruning '%1' - Type: %2", key.c_str(), value.c_str());
 
             cache_t::iterator p = m_cache.find(make_pair(key, value));
             if (p != m_cache.end())
@@ -1137,7 +1158,7 @@ bool Cache::prune_expired()
     }
     else
     {
-        Logging::error(m_cacheidx_file, "Failed to execute select. Return code: %1 Error: %2 SQL: %3", ret, sqlite3_errmsg(m_cacheidx_db), expanded_sql(stmt).c_str());
+        Logging::error(m_cacheidx_db->filename(), "Failed to execute select. Return code: %1 Error: %2 SQL: %3", ret, sqlite3_errmsg(*m_cacheidx_db), expanded_sql(stmt).c_str());
     }
 
     sqlite3_finalize(stmt);
@@ -1158,13 +1179,13 @@ bool Cache::prune_cache_size()
     sqlite3_stmt * stmt;
     const char * sql;
 
-    Logging::trace(m_cacheidx_file, "Pruning oldest cache entries exceeding %1 cache size...", format_size(params.m_max_cache_size).c_str());
+    Logging::trace(m_cacheidx_db->filename(), "Pruning oldest cache entries exceeding %1 cache size...", format_size(params.m_max_cache_size).c_str());
 
     sql = "SELECT filename, desttype, encoded_filesize FROM cache_entry ORDER BY access_time ASC;\n";
 
     std::lock_guard<std::recursive_mutex> lock_mutex(m_mutex);
 
-    sqlite3_prepare(m_cacheidx_db, sql, -1, &stmt, nullptr);
+    sqlite3_prepare(*m_cacheidx_db, sql, -1, &stmt, nullptr);
 
     int ret = 0;
     size_t total_size = 0;
@@ -1179,17 +1200,17 @@ bool Cache::prune_cache_size()
         total_size += size;
     }
 
-    Logging::trace(m_cacheidx_file, "%1 in cache.", format_size(total_size).c_str());
+    Logging::trace(m_cacheidx_db->filename(), "%1 in cache.", format_size(total_size).c_str());
 
     if (total_size > params.m_max_cache_size)
     {
-        Logging::trace(m_cacheidx_file, "Pruning %1 of oldest cache entries to limit cache size.", format_size(total_size - params.m_max_cache_size).c_str());
+        Logging::trace(m_cacheidx_db->filename(), "Pruning %1 of oldest cache entries to limit cache size.", format_size(total_size - params.m_max_cache_size).c_str());
         if (ret == SQLITE_DONE)
         {
             size_t n = 0;
             for (const auto& [key, value] : keys)
             {
-                Logging::trace(m_cacheidx_file, "Pruning: %1 Type: %2", key.c_str(), value.c_str());
+                Logging::trace(m_cacheidx_db->filename(), "Pruning: %1 Type: %2", key.c_str(), value.c_str());
 
                 cache_t::iterator p = m_cache.find(make_pair(key, value));
                 if (p != m_cache.end())
@@ -1210,11 +1231,11 @@ bool Cache::prune_cache_size()
                 }
             }
 
-            Logging::trace(m_cacheidx_file, "%1 left in cache.", format_size(total_size).c_str());
+            Logging::trace(m_cacheidx_db->filename(), "%1 left in cache.", format_size(total_size).c_str());
         }
         else
         {
-            Logging::error(m_cacheidx_file, "Failed to execute select. Return code: %1 Error: %2 SQL: %3", ret, sqlite3_errmsg(m_cacheidx_db), expanded_sql(stmt).c_str());
+            Logging::error(m_cacheidx_db->filename(), "Failed to execute select. Return code: %1 Error: %2 SQL: %3", ret, sqlite3_errmsg(*m_cacheidx_db), expanded_sql(stmt).c_str());
         }
     }
 
@@ -1227,7 +1248,7 @@ bool Cache::prune_disk_space(size_t predicted_filesize)
 {
     std::string cachepath;
 
-    transcoder_cache_path(cachepath);
+    transcoder_cache_path(&cachepath);
 
     size_t free_bytes = get_disk_free(cachepath);
 
@@ -1262,7 +1283,7 @@ bool Cache::prune_disk_space(size_t predicted_filesize)
 
         sql = "SELECT filename, desttype, encoded_filesize FROM cache_entry ORDER BY access_time ASC;\n";
 
-        sqlite3_prepare(m_cacheidx_db, sql, -1, &stmt, nullptr);
+        sqlite3_prepare(*m_cacheidx_db, sql, -1, &stmt, nullptr);
 
         int ret = 0;
         while ((ret = sqlite3_step(stmt)) == SQLITE_ROW)
@@ -1306,7 +1327,7 @@ bool Cache::prune_disk_space(size_t predicted_filesize)
         }
         else
         {
-            Logging::error(cachepath, "Failed to execute select. Return code: %1 Error: %2 SQL: %3", ret, sqlite3_errmsg(m_cacheidx_db), expanded_sql(stmt).c_str());
+            Logging::error(cachepath, "Failed to execute select. Return code: %1 Error: %2 SQL: %3", ret, sqlite3_errmsg(*m_cacheidx_db), expanded_sql(stmt).c_str());
         }
 
         sqlite3_finalize(stmt);
@@ -1343,7 +1364,7 @@ bool Cache::clear()
 
     sql = "SELECT filename, desttype FROM cache_entry;\n";
 
-    sqlite3_prepare(m_cacheidx_db, sql, -1, &stmt, nullptr);
+    sqlite3_prepare(*m_cacheidx_db, sql, -1, &stmt, nullptr);
 
     int ret = 0;
     while((ret = sqlite3_step(stmt)) == SQLITE_ROW)
@@ -1354,13 +1375,13 @@ bool Cache::clear()
         keys.emplace_back(filename, desttype);
     }
 
-    Logging::trace(m_cacheidx_file, "Clearing all %1 entries from cache...", keys.size());
+    Logging::trace(m_cacheidx_db->filename(), "Clearing all %1 entries from cache...", keys.size());
 
     if (ret == SQLITE_DONE)
     {
         for (const auto& [key, value] : keys)
         {
-            Logging::trace(m_cacheidx_file, "Pruning: %1 Type: %2", key.c_str(), value.c_str());
+            Logging::trace(m_cacheidx_db->filename(), "Pruning: %1 Type: %2", key.c_str(), value.c_str());
 
             cache_t::iterator p = m_cache.find(make_pair(key, value));
             if (p != m_cache.end())
@@ -1376,7 +1397,7 @@ bool Cache::clear()
     }
     else
     {
-        Logging::error(m_cacheidx_file, "Failed to execute select. Return code: %1 Error: %2 SQL: %3", ret, sqlite3_errmsg(m_cacheidx_db), expanded_sql(stmt).c_str());
+        Logging::error(m_cacheidx_db->filename(), "Failed to execute select. Return code: %1 Error: %2 SQL: %3", ret, sqlite3_errmsg(*m_cacheidx_db), expanded_sql(stmt).c_str());
     }
 
     sqlite3_finalize(stmt);
@@ -1389,11 +1410,11 @@ bool Cache::remove_cachefile(const std::string & filename, const std::string & f
     std::string cachefile;
     bool success;
 
-    Buffer::make_cachefile_name(cachefile, filename, fileext, false);
+    Buffer::make_cachefile_name(&cachefile, filename, fileext, false);
 
     success = Buffer::remove_file(cachefile);
 
-    Buffer::make_cachefile_name(cachefile, filename, fileext, true);
+    Buffer::make_cachefile_name(&cachefile, filename, fileext, true);
 
     if (!Buffer::remove_file(cachefile) && errno != ENOENT)
     {

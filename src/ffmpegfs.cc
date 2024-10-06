@@ -152,8 +152,6 @@ FFMPEGFS_PARAMS::FFMPEGFS_PARAMS(const FFMPEGFS_PARAMS & other)
 FFMPEGFS_PARAMS::~FFMPEGFS_PARAMS()
 {
     delete m_hwaccel_dec_blocked;
-    delete m_include_extensions;
-    delete m_hide_extensions;
 }
 
 FFMPEGFS_PARAMS& FFMPEGFS_PARAMS::operator=(const FFMPEGFS_PARAMS & other) noexcept
@@ -1994,11 +1992,11 @@ static int ffmpegfs_opt_proc(__attribute__((unused)) void* data, const char* arg
     }
     case KEY_INCLUDE_EXTENSIONS:
     {
-        return get_value(arg, params.m_include_extensions);
+        return get_value(arg, params.m_include_extensions.get());
     }
     case KEY_HIDE_EXTENSIONS:
     {
-        return get_value(arg, params.m_hide_extensions);
+        return get_value(arg, params.m_hide_extensions.get());
     }
     }
 
@@ -2049,7 +2047,7 @@ static void print_params()
 {
     std::string cachepath;
 
-    transcoder_cache_path(cachepath);
+    transcoder_cache_path(&cachepath);
 
     Logging::trace(nullptr, "********* " PACKAGE_NAME " Options *********");
     Logging::trace(nullptr, "Base Path         : %1", params.m_basepath.c_str());

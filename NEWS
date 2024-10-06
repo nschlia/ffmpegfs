@@ -18,8 +18,9 @@ FFmpegfs NEWS
 * TODO: Create Windows installer.
 - TODO: Automatically build Windows release binaries and add to release assets.
 
-Important changes in 2.17 (2024-08-XX):
+Important changes in 2.17 (2024-10-XX):
 
+* Bugfix: Issue #164: Fixed incorrectly discarded HLS seek requests.
 * Bugfix: Wrong error message fixed when an invalid audio/video codec was
   selected. The message should rather say "unsupported codec" instead of
   talking about "sample format not supported.".

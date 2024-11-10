@@ -52,7 +52,7 @@ Building FFmpegfs yourself
 For encoding and decoding, FFmpegfs utilises the FFmpeg multi media framework. The following libraries are necessary:
 
 * gcc and g++ compilers
-* fuse (>= 2.6.0)
+* fuse3 (>= 3.4.1)
 * sqlite3 (>= 3.7.13)
 
 FFmpeg 4.1.8 "al-Khwarizmi" or newer:
@@ -81,7 +81,7 @@ For more information, see the "Supported Linux Distributions" chapter in README.
 
     apt-get install gcc g++ make pkg-config asciidoc-base w3m xxd
 
-    apt-get install fuse libfuse-dev libsqlite3-dev libavcodec-dev libavformat-dev libswresample-dev libavutil-dev libswscale-dev libavfilter-dev libcue-dev libchardet-dev
+    apt-get install libfuse3-dev libsqlite3-dev libavcodec-dev libavformat-dev libswresample-dev libavutil-dev libswscale-dev libavfilter-dev libcue-dev libchardet-dev
 
 To get DVD support:
 
@@ -103,7 +103,7 @@ To use "make check" (run test suite):
 
     zypper install gcc gcc-c++
 
-    zypper install fuse fuse-devel libsqlite3-devel libavcodec-devel libavformat-devel libswresample-devel libavutil-devel libswscale-devel libcue-devel libchardet-devel
+    zypper install fuse3-devel libsqlite3-devel libavcodec-devel libavformat-devel libswresample-devel libavutil-devel libswscale-devel libcue-devel libchardet-devel
 
 To get DVD support:
 
@@ -119,7 +119,7 @@ Suse includes non-proprietary codecs with FFmpeg only, namely mp3, AAC and H264 
 
     yum install gcc g++
 
-    yum install fuse-devel sqlite-devel libcue-devel libchardet-devel
+    yum install fuse3-devel sqlite-devel libcue-devel libchardet-devel
 
 To get DVD support:
 
@@ -139,7 +139,7 @@ If you want to build the documentation, you will find "asciidoc" missing from th
 
 To get fuse support and chromaprint (for make check):
 
-    emerge sys-fs/fuse
+    emerge sys-fs/fuse3
     emerge media-libs/chromaprint
 
 To get FFmpeg with H264 etc. support, specify some "USE flags" when doing emerge:

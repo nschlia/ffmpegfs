@@ -97,16 +97,12 @@
  * \include COPYING.CC0
  */
 
-#define FUSE_USE_VERSION 26             /**< @brief Requested minimum FUSE version */
+#define FUSE_USE_VERSION 30             /**< @brief Requested minimum FUSE version */
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wmissing-field-initializers"
-#pragma GCC diagnostic ignored "-Wsign-conversion"
-#include <fuse.h>
-#pragma GCC diagnostic pop
+#include <fuse3/fuse.h>
 #ifdef __cplusplus
 }
 #endif

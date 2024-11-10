@@ -79,14 +79,14 @@ static int                          selector(const struct dirent * de);
 static int                          scandir(const char *dirp, std::vector<struct dirent> * _namelist, int (*selector) (const struct dirent *), int (*cmp) (const struct dirent **, const struct dirent **));
 
 static int                          ffmpegfs_readlink(const char *path, char *buf, size_t size);
-static int                          ffmpegfs_readdir(const char *path, void *buf, fuse_fill_dir_t filler, off_t offset, struct fuse_file_info *fi);
-static int                          ffmpegfs_getattr(const char *path, struct stat *stbuf);
+static int                          ffmpegfs_readdir(const char *path, void *buf, fuse_fill_dir_t filler, off_t offset, struct fuse_file_info *fi, enum fuse_readdir_flags);
+static int                          ffmpegfs_getattr(const char *path, struct stat *stbuf, fuse_file_info *fi);
 static int                          ffmpegfs_fgetattr(const char *path, struct stat * stbuf, struct fuse_file_info *fi);
 static int                          ffmpegfs_open(const char *path, struct fuse_file_info *fi);
 static int                          ffmpegfs_read(const char *path, char *buf, size_t size, off_t offset, struct fuse_file_info *fi);
 static int                          ffmpegfs_statfs(const char *path, struct statvfs *stbuf);
 static int                          ffmpegfs_release(const char *path, struct fuse_file_info *fi);
-static void *                       ffmpegfs_init(struct fuse_conn_info *conn);
+static void *                       ffmpegfs_init(struct fuse_conn_info *conn, fuse_config *cfg);
 static void                         ffmpegfs_destroy(__attribute__((unused)) void * p);
 
 static FILENAME_MAP             filenames;          /**< @brief Map files to virtual files */
@@ -248,7 +248,7 @@ void init_fuse_ops()
 {
     std::memset(&ffmpegfs_ops, 0, sizeof(fuse_operations));
     ffmpegfs_ops.getattr  = ffmpegfs_getattr;
-    ffmpegfs_ops.fgetattr = ffmpegfs_fgetattr;
+//    ffmpegfs_ops.fgetattr = ffmpegfs_fgetattr;
     ffmpegfs_ops.readlink = ffmpegfs_readlink;
     ffmpegfs_ops.readdir  = ffmpegfs_readdir;
     ffmpegfs_ops.open     = ffmpegfs_open;
@@ -301,7 +301,7 @@ static int ffmpegfs_readlink(const char *path, char *buf, size_t size)
  * @param[in] filler - Filler function.
  * @return On success, returns 0. On error, returns -errno.
  */
-static int ffmpegfs_readdir(const char *path, void *buf, fuse_fill_dir_t filler, off_t /*offset*/, struct fuse_file_info * /*fi*/)
+static int ffmpegfs_readdir(const char *path, void *buf, fuse_fill_dir_t filler, off_t /*offset*/, struct fuse_file_info * /*fi*/, enum fuse_readdir_flags)
 {
     std::string origpath;
 
@@ -539,7 +539,7 @@ static int ffmpegfs_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
  * @param[in] stbuf - Buffer to store information.
  * @return On success, returns 0. On error, returns -errno.
  */
-static int ffmpegfs_getattr(const char *path, struct stat *stbuf)
+static int ffmpegfs_getattr(const char *path, struct stat *stbuf, struct fuse_file_info *fi)
 {
     Logging::trace(path, "getattr");
 
@@ -1333,7 +1333,7 @@ static int ffmpegfs_release(const char *path, struct fuse_file_info *fi)
  * @param[in] conn - fuse_conn_info structure of FUSE. See FUSE docs for details.
  * @return nullptr
  */
-static void *ffmpegfs_init(struct fuse_conn_info *conn)
+static void *ffmpegfs_init(struct fuse_conn_info *conn, struct fuse_config *cfg)
 {
     Logging::info(nullptr, "%1 V%2 initialising.", PACKAGE_NAME, FFMPEFS_VERSION);
     Logging::info(nullptr, "Mapping '%1' to '%2'.", params.m_basepath.c_str(), params.m_mountpath.c_str());
@@ -1350,7 +1350,7 @@ static void *ffmpegfs_init(struct fuse_conn_info *conn)
     sigaction(SIGINT, &sa, &oldHandler);
 
     // We need synchronous reads.
-    conn->async_read = 0;
+//     conn->async_read = 0;
     //    conn->async_read = 1;
     //	conn->want |= FUSE_CAP_ASYNC_READ;
     //	conn->want |= FUSE_CAP_SPLICE_READ;
@@ -2410,7 +2410,7 @@ int add_fuse_entry(void *buf, fuse_fill_dir_t filler, const std::string & name, 
         return 0;
     }
 
-    return filler(buf, name.c_str(), stbuf, off);
+    return filler(buf, name.c_str(), stbuf, off, FUSE_FILL_DIR_PLUS);
 }
 
 int add_dotdot(void *buf, fuse_fill_dir_t filler, const struct stat *stbuf, off_t off)

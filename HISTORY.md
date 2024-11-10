@@ -1,11 +1,13 @@
 History
 =======
 
-**New in 2.17 (2024-08-XX):**
+**New in 2.17 (2024-11-10):**
 
+- **Bugfix:** Issue [#164](https://github.com/nschlia/ffmpegfs/issues/164): Fixed incorrectly discarded HLS seek requests.
 - **Bugfix:** Wrong error message fixed when an invalid audio/video codec was selected. The message should rather say "unsupported codec" instead of talking about "sample format not supported.".
 - **Bugfix:** Issue [#162](https://github.com/nschlia/ffmpegfs/issues/162): If not present, add time stamps to the copied streams.
 - Changed quality from 34 to 40 for hardware encoded video streams to create slightly smaller files.
+- [Closes#1084487:](https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=1084487): Moved from the Fuse 2 to the Fuse 3 API.
 
 **New in 2.16 (2024-06-10):**
 

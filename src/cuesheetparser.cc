@@ -321,7 +321,7 @@ static int parse_cuesheet(LPCVIRTUALFILE virtualfile, const std::string & cueshe
                 return -errno;
             }
 
-            if (buf != nullptr && filler(buf, dirname.c_str(), &insertedvirtualfile->m_st, 0))
+            if (buf != nullptr && filler(buf, dirname.c_str(), &insertedvirtualfile->m_st, 0, FUSE_FILL_DIR_PLUS))
             {
                 // break;
             }
@@ -420,7 +420,7 @@ int check_cuesheet(const std::string & filename, void *buf, fuse_fill_dir_t fill
                     throw -errno;
                 }
 
-                if (buf != nullptr && filler(buf, dirname.c_str(), &virtualdir->m_st, 0))
+                if (buf != nullptr && filler(buf, dirname.c_str(), &virtualdir->m_st, 0, FUSE_FILL_DIR_PLUS))
                 {
                     // break;
                 }

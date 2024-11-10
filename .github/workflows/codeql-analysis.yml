@@ -99,7 +99,7 @@ jobs:
       run: |
         sudo apt-get update
         sudo apt-get install -yq asciidoc-base w3m libchromaprint-dev doxygen graphviz
-        sudo apt-get install -yq libcue-dev libfuse-dev libsqlite3-dev libavcodec-dev libavformat-dev libswresample-dev libavutil-dev libswscale-dev libavfilter-dev libchardet-dev
+        sudo apt-get install -yq libcue-dev libfuse3-dev libsqlite3-dev libavcodec-dev libavformat-dev libswresample-dev libavutil-dev libswscale-dev libavfilter-dev libchardet-dev
         sudo apt-get install -yq libdvdread-dev libdvdnav-dev libbluray-dev
     - name: autogen.sh
       run: ./autogen.sh

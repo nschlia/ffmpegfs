@@ -4,13 +4,13 @@ ARG DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update
 RUN apt-get install -yq apt-utils
-RUN apt-get install -yq fuse libfuse2 libsqlite3-0 libavcodec59 libavformat59 libswresample4 libavutil57 libswscale6 libavfilter8 libcue2 libchardet1
+RUN apt-get install -yq fuse libfuse3-3 libsqlite3-0 libavcodec59 libavformat59 libswresample4 libavutil57 libswscale6 libavfilter8 libcue2 libchardet1
 RUN apt-get install -yq libdvdread[48] libdvdnav4 libbluray2
 
 FROM common as builder
 
 RUN apt-get install -yq gcc g++ make pkg-config autoconf asciidoc-base w3m libchromaprint-dev bc doxygen graphviz curl git xxd
-RUN apt-get install -yq libcue-dev libfuse-dev libsqlite3-dev libavcodec-dev libavformat-dev libswresample-dev libavutil-dev libswscale-dev libavfilter-dev libchardet-dev
+RUN apt-get install -yq libcue-dev libfuse3-dev libsqlite3-dev libavcodec-dev libavformat-dev libswresample-dev libavutil-dev libswscale-dev libavfilter-dev libchardet-dev
 RUN apt-get install -yq libdvdread-dev libdvdnav-dev libbluray-dev
 
 ARG BRANCH=master

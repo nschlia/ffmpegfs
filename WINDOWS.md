@@ -13,26 +13,31 @@ However, you may now use it under Windows if you wish to.
 
 ### Install Windows Prequisites
 
-In order to build FFmpegfs under Windows, various steps must be taken. but it is possible with Cygwin's assistance.
+In order to build FFmpegfs under Windows, various steps must be taken, but it is possible with Cygwin's assistance.
 
-Download Cygwin from https://www.cygwin.com/ to start with. and install. Later we will add the necessary packages.
+Download Cygwin from https://www.cygwin.com/ to start with and install, leaving all options at default. We will add the necessary packages later.
 
-From https://winfsp.dev/rel, get Windows File Proxy (WinFSP). Install it after making the recommended selections for all of the development parameters. To make it accessible, the subsequent steps must be carried out in a Cygwin shell.
+From https://winfsp.dev/rel, get Windows File Proxy (WinFSP) and install, ensuring that *"Fuse for Cygwin"* and the *"Developer"* feature are chosen for installation. The following procedures must be completed in a Cygwin shell in order to make it accessible in Cygwin.
 
 ### Update Cygwin
 
 #### Install WinFSP Support For Cygwin
 
-In order to activate Fuse support please follow the instructions  on https://winfsp.dev/rel/ under "For Cygwin users". This adds the Fuse package, which Cygwin does not provide.
+On the WinFSP pages, open the "For Cygwin users" section by clicking on this link: https://winfsp.dev/rel/#for-cygwin-users. Then follow the steps to enable Fuse support. This adds the package missing from Cygwin.
 
 #### Install Packages From Cygwin Setup
 
-The necessary build environment will be made available by installing via Cygwin setup.
+The necessary build environment will be made available by installing via Cygwin setup. Run [setup-x86_64.exe](https://www.cygwin.com/setup-x86_64.exe) and select the following additional packages:
+
 ```
 git, gcc-core, gcc-g++, make, pkg-config, asciidoc, docbook-xml, xxd, libtool, libiconv-devel, libcue-devel,  libsqlite3-devel, wget, automake
 ```
 If there are multiple versions available, choose the highest. Additionally make sure to install the **automake** wrapper for various versions. This will save you from the headache of choosing the right bundles.
+
+For details, see [Installing and Updating Cygwin Packages](https://www.cygwin.com/install.html).
+
 To get DVD support:
+
 ```
 libdvdread-devel
 ```

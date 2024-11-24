@@ -1,5 +1,3 @@
-[TOC]
-
 Building For Windows
 ====================
 

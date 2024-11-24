@@ -36,7 +36,7 @@ git, gcc-core, gcc-g++, make, pkg-config, asciidoc, docbook-xml, xxd, libtool, l
 ```
 If there are multiple versions available, choose the highest. Additionally make sure to install the **automake** wrapper for various versions. This will save you from the headache of choosing the right bundles.
 
-For details, see [Installing and Updating Cygwin Packages](https://www.cygwin.com/install.html).
+For details, see "[Installing and Updating Cygwin Packages](https://www.cygwin.com/install.html)".
 
 ##### DVD Support
 
@@ -47,7 +47,7 @@ libdvdread-devel
 ```
 ##### Bluray Support
 
-To get Blu-ray support, see "Install Libraries Missing From Setup".
+To get Blu-ray support, see "[Building libbluray](WINDOWS.md#build-libbluray)".
 
 ##### Build Doxygen Documentation
 
@@ -79,7 +79,7 @@ libchromaprint-devel, bc
 
 #### Install Libraries Missing From Setup
 
-##### Build Libchardet
+##### Building Libchardet
 
 Libchardet is also not part of Cygwin, therefore go to https://github.com/Joungkyun/libchardet/releases to download and build libchardet. You may use a newer version if one becomes available. At the time of writing, that was V1.0.6.
 
@@ -96,7 +96,7 @@ Saving to: 'libchardet-1.0.6.tar.bz2'
 ~/install $ make install
 ```
 
-##### Build libbluray
+##### Building libbluray
 
 Regrettably, Cygwin does not offer libbluray, which is optionally necessary to enable Bluray support.
 

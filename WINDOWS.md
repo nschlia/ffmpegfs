@@ -27,6 +27,8 @@ On the WinFSP pages, open the "For Cygwin users" section by clicking on this lin
 
 #### Install Packages From Cygwin Setup
 
+##### Basic Packages
+
 The necessary build environment will be made available by installing via Cygwin setup. Run [setup-x86_64.exe](https://www.cygwin.com/setup-x86_64.exe) again, then select and install the following additional packages:
 
 ```
@@ -36,22 +38,34 @@ If there are multiple versions available, choose the highest. Additionally make 
 
 For details, see [Installing and Updating Cygwin Packages](https://www.cygwin.com/install.html).
 
-To get DVD support:
+##### DVD Support
+
+To enable DVD support, select and install:
 
 ```
 libdvdread-devel
 ```
-To get Blu-ray support see "Install Libraries Missing From Setup".
+##### Bluray Support
 
-To use "make doxy" (build Doxygen documentation):
+To get Blu-ray support, see "Install Libraries Missing From Setup".
+
+##### Build Doxygen Documentation
+
+ To use "make doxy" to build the documentation with Doxygen, the following must be selected and installed:
+
 ```
 doxygen, graphviz, curl
 ```
-To use "make check" (run test suite):
+##### Run Test Suite
+
+To use "make check", select and install:
+
 ```
 libchromaprint-devel, bc
 ```
-**Cygserver** is required to execute FFmpegfs. See https://cygwin.com/cygwin-ug-net/using-cygserver.html for further information.
+##### Other Requirements
+
+**Cygserver** is used to execute FFmpegfs. See https://cygwin.com/cygwin-ug-net/using-cygserver.html for further information.
 
 * You need to install ***cygrunsrv***. You will find it under the "Admin" category in the Cygwin setup utility.
 * Launch the Cygwin terminal as administrator.
@@ -64,6 +78,8 @@ libchromaprint-devel, bc
 * When Windows is restarted, it will automatically start, so you won't have to do this again.
 
 #### Install Libraries Missing From Setup
+
+##### Build Libchardet
 
 Libchardet is also not part of Cygwin, therefore go to https://github.com/Joungkyun/libchardet/releases to download and build libchardet. You may use a newer version if one becomes available. At the time of writing, that was V1.0.6.
 
@@ -80,16 +96,22 @@ Saving to: 'libchardet-1.0.6.tar.bz2'
 ~/install $ make install
 ```
 
-Regrettably, Cygwin does not offer *libbluray*, which is optionally necessary to enable Bluray support.
+##### Build libbluray
+
+Regrettably, Cygwin does not offer libbluray, which is optionally necessary to enable Bluray support.
 
 As of yet I could not successfully build it. Bluray support will not be available.
 
 #### Get The Windows FFmpeg Binaries
 
+##### Use Pre-Build Binaries
+
 Look at the download page of the [FFmpeg Homepages](https://ffmpeg.org/download.html#build-windows) to obtain pre-built Windows binaries.
 
 Download it, for example, from [Github](https://github.com/BtbN/FFmpeg-Builds/releases/download/latest/ffmpeg-master-latest-win64-gpl-shared.zip), place it in win/ffmpeg/win64/
 and then unpack it. This will automatically place all files in the appropriate directories.
+
+##### Build FFmpeg Yourself
 
 Should you feel lucky and want to build the binaries yourself, you may also use FFmpeg Windows Build Helpers, which can be obtained [here](https://github.com/rdp/ffmpeg-windows-build-helpers).
 
@@ -99,7 +121,7 @@ Should you feel lucky and want to build the binaries yourself, you may also use 
 | win/ffmpeg/win64/include |        64 | Development headers |
 | win/ffmpeg/win64/lib     |        64 | Libraries           |
 
-#### Build The Binaries For FFmpegfs
+###### Build The Binaries For FFmpegfs
 
 After then, all else is just running...
 
@@ -129,6 +151,8 @@ A 32-bit version is probably possible, but Cygwin 32 is no longer supported on W
 
 #### Troubleshooting
 
+##### Meessage "Function not implemented"
+
 When ffmpegfs.exe refuses to run with the following message:
 
 ```
@@ -136,3 +160,7 @@ When ffmpegfs.exe refuses to run with the following message:
 ```
 
 **Cygserver** is not running or not installed. See "Install WinFSP Support For Cygwin" above how to fix that.
+
+##### More...?
+
+More will be posted whenever I learn of it.

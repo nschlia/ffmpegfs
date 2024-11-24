@@ -27,7 +27,7 @@ On the WinFSP pages, open the "For Cygwin users" section by clicking on this lin
 
 #### Install Packages From Cygwin Setup
 
-The necessary build environment will be made available by installing via Cygwin setup. Run [setup-x86_64.exe](https://www.cygwin.com/setup-x86_64.exe) and select the following additional packages:
+The necessary build environment will be made available by installing via Cygwin setup. Run [setup-x86_64.exe](https://www.cygwin.com/setup-x86_64.exe) again, then select and install the following additional packages:
 
 ```
 git, gcc-core, gcc-g++, make, pkg-config, asciidoc, docbook-xml, xxd, libtool, libiconv-devel, libcue-devel,  libsqlite3-devel, wget, automake

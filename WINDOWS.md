@@ -47,7 +47,7 @@ libdvdread-devel
 ```
 ##### Bluray Support
 
-To get Blu-ray support, see "[Building libbluray](WINDOWS.md#build-libbluray)".
+To get Blu-ray support, see "Building libbluray".
 
 ##### Build Doxygen Documentation
 

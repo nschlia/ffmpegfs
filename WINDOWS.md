@@ -83,6 +83,8 @@ libchromaprint-devel, bc
 
 Libchardet is also not part of Cygwin, therefore go to https://github.com/Joungkyun/libchardet/releases to download and build libchardet. You may use a newer version if one becomes available. At the time of writing, that was V1.0.6.
 
+Open a "Cygwin64 Terminal", from inside this terminal, run the following commands:
+
 ```
 $ mkdir install
 $ cd install

@@ -160,11 +160,7 @@ to build FFmpeg.
 
 #### Building from tar ball
 
-Get the most recent release archive here:
-
-    wget https://github.com/nschlia/ffmpegfs/releases/download/v2.12/ffmpegfs-2.12.tar.gz
-
-As I frequently fail to update this URL, you can check https://github.com/nschlia/ffmpegfs/releases to see if there are newer releases available.
+Get the most recent release archive here: https://github.com/nschlia/ffmpegfs/releases
 
 Alternatively, utilise these instructions, being sure to download the most recent version:
 

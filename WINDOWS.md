@@ -88,14 +88,19 @@ Open a "Cygwin64 Terminal", from inside this terminal, run the following command
 ```
 $ mkdir install
 $ cd install
-~/install $ wget https://github.com/Joungkyun/libchardet/releases/download/1.0.6/libchardet-1.0.6.tar.bz2
+~/install
+$ wget https://github.com/Joungkyun/libchardet/releases/download/1.0.6/libchardet-1.0.6.tar.bz2
 Length: 435028 (425K) [application/octet-stream]
 Saving to: 'libchardet-1.0.6.tar.bz2'
 2023-01-07 12:19:06 (6.41 MB/s) - 'libchardet-1.0.6.tar.bz2' saved [435028/435028]
-~/install $ tar -xf libchardet-1.0.6.tar.bz2
-~/install $ cd libchardet-1.0.6
-~/install $ ./configure --prefix=/usr
-~/install $ make install
+~/install
+$ tar -xf libchardet-1.0.6.tar.bz2
+~/install
+$ cd libchardet-1.0.6
+~/install
+$ ./configure --prefix=/usr
+~/install
+$ make install
 ```
 
 ##### Building libbluray

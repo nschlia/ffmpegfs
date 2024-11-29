@@ -130,7 +130,9 @@ Should you feel lucky and want to build the binaries yourself, you may also use 
 
 ### Build The Binaries For FFmpegfs
 
-Finally, after preparing all the prerequisites, everything else is just running...
+Finally, after preparing all the prerequisites, get the most recent release archive here: https://github.com/nschlia/ffmpegfs/releases
+
+Unpack the file, e.g. with `tar -xf ffmpegfs-2.17.tar.gz` (replace archive name with current version), and then cd to the source directory.
 
 ```
 $ ./configure

@@ -158,7 +158,7 @@ A 32-bit version is probably possible, but Cygwin 32 is no longer supported on W
 
 ### Troubleshooting
 
-#### Meessage "Function not implemented"
+#### Message "Function not implemented"
 
 When ffmpegfs.exe refuses to run with the following message:
 

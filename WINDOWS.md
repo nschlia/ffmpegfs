@@ -156,9 +156,9 @@ To take advantage of bash's built-in script command, make sure to utilise the "d
 #### A 32 Bit Version?
 A 32-bit version is probably possible, but Cygwin 32 is no longer supported on Windows 10 and later. As a result, 32-bit builds are not implemented in the make system.
 
-#### Troubleshooting
+### Troubleshooting
 
-##### Meessage "Function not implemented"
+#### Meessage "Function not implemented"
 
 When ffmpegfs.exe refuses to run with the following message:
 

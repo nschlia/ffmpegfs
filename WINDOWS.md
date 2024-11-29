@@ -128,9 +128,9 @@ Should you feel lucky and want to build the binaries yourself, you may also use 
 | win/ffmpeg/win64/include |        64 | Development headers |
 | win/ffmpeg/win64/lib     |        64 | Libraries           |
 
-###### Build The Binaries For FFmpegfs
+### Build The Binaries For FFmpegfs
 
-After then, all else is just running...
+Finally, after preparing all the prerequisites, everything else is just running...
 
 ```
 $ ./configure

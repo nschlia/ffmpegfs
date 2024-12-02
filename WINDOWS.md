@@ -134,11 +134,12 @@ Note: The win/ffmpeg/win64/ directory is located under the FFmpeg source directo
 
 ### Build The Binaries For FFmpegfs
 
-Finally, after preparing all the prerequisites, get the most recent release archive here: https://github.com/nschlia/ffmpegfs/releases
+Once all prerequisites have been prepared, obtain the Windows source branch by running "git clone https://github.com/nschlia/ffmpegfs.git -b windows" and then cd to the source directory.
 
-Unpack the file, e.g. with `tar -xf ffmpegfs-2.17.tar.gz` (replace archive name with current version), and then cd to the source directory.
+Everything else is executing the build and configure commands:
 
 ```
+$ cd ffmpegfs
 $ ./configure
 $ make
 ```

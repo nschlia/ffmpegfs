@@ -136,18 +136,29 @@ Note: The win/ffmpeg/win64/ directory is located under the FFmpeg source directo
 
 Once all prerequisites have been prepared, obtain the Windows source branch by running "git clone https://github.com/nschlia/ffmpegfs.git -b windows" and then cd to the source directory.
 
-Everything else is executing the build and configure commands:
+Since you did not download a release, where a configure script was already generated for you, you first need to run autogen.sh:
 
 ```
-$ cd ffmpegfs
-$ ./configure
-$ make
+cd ffmpegfs
+./autogen.sh
+```
+
+Everything else is executing the configure and build commands:
+
+```
+./configure
+```
+
+To build and run the test suite, do:
+
+```
+make check
 ```
 
 Call to generate a "export" directory with the necessary binaries.
 
 ```
-$ make export
+make export
 ```
 
 By doing this, all DLLs needed to launch ffmpegfs.exe without first installing Cygwin will be exported.

@@ -118,7 +118,20 @@ Look at the download page of the [FFmpeg Homepages](https://ffmpeg.org/download.
 Download it, for example, from [Github](https://github.com/BtbN/FFmpeg-Builds/releases/download/latest/ffmpeg-master-latest-win64-gpl-shared.zip), place it in win/ffmpeg/win64/
 and then unpack it. This will automatically place all files in the appropriate directories.
 
-Note: The win/ffmpeg/win64/ directory vis located under the FFmpeg source directory which will be created when the tar ball is unpacked. See "Build The Binaries For FFmpegfs".
+```
+unzip ffmpeg-master-latest-win64-gpl-shared.zip
+```
+
+Most likely, a subdirectory like ffmpeg-master-latest-win64-gpl-shared will be created. If so, its contents must be moved to win/ffmpeg/win64/:
+
+```
+/bin/cp -rv  /* .
+rm -Rf ffmpeg-master-latest-win64-gpl-shared
+```
+
+The "/bin/cp" method will prevent overrides that ask obnoxious questions before overwriting something.
+
+Note: The win/ffmpeg/win64/ directory is located under the FFmpeg source directory.
 
 ##### Build FFmpeg Yourself
 
@@ -130,7 +143,7 @@ Should you feel lucky and want to build the binaries yourself, you may also use 
 | win/ffmpeg/win64/include |        64 | Development headers |
 | win/ffmpeg/win64/lib     |        64 | Libraries           |
 
-Note: The win/ffmpeg/win64/ directory is located under the FFmpeg source directory which will be created when the tar ball is unpacked. See "Build The Binaries For FFmpegfs".
+Note: The win/ffmpeg/win64/ directory is located under the FFmpeg source directory.
 
 ### Build The Binaries For FFmpegfs
 

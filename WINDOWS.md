@@ -179,10 +179,20 @@ By doing this, all DLLs needed to launch ffmpegfs.exe without first installing C
 You will be able to run ffmpegfs.exe from the command prompt after running the setenv script.
 
 ```
-$ . setenv
+. setenv
 ```
 
 To take advantage of bash's built-in script command, make sure to utilise the "dot space" syntax as demonstrated above; otherwise, the environment will remain untouched.
+
+#### Usage
+
+Examples see https://github.com/nschlia/ffmpegfs/tree/windows?tab=readme-ov-file#usage
+
+Please keep in mind that Cygwin uses its own syntax for Windows drives, e.g., drive C: is /cygwin/c, so mapping C: to $HOME/out would be:
+
+```
+ffmpegfs --audiobitrate=256K --videobitrate=1.5M  /cygdrive/c out -o allow_other,ro,desttype=mp4
+```
 
 #### A 32 Bit Version?
 A 32-bit version is probably possible, but Cygwin 32 is no longer supported on Windows 10 and later. As a result, 32-bit builds are not implemented in the make system.

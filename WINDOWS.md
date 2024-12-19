@@ -188,11 +188,13 @@ To take advantage of bash's built-in script command, make sure to utilise the "d
 
 Examples see https://github.com/nschlia/ffmpegfs/tree/windows?tab=readme-ov-file#usage
 
-Please keep in mind that Cygwin uses its own syntax for Windows drives, e.g., drive C: is /cygwin/c, so mapping C: to $HOME/out would be:
+Although Cygwin uses its own syntax for Windows drives, e.g., drive C: is /cygwin/c, WinFSP uses a modified Windows drive syntax, so mapping e.g., C:\temp\in\ to C:\temp\out\ would be:
 
 ```
-ffmpegfs --audiobitrate=256K --videobitrate=1.5M  /cygdrive/c out -o allow_other,ro,desttype=mp4
+ffmpegfs --audiobitrate=256K --videobitrate=1.5M  c:/tmp/in/ c:/tmp/out/ -o allow_other,ro,desttype=mp4
 ```
+
+That means, basically, all Windows-like backslashes have to be replaced by forward slashes.
 
 #### A 32 Bit Version?
 A 32-bit version is probably possible, but Cygwin 32 is no longer supported on Windows 10 and later. As a result, 32-bit builds are not implemented in the make system.

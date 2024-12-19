@@ -1802,8 +1802,11 @@ static int ffmpegfs_opt_proc(__attribute__((unused)) void* data, const char* arg
     case KEY_HELP:
     {
         usage();
+#ifndef _WIN32
+        // Bug in WinSFP: Help displayed garbled
         fuse_opt_add_arg(outargs, "-ho");
         fuse_main(outargs->argc, outargs->argv, &ffmpegfs_ops, nullptr);
+#endif
         exit(1);
     }
     case KEY_VERSION:

@@ -191,10 +191,12 @@ Examples see https://github.com/nschlia/ffmpegfs/tree/windows?tab=readme-ov-file
 Although Cygwin uses its own syntax for Windows drives, e.g., drive C: is /cygwin/c, WinFSP uses a modified Windows drive syntax, so mapping e.g., C:\temp\in\ to C:\temp\out\ would be:
 
 ```
-ffmpegfs --audiobitrate=256K --videobitrate=1.5M  c:/tmp/in/ c:/tmp/out/ -o allow_other,ro,desttype=mp4
+ffmpegfs --audiobitrate=256K --videobitrate=1.5M   d:/tmp/in/ /cygdrive/D/tmp/out -o allow_other,ro,desttype=mp4
 ```
 
-That means, basically, all Windows-like backslashes have to be replaced by forward slashes.
+That means, basically, all Windows-like backslashes have to be replaced by forward slashes. 
+
+Do *not* create the out path, this will be done by WinFSP.
 
 #### A 32 Bit Version?
 A 32-bit version is probably possible, but Cygwin 32 is no longer supported on Windows 10 and later. As a result, 32-bit builds are not implemented in the make system.

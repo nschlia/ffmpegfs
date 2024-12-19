@@ -2437,11 +2437,14 @@ int main(int argc, char *argv[])
         return 1;
     }
 
+#ifndef __CYGWIN__
+    // No requirement for Windows, must be drive letter in fact
     if (params.m_basepath.front() != '/')
     {
         std::fprintf(stderr, "INVALID PARAMETER: basepath must be an absolute path.\n\n");
         return 1;
     }
+#endif  // !__CYGWIN__
 
     struct stat stbuf;
     if (stat(params.m_basepath.c_str(), &stbuf) != 0 || !S_ISDIR(stbuf.st_mode))

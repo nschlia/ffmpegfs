@@ -191,17 +191,17 @@ WinFSP supports both the cygdrive path prefix as well as a modified Windows driv
 To map C:\temp\in\ to a free drive letter, say X:, use
 
 ```
-. sentenv
+. setenv
 src/ffmpegfs --audiobitrate=256K --videobitrate=1.5M /cygdrive/D/tmp/in/ X: -o allow_other,ro,desttype=mp4
 ```
 It may also be possible to map to a subdirectory, e.g., C:\temp\in\ to C:\temp\out\, and this could be done with
 ```
-. sentenv
+. setenv
 src/ffmpegfs --audiobitrate=256K --videobitrate=1.5M /cygdrive/D/tmp/in/ /cygdrive/D/tmp/out -o allow_other,ro,desttype=mp4
 ```
 or
 ```
-. sentenv
+. setenv
 src/ffmpegfs --audiobitrate=256K --videobitrate=1.5M d:/tmp/in/ d:/tmp/out -o allow_other,ro,desttype=mp4
 ```
 

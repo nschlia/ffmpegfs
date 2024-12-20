@@ -184,19 +184,30 @@ You will be able to run ffmpegfs.exe from the command prompt after running the s
 
 To take advantage of bash's built-in script command, make sure to utilise the "dot space" syntax as demonstrated above; otherwise, the environment will remain untouched.
 
-#### Usage
+Cygwin uses its own syntax for Windows drives; e.g., drive C: is represented as "/cygwin/c." Details see https://cygwin.com/cygwin-ug-net/using.html#cygdrive.
 
-Examples see https://github.com/nschlia/ffmpegfs/tree/windows?tab=readme-ov-file#usage
+WinFSP supports both the cygdrive path prefix as well as a modified Windows drive syntax. That means, basically, all Windows-like backslashes have to be replaced by forward slashes. 
 
-Although Cygwin uses its own syntax for Windows drives, e.g., drive C: is /cygwin/c, WinFSP uses a modified Windows drive syntax, so mapping e.g., C:\temp\in\ to C:\temp\out\ would be:
+To map C:\temp\in\ to a free drive letter, say X:, use
 
 ```
-ffmpegfs --audiobitrate=256K --videobitrate=1.5M   d:/tmp/in/ /cygdrive/D/tmp/out -o allow_other,ro,desttype=mp4
+. sentenv
+src/ffmpegfs --audiobitrate=256K --videobitrate=1.5M /cygdrive/D/tmp/in/ X: -o allow_other,ro,desttype=mp4
+```
+It may also be possible to map to a subdirectory, e.g., C:\temp\in\ to C:\temp\out\, and this could be done with
+```
+. sentenv
+src/ffmpegfs --audiobitrate=256K --videobitrate=1.5M /cygdrive/D/tmp/in/ /cygdrive/D/tmp/out -o allow_other,ro,desttype=mp4
+```
+or
+```
+. sentenv
+src/ffmpegfs --audiobitrate=256K --videobitrate=1.5M d:/tmp/in/ d:/tmp/out -o allow_other,ro,desttype=mp4
 ```
 
-That means, basically, all Windows-like backslashes have to be replaced by forward slashes. 
+or any combination of both. This will create a so-called junction, which is Windows babble for a Unix symbolic link.
 
-Do *not* create the out path, this will be done by WinFSP.
+Note: Do not create the output path; this will be done by WinFSP.
 
 #### A 32 Bit Version?
 A 32-bit version is probably possible, but Cygwin 32 is no longer supported on Windows 10 and later. As a result, 32-bit builds are not implemented in the make system.

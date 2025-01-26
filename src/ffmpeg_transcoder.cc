@@ -1581,10 +1581,14 @@ int FFmpeg_Transcoder::prepare_codec(void *opt, FILETYPE filetype) const
 
     for (const PROFILE_LIST & profile : m_profile)
     {
-        if (profile.m_filetype == filetype && profile.m_profile == params.m_profile)
+        if (profile.m_filetype == filetype)
         {
-            ret = update_codec(opt, profile.m_option_codec);
-            break;
+            ret = AVERROR_OPTION_NOT_FOUND; // Once we found the file type, we also need to find the profile. Otherwise we have an invalid command line option.
+            if (profile.m_profile == params.m_profile)
+            {
+                ret = update_codec(opt, profile.m_option_codec);
+                break;
+            }
         }
     }
 
@@ -2928,10 +2932,14 @@ int FFmpeg_Transcoder::prepare_format(AVDictionary** dict, FILETYPE filetype) co
 
     for (const PROFILE_LIST & profile : m_profile)
     {
-        if (profile.m_filetype == filetype && profile.m_profile == params.m_profile)
+        if (profile.m_filetype == filetype)
         {
-            ret = update_format(dict, profile.m_option_format);
-            break;
+            ret = AVERROR_OPTION_NOT_FOUND; // Once we found the file type, we also need to find the profile. Otherwise we have an invalid command line option.
+            if (profile.m_profile == params.m_profile)
+            {
+                ret = update_format(dict, profile.m_option_format);
+                break;
+            }
         }
     }
 

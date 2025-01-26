@@ -1350,10 +1350,10 @@ static void *ffmpegfs_init(struct fuse_conn_info *conn, struct fuse_config *cfg)
     sigaction(SIGINT, &sa, &oldHandler);
 
     // We need synchronous reads.
-//     conn->async_read = 0;
-    //    conn->async_read = 1;
-    //	conn->want |= FUSE_CAP_ASYNC_READ;
-    //	conn->want |= FUSE_CAP_SPLICE_READ;
+    //conn->async_read = 0;
+    //conn->async_read = 1;
+    //conn->want |= FUSE_CAP_ASYNC_READ;
+    //conn->want |= FUSE_CAP_SPLICE_READ;
 
     if (params.m_cache_maintenance)
     {

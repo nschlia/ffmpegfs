@@ -62,4 +62,6 @@ mkdoxy
 /.settings
 # All backup files
 *~
+/.qtc_clangd/
+/CMakeCache.txt.prev
 

@@ -418,6 +418,39 @@ const FFmpeg_Profiles::PROFILE_LIST_VEC FFmpeg_Profiles::m_profile =
         }
 
     },
+    // ----------------------------------------------------------------------------------------------------------------
+    {
+        FILETYPE::ALAC,
+        PROFILE::ALAC_ITUNES,
+        //!
+        //! @brief ALAC profile: ProRes/ALAC codec options.
+        //!
+        {
+        },
+        //!
+        //! @brief ALAC profile: ProRes/ALAC format options.
+        //!
+        {
+            //-movflags E……. MOV muxer flags (default 0)
+            //   empty_moov E……. Make the initial moov atom empty (not supported by QuickTime)
+            //   separate_moof E……. Write separate moof/mdat atoms for each track
+            //   isml E……. Create a live smooth streaming feed (for pushing to a publishing point)
+            //   faststart E……. Run a second pass to put the index (moov atom) at the beginning of the file
+            //   omit_tfhd_offset E……. Omit the base data offset in tfhd atoms
+            //-moov_size E……. maximum moov size so it can be placed at the begin (from 0 to INT_MAX) (default 0)
+
+            //{ "movflags",               "+empty_moov",              0, OPT_ALL },
+            //{ "movflags",               "+delay_moov",              0, OPT_ALL },
+            //{ "movflags",               "+separate_moof",           0, OPT_ALL },
+            //{ "movflags",               "+faststart",               0, OPT_ALL },     // FEHLER: Unable to re-open .m4a output file for shifting data
+            //{ "movflags",               "+delay_moov",              0, OPT_ALL },
+
+            //{ "moov_size",              "200000",                   0, OPT_ALL },
+
+            // No options: iTunes plays the files, but only after they have been fully recoded.
+        }
+
+    },
 
     // ****************************************************************************************************************
     // HLS/ts container

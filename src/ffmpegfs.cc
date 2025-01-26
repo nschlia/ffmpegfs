@@ -508,6 +508,10 @@ static const PROFILE_MAP profile_map
     { "OPERA",          PROFILE::MP4_OPERA },
     { "MAXTHON",        PROFILE::MP4_MAXTHON },
 
+    // ALAC
+
+    { "ITUNES",         PROFILE::ALAC_ITUNES },
+
     // WEBM
 };
 

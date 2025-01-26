@@ -191,15 +191,20 @@ enum class PROFILE
     MP4_MAXTHON,                        /**< @brief Maxthon */
 
     // HLS/ts
-    HLS_DEFAULT = DEFAULT,      /**< @brief HLS/ts uses no profile */
+    HLS_DEFAULT = DEFAULT,              /**< @brief HLS/ts uses no profile */
+
     // mov
-    MOV_DEFAULT = DEFAULT,      /**< @brief MOV uses no profile */
+    MOV_DEFAULT = DEFAULT,              /**< @brief MOV uses no profile */
+
     // MOV/ProRes
-    PRORES_DEFAULT = DEFAULT,   /**< @brief MOV/ProRes uses no profile */
+    PRORES_DEFAULT = DEFAULT,           /**< @brief MOV/ProRes uses no profile */
+
     // MOV/ProRes
-    ALAC_DEFAULT = DEFAULT,     /**< @brief MOV/ALAC uses no profile */
+    ALAC_DEFAULT = DEFAULT,             /**< @brief Default profile */
+    ALAC_ITUNES = 10,                   /**< @brief Optimised for iTunes */
+
     // WebM
-    WEBM_DEFAULT = DEFAULT,     /**< @brief WebM uses no profile */
+    WEBM_DEFAULT = DEFAULT,             /**< @brief WebM uses no profile */
 
 };
 

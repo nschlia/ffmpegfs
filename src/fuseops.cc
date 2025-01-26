@@ -81,7 +81,7 @@ static int                          scandir(const char *dirp, std::vector<struct
 static int                          ffmpegfs_readlink(const char *path, char *buf, size_t size);
 static int                          ffmpegfs_readdir(const char *path, void *buf, fuse_fill_dir_t filler, off_t offset, struct fuse_file_info *fi, enum fuse_readdir_flags);
 static int                          ffmpegfs_getattr(const char *path, struct stat *stbuf, fuse_file_info *fi);
-static int                          ffmpegfs_fgetattr(const char *path, struct stat * stbuf, struct fuse_file_info *fi);
+//static int                          ffmpegfs_fgetattr(const char *path, struct stat * stbuf, struct fuse_file_info *fi);
 static int                          ffmpegfs_open(const char *path, struct fuse_file_info *fi);
 static int                          ffmpegfs_read(const char *path, char *buf, size_t size, off_t offset, struct fuse_file_info *fi);
 static int                          ffmpegfs_statfs(const char *path, struct statvfs *stbuf);
@@ -539,7 +539,7 @@ static int ffmpegfs_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
  * @param[in] stbuf - Buffer to store information.
  * @return On success, returns 0. On error, returns -errno.
  */
-static int ffmpegfs_getattr(const char *path, struct stat *stbuf, struct fuse_file_info *fi)
+static int ffmpegfs_getattr(const char *path, struct stat *stbuf, struct fuse_file_info * /*fi*/)
 {
     Logging::trace(path, "getattr");
 
@@ -857,110 +857,110 @@ static int ffmpegfs_getattr(const char *path, struct stat *stbuf, struct fuse_fi
  * @param[in] fi
  * @return On success, returns 0. On error, returns -errno.
  */
-static int ffmpegfs_fgetattr(const char *path, struct stat * stbuf, struct fuse_file_info *fi)
-{
-    std::string origpath;
+//static int ffmpegfs_fgetattr(const char *path, struct stat * stbuf, struct fuse_file_info *fi)
+//{
+//    std::string origpath;
 
-    Logging::trace(path, "fgetattr");
+//    Logging::trace(path, "fgetattr");
 
-    errno = 0;
+//    errno = 0;
 
-    append_basepath(&origpath, path);
+//    append_basepath(&origpath, path);
 
-    LPCVIRTUALFILE virtualfile = find_original(&origpath);
+//    LPCVIRTUALFILE virtualfile = find_original(&origpath);
 
-    if (virtualfile != nullptr && (virtualfile->m_flags & VIRTUALFLAG_HIDDEN))
-    {
-        errno = ENOENT;
-        return -errno;
-    }
+//    if (virtualfile != nullptr && (virtualfile->m_flags & VIRTUALFLAG_HIDDEN))
+//    {
+//        errno = ENOENT;
+//        return -errno;
+//    }
 
-    if ((virtualfile == nullptr || (virtualfile->m_flags & VIRTUALFLAG_PASSTHROUGH)) && lstat(origpath.c_str(), stbuf) == 0)
-    {
-        // passthrough for regular files
-        errno = 0;
-        return 0;
-    }
-    else
-    {
-        // Not really an error.
-        errno = 0;
-    }
+//    if ((virtualfile == nullptr || (virtualfile->m_flags & VIRTUALFLAG_PASSTHROUGH)) && lstat(origpath.c_str(), stbuf) == 0)
+//    {
+//        // passthrough for regular files
+//        errno = 0;
+//        return 0;
+//    }
+//    else
+//    {
+//        // Not really an error.
+//        errno = 0;
+//    }
 
-    // This is a virtual file
+//    // This is a virtual file
 
-    bool no_check = false;
+//    bool no_check = false;
 
-    switch (virtualfile->m_type)
-    {
-#ifdef USE_LIBVCD
-    case VIRTUALTYPE::VCD:
-#endif // USE_LIBVCD
-#ifdef USE_LIBDVD
-    case VIRTUALTYPE::DVD:
-#endif // USE_LIBDVD
-#ifdef USE_LIBBLURAY
-    case VIRTUALTYPE::BLURAY:
-#endif // USE_LIBBLURAY
-    {
-        // Use stored status
-        mempcpy(stbuf, &virtualfile->m_st, sizeof(struct stat));
-        no_check = true;
-        FALLTHROUGH_INTENDED;
-    }
-    case VIRTUALTYPE::DISK:
-    {
-        if (virtualfile->m_flags & (VIRTUALFLAG_FILESET | VIRTUALFLAG_FRAME | VIRTUALFLAG_HLS | VIRTUALFLAG_DIRECTORY))
-        {
-            mempcpy(stbuf, &virtualfile->m_st, sizeof(struct stat));
-        }
-        else
-        {
-            if (!no_check)
-            {
-                if (lstat(origpath.c_str(), stbuf) == -1)
-                {
-                    return -errno;
-                }
-            }
+//    switch (virtualfile->m_type)
+//    {
+//#ifdef USE_LIBVCD
+//    case VIRTUALTYPE::VCD:
+//#endif // USE_LIBVCD
+//#ifdef USE_LIBDVD
+//    case VIRTUALTYPE::DVD:
+//#endif // USE_LIBDVD
+//#ifdef USE_LIBBLURAY
+//    case VIRTUALTYPE::BLURAY:
+//#endif // USE_LIBBLURAY
+//    {
+//        // Use stored status
+//        mempcpy(stbuf, &virtualfile->m_st, sizeof(struct stat));
+//        no_check = true;
+//        FALLTHROUGH_INTENDED;
+//    }
+//    case VIRTUALTYPE::DISK:
+//    {
+//        if (virtualfile->m_flags & (VIRTUALFLAG_FILESET | VIRTUALFLAG_FRAME | VIRTUALFLAG_HLS | VIRTUALFLAG_DIRECTORY))
+//        {
+//            mempcpy(stbuf, &virtualfile->m_st, sizeof(struct stat));
+//        }
+//        else
+//        {
+//            if (!no_check)
+//            {
+//                if (lstat(origpath.c_str(), stbuf) == -1)
+//                {
+//                    return -errno;
+//                }
+//            }
 
-            // Get size for resulting output file from regular file, otherwise it's a symbolic link.
-            if (S_ISREG(stbuf->st_mode))
-            {
-                Cache_Entry* cache_entry = reinterpret_cast<Cache_Entry*>(fi->fh);
+//            // Get size for resulting output file from regular file, otherwise it's a symbolic link.
+//            if (S_ISREG(stbuf->st_mode))
+//            {
+//                Cache_Entry* cache_entry = reinterpret_cast<Cache_Entry*>(fi->fh);
 
-                if (cache_entry == nullptr)
-                {
-                    Logging::error(path, "fgetattr: Tried to stat unopen file.");
-                    errno = EBADF;
-                    return -errno;
-                }
+//                if (cache_entry == nullptr)
+//                {
+//                    Logging::error(path, "fgetattr: Tried to stat unopen file.");
+//                    errno = EBADF;
+//                    return -errno;
+//                }
 
-                uint32_t segment_no = 0;
+//                uint32_t segment_no = 0;
 
-                stat_set_size(stbuf, transcoder_buffer_watermark(cache_entry, segment_no));
-            }
-        }
+//                stat_set_size(stbuf, transcoder_buffer_watermark(cache_entry, segment_no));
+//            }
+//        }
 
-        errno = 0;  // Just to make sure - reset any error
+//        errno = 0;  // Just to make sure - reset any error
 
-        break;
-    }
-    case VIRTUALTYPE::SCRIPT:
-    {
-        mempcpy(stbuf, &virtualfile->m_st, sizeof(struct stat));
-        break;
-    }
-        // We should never come here but this shuts up a warning
-    case VIRTUALTYPE::PASSTHROUGH:
-    case VIRTUALTYPE::BUFFER:
-    {
-        break;
-    }
-    }
+//        break;
+//    }
+//    case VIRTUALTYPE::SCRIPT:
+//    {
+//        mempcpy(stbuf, &virtualfile->m_st, sizeof(struct stat));
+//        break;
+//    }
+//        // We should never come here but this shuts up a warning
+//    case VIRTUALTYPE::PASSTHROUGH:
+//    case VIRTUALTYPE::BUFFER:
+//    {
+//        break;
+//    }
+//    }
 
-    return 0;
-}
+//    return 0;
+//}
 
 /**
  * @brief File open operation
@@ -1333,7 +1333,7 @@ static int ffmpegfs_release(const char *path, struct fuse_file_info *fi)
  * @param[in] conn - fuse_conn_info structure of FUSE. See FUSE docs for details.
  * @return nullptr
  */
-static void *ffmpegfs_init(struct fuse_conn_info *conn, struct fuse_config *cfg)
+static void *ffmpegfs_init(struct fuse_conn_info * /*conn*/, struct fuse_config * /*cfg*/)
 {
     Logging::info(nullptr, "%1 V%2 initialising.", PACKAGE_NAME, FFMPEFS_VERSION);
     Logging::info(nullptr, "Mapping '%1' to '%2'.", params.m_basepath.c_str(), params.m_mountpath.c_str());

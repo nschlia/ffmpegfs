@@ -50,14 +50,10 @@
  * https://raw.githubusercontent.com/FFmpeg/FFmpeg/master/doc/APIchanges
  */
 
-// FFmpeg 4.1.8 "al-Khwarizmi" or newer:
-//
-// libavutil (>= 56.22.100)
-// libavcodec (>= 58.35.100)
-// libavformat (>= 58.20.100)
-// libavfilter (>= 7.40.101)
-// libswscale (>= 5.3.100)
-// libswresample (>= 3.3.100)
+// Define as FF_PROFILE_UNKNOWN in older versions
+#ifndef AV_PROFILE_UNKNOWN
+#define AV_PROFILE_UNKNOWN  FF_PROFILE_UNKNOWN
+#endif
 
 /**
   * 2022-07-xx - xxxxxxxxxx - lavu 57.30.100 - frame.h

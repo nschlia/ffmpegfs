@@ -1575,7 +1575,7 @@ static int get_hwaccel_dec_blocked(const std::string & arg, HWACCEL_BLOCKED_MAP 
         if (!nProfilesFound)
         {
             // No profile
-            (*hwaccel_dec_blocked)->insert(std::pair<AVCodecID, int>(codec_id, FF_PROFILE_UNKNOWN));
+            (*hwaccel_dec_blocked)->insert(std::pair<AVCodecID, int>(codec_id, AV_PROFILE_UNKNOWN));
         }
 
         return 0;
@@ -1595,7 +1595,7 @@ bool check_hwaccel_dec_blocked(AVCodecID codec_id, int profile)
 
     for (HWACCEL_BLOCKED_MAP::const_iterator it = params.m_hwaccel_dec_blocked->find(codec_id); it != params.m_hwaccel_dec_blocked->cend(); ++it)
     {
-        if (it->first == codec_id && (it->second == profile || it->second == FF_PROFILE_UNKNOWN))
+        if (it->first == codec_id && (it->second == profile || it->second == AV_PROFILE_UNKNOWN))
         {
             return true;
         }

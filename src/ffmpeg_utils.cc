@@ -55,7 +55,6 @@ extern "C" {
 #include <fstream>
 #include <sstream>
 #include <locale>
-#include <codecvt>
 #include <vector>
 #include <cstring>
 #include <functional>
@@ -2272,76 +2271,38 @@ int read_file(const std::string & path, std::string & result)
         {
         case ENCODING::UTF16LE_BOM:
         {
-            std::u16string in;
-            // For Windows, wchar_t is uint16_t, but for Linux and others
-            // it's uint32_t, so we need to convert in a portable way
-            for (char16_t ch; ifs.read((char*)&ch, sizeof(ch));)
-            {
-#if __BYTE_ORDER == __BIG_ENDIAN
-                in.push_back((char16_t)__builtin_bswap16(ch));
-#else
-                in.push_back(ch);
-#endif
-            }
-            // As of c++11 UTF-16 to UTF-8 conversion nicely comes out-of-the-box
-            std::wstring_convert<std::codecvt_utf8_utf16<char16_t>, char16_t> utfconv;
-            result = utfconv.to_bytes(in);
+            std::stringstream ss;
+            ss << ifs.rdbuf();
+            result = ss.str(); // raw UTF-16LE bytes (without BOM)
+            res = to_utf8(result, "UTF-16LE");
+            if (res) { throw res; }
             break;
         }
         case ENCODING::UTF16BE_BOM:
         {
-            std::u16string in;
-            // For Windows, wchar_t is uint16_t, but for Linux and others
-            // it's uint32_t, so we need to convert in a portable way
-            for (char16_t ch; ifs.read((char*)&ch, sizeof(ch));)
-            {
-#if __BYTE_ORDER == __BIG_ENDIAN
-                in.push_back(ch);
-#else
-                in.push_back((char16_t)__builtin_bswap16(ch));
-#endif
-            }
-            // As of c++11 UTF-16 to UTF-8 conversion nicely comes out-of-the-box
-            std::wstring_convert<std::codecvt_utf8_utf16<char16_t>, char16_t> utfconv;
-            result = utfconv.to_bytes(in);
+            std::stringstream ss;
+            ss << ifs.rdbuf();
+            result = ss.str(); // raw UTF-16BE bytes (without BOM)
+            res = to_utf8(result, "UTF-16BE");
+            if (res) { throw res; }
             break;
         }
         case ENCODING::UTF32LE_BOM:
         {
-            std::u32string in;
-            // For Windows, wchar_t is uint16_t, but for Linux and others
-            // it's uint32_t, so we need to convert in a portable way.
-            // Read characters 32 bitwise:
-            for (char32_t ch; ifs.read((char*)&ch, sizeof(ch));)
-            {
-#if __BYTE_ORDER == __BIG_ENDIAN
-                in.push_back((char32_t)__builtin_bswap32(ch));
-#else
-                in.push_back(ch);
-#endif
-            }
-            // As of c++11 UTF-32 to UTF-8 conversion nicely comes out-of-the-box
-            std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t> utfconv;
-            result = utfconv.to_bytes(in);
+            std::stringstream ss;
+            ss << ifs.rdbuf();
+            result = ss.str(); // raw UTF-32LE bytes (without BOM)
+            res = to_utf8(result, "UTF-32LE");
+            if (res) { throw res; }
             break;
         }
         case ENCODING::UTF32BE_BOM:
         {
-            std::u32string in;
-            // For Windows, wchar_t is uint16_t, but for Linux and others
-            // it's uint32_t, so we need to convert in a portable way
-            // Read characters 32 bitwise:
-            for (char32_t ch; ifs.read((char*)&ch, sizeof(ch));)
-            {
-#if __BYTE_ORDER == __BIG_ENDIAN
-                in.push_back(ch);
-#else
-                in.push_back((char32_t)__builtin_bswap32(ch));
-#endif
-            }
-            // As of c++11 UTF-32 to UTF-8 conversion nicely comes out-of-the-box
-            std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t> utfconv;
-            result = utfconv.to_bytes(in);
+            std::stringstream ss;
+            ss << ifs.rdbuf();
+            result = ss.str(); // raw UTF-32BE bytes (without BOM)
+            res = to_utf8(result, "UTF-32BE");
+            if (res) { throw res; }
             break;
         }
         case ENCODING::UTF8_BOM:

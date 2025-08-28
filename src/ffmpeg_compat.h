@@ -160,4 +160,12 @@
  */
 #define LAVC_DEP_TICKSPERFRAME              (LIBAVCODEC_VERSION_INT >= AV_VERSION_INT(60, 0, 0))
 
+/**
+ * 2024-09-08 - 3305767560a - lavc 61.13.100 - avcodec.h
+ *   Add avcodec_get_supported_config() and enum AVCodecConfig; deprecate
+ *   AVCodec.pix_fmts, AVCodec.sample_fmts, AVCodec.supported_framerates,
+ *   AVCodec.supported_samplerates and AVCodec.ch_layouts.
+ */
+#define LAVC_USE_SUPPORTED_CFG              (LIBAVCODEC_VERSION_INT >= AV_VERSION_INT(61, 13, 0))
+
 #endif // FFMPEG_COMPAT_H

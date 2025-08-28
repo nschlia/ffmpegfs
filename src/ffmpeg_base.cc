@@ -137,11 +137,26 @@ void FFmpeg_Base::video_stream_setup(AVCodecContext *output_codec_ctx, AVStream*
         int loss = 0;
 
         AVPixelFormat  src_pix_fmt                  = input_codec_ctx->pix_fmt;
+#if LAVC_USE_SUPPORTED_CFG
+        {
+        const enum AVPixelFormat *pix_list = nullptr;
+        int npix = 0;
+        int ret_cfg = avcodec_get_supported_config(output_codec_ctx, output_codec_ctx->codec,
+                                                   AV_CODEC_CONFIG_PIX_FORMAT,
+                                                   0, (const void**)&pix_list, &npix);
+        if (ret_cfg >= 0 && pix_list && npix > 0)
+        {
+            int alpha = 0;
+            enc_hw_pix_fmt = avcodec_find_best_pix_fmt_of_list(pix_list, src_pix_fmt, alpha, &loss);
+        }
+    }
+#else
         if (output_codec_ctx->codec->pix_fmts != nullptr)
         {
             int alpha = 0;
             enc_hw_pix_fmt = avcodec_find_best_pix_fmt_of_list(output_codec_ctx->codec->pix_fmts, src_pix_fmt, alpha, &loss);
         }
+#endif
 
         if (enc_hw_pix_fmt == AV_PIX_FMT_NONE)
         {

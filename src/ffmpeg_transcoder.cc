@@ -1149,7 +1149,25 @@ int FFmpeg_Transcoder::open_output_frame_set(Buffer *buffer)
     const AVPixFmtDescriptor *dst_desc = av_pix_fmt_desc_get(m_in.m_video.m_codec_ctx->pix_fmt);
     int loss = 0;
 
+#if LAVC_USE_SUPPORTED_CFG
+    {
+        const enum AVPixelFormat *pix_list = nullptr;
+        int npix = 0;
+        int ret_cfg = avcodec_get_supported_config(output_codec_ctx, output_codec,
+                                                   AV_CODEC_CONFIG_PIX_FORMAT,
+                                                   0, (const void**)&pix_list, &npix);
+        if (ret_cfg >= 0 && pix_list && npix > 0)
+        {
+            output_codec_ctx->pix_fmt = avcodec_find_best_pix_fmt_of_list(pix_list, m_in.m_video.m_codec_ctx->pix_fmt, (dst_desc->flags & AV_PIX_FMT_FLAG_ALPHA) ? 1 : 0, &loss);
+        }
+        else
+        {
+            output_codec_ctx->pix_fmt = m_in.m_video.m_codec_ctx->pix_fmt;
+        }
+    }
+#else
     output_codec_ctx->pix_fmt = avcodec_find_best_pix_fmt_of_list(output_codec->pix_fmts, m_in.m_video.m_codec_ctx->pix_fmt, (dst_desc->flags & AV_PIX_FMT_FLAG_ALPHA) ? 1 : 0, &loss);
+#endif
 
     if (output_codec_ctx->pix_fmt == AV_PIX_FMT_NONE)
     {
@@ -1733,6 +1751,73 @@ int FFmpeg_Transcoder::add_stream(AVCodecID codec_id)
             orig_sample_rate = output_codec_ctx->sample_rate;
         }
 
+#if LAVC_USE_SUPPORTED_CFG
+        {
+            const int *supported_samplerates = nullptr;
+            int num_samplerates = 0;
+            int ret_cfg = avcodec_get_supported_config(output_codec_ctx, output_codec,
+                                                       AV_CODEC_CONFIG_SAMPLE_RATE,
+                                                       0, (const void**)&supported_samplerates,
+                                                       &num_samplerates);
+            if (ret_cfg >= 0 && supported_samplerates && num_samplerates > 0)
+            {
+                bool exact_match = false;
+                for (int n = 0; n < num_samplerates; n++)
+                {
+                    if (supported_samplerates[n] == output_codec_ctx->sample_rate)
+                    {
+                        exact_match = true;
+                        break;
+                    }
+                }
+                if (!exact_match)
+                {
+                    int min_samplerate = 0, max_samplerate = INT_MAX;
+                    for (int n = 0; n < num_samplerates; n++)
+                    {
+                        int s = supported_samplerates[n];
+                        if (min_samplerate <= s && output_codec_ctx->sample_rate >= s)
+                            min_samplerate = s;
+                    }
+
+                    for (int n = 0; n < num_samplerates; n++)
+                    {
+                        int s = supported_samplerates[n];
+                        if (max_samplerate >= s && output_codec_ctx->sample_rate <= s)
+                            max_samplerate = s;
+                    }
+
+                    if (min_samplerate != 0 && max_samplerate != INT_MAX)
+                    {
+                        if (output_codec_ctx->sample_rate - min_samplerate < max_samplerate - output_codec_ctx->sample_rate)
+                            output_codec_ctx->sample_rate = min_samplerate;
+                        else
+                            output_codec_ctx->sample_rate = max_samplerate;
+                    }
+                    else if (min_samplerate != 0)
+                    {
+                        output_codec_ctx->sample_rate = min_samplerate;
+                    }
+                    else if (max_samplerate != INT_MAX)
+                    {
+                        output_codec_ctx->sample_rate = max_samplerate;
+                    }
+                    else
+                    {
+                        for (int n = 0; n < num_samplerates; n++)
+                            if (supported_samplerates[n] == 48000)
+                            {
+                                output_codec_ctx->sample_rate = 48000;
+                                break;
+                            }
+
+                        if (output_codec_ctx->sample_rate <= 0)
+                            output_codec_ctx->sample_rate = supported_samplerates[0];
+                    }
+                }
+            }
+        }
+#else
         if (output_codec->supported_samplerates != nullptr)
         {
             // Go through supported sample rates and adjust if necessary
@@ -1805,9 +1890,45 @@ int FFmpeg_Transcoder::add_stream(AVCodecID codec_id)
                                format_samplerate(output_codec_ctx->sample_rate).c_str());
             }
         }
+#endif
 
         // If sample format not pre-defined (not AV_SAMPLE_FMT_NONE), use input file setting.
         AVSampleFormat in_sample_format = (m_current_format->sample_format() == AV_SAMPLE_FMT_NONE) ? m_in.m_audio.m_codec_ctx->sample_fmt : m_current_format->sample_format();
+#if LAVC_USE_SUPPORTED_CFG
+        {
+            // Query supported sample formats via the new API
+            const enum AVSampleFormat *sample_fmts = nullptr;
+            int num_fmts = 0;
+            int ret_cfg = avcodec_get_supported_config(output_codec_ctx, output_codec,
+                                                       AV_CODEC_CONFIG_SAMPLE_FORMAT,
+                                                       0, (const void**)&sample_fmts,
+                                                       &num_fmts);
+            if (ret_cfg >= 0 && sample_fmts && num_fmts > 0)
+            {
+                AVSampleFormat input_fmt_planar = av_get_planar_sample_fmt(in_sample_format);
+                for (int i = 0; i < num_fmts; i++)
+                {
+                    AVSampleFormat output_fmt_planar = av_get_planar_sample_fmt(sample_fmts[i]);
+                    if (sample_fmts[i] == in_sample_format ||
+                            (input_fmt_planar != AV_SAMPLE_FMT_NONE && input_fmt_planar == output_fmt_planar))
+                    {
+                        output_codec_ctx->sample_fmt = sample_fmts[i];
+                        break;
+                    }
+                }
+                if (output_codec_ctx->sample_fmt == AV_SAMPLE_FMT_NONE)
+                {
+                    // Fallback: first supported format
+                    output_codec_ctx->sample_fmt = sample_fmts[0];
+                }
+            }
+            else
+            {
+                // If supported sample formats are unknown simply take input format
+                output_codec_ctx->sample_fmt = in_sample_format;
+            }
+        }
+#else
         if (output_codec->sample_fmts != nullptr)
         {
             // Check if input sample format is supported and if so, use it (avoiding resampling)
@@ -1839,7 +1960,7 @@ int FFmpeg_Transcoder::add_stream(AVCodecID codec_id)
             // If supported sample formats are unknown simply take input format and cross our fingers it'll work...
             output_codec_ctx->sample_fmt        = in_sample_format;
         }
-
+#endif
         // Set the sample rate for the container.
         output_stream->time_base.den            = output_codec_ctx->sample_rate;
         output_stream->time_base.num            = 1;

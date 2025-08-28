@@ -32,6 +32,11 @@ A Windows version of FFmpegfs has frequently been requested; see issue [#76](htt
 
 To see what's been done so far, checkout the [windows](https://github.com/nschlia/ffmpegfs/tree/windows) branch.
 
+**New in 2.18:**
+
+- **Feature:** Added ALAC profile for iTunes (--desttype=ALAC --profile=ITUNES). Playback of the file will not commence until it is fully recoded; however, it can be played in iTunes.
+- **Feature:** Implemented a validation check for the combination of TYPE and PROFILE in --desttype=TYPE --profile=PROFILE.
+
 **New in 2.17 (2024-11-10):**
 
 - **Bugfix:** Issue [#164](https://github.com/nschlia/ffmpegfs/issues/164): Fixed incorrectly discarded HLS seek requests.
@@ -39,16 +44,6 @@ To see what's been done so far, checkout the [windows](https://github.com/nschli
 - **Bugfix:** Issue [#162](https://github.com/nschlia/ffmpegfs/issues/162): If not present, add time stamps to the copied streams.
 - Changed quality from 34 to 40 for hardware encoded video streams to create slightly smaller files.
 - [Closes#1084487:](https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=1084487): Moved from the Fuse 2 to the Fuse 3 API.
-
-**New in 2.16 (2024-06-10):**
-
-- **Bugfix:** Closes [#160](https://github.com/nschlia/ffmpegfs/issues/160): Fix build with FFmpeg 7.0. [Debian Bug #1072412](https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=1072412). write_packet() now with const buffer as of Libavformat 61+.
-- **Fixed deprecation:** 2014-05-18 - 68c0518 / fd05602 - lavc 55.63.100 / 55.52.0 - avcodec.h
-  Add avcodec_free_context(). From now on it should be used for freeing AVCodecContext.
-- **Fixed deprecation:** 2023-05-15 - 7d1d61cc5f5 - lavc 60 - avcodec.h
-  Depreate AVCodecContext.ticks_per_frame in favor of
-  AVCodecContext.framerate (encoding) and
-  AV_CODEC_PROP_FIELDS (decoding).
 
 ## Full History
 
@@ -300,7 +295,7 @@ See https://www.ffmpeg.org/legal.html for details.
 Copyright
 ---------
 
-This fork with FFmpeg support copyright \(C) 2017-2024 Norbert Schlia (nschlia@oblivion-software.de).
+This fork with FFmpeg support copyright \(C) 2017-2025 Norbert Schlia (nschlia@oblivion-software.de).
 
 Based on work Copyright \(C) 2006-2008 David Collett, 2008-2013 K. Henriksson.
 

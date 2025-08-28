@@ -1143,7 +1143,29 @@ std::string ffmpeg_geterror(int errnum)
     }
     else
     {
-        return strerror(errnum);
+        // Prefer thread-safe strerror_r where available
+#if defined(__GLIBC__) || defined(_POSIX_C_SOURCE)
+        char buf[256];
+        buf[0] = '\0';
+#   if ((_POSIX_C_SOURCE >= 200112L) && ! _GNU_SOURCE)
+        if (strerror_r(errnum, buf, sizeof(buf)) == 0)
+        {
+            return std::string(buf);
+        }
+        else
+        {
+            return std::string("Unknown error: ") + std::to_string(errnum);
+        }
+#   else
+        // GNU-specific strerror_r returns char*
+        char *msg = strerror_r(errnum, buf, sizeof(buf));
+        if (msg) return std::string(msg);
+        return std::string("Unknown error: ") + std::to_string(errnum);
+#   endif
+#else
+        // Fallback (may not be thread-safe on some platforms)
+        return std::string(strerror(errnum));
+#endif
     }
 }
 

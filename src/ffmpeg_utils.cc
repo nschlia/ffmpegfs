@@ -1128,7 +1128,7 @@ std::shared_ptr<char[]> new_strdup(const std::string & str)
         return nullptr;
     }
 
-    strncpy(p.get(), str.c_str(), n);
+    memcpy(p.get(), str.data(), n - 1); p.get()[n - 1] = '\0';
 
     return p;
 }

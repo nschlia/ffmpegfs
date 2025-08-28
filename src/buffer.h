@@ -101,7 +101,7 @@ public:
 
         // Main cache
         std::string             m_cachefile;                    /**< @brief Cache file name */
-        volatile int            m_fd;                           /**< @brief File handle for buffer */
+        int                     m_fd;                           /**< @brief File handle for buffer */
         uint8_t *               m_buffer;                       /**< @brief Pointer to buffer memory */
         size_t                  m_buffer_pos;                   /**< @brief Read/write position */
         size_t                  m_buffer_watermark;             /**< @brief Number of bytes in buffer */
@@ -109,7 +109,7 @@ public:
         bool                    m_seg_finished;                 /**< @brief True if segment completely decoded */
         // Index for frame sets
         std::string             m_cachefile_idx;                /**< @brief Index file name */
-        volatile int            m_fd_idx;                       /**< @brief File handle for index */
+        int                     m_fd_idx;                       /**< @brief File handle for index */
         uint8_t *               m_buffer_idx;                   /**< @brief Pointer to index memory */
         size_t                  m_buffer_size_idx;              /**< @brief Size of index buffer */
         // Flags

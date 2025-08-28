@@ -48,7 +48,7 @@ jobs:
       run: make -s -j `nproc` check
     - name: Archive Clang Build Logs
       if: always()
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: Collected build logs
         path: |
@@ -57,7 +57,7 @@ jobs:
            doxyfile.inc
     - name: Archive Test Results
       if: always()
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: Collected test results
         path: |

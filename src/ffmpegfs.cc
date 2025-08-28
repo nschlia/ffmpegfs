@@ -2360,7 +2360,7 @@ int main(int argc, char *argv[])
     if (getppid() == getpgid(0))
     {
         std::printf("%s V%s\n", PACKAGE_NAME, FFMPEFS_VERSION);
-        std::printf("Copyright (C) 2017-2024 Norbert Schlia (nschlia@oblivion-software.de)\n"
+        std::printf("Copyright (C) 2017-2025 Norbert Schlia (nschlia@oblivion-software.de)\n"
                     "David Collett (2006-2008) and K. Henriksson (2008-2012)\n\n");
     }
 

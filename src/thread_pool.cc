@@ -64,7 +64,6 @@ void thread_pool::loop_function()
 
             if (m_queue_shutdown)
             {
-                lock_queue_mutex.unlock();
                 break;
             }
 
@@ -148,9 +147,10 @@ void thread_pool::tear_down(bool silent)
         Logging::debug(nullptr, "Tearing down the thread pool. There are %1 threads still in the pool.", m_thread_queue.size());
     }
 
-    m_queue_mutex.lock();
-    m_queue_shutdown = true;
-    m_queue_mutex.unlock();
+    {
+        std::lock_guard<std::mutex> lk(m_queue_mutex);
+        m_queue_shutdown = true;
+    }
     m_queue_cond.notify_all();
 
     while (!m_thread_pool.empty())

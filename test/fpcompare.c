@@ -221,7 +221,11 @@ done:
     }
 
     if (codec_ctx_opened) {
+#if  (LIBAVFORMAT_VERSION_MICRO >= 100 && LIBAVCODEC_VERSION_INT >= AV_VERSION_INT(57, 48, 101))
+        avcodec_free_context(&codec_ctx);
+#else
         avcodec_close(codec_ctx);
+#endif
     }
     if (format_ctx) {
         avformat_close_input(&format_ctx);

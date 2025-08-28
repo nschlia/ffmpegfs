@@ -6520,23 +6520,22 @@ const char *FFmpeg_Transcoder::virtname() const
 // create
 int FFmpeg_Transcoder::init_deinterlace_filters(AVCodecContext *codec_ctx, AVPixelFormat pix_fmt, const AVRational & avg_frame_rate, const AVRational & time_base)
 {
-    const AVFilter * buffer_src     = avfilter_get_by_name("buffer");
-    const AVFilter * buffer_sink    = avfilter_get_by_name("buffersink");
-    AVFilterInOut * outputs         = avfilter_inout_alloc();
-    AVFilterInOut * inputs          = avfilter_inout_alloc();
-    //enum AVPixelFormat pix_fmts[] = { AV_PIX_FMT_GRAY8, AV_PIX_FMT_NONE };
+    const AVFilter * buffer_src  = avfilter_get_by_name("buffer");
+    const AVFilter * buffer_sink = avfilter_get_by_name("buffersink");
+    AVFilterInOut * outputs      = avfilter_inout_alloc();
+    AVFilterInOut * inputs       = avfilter_inout_alloc();
     int ret = 0;
 
-    m_buffer_sink_context = nullptr;
+    m_buffer_sink_context   = nullptr;
     m_buffer_source_context = nullptr;
-    m_filter_graph = nullptr;
+    m_filter_graph          = nullptr;
 
     try
     {
         if (!avg_frame_rate.den && !avg_frame_rate.num)
         {
             // No framerate, so this video "stream" has only one picture
-            throw static_cast<int>(AVERROR(EINVAL));
+            throw static_cast<int>(AVERROR(EINVAL)); // Einzelbild-"Stream"
         }
 
         m_filter_graph = avfilter_graph_alloc();
@@ -6546,75 +6545,101 @@ int FFmpeg_Transcoder::init_deinterlace_filters(AVCodecContext *codec_ctx, AVPix
             throw static_cast<int>(AVERROR(ENOMEM));
         }
 
-        // buffer video source: the decoded frames from the decoder will be inserted here.
+        // --- buffersrc (Quelle) direkt mit Args erstellen ---
         std::string args;
-
-        strsprintf(&args, "video_size=%dx%d:pix_fmt=%d:time_base=%d/%d:pixel_aspect=%d/%d",
+        strsprintf(&args,
+                   "video_size=%dx%d:pix_fmt=%d:time_base=%d/%d:pixel_aspect=%d/%d",
                    codec_ctx->width, codec_ctx->height, pix_fmt,
                    time_base.num, time_base.den,
-                   codec_ctx->sample_aspect_ratio.num, FFMAX(codec_ctx->sample_aspect_ratio.den, 1));
-
-        //AVRational fr = av_guess_frame_rate(m_m_out.m_format_ctx, m_pVideoStream, nullptr);
-        //if (fr.num && fr.den)
-        //{
-        //    av_strlcatf(buffersrc_args, sizeof(buffersrc_args), ":framerate=%d/%d", fr.num, fr.den);
-        //}
-        //
-        //args.snprintf("%d:%d:%d:%d:%d", m_pCodecContext->width, m_pCodecContext->height, m_pCodecContext->format, 0, 0); //  0, 0 ok?
+                   codec_ctx->sample_aspect_ratio.num,
+                   FFMAX(codec_ctx->sample_aspect_ratio.den, 1));
 
         ret = avfilter_graph_create_filter(&m_buffer_source_context, buffer_src, "in", args.c_str(), nullptr, m_filter_graph);
         if (ret < 0)
         {
             Logging::error(virtname(), "Cannot create buffer source (error '%1').", ffmpeg_geterror(ret).c_str());
-            throw  ret;
+            throw ret;
         }
 
-        //av_opt_set(m_pBufferSourceContext, "thread_type", "slice", AV_OPT_SEARCH_CHILDREN);
-        //av_opt_set_int(m_pBufferSourceContext, "threads", FFMAX(1, av_cpu_count()), AV_OPT_SEARCH_CHILDREN);
-        //av_opt_set_int(m_pBufferSourceContext, "threads", 16, AV_OPT_SEARCH_CHILDREN);
+        // --- buffersink (Senke) mit Pre-Init-Optionen ---
+#if LIBAVFILTER_VERSION_INT >= AV_VERSION_INT(10, 6, 100) && LIBAVUTIL_VERSION_INT >= AV_VERSION_INT(59, 36, 100)
+        // Neuer Weg: Array-Optionen (pixel_formats) + av_opt_set_array()
+        m_buffer_sink_context = avfilter_graph_alloc_filter(m_filter_graph, buffer_sink, "out");
+        if (!m_buffer_sink_context)
+        {
+            throw static_cast<int>(AVERROR(ENOMEM));
+        }
 
-        // buffer video sink: to terminate the filter chain.
+        // Nicht-Runtime-Optionen vor dem Init setzen
+        {
+            const enum AVPixelFormat pf = pix_fmt;
+            // Wir ersetzen (ab Index 0) 1 Element in "pixel_formats"
+            ret = av_opt_set_array(m_buffer_sink_context,
+                                   "pixel_formats",
+                                   AV_OPT_SEARCH_CHILDREN | AV_OPT_ARRAY_REPLACE,
+                                   0, /* start_elem */
+                                   1, /* nb_elems */
+                                   AV_OPT_TYPE_PIXEL_FMT,
+                                   &pf);
+            if (ret < 0)
+            {
+                Logging::error(virtname(), "Cannot set buffersink pixel_formats (error '%1').", ffmpeg_geterror(ret).c_str());
+                throw ret;
+            }
+        }
 
-        std::array<enum AVPixelFormat, 3> pixel_fmts;
-
-        pixel_fmts[0] = pix_fmt;
-        pixel_fmts[1] = AV_PIX_FMT_NONE;
-
-        ret = avfilter_graph_create_filter(&m_buffer_sink_context, buffer_sink, "out", nullptr, nullptr, m_filter_graph);
-
+        ret = avfilter_init_str(m_buffer_sink_context, nullptr);
         if (ret < 0)
         {
-            Logging::error(virtname(), "Cannot create buffer sink (error '%1').", ffmpeg_geterror(ret).c_str());
-            throw  ret;
+            Logging::error(virtname(), "Cannot init buffer sink (error '%1').", ffmpeg_geterror(ret).c_str());
+            throw ret;
+        }
+#else
+        // Alter Weg: int-list-Option (pix_fmts) vor Init setzen
+        m_buffer_sink_context = avfilter_graph_alloc_filter(m_filter_graph, buffer_sink, "out");
+        if (!m_buffer_sink_context)
+        {
+            throw static_cast<int>(AVERROR(ENOMEM));
         }
 
-        // Cannot change FFmpeg's API, so we hide this warning
+        // Liste inkl. Terminator, wie in älteren Beispielen
+        enum AVPixelFormat pixel_fmts[] = { pix_fmt, AV_PIX_FMT_NONE };
+
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wconversion"
 #pragma GCC diagnostic ignored "-Wsign-conversion"
-        ret = av_opt_set_int_list(m_buffer_sink_context, "pix_fmts", pixel_fmts.data(), AV_PIX_FMT_NONE, AV_OPT_SEARCH_CHILDREN);
+        ret = av_opt_set_int_list(m_buffer_sink_context, "pix_fmts", pixel_fmts, AV_PIX_FMT_NONE, AV_OPT_SEARCH_CHILDREN);
 #pragma GCC diagnostic pop
 
         if (ret < 0)
         {
-            Logging::error(nullptr, "Cannot set output pixel format (error '%1').", ffmpeg_geterror(ret).c_str());
-            throw  ret;
+            Logging::error(virtname(), "Cannot set output pixel format (error '%1').", ffmpeg_geterror(ret).c_str());
+            throw ret;
         }
 
-        // Endpoints for the filter graph.
-        outputs->name          = av_strdup("in");
-        outputs->filter_ctx    = m_buffer_source_context;
-        outputs->pad_idx       = 0;
-        outputs->next          = nullptr;
-        inputs->name           = av_strdup("out");
-        inputs->filter_ctx     = m_buffer_sink_context;
-        inputs->pad_idx        = 0;
-        inputs->next           = nullptr;
+        ret = avfilter_init_str(m_buffer_sink_context, nullptr);
+        if (ret < 0)
+        {
+            Logging::error(virtname(), "Cannot init buffer sink (error '%1').", ffmpeg_geterror(ret).c_str());
+            throw ret;
+        }
+#endif
+
+        // Endpunkte für Graph
+        outputs->name       = av_strdup("in");
+        outputs->filter_ctx = m_buffer_source_context;
+        outputs->pad_idx    = 0;
+        outputs->next       = nullptr;
+
+        inputs->name        = av_strdup("out");
+        inputs->filter_ctx  = m_buffer_sink_context;
+        inputs->pad_idx     = 0;
+        inputs->next        = nullptr;
 
         // args "null"      passthrough (dummy) filter for video
         // args "null"      passthrough (dummy) filter for audio
 
-        // https://stackoverflow.com/questions/31163120/c-applying-filter-in-ffmpeg
+        // --- Deinterlace-Filterkette
         const char * filters;
         //filters = "yadif=mode=send_frame:parity=auto:deint=interlaced";
         filters = "yadif=mode=send_frame:parity=auto:deint=all";
@@ -6631,14 +6656,14 @@ int FFmpeg_Transcoder::init_deinterlace_filters(AVCodecContext *codec_ctx, AVPix
         if (ret < 0)
         {
             Logging::error(virtname(), "avfilter_graph_parse_ptr failed (error '%1').", ffmpeg_geterror(ret).c_str());
-            throw  ret;
+            throw ret;
         }
 
         ret = avfilter_graph_config(m_filter_graph, nullptr);
         if (ret < 0)
         {
             Logging::error(virtname(), "avfilter_graph_config failed (error '%1').", ffmpeg_geterror(ret).c_str());
-            throw  ret;
+            throw ret;
         }
 
         Logging::debug(virtname(), "Deinterlacing initialised with filters '%1'.", filters);

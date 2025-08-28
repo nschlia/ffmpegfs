@@ -83,7 +83,7 @@ extern "C" {
 /**
  * Allow use of av_format_inject_global_side_data when available
  */
-#define HAVE_AV_FORMAT_INJECT_GLOBAL_SIDE_DATA  (LIBAVFORMAT_VERSION_MICRO >= 100 && LIBAVFORMAT_VERSION_INT >= AV_VERSION_INT(57, 64, 101))
+#define HAVE_AV_FORMAT_INJECT_GLOBAL_SIDE_DATA  (LIBAVFORMAT_VERSION_MICRO >= 100 && LIBAVFORMAT_VERSION_INT >= AV_VERSION_INT(57, 64, 101) && LIBAVFORMAT_VERSION_INT < AV_VERSION_INT(60, 14, 100))
 
 /**
  * Add av_get_media_type_string function if missing

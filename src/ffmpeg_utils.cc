@@ -2109,8 +2109,34 @@ const char * hwdevice_get_type_name(AVHWDeviceType dev_type)
 
 int to_utf8(std::string & text, const std::string & encoding)
 {
-    iconv_t conv = iconv_open("UTF-8", encoding.c_str());
+	iconv_t conv = iconv_open("UTF-8", encoding.c_str());
     if (conv == (iconv_t) -1)
+    {
+        int open_err = errno;
+        // Some platforms (e.g. BSD/macOS) use UCS-* names instead of UTF-*
+        const char *fallback = nullptr;
+        if (open_err == EINVAL)
+        {
+            if (encoding == "UTF-32LE")      fallback = "UCS-4LE";
+            else if (encoding == "UTF-32BE") fallback = "UCS-4BE";
+            else if (encoding == "UTF-16LE") fallback = "UCS-2LE";
+            else if (encoding == "UTF-16BE") fallback = "UCS-2BE";
+        }
+        if (fallback != nullptr)
+        {
+            conv = iconv_open("UTF-8", fallback);
+            if (conv == (iconv_t) -1)
+            {
+                // Fallback also failed
+                return errno;
+            }
+        }
+        else
+        {
+            // Error in iconv_open, errno in return code.
+            return open_err;
+        }
+    }
     {
         // Error in iconv_open, errno in return code.
         return errno;
@@ -2121,13 +2147,13 @@ int to_utf8(std::string & text, const std::string & encoding)
     size_t srclen = text.size();
     size_t dstlen = 2 * srclen;
 
-    src.reserve(srclen + 1);
-    dst.reserve(dstlen + 2);
+    src.resize(srclen + 1);
+    dst.resize(dstlen + 2);
 
     char * pIn = src.data();
     char * pOut = dst.data();
 
-    strncpy(pIn, text.c_str(), srclen);
+    memcpy(pIn, text.data(), srclen); pIn[srclen] = '\0';
 
     size_t len = iconv(conv, &pIn, &srclen, &pOut, &dstlen);
     if (len != (size_t) -1)

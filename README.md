@@ -11,11 +11,7 @@ Web site: https://nschlia.github.io/ffmpegfs/
 
 | Branch                                                    | Compiler     | FFmpeg | Host OS      | CPU    | Build State                                                  |
 | --------------------------------------------------------- | ------------ | ------ | ------------ | ------ | ------------------------------------------------------------ |
-| [master](https://github.com/nschlia/ffmpegfs/tree/master) | GCC 13.2.0   | 6.1.1  | Debian 13    | AMD/64 | ![Build Status](https://secure.oblivion-software.de/jenkins/buildStatus/icon?job=ffmpegfs+github-latest) |
-| [master](https://github.com/nschlia/ffmpegfs/tree/master) | GCC 12.2.0   | 6.0.1  | Debian 12    | AMD/64 | ![Build Status](https://secure.oblivion-software.de/jenkins/buildStatus/icon?job=ffmpegfs%20github-ffmpeg) |
 | [master](https://github.com/nschlia/ffmpegfs/tree/master) | GCC 10.5.0   | 4.4.2  | Ubuntu 22.04 | AMD/64 | [![Build Status](https://github.com/nschlia/ffmpegfs/actions/workflows/make-gcc.yml/badge.svg)](https://github.com/nschlia/ffmpegfs/actions/workflows/make-gcc.yml) |
-| [master](https://github.com/nschlia/ffmpegfs/tree/master) | GCC 12.2.0   | 5.1.4  | Debian 12    | ARM/32 | ![Build Status](https://secure.oblivion-software.de/jenkins/buildStatus/icon?job=ffmpegfs+github-arm32) |
-| [master](https://github.com/nschlia/ffmpegfs/tree/master) | Clang 14.0.6 | 6.0.1  | Debian 12    | AMD/64 | ![Build Status](https://secure.oblivion-software.de/jenkins/buildStatus/icon?job=ffmpegfs%20github-ffmpeg-clang) |
 | [master](https://github.com/nschlia/ffmpegfs/tree/master) | Clang 11.1.0 | 4.4.2  | Ubuntu 22.04 | AMD/64 | [![Build Status](https://github.com/nschlia/ffmpegfs/actions/workflows/make-clang.yml/badge.svg)](https://github.com/nschlia/ffmpegfs/actions/workflows/make-clang.yml) |
 | [master](https://github.com/nschlia/ffmpegfs/tree/master) |              |        |              |        | [![CodeQL](https://github.com/nschlia/ffmpegfs/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/nschlia/ffmpegfs/actions/workflows/codeql-analysis.yml) |
 

@@ -9,11 +9,11 @@ Web site: https://nschlia.github.io/ffmpegfs/
 
 ## Code Status
 
-| Branch                                                    | Compiler     | FFmpeg | Host OS      | CPU    | Build State                                                  |
-| --------------------------------------------------------- | ------------ | ------ | ------------ | ------ | ------------------------------------------------------------ |
-| [master](https://github.com/nschlia/ffmpegfs/tree/master) | GCC 10.5.0   | 4.4.2  | Ubuntu 22.04 | AMD/64 | [![Build Status](https://github.com/nschlia/ffmpegfs/actions/workflows/make-gcc.yml/badge.svg)](https://github.com/nschlia/ffmpegfs/actions/workflows/make-gcc.yml) |
-| [master](https://github.com/nschlia/ffmpegfs/tree/master) | Clang 11.1.0 | 4.4.2  | Ubuntu 22.04 | AMD/64 | [![Build Status](https://github.com/nschlia/ffmpegfs/actions/workflows/make-clang.yml/badge.svg)](https://github.com/nschlia/ffmpegfs/actions/workflows/make-clang.yml) |
-| [master](https://github.com/nschlia/ffmpegfs/tree/master) |              |        |              |        | [![CodeQL](https://github.com/nschlia/ffmpegfs/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/nschlia/ffmpegfs/actions/workflows/codeql-analysis.yml) |
+| Branch                                                    | Build State                                                  |
+| --------------------------------------------------------- | ------------------------------------------------------------ |
+| [master](https://github.com/nschlia/ffmpegfs/tree/master) | [![Build Status](https://github.com/nschlia/ffmpegfs/actions/workflows/make-gcc.yml/badge.svg)](https://github.com/nschlia/ffmpegfs/actions/workflows/make-gcc.yml) |
+| [master](https://github.com/nschlia/ffmpegfs/tree/master) | [![Build Status](https://github.com/nschlia/ffmpegfs/actions/workflows/make-clang.yml/badge.svg)](https://github.com/nschlia/ffmpegfs/actions/workflows/make-clang.yml) |
+| [master](https://github.com/nschlia/ffmpegfs/tree/master) | [![CodeQL](https://github.com/nschlia/ffmpegfs/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/nschlia/ffmpegfs/actions/workflows/codeql-analysis.yml) |
 
 ## Packaging Status
 

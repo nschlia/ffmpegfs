@@ -36,6 +36,15 @@ To see what's been done so far, checkout the [windows](https://github.com/nschli
 
 - **Feature:** Added ALAC profile for iTunes (--desttype=ALAC --profile=ITUNES). Playback of the file will not commence until it is fully recoded; however, it can be played in iTunes.
 - **Feature:** Implemented a validation check for the combination of TYPE and PROFILE in --desttype=TYPE --profile=PROFILE.
+* Updated Dockerfile to include Fuse3
+* **Bugfix:** Fix error with new FFmpeg API. "Option 'pix_fmts' is not a runtime option and so cannot be set after the object has been initialized"
+* **Fixed deprecation:** Replace avcodec_get_supported_config()
+* **Fixed deprecation:** Remove avcodec_close()
+* **Fixed deprecation:** Remove av_format_inject_global_side_data()
+* **Fixed deprecation:** Replace std::codecvt with iconv in read_file
+* **Bugfix:** reserve() only guarantees capacity, not size → Writing via .data() is undefined behaviour. Using resize() makes the memory usable.
+* As strerror() is not thread-safe, use strerror_r() where available.
+* strncpy likes to copy without NUL → terminate explicitly.
 
 **New in 2.17 (2024-11-10):**
 

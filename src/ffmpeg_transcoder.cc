@@ -3510,7 +3510,7 @@ int FFmpeg_Transcoder::decode_video_frame(AVPacket *pkt, int *decoded)
             if (ret < 0)
             {
                 Logging::error(filename(), "Could not decode video frame (error '%1').", ffmpeg_geterror(ret).c_str());
-                return ret;
+                break;
             }
 
             // If decoding is done in hardware, the resulting frame data needs to be copied to software memory
@@ -3559,7 +3559,7 @@ int FFmpeg_Transcoder::decode_video_frame(AVPacket *pkt, int *decoded)
                 ret = send_filters(&frame, ret);
                 if (ret)
                 {
-                    return ret;
+                    break;
                 }
 
                 if (m_sws_ctx != nullptr)
@@ -3570,7 +3570,7 @@ int FFmpeg_Transcoder::decode_video_frame(AVPacket *pkt, int *decoded)
                     if (ret < 0)
                     {
                         Logging::error(filename(), "Could not decode video frame (error '%1').", ffmpeg_geterror(ret).c_str());
-                        return ret;
+                        break;
                     }
 
                     AVCodecContext *output_codec_ctx = m_out.m_video.m_codec_ctx.get();
@@ -3578,7 +3578,7 @@ int FFmpeg_Transcoder::decode_video_frame(AVPacket *pkt, int *decoded)
                     ret = alloc_picture(tmp_frame, m_out.m_pix_fmt, output_codec_ctx->width, output_codec_ctx->height);
                     if (ret < 0)
                     {
-                        return ret;
+                        break;
                     }
 
                     sws_scale(m_sws_ctx,

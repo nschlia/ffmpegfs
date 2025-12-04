@@ -1,11 +1,12 @@
-FFmpegfs
-========
+# FFmpegfs
 
-FFmpegfs is a read-only FUSE filesystem which transcodes various audio and video formats to MP4, WebM, and many more on the fly when opened and read using the FFmpeg library, thus supporting a multitude of input formats and a variety of common output formats.
+FFmpegfs is a read-only FUSE filesystem that transcodes various audio and video formats to MP4, WebM, and many more **on the fly** using the FFmpeg library. It thus supports a multitude of input formats and provides access in a variety of common output formats.
 
-This allows access to a multi-media file collection with software and/or hardware which only understands one of the supported output formats, or transcodes files through simple drag-and-drop in a file browser.
+This enables seamless access to a multimedia file collection with software and/or hardware that only supports one of the output formats, or allows transcoding files simply via drag-and-drop in a file browser.
 
-Web site: https://nschlia.github.io/ffmpegfs/
+📌 Website: [https://nschlia.github.io/ffmpegfs/](https://nschlia.github.io/ffmpegfs/)
+
+---
 
 ## Code Status
 
@@ -19,43 +20,47 @@ Web site: https://nschlia.github.io/ffmpegfs/
 
 [![Packaging status](https://repology.org/badge/vertical-allrepos/ffmpegfs.svg?columns=4)](https://repology.org/project/ffmpegfs/versions)
 
-News
-----
+---
+
+## News
 
 ### Windows Version
 
-A Windows version of FFmpegfs has frequently been requested; see issue [#76](https://github.com/nschlia/ffmpegfs/issues/76) for more information. In essence, this failed because Windows doesn't support Fuse. I discovered [WinFSP](https://winfsp.dev/), which offers everything necessary.
+A Windows version of FFmpegfs has frequently been requested; see issue [#76](https://github.com/nschlia/ffmpegfs/issues/76) for more information. In essence, this failed because Windows doesn't support FUSE. I discovered [WinFSP](https://winfsp.dev/), which offers everything necessary.
 
 To see what's been done so far, checkout the [windows](https://github.com/nschlia/ffmpegfs/tree/windows) branch.
 
-**New in 2.18:**
+---
 
-- **Feature:** Added ALAC profile for iTunes (--desttype=ALAC --profile=ITUNES). Playback of the file will not commence until it is fully recoded; however, it can be played in iTunes.
-- **Feature:** Implemented a validation check for the combination of TYPE and PROFILE in --desttype=TYPE --profile=PROFILE.
-- Updated Dockerfile to include Fuse3
-- **Bugfix:** Fix error with new FFmpeg API. "Option 'pix_fmts' is not a runtime option and so cannot be set after the object has been initialized"
-- **Fixed deprecation:** Replace avcodec_get_supported_config()
-- **Fixed deprecation:** Remove avcodec_close()
-- **Fixed deprecation:** Remove av_format_inject_global_side_data()
-- **Fixed deprecation:** Replace std::codecvt with iconv in read_file
-- **Bugfix:** reserve() only guarantees capacity, not size → Writing via .data() is undefined behaviour. Using resize() makes the memory usable.
-- As strerror() is not thread-safe, use strerror_r() where available.
-- strncpy likes to copy without NUL → terminate explicitly.
+### New in 2.18
 
-**New in 2.17 (2024-11-10):**
+- **Feature:** Added ALAC profile for iTunes (`--desttype=ALAC --profile=ITUNES`). Playback of the file will not commence until it is fully recoded; however, it can be played in iTunes.
+- **Feature:** Implemented a validation check for the combination of TYPE and PROFILE in `--desttype=TYPE --profile=PROFILE`.
+- Updated Dockerfile to include FUSE 3.
+- **Bugfix:** Fix error with new FFmpeg API: *"Option 'pix_fmts' is not a runtime option and so cannot be set after the object has been initialized"*.
+- **Fixed deprecation:** Replace `avcodec_get_supported_config()`.
+- **Fixed deprecation:** Remove `avcodec_close()`.
+- **Fixed deprecation:** Remove `av_format_inject_global_side_data()`.
+- **Fixed deprecation:** Replace `std::codecvt` with `iconv` in `read_file`.
+- **Bugfix:** `reserve()` only guarantees capacity, not size → writing via `.data()` is undefined behaviour. Using `resize()` makes the memory usable.
+- As `strerror()` is not thread-safe, use `strerror_r()` where available.
+- `strncpy` likes to copy without NUL → terminate explicitly.
+
+---
+
+### New in 2.17 (2024-11-10)
 
 - **Bugfix:** Issue [#164](https://github.com/nschlia/ffmpegfs/issues/164): Fixed incorrectly discarded HLS seek requests.
 - **Bugfix:** Wrong error message fixed when an invalid audio/video codec was selected. The message should rather say "unsupported codec" instead of talking about "sample format not supported.".
 - **Bugfix:** Issue [#162](https://github.com/nschlia/ffmpegfs/issues/162): If not present, add time stamps to the copied streams.
 - Changed quality from 34 to 40 for hardware encoded video streams to create slightly smaller files.
-- [Closes#1084487:](https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=1084487): Moved from the Fuse 2 to the Fuse 3 API.
+- [Closes#1084487:](https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=1084487): Moved from the FUSE 2 to the FUSE 3 API.
 
-## Full History
+📜 See [HISTORY.md](HISTORY.md) for the complete changelog.
 
-For more information, see [history](HISTORY.md).
+---
 
-Supported Formats
------
+## Supported Formats
 
 ### Input
 
@@ -63,7 +68,7 @@ Making a full list of the formats the FFmpeg API supports would be somewhat poin
 
 Sadly, it also depends on the codecs that have been built into the Linux distribution's library. Some, like openSUSE, only include royalty-free codecs, while others, like Red Hat, completely omit FFmpeg. You can use the following command to find out:
 
-```
+```bash
 ffmpeg -formats
 ```
 
@@ -115,18 +120,21 @@ By choosing *HLS*, TS segments and an M3U playlist (master.m3u8 and index_0_av.m
 
 Please be aware that since most browsers cannot open the files from disc due to restrictions, they must be on a web server. For further information, see [problems](PROBLEMS.md#open-hlshtml-from-disk-to-play-hls-output).
 
-Installation Instructions
--------------------------
+---
+
+## Installation Instructions
 
 A rather detailed description can be found under [install](INSTALL.md).
 
-Fixing Problems
----------------
+---
+
+## Fixing Problems
 
 This part has been transferred to a different file because it has gotten too big. Details can be found in [problems](PROBLEMS.md).
 
-Usage
------
+---
+
+## Usage
 
 Mount your file system as follows:
 
@@ -152,15 +160,15 @@ At this point, files like `/mnt/music/**.flac` and `/mnt/music/**.ogg` will show
 
 Audio bitrates will be reduced to 256 KBit, video to 1.5 MBit. The source bitrate will not be scaled up if it is lower; it will remain at the lower value.
 
-Keep in mind that only root can, by default, utilise the "allow other" option. Either use the "user allow other" key in /etc/fuse.conf or run FFmpegfs as root.
+Keep in mind that only root can, by default, use the "allow_other" option. Either use the "user_allow_other" key in `/etc/fuse.conf` or run FFmpegfs as root.
 
-Any user must have "allow other" enabled in order to access the mount. By default, only the user who initiated FFmpegfs has access to this.
+Any user must have "allow_other" enabled in order to access the mount. By default, only the user who initiated FFmpegfs has access to this.
 
 Examples:
 
     ffmpegfs -f $HOME/test/in $HOME/test/out --log_stderr --log_maxlevel=DEBUG -o allow_other,ro,desttype=mp4,cachepath=$HOME/test/cache
 
-Transcode files using FFmpegfs from test/in to test/out while logging to stderr at a noisy TRACE level. The cache resides in test/cache. All directories are under the current user's home directory.
+Transcode files using FFmpegfs from `test/in` to `test/out` while logging to stderr at a noisy DEBUG level. The cache resides in `test/cache`. All directories are under the current user's home directory.
 
      ffmpegfs -f $HOME/test/in $HOME/test/out --log_stderr --log_maxlevel=DEBUG -o allow_other,ro,desttype=mp4,cachepath=$HOME/test/cache,videowidth=640
 
@@ -174,8 +182,9 @@ Deinterlacing can be enabled for better image quality.
 
 There is a [feature list](FEATURES.md) with detailed explanations.
 
-How It Works
-------------
+---
+
+## How It Works
 
 The decoder and encoder are initialised when a file is opened, and the file's metadata is also read. At this point, a rough estimate of the total file size can be made. Because the actual size greatly depends on the material encoded, this technique works fair-to-good for MP4 or WebM output files but works well for MP3, AIFF, or WAV output files.
 
@@ -189,12 +198,13 @@ A file will be transcoded up to the seek point when you seek within it (if not a
 
 **MP4:** The same is true for meta atoms contained in MP4 containers.
 
-**WAV:** The estimated size of the WAV file will be included in a pro forma WAV header. When the file is complete, this header will be changed. Though most current gamers apparently disregard this information and continue to play the file, it does not seem required.
+**WAV:** The estimated size of the WAV file will be included in a pro forma WAV header. When the file is complete, this header will be changed. Though most current players apparently disregard this information and continue to play the file, it does not seem required.
 
 Only for MP3 targets: A particular optimization has been done so that programmes that look for id3v1 tags don't have to wait for the entire file to be transcoded before reading the tag. This accelerates these apps *dramatically*.
 
-About Output Formats
---------------------
+---
+
+## About Output Formats
 
 A few remarks regarding the output formats that are supported:
 
@@ -212,13 +222,11 @@ Older versions of FFmpeg do not support several new MP4 features that are requir
 
 Faststart files are produced by default with an empty size field so that the file can be started to be written out at once rather than having to be encoded as a complete first. It would take some time before playback could begin if it were fully encoded. The data part is divided into chunks of about 1 second each, all with their own header, so it is possible to fill in the size fields early enough.
 
-One disadvantage is that not all players agree with the format, or they play it with odd side effects. VLC only refreshes the time display every several seconds while playing the file. There may not always be a complete duration displayed while streaming using HTML5 video tags, but that is fine as long as the content plays. Playback can only move backwards from the current playback position.
+One disadvantage is that not all players agree with the format, or they play it with odd side effects. VLC only refreshes the time display every several seconds while playing the file. There may not always be a complete duration displayed while streaming using HTML5 video tags, but that is fine as long as the content plays. Playback can only move backwards from the current playback position. However, that is the cost of commencing playback quickly.
 
+---
 
-However, that is the cost of commencing playback quickly.
-
-Development
------------
+## Development
 
 Git is the revision control system used by FFmpegfs. The complete repository is available here:
 
@@ -240,68 +248,28 @@ Please be aware that the main branch of FFmpegfs may not be stable as it is stil
 
 You are welcome to clone this project and add new features. They might be brought back into this project if additional people find them intriguing. The same holds true for bug fixes; if you find a bug, feel free to patch it!
 
-Supported Linux Distributions
------------------------------
+---
 
-FFmpegfs has been tested with:
-
-| Distribution             | FFmpeg Version                       | Remarks                                                      | Result |
-| ------------------------ | ------------------------------------ | ------------------------------------------------------------ | ------ |
-| **Daily build**          | N-107143-g56419428a8                 |                                                              | OK     |
-| **Debian 9 Stretch**     | 3.2.8-1~deb9u1                       |                                                              | OK     |
-| **Debian 10 Buster**     | 4.1.6-1~deb10u1                      |                                                              | OK     |
-| **Debian 11 Bullseye**   | 4.3.2-0+deb11u2                      |                                                              | OK     |
-| **Debian 12 Bookworm**   | 5.0.1                                |                                                              | OK     |
-| **Raspbian 10 Buster**   | 4.1.6-1~deb10u1+rpt1                 |                                                              | OK     |
-| **Raspbian 11 Bullseye** | 4.3.2-0+rpt3+deb11u2                 | Added subtitle support                                       | OK     |
-| **Ubuntu 16.04.3 LTS**   | 2.8.11-0ubuntu0.16.04.1              |                                                              | OK     |
-| **Ubuntu 17.10**         | 3.3.4-2                              |                                                              | OK     |
-| **Ubuntu 20.04 LTS**     | 4.2.2-1ubuntu1                       |                                                              | OK     |
-| **Suse 42**              | 3.3.4                                | See notes below                                              | not OK |
-| **Red Hat 7**            | FFmpeg must be compiled from sources |                                                              | OK     |
-| **Funtoo 7.3.1**         | 3.4.1                                | FFmpeg needs to be installed with correct "USE flags", see [install](INSTALL.md) | OK     |
-
-**Suse** does not provide proprietary formats like AAC and H264, so the distribution of FFmpeg is crippled. FFmpegfs will not be able to encode to H264 and AAC. End of story.
-
-See https://en.opensuse.org/Restricted_formats.
-
-**Tips on other operating systems and distributions, such as Mac or other nixes, are welcome.**
-
-Future Objectives
------------------
+## Future Objectives
 
 *Any ideas or wishes?* Free to create [an issue](https://github.com/nschlia/ffmpegfs/issues) and let me know. Some great features started this way!
 
 For more information, see [TODO](TODO).
 
-Authors
--------
+---
 
-This fork with FFmpeg support has been maintained by Norbert Schlia (nschlia@oblivion-software.de) since 2017 to date.
+## Authors
 
-Based on work by K. Henriksson (from 2008 to 2017) and the original author, David Collett (from 2006 to 2008).
+- **Current maintainer (2017–present):** Norbert Schlia (nschlia@oblivion-software.de)  
+- **Earlier maintainer (2008–2017):** K. Henriksson  
+- **Original author (2006–2008):** David Collett  
 
-Much thanks to them for the original work and giving me a good head start!
+Thanks to all for their foundational work.
 
-License
--------
+---
 
-This program can be distributed under the terms of the GNU GPL version 3 or later. It can be found [online](http://www.gnu.org/licenses/gpl-3.0.html) or in the COPYING file.
+## License
 
-This and other documentation may be distributed under the GNU Free Documentation License (GFDL) 1.3 or later with no invariant sections, or alternatively under the GNU General Public License (GPL) version 3 or later. The GFDL can be found [online](http://www.gnu.org/licenses/fdl-1.3.html) or in the COPYING.DOC file.
-
-FFmpeg License
---------------
-
-FFmpeg is licensed under the GNU Lesser General Public License (LGPL) version 2.1 or later. However, FFmpeg incorporates several optional parts and optimizations that are covered by the GNU General Public License (GPL) version 2 or later. If those parts get used the GPL applies to all of FFmpeg.
-
-See https://www.ffmpeg.org/legal.html for details.
-
-Copyright
----------
-
-This fork with FFmpeg support copyright \(C) 2017-2025 Norbert Schlia (nschlia@oblivion-software.de).
-
-Based on work Copyright \(C) 2006-2008 David Collett, 2008-2013 K. Henriksson.
-
-This is free software: you are free to change and redistribute it under the terms of the GNU General Public License (GPL) version 3 or later.
+- FFmpegfs: **GPLv3 or later**  
+- Documentation: **GFDL 1.3 or later** (or alternatively GPLv3+)  
+- FFmpeg itself: **LGPL 2.1+**, with some optional GPL components. See [FFmpeg Legal](https://www.ffmpeg.org/legal.html).

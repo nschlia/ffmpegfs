@@ -64,4 +64,5 @@ mkdoxy
 *~
 /.qtc_clangd/
 /CMakeCache.txt.prev
+/build/
 

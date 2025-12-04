@@ -18,6 +18,8 @@ Important changes in 2.18 (2025-XX-XX):
   is undefined behaviour. Using resize() makes the memory usable.
 * As strerror() is not thread-safe, use strerror_r() where available.
 * strncpy likes to copy without NUL → terminate explicitly.
+* Bugfix: Issue #173: Fixed output directory no showing complete list of
+  files under Debian 13.
 
 Important changes in 2.17 (2024-11-10):
 

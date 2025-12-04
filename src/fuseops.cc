@@ -2403,14 +2403,15 @@ static const FFmpegfs_Format * get_format(LPVIRTUALFILE newvirtualfile)
     return nullptr;
 }
 
-int add_fuse_entry(void *buf, fuse_fill_dir_t filler, const std::string & name, const struct stat *stbuf, off_t off)
+int add_fuse_entry(void *buf, fuse_fill_dir_t filler, const std::string & name, const struct stat *stbuf, off_t /*off*/)
 {
     if (buf == nullptr || filler == nullptr)
     {
         return 0;
     }
 
-    return filler(buf, name.c_str(), stbuf, off, FUSE_FILL_DIR_PLUS);
+    // Issue #173: FUSE_FILL_DIR_PLUS erstmal NICHT nutzen
+    return filler(buf, name.c_str(), stbuf, 0, static_cast<fuse_fill_dir_flags>(0));
 }
 
 int add_dotdot(void *buf, fuse_fill_dir_t filler, const struct stat *stbuf, off_t off)

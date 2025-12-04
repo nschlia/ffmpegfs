@@ -45,6 +45,7 @@ To see what's been done so far, checkout the [windows](https://github.com/nschli
 - **Bugfix:** `reserve()` only guarantees capacity, not size → writing via `.data()` is undefined behaviour. Using `resize()` makes the memory usable.
 - As `strerror()` is not thread-safe, use `strerror_r()` where available.
 - `strncpy` likes to copy without NUL → terminate explicitly.
+- **Bugfix:** Issue [#173](https://github.com/nschlia/ffmpegfs/issues/173): Fixed output directory no showing complete list of files under Debian 13.
 
 ---
 

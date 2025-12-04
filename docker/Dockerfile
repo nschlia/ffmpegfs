@@ -1,23 +1,27 @@
-FROM debian as common
+FROM debian:trixie AS common
 
 ARG DEBIAN_FRONTEND=noninteractive
 
-RUN apt-get update
-RUN apt-get install -yq apt-utils
-RUN apt-get install -yq \
+RUN apt-get update \
+ && apt-get install -yq apt-utils \
+ && apt-get install -yq \
     fuse3 libfuse3-4 libsqlite3-0 \
-    libavcodec59 libavformat61 libswresample4 libavutil57 \
+    libavcodec61 libavformat61 libswresample5 libavutil59 \
     libswscale8 libavfilter10 libcue2 libchardet1 \
-    libdvdread8 libdvdnav4 libbluray2
+    libdvdread8 libdvdnav4 libbluray2 \
+ && rm -rf /var/lib/apt/lists/*
 
-FROM common as builder
+FROM common AS builder
 
-RUN apt-get update
-RUN apt-get install -yq gcc g++ make pkg-config autoconf asciidoc-base w3m \
+RUN apt-get update \
+ && apt-get install -yq \
+    gcc g++ make pkg-config autoconf asciidoc-base w3m \
     libchromaprint-dev bc doxygen graphviz curl git xxd \
-    libfuse3-dev libsqlite3-dev libavcodec-dev libavformat-dev \
-    libswresample-dev libavutil-dev libswscale-dev libavfilter-dev \
-    libcue-dev libchardet-dev libdvdread-dev libdvdnav-dev libbluray-dev
+    libfuse3-dev libsqlite3-dev \
+    libavcodec-dev libavformat-dev libswresample-dev libavutil-dev \
+    libswscale-dev libavfilter-dev libcue-dev libchardet-dev \
+    libdvdread-dev libdvdnav-dev libbluray-dev \
+ && rm -rf /var/lib/apt/lists/*
 
 ARG BRANCH=master
 

@@ -12,9 +12,11 @@ This enables seamless access to a multimedia file collection with software and/o
 
 | Branch                                                    | Build State                                                  |
 | --------------------------------------------------------- | ------------------------------------------------------------ |
-| [master](https://github.com/nschlia/ffmpegfs/tree/master) | [![Build Status](https://github.com/nschlia/ffmpegfs/actions/workflows/make-gcc.yml/badge.svg)](https://github.com/nschlia/ffmpegfs/actions/workflows/make-gcc.yml) |
-| [master](https://github.com/nschlia/ffmpegfs/tree/master) | [![Build Status](https://github.com/nschlia/ffmpegfs/actions/workflows/make-clang.yml/badge.svg)](https://github.com/nschlia/ffmpegfs/actions/workflows/make-clang.yml) |
-| [master](https://github.com/nschlia/ffmpegfs/tree/master) | [![CodeQL](https://github.com/nschlia/ffmpegfs/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/nschlia/ffmpegfs/actions/workflows/codeql-analysis.yml) |
+| [master](https://github.com/nschlia/ffmpegfs/tree/master) | [![C/C++](https://github.com/nschlia/ffmpegfs/actions/workflows/main.yml)
+| [master](https://github.com/nschlia/ffmpegfs/tree/master) | [![Clang (GNU Make)](https://github.com/nschlia/ffmpegfs/actions/workflows/make-clang.yml)
+| [master](https://github.com/nschlia/ffmpegfs/tree/master) | [![GCC (GNU Make)](https://github.com/nschlia/ffmpegfs/actions/workflows/make-gcc.yml)
+| [master](https://github.com/nschlia/ffmpegfs/tree/master) | [![CodeQL](https://github.com/nschlia/ffmpegfs/actions/workflows/codeql-analysis.yml)
+| [master](https://github.com/nschlia/ffmpegfs/tree/master) | [![Docker Image](https://github.com/nschlia/ffmpegfs/actions/workflows/docker-image.yml)
 
 
 ## Packaging Status

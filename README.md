@@ -16,6 +16,7 @@ This enables seamless access to a multimedia file collection with software and/o
 | [master](https://github.com/nschlia/ffmpegfs/tree/master) | [![Build Status](https://github.com/nschlia/ffmpegfs/actions/workflows/make-clang.yml/badge.svg)](https://github.com/nschlia/ffmpegfs/actions/workflows/make-clang.yml) |
 | [master](https://github.com/nschlia/ffmpegfs/tree/master) | [![CodeQL](https://github.com/nschlia/ffmpegfs/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/nschlia/ffmpegfs/actions/workflows/codeql-analysis.yml) |
 
+
 ## Packaging Status
 
 [![Packaging status](https://repology.org/badge/vertical-allrepos/ffmpegfs.svg?columns=4)](https://repology.org/project/ffmpegfs/versions)
@@ -46,6 +47,7 @@ To see what's been done so far, checkout the [windows](https://github.com/nschli
 - As `strerror()` is not thread-safe, use `strerror_r()` where available.
 - `strncpy` likes to copy without NUL → terminate explicitly.
 - **Bugfix:** Issue [#173](https://github.com/nschlia/ffmpegfs/issues/173): Fixed output directory no showing complete list of files under Debian 13.
+- **Bugfix:** Updated Dockerfile for Trixie
 
 ---
 

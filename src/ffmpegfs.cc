@@ -70,6 +70,11 @@ extern "C" {
 #pragma GCC diagnostic ignored "-Wimplicit-int-conversion"
 #endif
 
+// Define as FF_PROFILE_UNKNOWN in older versions
+#ifndef AV_PROFILE_UNKNOWN
+#define AV_PROFILE_UNKNOWN  FF_PROFILE_UNKNOWN
+#endif
+
 FFMPEGFS_FORMAT_ARR ffmpeg_format;                      /**< @brief Two FFmpegfs_Format infos, 0: video file, 1: audio file */
 FFMPEGFS_PARAMS     params;                             /**< @brief FFmpegfs command line parameters */
 

@@ -50,11 +50,6 @@
  * https://raw.githubusercontent.com/FFmpeg/FFmpeg/master/doc/APIchanges
  */
 
-// Define as FF_PROFILE_UNKNOWN in older versions
-#ifndef AV_PROFILE_UNKNOWN
-#define AV_PROFILE_UNKNOWN  FF_PROFILE_UNKNOWN
-#endif
-
 /**
   * 2022-07-xx - xxxxxxxxxx - lavu 57.30.100 - frame.h
   *   Add AVFrame.duration, deprecate AVFrame.pkt_duration.

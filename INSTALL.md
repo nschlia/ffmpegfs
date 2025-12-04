@@ -81,7 +81,7 @@ For more information, see the "Supported Linux Distributions" chapter in README.
 
     apt-get install gcc g++ make pkg-config asciidoc-base w3m xxd
 
-    apt-get install libfuse3-dev libsqlite3-dev libavcodec-dev libavformat-dev libswresample-dev libavutil-dev libswscale-dev libavfilter-dev libcue-dev libchardet-dev
+    apt-get install fuse3 libfuse3-dev libsqlite3-dev libavcodec-dev libavformat-dev libswresample-dev libavutil-dev libswscale-dev libavfilter-dev libcue-dev libchardet-dev
 
 To get DVD support:
 

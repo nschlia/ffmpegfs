@@ -21,6 +21,10 @@
  */
 
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+#include <limits.h>
 
 // Disable annoying warnings outside our code
 #pragma GCC diagnostic push
@@ -36,44 +40,65 @@
 
 #include <chromaprint.h>
 
-#define MAX(a, b) ((a) > (b) ? (a) : (b))
-#define MIN(a, b) ((a) < (b) ? (a) : (b))
+#ifndef MAX
+# define MAX(a, b) ((a) > (b) ? (a) : (b))
+#endif
+#ifndef MIN
+# define MIN(a, b) ((a) < (b) ? (a) : (b))
+#endif
+
+/* ------------------------------------------------------------------------- */
+/* Audio-Dekodierung und Fingerprint                                         */
+/* ------------------------------------------------------------------------- */
 
 int decode_audio_file(ChromaprintContext *chromaprint_ctx, const char *file_name, int max_length, int *duration)
 {
-    int ok = 0, remaining, length, codec_ctx_opened = 0, stream_index;
-    AVFormatContext *format_ctx = NULL;
-    AVCodecContext *codec_ctx = NULL;
-#if (LIBAVCODEC_VERSION_INT >= AV_VERSION_INT(59, 0, 0))
-    const AVCodec *codec = NULL;
-#else
-    AVCodec *codec = NULL;
-#endif
-    AVStream *stream = NULL;
-    AVFrame *frame = NULL;
-    SwrContext *swr_ctx = NULL;
-    int max_dst_nb_samples = 0;
-    uint8_t *dst_data = NULL ;
-    AVPacket packet;
-    int16_t* samples;
+    int ok = 0;
+    int stream_index = -1;
+    int64_t remaining = INT64_MAX;
+    int channels = 0;
+    int sample_rate = 0;
 
+    AVFormatContext *format_ctx = NULL;
+    AVCodecContext  *codec_ctx  = NULL;
+#if (LIBAVCODEC_VERSION_INT >= AV_VERSION_INT(59, 0, 0))
+    const AVCodec   *codec      = NULL;
+#else
+    AVCodec         *codec      = NULL;
+#endif
+    AVStream        *stream     = NULL;
+    AVFrame         *frame      = NULL;
+    AVPacket        *packet     = NULL;
+    SwrContext      *swr_ctx    = NULL;
+
+    uint8_t  **dst_data         = NULL;
+    int       dst_linesize      = 0;
+    int       max_dst_nb_samples = 0;
+    int16_t  *samples           = NULL;
+
+    if (!chromaprint_ctx || !file_name || !duration) {
+        fprintf(stderr, "ERROR: invalid argument to decode_audio_file()\n");
+        return 0;
+    }
+
+    /* stdin erlauben */
     if (!strcmp(file_name, "-")) {
         file_name = "pipe:0";
     }
 
     if (avformat_open_input(&format_ctx, file_name, NULL, NULL) != 0) {
-        fprintf(stderr, "ERROR: couldn't open the file\n");
+        fprintf(stderr, "ERROR: couldn't open the file '%s'\n", file_name);
         goto done;
     }
 
     if (avformat_find_stream_info(format_ctx, NULL) < 0) {
-        fprintf(stderr, "ERROR: couldn't find stream information in the file\n");
+        fprintf(stderr, "ERROR: couldn't find stream information in the file '%s'\n", file_name);
         goto done;
     }
 
     stream_index = av_find_best_stream(format_ctx, AVMEDIA_TYPE_AUDIO, -1, -1, &codec, 0);
     if (stream_index < 0) {
-        fprintf(stderr, "ERROR: couldn't find any audio stream in the file\n");
+        fprintf(stderr, "ERROR: no suitable audio stream found in '%s'\n", file_name);
         goto done;
     }
 
@@ -86,44 +111,57 @@ int decode_audio_file(ChromaprintContext *chromaprint_ctx, const char *file_name
     }
 
     if (avcodec_parameters_to_context(codec_ctx, stream->codecpar) < 0) {
-        fprintf(stderr, "ERROR: couldn't populate codex context\n");
+        fprintf(stderr, "ERROR: couldn't copy codec parameters\n");
         goto done;
     }
-
-    codec_ctx->request_sample_fmt = AV_SAMPLE_FMT_S16;
 
     if (avcodec_open2(codec_ctx, codec, NULL) < 0) {
         fprintf(stderr, "ERROR: couldn't open the codec\n");
         goto done;
     }
-    codec_ctx_opened = 1;
 
 #if (LIBAVUTIL_VERSION_INT >= AV_VERSION_INT(57, 24, 0))
-    int channels = codec_ctx->ch_layout.nb_channels;
+    channels = codec_ctx->ch_layout.nb_channels;
 #else
-    int channels = codec_ctx->channels;
+    channels = codec_ctx->channels;
 #endif
-
     if (channels <= 0) {
         fprintf(stderr, "ERROR: no channels found in the audio stream\n");
         goto done;
     }
 
+    sample_rate = codec_ctx->sample_rate;
+    if (sample_rate <= 0) {
+        fprintf(stderr, "ERROR: invalid sample rate in the audio stream\n");
+        goto done;
+    }
+
+    /* Dauer in Sekunden (grobe Näherung wie bisher) */
+    if (stream->duration > 0 && stream->time_base.den > 0) {
+        *duration = (int)(stream->time_base.num *
+                          stream->duration /
+                          stream->time_base.den);
+    } else if (format_ctx->duration > 0) {
+        *duration = (int)(format_ctx->duration / AV_TIME_BASE);
+    } else {
+        *duration = 0;
+    }
+
+    /* ggf. Resampler vorbereiten */
     if (codec_ctx->sample_fmt != AV_SAMPLE_FMT_S16) {
 #if (LIBSWRESAMPLE_VERSION_INT >= AV_VERSION_INT(4, 5, 0))
         int ret = swr_alloc_set_opts2(&swr_ctx,
                                       &codec_ctx->ch_layout, AV_SAMPLE_FMT_S16, codec_ctx->sample_rate,
                                       &codec_ctx->ch_layout, codec_ctx->sample_fmt, codec_ctx->sample_rate,
                                       0, NULL);
-        if (ret < 0)
-        {
+        if (ret < 0) {
             fprintf(stderr, "ERROR: couldn't allocate audio resampler\n");
-            return ret;
+            goto done;
         }
 #else
         swr_ctx = swr_alloc_set_opts(NULL,
-                                     (int64_t)codec_ctx->channel_layout, AV_SAMPLE_FMT_S16, codec_ctx->sample_rate,
-                                     (int64_t)codec_ctx->channel_layout, codec_ctx->sample_fmt, codec_ctx->sample_rate,
+                                     codec_ctx->channel_layout, AV_SAMPLE_FMT_S16, codec_ctx->sample_rate,
+                                     codec_ctx->channel_layout, codec_ctx->sample_fmt, codec_ctx->sample_rate,
                                      0, NULL);
         if (!swr_ctx) {
             fprintf(stderr, "ERROR: couldn't allocate audio resampler\n");
@@ -136,68 +174,107 @@ int decode_audio_file(ChromaprintContext *chromaprint_ctx, const char *file_name
         }
     }
 
-    *duration = (int)(stream->time_base.num * stream->duration / stream->time_base.den);
+    /* Maximale Samples je nach -length */
+    if (max_length > 0) {
+        remaining = (int64_t)max_length * channels * sample_rate;
+    }
 
-    remaining = max_length * channels * codec_ctx->sample_rate;
-    chromaprint_start(chromaprint_ctx, codec_ctx->sample_rate, channels);
-    frame = av_frame_alloc();
+    chromaprint_start(chromaprint_ctx, sample_rate, channels);
 
-    while (1) {
-        if (av_read_frame(format_ctx, &packet) < 0) {
-            break;
+    frame  = av_frame_alloc();
+    packet = av_packet_alloc();
+    if (!frame || !packet) {
+        fprintf(stderr, "ERROR: couldn't allocate frame or packet\n");
+        goto done;
+    }
+
+    for (;;) {
+        if (av_read_frame(format_ctx, packet) < 0) {
+            break; /* EOF oder Fehler – wir verlassen uns auf chromaprint_finish */
         }
 
-        if (packet.stream_index == stream_index) {
-            if (avcodec_send_packet(codec_ctx, &packet) < 0) {
-                fprintf(stderr, "WARNING: error sending audio data\n");
-                continue;
+        if (packet->stream_index != stream_index) {
+            av_packet_unref(packet);
+            continue;
+        }
+
+        if (avcodec_send_packet(codec_ctx, packet) < 0) {
+            fprintf(stderr, "WARNING: error sending audio data\n");
+            av_packet_unref(packet);
+            continue;
+        }
+
+        av_packet_unref(packet);
+
+        for (;;) {
+            int recv_result = avcodec_receive_frame(codec_ctx, frame);
+
+            if (recv_result == AVERROR(EAGAIN) ||
+                recv_result == AVERROR_EOF) {
+                break;
             }
 
-            while(1) {
-                int recv_result = avcodec_receive_frame(codec_ctx, frame);
-                if (recv_result == AVERROR(EAGAIN)) break;
+            if (recv_result < 0) {
+                fprintf(stderr, "WARNING: error decoding audio\n");
+                goto finish;
+            }
 
-                if (recv_result < 0) {
-                    fprintf(stderr, "WARNING: error decoding audio\n");
-                    break;
-                }
-                if (swr_ctx) {
-                    if (frame->nb_samples > max_dst_nb_samples) {
-                        max_dst_nb_samples = frame->nb_samples;
+            /* Nach S16 konvertieren, falls nötig */
+            if (swr_ctx) {
+                int dst_nb_samples = frame->nb_samples;
+
+                if (dst_nb_samples > max_dst_nb_samples) {
+                    if (dst_data) {
+                        av_freep(&dst_data[0]);
                         av_freep(&dst_data);
-                        if (av_samples_alloc(&dst_data, NULL,
-                                             channels, max_dst_nb_samples,
-                                             AV_SAMPLE_FMT_S16, 0) < 0) {
-                            fprintf(stderr, "ERROR: couldn't allocate audio converter buffer\n");
-                            goto done;
-                        }
                     }
-
-                    if (swr_convert(swr_ctx, &dst_data, frame->nb_samples,
-                                    (const uint8_t**)frame->data, frame->nb_samples) < 0) {
-                        fprintf(stderr, "ERROR: couldn't convert the audio\n");
+                    if (av_samples_alloc_array_and_samples(&dst_data,
+                                                           &dst_linesize,
+                                                           channels,
+                                                           dst_nb_samples,
+                                                           AV_SAMPLE_FMT_S16,
+                                                           0) < 0) {
+                        fprintf(stderr, "ERROR: couldn't allocate audio converter buffer\n");
                         goto done;
                     }
-                    samples = (int16_t*)dst_data;
-                } else {
-                    samples = (int16_t*)frame->data[0];
+                    max_dst_nb_samples = dst_nb_samples;
                 }
 
-                length = MIN(remaining, frame->nb_samples * channels);
-                if (!chromaprint_feed(chromaprint_ctx, samples, length)) {
+                int converted = swr_convert(swr_ctx,
+                                            dst_data, dst_nb_samples,
+                                            (const uint8_t **)frame->data, frame->nb_samples);
+                if (converted < 0) {
+                    fprintf(stderr, "ERROR: couldn't convert the audio\n");
                     goto done;
                 }
 
-                if (max_length) {
-                    remaining -= length;
-                    if (remaining <= 0) {
-                        goto finish;
-                    }
+                samples = (int16_t *)dst_data[0];
+                dst_nb_samples = converted;
+            } else {
+                samples = (int16_t *)frame->data[0];
+            }
+
+            /* Anzahl Samples (interleaved) begrenzen */
+            int64_t frame_samples_total =
+                (int64_t)frame->nb_samples * channels;
+            int length = (int)MIN(remaining, frame_samples_total);
+
+            if (length <= 0) {
+                goto finish;
+            }
+
+            if (!chromaprint_feed(chromaprint_ctx, samples, length)) {
+                fprintf(stderr, "ERROR: fingerprint feed failed\n");
+                goto done;
+            }
+
+            if (max_length > 0) {
+                remaining -= length;
+                if (remaining <= 0) {
+                    goto finish;
                 }
             }
         }
-
-        av_packet_unref(&packet);
     }
 
 finish:
@@ -209,47 +286,56 @@ finish:
     ok = 1;
 
 done:
-    if (frame) {
-        av_frame_unref(frame);
-    }
     if (dst_data) {
+        av_freep(&dst_data[0]);
         av_freep(&dst_data);
     }
-
     if (swr_ctx) {
         swr_free(&swr_ctx);
     }
-
-    if (codec_ctx_opened) {
-#if  (LIBAVFORMAT_VERSION_MICRO >= 100 && LIBAVCODEC_VERSION_INT >= AV_VERSION_INT(57, 48, 101))
-        avcodec_free_context(&codec_ctx);
-#else
-        avcodec_close(codec_ctx);
-#endif
+    if (frame) {
+        av_frame_free(&frame);
     }
-    if (format_ctx) {
-        avformat_close_input(&format_ctx);
+    if (packet) {
+        av_packet_free(&packet);
     }
     if (codec_ctx) {
         avcodec_free_context(&codec_ctx);
     }
+    if (format_ctx) {
+        avformat_close_input(&format_ctx);
+    }
     return ok;
 }
 
+/* ------------------------------------------------------------------------- */
+/* main(): Argument-Parsing und Vergleich                                   */
+/* ------------------------------------------------------------------------- */
+
 int main(int argc, char **argv)
 {
-    int i, j, max_length = 120, num_file_names = 0/*, raw = 0*/, duration;
+    int i, j;
+    int max_length       = 120;
+    int num_file_names   = 0; /*, raw = 0 */
+    int duration         = 0;
     int raw_fingerprint_size[2];
-    uint32_t *raw_fingerprints[2] = {0};
-    char *file_name, **file_names;
+    uint32_t *raw_fingerprints[2] = { 0, 0 };
+    char    *file_name, **file_names;
     ChromaprintContext *chromaprint_ctx;
-    int algo = CHROMAPRINT_ALGORITHM_DEFAULT, num_failed = 0;
+    int algo             = CHROMAPRINT_ALGORITHM_DEFAULT;
+    int num_failed       = 0;
     uint32_t thisdiff;
-    int setbits = 0;
+    int setbits          = 0;
 
-    file_names = malloc((size_t)argc * sizeof(char *));
+    file_names = (char **)malloc((size_t)argc * sizeof(char *));
+    if (!file_names) {
+        fprintf(stderr, "ERROR: out of memory\n");
+        return 1;
+    }
+
     for (i = 1; i < argc; i++) {
         char *arg = argv[i];
+
         if (!strcmp(arg, "-length") && i + 1 < argc) {
             max_length = atoi(argv[++i]);
         }
@@ -258,12 +344,13 @@ int main(int argc, char **argv)
             free(file_names);
             return 0;
         }
-        //else if (!strcmp(arg, "-raw")) {
-        //    raw = 1;
-        //}
+        /* else if (!strcmp(arg, "-raw")) {
+         *     raw = 1;
+         * }
+         */
         else if (!strcmp(arg, "-algo") && i + 1 < argc) {
             const char *v = argv[++i];
-            if (!strcmp(v, "test1")) { algo = CHROMAPRINT_ALGORITHM_TEST1; }
+            if (!strcmp(v, "test1"))      { algo = CHROMAPRINT_ALGORITHM_TEST1; }
             else if (!strcmp(v, "test2")) { algo = CHROMAPRINT_ALGORITHM_TEST2; }
             else if (!strcmp(v, "test3")) { algo = CHROMAPRINT_ALGORITHM_TEST3; }
             else if (!strcmp(v, "test4")) { algo = CHROMAPRINT_ALGORITHM_TEST4; }
@@ -272,6 +359,7 @@ int main(int argc, char **argv)
             }
         }
         else if (!strcmp(arg, "-set") && i + 1 < argc) {
+            /* Werte werden weiter unten verarbeitet; hier nur überspringen */
             i += 1;
         }
         else {
@@ -294,11 +382,17 @@ int main(int argc, char **argv)
     av_log_set_level(AV_LOG_ERROR);
 
     chromaprint_ctx = chromaprint_new(algo);
+    if (!chromaprint_ctx) {
+        fprintf(stderr, "ERROR: chromaprint_new() failed\n");
+        free(file_names);
+        return 1;
+    }
 
+    /* -set Optionen an Chromaprint durchreichen */
     for (i = 1; i < argc; i++) {
         char *arg = argv[i];
         if (!strcmp(arg, "-set") && i + 1 < argc) {
-            char *name = argv[++i];
+            char *name  = argv[++i];
             char *value = strchr(name, '=');
             if (value) {
                 *value++ = '\0';
@@ -323,16 +417,17 @@ int main(int argc, char **argv)
 
     if (num_failed == 0) {
         int min_raw_fingerprint_size = MIN(raw_fingerprint_size[0],
-                raw_fingerprint_size[1]);
+                                           raw_fingerprint_size[1]);
         int max_raw_fingerprint_size = MAX(raw_fingerprint_size[0],
-                raw_fingerprint_size[1]);
+                                           raw_fingerprint_size[1]);
 
         for (j = 0; j < min_raw_fingerprint_size; j++) {
-            thisdiff = raw_fingerprints[0][j]^raw_fingerprints[1][j];
+            thisdiff = raw_fingerprints[0][j] ^ raw_fingerprints[1][j];
             setbits += __builtin_popcount(thisdiff);
         }
-        setbits += (int)((max_raw_fingerprint_size-min_raw_fingerprint_size)*32.0);
-        printf("%f\n", setbits/(max_raw_fingerprint_size*32.0));
+        setbits += (int)((max_raw_fingerprint_size - min_raw_fingerprint_size) * 32.0);
+
+        printf("%f\n", setbits / (max_raw_fingerprint_size * 32.0));
     } else {
         fprintf(stderr, "ERROR: Couldn't calculate both fingerprints; can't compare.\n");
     }

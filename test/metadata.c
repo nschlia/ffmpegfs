@@ -14,19 +14,19 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- * On Debian systems, the complete text of the GNU General Public License
- * Version 3 can be found in `/usr/share/common-licenses/GPL-3'.
  */
 
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
-// Disable annoying warnings outside our code
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wconversion"
 #pragma GCC diagnostic ignored "-Wsign-conversion"
 #include <libavformat/avformat.h>
+#include <libavutil/avutil.h>
 #include <libavutil/dict.h>
+#include <libavutil/error.h>
 #include <libavutil/ffversion.h>
 #pragma GCC diagnostic pop
 
@@ -35,14 +35,14 @@ int main (int argc, char **argv)
     if (argc != 2)
     {
         fprintf(stderr, "usage: %s <input_file>\n"
-               "Print all file meta data to screen.\n"
-               "\n", argv[0]);
+                        "Print all file meta data to screen.\n"
+                        "\n", argv[0]);
         fprintf(stderr, "ERROR: Exactly one parameter required\n\n");
         return 1;
     }
 
     if (!strcmp(argv[1], "-v"))
-	{
+    {
         printf("FFmpeg " FFMPEG_VERSION "\n");
         return 0;
     }
@@ -53,6 +53,9 @@ int main (int argc, char **argv)
 
     const char *filename = argv[1];
     AVFormatContext *format_ctx = NULL;
+
+    av_log_set_level(AV_LOG_ERROR);
+
     int ret = avformat_open_input(&format_ctx, filename, NULL, NULL);
     if (ret)
     {
@@ -66,9 +69,11 @@ int main (int argc, char **argv)
     if (ret < 0)
     {
         av_log(NULL, AV_LOG_ERROR, "Cannot find stream information\n");
+        avformat_close_input(&format_ctx);
         return ret;
     }
 
+    /* Stream-Metadaten */
     for (unsigned int streamno = 0; streamno < format_ctx->nb_streams; streamno++)
     {
         AVDictionaryEntry *tag = NULL;
@@ -79,6 +84,7 @@ int main (int argc, char **argv)
         }
     }
 
+    /* Container-Metadaten */
     {
         AVDictionaryEntry *tag = NULL;
 
@@ -89,6 +95,5 @@ int main (int argc, char **argv)
     }
 
     avformat_close_input(&format_ctx);
-
     return 0;
 }

@@ -4,7 +4,7 @@ ARG DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update
 RUN apt-get install -yq apt-utils
-RUN apt-get install -yq fuse libfuse3-4 libsqlite3-0 libavcodec59 libavformat61 libswresample4 libavutil57 libswscale8 libavfilter8 libcue2 libchardet1
+RUN apt install fuse3 libfuse3-4 libsqlite3-0 libavcodec59 libavformat61 libswresample4 libavutil57 libswscale8 libavfilter10 libcue2 libchardet1
 RUN apt-get install -yq libdvdread[48] libdvdnav4 libbluray2
 
 FROM common as builder

@@ -1,17 +1,20 @@
 # Definitions for sub-makes
 if DEBUG
-export OPTIMISATION = -DDEBUG -ggdb -fstack-protector-explicit
+OPTIMISATION = -DDEBUG -ggdb -fstack-protector-explicit
 else
-export OPTIMISATION = -DNDEBUG -Ofast -g
+OPTIMISATION = -DNDEBUG -Ofast -g
 endif
 
-export WARNINGS = -Wall -Wextra -Wconversion -Wsign-compare -Wsign-conversion -Wpedantic
-export AM_CFLAGS = -std=c17 $(INCLUDES) $(WARNINGS) $(OPTIMISATION) -D_GNU_SOURCE -D_FORTIFY_SOURCE=2 -Wl,-z,relro,-z,now
-export AM_CXXFLAGS = -std=c++17 $(INCLUDES) $(WARNINGS) $(OPTIMISATION) -D_GNU_SOURCE -D_FORTIFY_SOURCE=2 -Wl,-z,relro,-z,now
+WARNINGS = -Wall -Wextra -Wconversion -Wsign-compare -Wsign-conversion -Wpedantic
+
+AM_CFLAGS = -std=c17 $(INCLUDES) $(WARNINGS) $(OPTIMISATION) -D_GNU_SOURCE -D_FORTIFY_SOURCE=2
+AM_CXXFLAGS = -std=c++17 $(INCLUDES) $(WARNINGS) $(OPTIMISATION) -D_GNU_SOURCE -D_FORTIFY_SOURCE=2
+
 if ENABLE_EXTRA_VERSION
-export AM_CFLAGS += -DEXTRA_VERSION=\"${EXTRA_VERSION}\"
-export AM_CXXFLAGS += -DEXTRA_VERSION=\"${EXTRA_VERSION}\"
+AM_CFLAGS += -DEXTRA_VERSION=\"${EXTRA_VERSION}\"
+AM_CXXFLAGS += -DEXTRA_VERSION=\"${EXTRA_VERSION}\"
 endif
+
 AM_LDFLAGS = -Wl,-z,relro,-z,now
 
 export CACHEDIR="$(DESTDIR)/var/cache/ffmpegfs"

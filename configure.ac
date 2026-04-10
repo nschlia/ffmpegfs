@@ -18,10 +18,6 @@ m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
 AC_CANONICAL_HOST
 AC_DEFINE_UNQUOTED([HOST_OS], ["$host_os"], [Host operating system])
 
-# compiler flags
-CFLAGS=""
-CXXFLAGS=""
-
 # Checks for programs
 AC_PROG_CC
 AC_PROG_CXX
@@ -253,4 +249,3 @@ AM_COND_IF([HINT_LIBDVD],
            [AC_MSG_NOTICE([HINT: For DVD support, install the libdvdread development packages. Consult INSTALL.md for more information.])])
 AM_COND_IF([HINT_LIBBLURAY],
            [AC_MSG_NOTICE([HINT: For Blu-ray support, install the libbluray development package. Consult INSTALL.md for more information. ])])
-

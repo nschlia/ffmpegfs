@@ -21,6 +21,8 @@ Important changes in 2.18 (2026-04-10):
 * Bugfix: Issue #173: Fixed output directory no showing complete list of
   files under Debian 13.
 * Closes#1115015: Fix build with FFmpeg 8 (already applied in Debian via NMU)
+* Closes#1119414: Changed configure.ac and makefile.am to preserve the
+  default build flags
 
 Important changes in 2.17 (2024-11-10):
 

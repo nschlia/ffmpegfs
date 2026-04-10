@@ -1,6 +1,6 @@
 FFmpegfs NEWS
 
-Important changes in 2.18 (2025-XX-XX):
+Important changes in 2.18 (2026-04-10):
 
 * Feature: Added ALAC profile for iTunes (--desttype=ALAC --profile=ITUNES).
   Playback of the file will not commence until it is fully recoded; however,

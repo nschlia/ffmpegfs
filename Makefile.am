@@ -1,23 +1,21 @@
 # Definitions for sub-makes
 if DEBUG
-OPTIMISATION = -DDEBUG -ggdb -fstack-protector-explicit
+OPTIMISATION = -DDEBUG -ggdb
 else
-OPTIMISATION = -DNDEBUG -Ofast -g
+OPTIMISATION = -DNDEBUG
 endif
 
 WARNINGS = -Wall -Wextra -Wconversion -Wsign-compare -Wsign-conversion -Wpedantic
 
-AM_CFLAGS = -std=c17 $(INCLUDES) $(WARNINGS) $(OPTIMISATION) -D_GNU_SOURCE -D_FORTIFY_SOURCE=2
-AM_CXXFLAGS = -std=c++17 $(INCLUDES) $(WARNINGS) $(OPTIMISATION) -D_GNU_SOURCE -D_FORTIFY_SOURCE=2
+AM_CFLAGS = -std=c17 $(INCLUDES) $(WARNINGS) $(OPTIMISATION) -D_GNU_SOURCE
+AM_CXXFLAGS = -std=c++17 $(INCLUDES) $(WARNINGS) $(OPTIMISATION) -D_GNU_SOURCE
 
 if ENABLE_EXTRA_VERSION
-AM_CFLAGS += -DEXTRA_VERSION=\"${EXTRA_VERSION}\"
-AM_CXXFLAGS += -DEXTRA_VERSION=\"${EXTRA_VERSION}\"
+AM_CFLAGS += -DEXTRA_VERSION=\"$(EXTRA_VERSION)\"
+AM_CXXFLAGS += -DEXTRA_VERSION=\"$(EXTRA_VERSION)\"
 endif
 
-AM_LDFLAGS = -Wl,-z,relro,-z,now
-
-export CACHEDIR="$(DESTDIR)/var/cache/ffmpegfs"
+export CACHEDIR = $(DESTDIR)/var/cache/ffmpegfs
 
 SUBDIRS = src test
 
@@ -70,7 +68,7 @@ else
 		|| ( rm -f ChangeLog.tmp ; exit 1 )
 endif
 
-SRCS =  $(OBJS:.o=.c)
+SRCS = $(OBJS:.o=.c)
 
 #.PHONY: all distclean doxy cppcheck
 
@@ -89,7 +87,7 @@ doxyfile.inc: Doxyfile Makefile
 	@echo "HTML_EXTRA_FILES        += ffmpegfs.1.htmlhelp/manpages.html" >> doxyfile.inc
 	@echo "HTML_EXTRA_FILES        += ffmpegfs.1.htmlhelp/docbook-xsl.css" >> doxyfile.inc
 	@echo "INPUT                  += README.md" >> doxyfile.inc
-	@echo "INPUT	              += INSTALL.md" >> doxyfile.inc
+	@echo "INPUT                  += INSTALL.md" >> doxyfile.inc
 	@echo "INPUT                  += HISTORY.md" >> doxyfile.inc
 	@echo "INPUT                  += PROBLEMS.md" >> doxyfile.inc
 	@echo "INPUT                  += FEATURES.md" >> doxyfile.inc
@@ -105,7 +103,7 @@ doxyfile.inc: Doxyfile Makefile
 	@echo "REFERENCES_RELATION    = YES" >> doxyfile.inc
 	@echo "EXTRACT_STATIC         = YES" >> doxyfile.inc
 	@echo "EXTRACT_PRIVATE        = YES" >> doxyfile.inc
-	@echo "PROJECT_NUMBER         = ${VERSION}" >> doxyfile.inc
+	@echo "PROJECT_NUMBER         = $(VERSION)" >> doxyfile.inc
 
 # Run doxygen, first render Github markdown documents, see https://developer.github.com/v3/markdown/#render-an-arbitrary-markdown-document
 doxy: doxyfile.inc ffmpegfs.1.htmlhelp $(SRCS)
@@ -117,7 +115,7 @@ doxy-clean:
 
 # Clean up extra stuff
 clean-local: doxy-clean
-	rm -Rf ffmpegfs.1.htmlhelp ffmpegfs.1  ffmpegfs.1.hhc  ffmpegfs.1.hhp  ffmpegfs.1.pdf  ffmpegfs.1.text src/ffmpegfshelp.h
+	rm -Rf ffmpegfs.1.htmlhelp ffmpegfs.1 ffmpegfs.1.hhc ffmpegfs.1.hhp ffmpegfs.1.pdf ffmpegfs.1.text src/ffmpegfshelp.h
 
 # Really clean up everything
 wipe-all: doxy-clean distclean
@@ -125,7 +123,7 @@ wipe-all: doxy-clean distclean
 
 # Run cppcheck
 cppcheck:
-	cppcheck --inline-suppr --force --enable=all --inconclusive --library=posix --output-file=cppcheck.log --suppressions-list=cppcheck-suppressions.txt  -I src/ -I src/vcd/ -DUSE_LIBBLURAY -DUSE_LIBDVD -DUSE_LIBVCD -DHAVE_CONFIG_H -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DUSE_LIBSWRESAMPLE -DLAVU_DEP_OLD_CHANNEL_LAYOUT=1 -D__GNUC_ -DPACKAGE_NAME="FFmpegfs" -DFFMPEFS_VERSION=\"V0.0\" -U__clang_version__ -UPRESCAN_FRAMES -DEXTRA_VERSION="" src/ src/vcd/	
+	cppcheck --inline-suppr --force --enable=all --inconclusive --library=posix --output-file=cppcheck.log --suppressions-list=cppcheck-suppressions.txt -I src/ -I src/vcd/ -DUSE_LIBBLURAY -DUSE_LIBDVD -DUSE_LIBVCD -DHAVE_CONFIG_H -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DUSE_LIBSWRESAMPLE -DLAVU_DEP_OLD_CHANNEL_LAYOUT=1 -D__GNUC_ -DPACKAGE_NAME="FFmpegfs" -DFFMPEFS_VERSION=\"V0.0\" -U__clang_version__ -UPRESCAN_FRAMES -DEXTRA_VERSION="" src/ src/vcd/
 
 # android- 	Checks related to Android.
 # boost- 	Checks related to Boost library.
@@ -159,7 +157,7 @@ install-exec-hook:
 		echo "$(CACHEDIR) already exists."; \
 	else \
 		echo "Creating cache in $(CACHEDIR)."; \
-		mkdir -p $(CACHEDIR) || true; \
+		mkdir -p "$(CACHEDIR)" || true; \
 	fi
 
 uninstall-hook:

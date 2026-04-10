@@ -50,6 +50,7 @@ To see what's been done so far, checkout the [windows](https://github.com/nschli
 - `strncpy` likes to copy without NUL → terminate explicitly.
 - **Bugfix:** Issue [#173](https://github.com/nschlia/ffmpegfs/issues/173): Fixed output directory no showing complete list of files under Debian 13.
 - **Bugfix:** Updated Dockerfile for Trixie
+- **Bugfix:** Closes [#1115015](https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=1115015): Fix build with FFmpeg 8 (already applied in Debian via NMU)
 
 ---
 

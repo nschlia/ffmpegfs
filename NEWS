@@ -20,6 +20,7 @@ Important changes in 2.18 (2026-04-10):
 * strncpy likes to copy without NUL → terminate explicitly.
 * Bugfix: Issue #173: Fixed output directory no showing complete list of
   files under Debian 13.
+* Closes#1115015: Fix build with FFmpeg 8 (already applied in Debian via NMU)
 
 Important changes in 2.17 (2024-11-10):
 

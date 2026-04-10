@@ -46,6 +46,7 @@ extern "C" {
 
 #include "id3v1tag.h"
 #include "ffmpegfs.h"
+#include "ffmpeg_utils.h"
 
 #include <iostream>
 #include <libgen.h>
@@ -53,7 +54,6 @@ extern "C" {
 #include <wordexp.h>
 #include <memory>
 #include <fstream>
-#include <sstream>
 #include <locale>
 #include <vector>
 #include <cstring>

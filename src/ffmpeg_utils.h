@@ -51,6 +51,7 @@
 #include "ffmpeg_compat.h"
 
 #include <string>
+#include <sstream>
 #include <vector>
 #include <regex>
 #include <set>

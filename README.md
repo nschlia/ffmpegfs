@@ -35,7 +35,7 @@ To see what's been done so far, checkout the [windows](https://github.com/nschli
 
 ---
 
-### New in 2.18
+### New in 2.18 (2026-04-10):
 
 - **Feature:** Added ALAC profile for iTunes (`--desttype=ALAC --profile=ITUNES`). Playback of the file will not commence until it is fully recoded; however, it can be played in iTunes.
 - **Feature:** Implemented a validation check for the combination of TYPE and PROFILE in `--desttype=TYPE --profile=PROFILE`.
@@ -51,6 +51,7 @@ To see what's been done so far, checkout the [windows](https://github.com/nschli
 - **Bugfix:** Issue [#173](https://github.com/nschlia/ffmpegfs/issues/173): Fixed output directory no showing complete list of files under Debian 13.
 - **Bugfix:** Updated Dockerfile for Trixie
 - **Bugfix:** Closes [#1115015](https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=1115015): Fix build with FFmpeg 8 (already applied in Debian via NMU)
+- **Bugfix:** Closes [#1119414](https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=1119414) Changed configure.ac and makefile.am to preserve the default build flags
 
 ---
 

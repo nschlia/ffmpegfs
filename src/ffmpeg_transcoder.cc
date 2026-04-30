@@ -223,8 +223,6 @@ FFmpeg_Transcoder::FFmpeg_Transcoder()
     , m_is_video(false)
     , m_cur_sample_fmt(AV_SAMPLE_FMT_NONE)
     , m_cur_sample_rate(-1)
-    , m_audio_resample_ctx(nullptr)
-    , m_sws_ctx(nullptr)
     , m_buffer_sink_context(nullptr)
     , m_buffer_source_context(nullptr)
     , m_filter_graph(nullptr)
@@ -1635,7 +1633,7 @@ int FFmpeg_Transcoder::init_rescaler(AVPixelFormat in_pix_fmt, int in_width, int
                            out_width, out_height);
         }
 
-        m_sws_ctx = sws_getContext(
+        m_sws_ctx.reset(sws_getContext(
                     // Source settings
                     in_width,               // width
                     in_height,              // height
@@ -1644,7 +1642,7 @@ int FFmpeg_Transcoder::init_rescaler(AVPixelFormat in_pix_fmt, int in_width, int
                     out_width,              // width
                     out_height,             // height
                     out_pix_fmt,            // format
-                    SWS_FAST_BILINEAR, nullptr, nullptr, nullptr);    // Maybe SWS_LANCZOS | SWS_ACCURATE_RND
+                    SWS_FAST_BILINEAR, nullptr, nullptr, nullptr));    // Maybe SWS_LANCZOS | SWS_ACCURATE_RND
         if (m_sws_ctx == nullptr)
         {
             Logging::error(virtname(), "Could not allocate a scaling/conversion context.");
@@ -2966,7 +2964,7 @@ int FFmpeg_Transcoder::init_resampler()
         // Create a resampler context for the conversion.
         // Set the conversion parameters.
 #if SWR_DEP_ALLOC_SET_OPTS
-        ret = swr_alloc_set_opts2(&m_audio_resample_ctx,
+        ret = swr_alloc_set_opts2(m_audio_resample_ctx.address(),
                                   &m_out.m_audio.m_codec_ctx->ch_layout,
                                   m_out.m_audio.m_codec_ctx->sample_fmt,
                                   m_out.m_audio.m_codec_ctx->sample_rate,
@@ -2980,14 +2978,14 @@ int FFmpeg_Transcoder::init_resampler()
             return ret;
         }
 #else
-        m_audio_resample_ctx = swr_alloc_set_opts(nullptr,
-                                                  static_cast<int64_t>(m_out.m_audio.m_codec_ctx->channel_layout),
-                                                  m_out.m_audio.m_codec_ctx->sample_fmt,
-                                                  m_out.m_audio.m_codec_ctx->sample_rate,
-                                                  static_cast<int64_t>(m_in.m_audio.m_codec_ctx->channel_layout),
-                                                  m_in.m_audio.m_codec_ctx->sample_fmt,
-                                                  m_in.m_audio.m_codec_ctx->sample_rate,
-                                                  0, nullptr);
+        m_audio_resample_ctx.reset(swr_alloc_set_opts(nullptr,
+                                                       static_cast<int64_t>(m_out.m_audio.m_codec_ctx->channel_layout),
+                                                       m_out.m_audio.m_codec_ctx->sample_fmt,
+                                                       m_out.m_audio.m_codec_ctx->sample_rate,
+                                                       static_cast<int64_t>(m_in.m_audio.m_codec_ctx->channel_layout),
+                                                       m_in.m_audio.m_codec_ctx->sample_fmt,
+                                                       m_in.m_audio.m_codec_ctx->sample_rate,
+                                                       0, nullptr));
         if (m_audio_resample_ctx == nullptr)
         {
             Logging::error(virtname(), "Could not allocate a resample context.");
@@ -3000,8 +2998,7 @@ int FFmpeg_Transcoder::init_resampler()
         if (ret < 0)
         {
             Logging::error(virtname(), "Could not open resampler context (error '%1').", ffmpeg_geterror(ret).c_str());
-            swr_free(&m_audio_resample_ctx);
-            m_audio_resample_ctx = nullptr;
+            m_audio_resample_ctx.reset();
             return ret;
         }
     }
@@ -6412,14 +6409,7 @@ int64_t FFmpeg_Transcoder::seek(void * opaque, int64_t offset, int whence)
 
 bool FFmpeg_Transcoder::close_resample()
 {
-    if (m_audio_resample_ctx)
-    {
-        swr_free(&m_audio_resample_ctx);
-        m_audio_resample_ctx = nullptr;
-        return true;
-    }
-
-    return false;
+    return m_audio_resample_ctx.reset();
 }
 
 int FFmpeg_Transcoder::purge_audio_fifo()
@@ -6497,8 +6487,7 @@ bool FFmpeg_Transcoder::close_output_file()
 
     close_resample();
 
-    sws_freeContext(m_sws_ctx);
-    m_sws_ctx = nullptr;
+    m_sws_ctx.reset();
 
     // Close output file
     m_out.m_audio.reset();

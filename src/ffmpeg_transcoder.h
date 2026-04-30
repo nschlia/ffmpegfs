@@ -38,6 +38,8 @@
 #include "ffmpeg_audiofifo.h"
 #include "ffmpeg_frame.h"
 #include "ffmpeg_formatcontext.h"
+#include "ffmpeg_swrcontext.h"
+#include "ffmpeg_swscontext.h"
 #include "ffmpeg_packet.h"
 #include "ffmpeg_subtitle.h"
 #include "id3v1tag.h"
@@ -53,8 +55,6 @@
 #include <utility>
 
 class Buffer;
-struct SwrContext;
-struct SwsContext;
 struct AVFilterContext;
 struct AVFilterGraph;
 struct AVCodecContext;
@@ -1248,11 +1248,11 @@ private:
 #else   // !LAVU_DEP_OLD_CHANNEL_LAYOUT
     uint64_t                    m_cur_channel_layout;           /**< @brief Currently selected audio channel layout */
 #endif  // !LAVU_DEP_OLD_CHANNEL_LAYOUT
-    SwrContext *                m_audio_resample_ctx;           /**< @brief SwResample context for audio resampling */
+    FFmpeg_SwrContext           m_audio_resample_ctx;           /**< @brief SwResample context for audio resampling */
     FFmpeg_AudioFifo            m_audio_fifo;                   /**< @brief Audio sample FIFO */
 
     // Video conversion and buffering
-    SwsContext *                m_sws_ctx;                      /**< @brief Context for video filtering */
+    FFmpeg_SwsContext           m_sws_ctx;                      /**< @brief Context for video filtering */
     AVFilterContext *           m_buffer_sink_context;          /**< @brief Video filter sink context */
     AVFilterContext *           m_buffer_source_context;        /**< @brief Video filter source context */
     AVFilterGraph *             m_filter_graph;                 /**< @brief Video filter graph */

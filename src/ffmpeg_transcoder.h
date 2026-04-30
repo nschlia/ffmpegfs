@@ -36,6 +36,7 @@
 
 #include "ffmpeg_base.h"
 #include "ffmpeg_frame.h"
+#include "ffmpeg_formatcontext.h"
 #include "ffmpeg_packet.h"
 #include "ffmpeg_subtitle.h"
 #include "id3v1tag.h"
@@ -143,13 +144,13 @@ protected:
     {
         INPUTFILE() :
             m_filetype(FILETYPE::UNKNOWN),
-            m_format_ctx(nullptr),
+            m_format_ctx(FFmpeg_FormatContext::TYPE::INPUT),
             m_pix_fmt(AV_PIX_FMT_NONE)
         {}
 
         FILETYPE                m_filetype;                         /**< @brief File type, MP3, MP4, OPUS etc. */
 
-        AVFormatContext *       m_format_ctx;                       /**< @brief Output format context */
+        FFmpeg_FormatContext    m_format_ctx;                       /**< @brief Format context */
 
         StreamRef               m_audio;                            /**< @brief Audio stream information */
         StreamRef               m_video;                            /**< @brief Video stream information */

@@ -368,19 +368,18 @@ int FFmpeg_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, std::shared_pt
         return AVERROR(ret);
     }
 
-    m_in.m_format_ctx = avformat_alloc_context();
-    if (m_in.m_format_ctx == nullptr)
+    ret = m_in.m_format_ctx.alloc_input_context();
+    if (ret < 0)
     {
         Logging::error(filename(), "Out of memory opening file: format context could not be allocated.");
-        return AVERROR(ENOMEM);
+        return ret;
     }
 
     unsigned char *iobuffer = static_cast<unsigned char *>(av_malloc(m_fileio->bufsize() + FF_INPUT_BUFFER_PADDING_SIZE));
     if (iobuffer == nullptr)
     {
         Logging::error(filename(), "Out of memory opening file: I/O buffer could not be allocated.");
-        avformat_free_context(m_in.m_format_ctx);
-        m_in.m_format_ctx = nullptr;
+        m_in.m_format_ctx.reset();
         return AVERROR(ENOMEM);
     }
 
@@ -392,7 +391,15 @@ int FFmpeg_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, std::shared_pt
                 input_read,
                 nullptr,    // input_write
                 seek);      // input_seek
+    if (pb == nullptr)
+    {
+        Logging::error(filename(), "Out of memory opening file: I/O context could not be allocated.");
+        av_freep(&iobuffer);
+        m_in.m_format_ctx.reset();
+        return AVERROR(ENOMEM);
+    }
     m_in.m_format_ctx->pb = pb;
+    m_in.m_format_ctx.set_custom_io();
 
 #if IF_DECLARED_CONST
     const AVInputFormat * infmt = nullptr;
@@ -445,7 +452,7 @@ int FFmpeg_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, std::shared_pt
       */
 
     // Open the input file to read from it.
-    ret = avformat_open_input(&m_in.m_format_ctx, filename(), infmt, &opt);
+    ret = avformat_open_input(m_in.m_format_ctx.address(), filename(), infmt, &opt);
     if (ret < 0)
     {
         Logging::error(filename(), "Could not open input file (error '%1').", ffmpeg_geterror(ret).c_str());
@@ -2694,19 +2701,20 @@ int FFmpeg_Transcoder::open_output_filestreams(Buffer *buffer)
     m_copy_video = can_copy_stream(m_in.m_video.m_stream);
 
     // Create a new format context for the output container format.
+    int ret = 0;
     if (m_current_format->format_name() != "m4a")
     {
-        avformat_alloc_output_context2(&m_out.m_format_ctx, nullptr, m_current_format->format_name().c_str(), nullptr);
+        ret = m_out.m_format_ctx.alloc_output_context(m_current_format->format_name().c_str(), nullptr);
     }
     else
     {
-        avformat_alloc_output_context2(&m_out.m_format_ctx, nullptr, nullptr, ".m4a");
+        ret = m_out.m_format_ctx.alloc_output_context(nullptr, ".m4a");
     }
 
-    if (m_out.m_format_ctx == nullptr)
+    if (ret < 0 || m_out.m_format_ctx == nullptr)
     {
         Logging::error(virtname(), "Could not allocate an output format context.");
-        return AVERROR(ENOMEM);
+        return (ret < 0) ? ret : AVERROR(ENOMEM);
     }
 
     if (!m_is_video)
@@ -2843,8 +2851,10 @@ int FFmpeg_Transcoder::open_output_filestreams(Buffer *buffer)
     if (m_out.m_format_ctx->pb == nullptr)
     {
         Logging::error(virtname(), "Out of memory opening output file: Unable to allocate format context.");
+        av_freep(&iobuffer);
         return AVERROR(ENOMEM);
     }
+    m_out.m_format_ctx.set_custom_io();
 
     return 0;
 }
@@ -6500,27 +6510,7 @@ bool FFmpeg_Transcoder::close_output_file()
     m_out.m_album_art.clear();
     m_out.m_subtitle.clear();
 
-    if (m_out.m_format_ctx != nullptr)
-    {
-        closed = true;
-
-        if (m_out.m_format_ctx->pb != nullptr)
-        {
-            // 2017-09-01 - xxxxxxx - lavf 57.80.100 / 57.11.0 - avio.h
-            //  Add avio_context_free(). From now on it must be used for freeing AVIOContext.
-#if (LIBAVFORMAT_VERSION_INT >= AV_VERSION_INT(57, 80, 0))
-            av_freep(&m_out.m_format_ctx->pb->buffer);
-            avio_context_free(&m_out.m_format_ctx->pb);
-#else
-            av_freep(m_out.m_format_ctx->pb);
-#endif
-            m_out.m_format_ctx->pb = nullptr;
-        }
-
-        avformat_free_context(m_out.m_format_ctx);
-
-        m_out.m_format_ctx = nullptr;
-    }
+    closed = m_out.m_format_ctx.reset();
 
     return closed;
 }
@@ -6537,28 +6527,13 @@ bool FFmpeg_Transcoder::close_input_file()
 
     if (m_in.m_format_ctx != nullptr)
     {
-        closed = true;
-
         if (m_fileio.use_count() <= 1 && m_fileio != nullptr)
         {
             m_fileio->closeio();
         }
         m_fileio.reset();
 
-        if (m_in.m_format_ctx->pb != nullptr)
-        {
-            // 2017-09-01 - xxxxxxx - lavf 57.80.100 / 57.11.0 - avio.h
-            //  Add avio_context_free(). From now on it must be used for freeing AVIOContext.
-#if (LIBAVFORMAT_VERSION_INT >= AV_VERSION_INT(57, 80, 0))
-            avio_context_free(&m_in.m_format_ctx->pb);
-#else
-            av_freep(m_in.m_format_ctx->pb);
-#endif
-            m_in.m_format_ctx->pb = nullptr;
-        }
-
-        avformat_close_input(&m_in.m_format_ctx);
-        m_in.m_format_ctx = nullptr;
+        closed = m_in.m_format_ctx.reset();
     }
 
     free_filters();

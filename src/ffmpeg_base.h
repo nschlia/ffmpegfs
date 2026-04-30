@@ -55,13 +55,6 @@ public:
     virtual ~FFmpeg_Base() = default;
 
 protected:
-#if !LAVC_DEP_AV_INIT_PACKET
-    /**
-     * @brief Initialise one data packet for reading or writing.
-     * @param[in] pkt - Packet to be initialised.
-     */
-    void                init_packet(AVPacket *pkt) const;
-#endif // !LAVC_DEP_AV_INIT_PACKET
     /**
      * @brief Set up a video stream.
      * @param[in] output_codec_ctx - Output codec context.

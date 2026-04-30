@@ -57,25 +57,6 @@
 #define LAVU_DEP_PKT_DURATION               (LIBAVUTIL_VERSION_INT >= AV_VERSION_INT(57, 30, 0))
 
 /**
- * 2021-03-17 - f7db77bd87 - lavc 58.133.100 - codec.h
- *   Deprecated av_init_packet(). Once removed, sizeof(AVPacket) will
- *   no longer be a part of the public ABI.
- *   Deprecated AVPacketList.
- *
- * Note from libacodec/packet.h:
- *
- * sizeof(AVPacket) being a part of the public ABI is deprecated. once
- * av_init_packet() is removed, new packets will only be able to be allocated
- * with av_packet_alloc(), and new fields may be added to the end of the struct
- * with a minor bump.
- *
- *
- * see av_packet_alloc
- * see av_packet_ref
- * see av_packet_unref
- */
-#define LAVC_DEP_AV_INIT_PACKET             (LIBAVCODEC_VERSION_INT >= AV_VERSION_INT(58, 133, 0))
-/**
  * This is big fun... Of course making these const is a good idea, but nevertheless
  * a PITA to keep the code working with newer AND older versions...
  *

@@ -55,15 +55,6 @@ FFmpeg_Base::FFmpeg_Base()
 {
 }
 
-#if !LAVC_DEP_AV_INIT_PACKET
-void FFmpeg_Base::init_packet(AVPacket *pkt) const
-{
-    av_init_packet(pkt);
-    // Set the packet data and size so that it is recognised as being empty.
-    pkt->data = nullptr;
-    pkt->size = 0;
-}
-#endif // !LAVC_DEP_AV_INIT_PACKET
 
 void FFmpeg_Base::video_stream_setup(AVCodecContext *output_codec_ctx, AVStream* output_stream, AVCodecContext *input_codec_ctx, AVRational framerate, AVPixelFormat  enc_hw_pix_fmt) const
 {

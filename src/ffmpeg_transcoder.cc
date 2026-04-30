@@ -2660,13 +2660,11 @@ int FFmpeg_Transcoder::add_albumart_stream(const AVCodecContext * input_codec_ct
 
 int FFmpeg_Transcoder::add_albumart_frame(AVStream *output_stream, AVPacket *pkt_in)
 {
-    AVPacket *tmp_pkt;
-    int ret = 0;
+    FFmpeg_Packet tmp_pkt(pkt_in);
+    int ret = tmp_pkt.res();
 
-    tmp_pkt = av_packet_clone(pkt_in);
-    if (tmp_pkt == nullptr)
+    if (ret < 0)
     {
-        ret = AVERROR(ENOMEM);
         Logging::error(virtname(), "Could not write album art packet (error '%1').", ffmpeg_geterror(ret).c_str());
         return ret;
     }
@@ -2678,11 +2676,7 @@ int FFmpeg_Transcoder::add_albumart_frame(AVStream *output_stream, AVPacket *pkt
     tmp_pkt->pos = 0;
     tmp_pkt->dts = 0;
 
-    ret = store_packet(tmp_pkt, AVMEDIA_TYPE_ATTACHMENT);
-
-    av_packet_unref(tmp_pkt);
-
-    return ret;
+    return store_packet(tmp_pkt, AVMEDIA_TYPE_ATTACHMENT);
 }
 
 int FFmpeg_Transcoder::open_output_filestreams(Buffer *buffer)
@@ -3740,6 +3734,7 @@ int FFmpeg_Transcoder::decode_subtitle(AVCodecContext *codec_ctx, AVPacket *pkt,
 
 int FFmpeg_Transcoder::store_packet(AVPacket *pkt, AVMediaType mediatype)
 {
+    int ret;
     if (is_hls() && pkt->pts != AV_NOPTS_VALUE)
     {
         switch (mediatype)
@@ -3762,7 +3757,13 @@ int FFmpeg_Transcoder::store_packet(AVPacket *pkt, AVMediaType mediatype)
                     Logging::trace(virtname(), "Buffering audio packets until the next segment no. %1 from position %2 (%3).", next_segment, pos, format_duration(pos).c_str());
                 }
 
-                m_hls_packet_fifo.push(av_packet_clone(pkt));
+                FFmpeg_Packet fifo_pkt(pkt);
+                ret = fifo_pkt.res();
+                if (ret < 0)
+                {
+                    return ret;
+                }
+                m_hls_packet_fifo.push(std::move(fifo_pkt));
                 return 0;
             }
             break;
@@ -3785,7 +3786,13 @@ int FFmpeg_Transcoder::store_packet(AVPacket *pkt, AVMediaType mediatype)
                     Logging::trace(virtname(), "Buffering video packets until the next segment no. %1 from position %2 (%3).", next_segment, pos, format_duration(pos).c_str());
                 }
 
-                m_hls_packet_fifo.push(av_packet_clone(pkt));
+                FFmpeg_Packet fifo_pkt(pkt);
+                ret = fifo_pkt.res();
+                if (ret < 0)
+                {
+                    return ret;
+                }
+                m_hls_packet_fifo.push(std::move(fifo_pkt));
                 return 0;
             }
             break;
@@ -3805,7 +3812,13 @@ int FFmpeg_Transcoder::store_packet(AVPacket *pkt, AVMediaType mediatype)
 
                 if (goto_next_segment(next_segment))
                 {
-                    m_hls_packet_fifo.push(av_packet_clone(pkt));
+                    FFmpeg_Packet fifo_pkt(pkt);
+                    ret = fifo_pkt.res();
+                    if (ret < 0)
+                    {
+                        return ret;
+                    }
+                    m_hls_packet_fifo.push(std::move(fifo_pkt));
                     return 0;
                 }
             }
@@ -3818,7 +3831,7 @@ int FFmpeg_Transcoder::store_packet(AVPacket *pkt, AVMediaType mediatype)
         }
     }
 
-    int ret = av_write_frame(m_out.m_format_ctx, pkt);
+    ret = av_write_frame(m_out.m_format_ctx, pkt);
 
     if (ret < 0)
     {
@@ -4188,40 +4201,31 @@ int FFmpeg_Transcoder::flush_frames_single(int stream_idx, bool use_flush_packet
 
         if (decode_frame_ptr != nullptr)
         {
-#if !LAVC_DEP_AV_INIT_PACKET
-            AVPacket pkt;
-#endif // !LAVC_DEP_AV_INIT_PACKET
-            AVPacket *flush_packet = nullptr;
+            FFmpeg_Packet flush_packet(stream_idx);
+            AVPacket *flush_packet_ptr = nullptr;
+
+            if (flush_packet.res() < 0)
+            {
+                return flush_packet.res();
+            }
 
             if (use_flush_packet)
             {
-#if LAVC_DEP_AV_INIT_PACKET
-                flush_packet = av_packet_alloc();
-#else // !LAVC_DEP_AV_INIT_PACKET
-                flush_packet = &pkt;
-
-                init_packet(flush_packet);
-#endif // !LAVC_DEP_AV_INIT_PACKET
-
                 flush_packet->data          = nullptr;
                 flush_packet->size          = 0;
                 flush_packet->stream_index  = stream_idx;
+                flush_packet_ptr            = flush_packet;
             }
 
             // cppcheck-suppress knownConditionTrueFalse
             for (int decoded = 1; decoded;)
             {
-                ret = (this->*decode_frame_ptr)(flush_packet, &decoded);
+                ret = (this->*decode_frame_ptr)(flush_packet_ptr, &decoded);
                 if (ret < 0 && ret != AVERROR(EAGAIN))
                 {
                     break;
                 }
             }
-
-            av_packet_unref(flush_packet);
-#if LAVC_DEP_AV_INIT_PACKET
-            av_packet_free(&flush_packet);
-#endif // LAVC_DEP_AV_INIT_PACKET
         }
     }
 
@@ -4231,13 +4235,18 @@ int FFmpeg_Transcoder::flush_frames_single(int stream_idx, bool use_flush_packet
 int FFmpeg_Transcoder::read_decode_convert_and_store(int *finished)
 {
     // Packet used for temporary storage.
-    AVPacket pkt;
-    int ret = 0;
+    FFmpeg_Packet pkt;
+    int ret = pkt.res();
+
+    if (ret < 0)
+    {
+        return ret;
+    }
 
     try
     {
         // Read one frame from the input file into a temporary packet.
-        ret = av_read_frame(m_in.m_format_ctx, &pkt);
+        ret = av_read_frame(m_in.m_format_ctx, pkt);
         if (ret < 0)
         {
             if (ret == AVERROR_EOF)
@@ -4257,9 +4266,9 @@ int FFmpeg_Transcoder::read_decode_convert_and_store(int *finished)
         {
             // Check for end of cue sheet track
             ///<* @todo Cue sheet track: Must check video stream, too and end if both all video and audio packets arrived. Discard packets exceeding duration.
-            if (is_audio_stream(pkt.stream_index))
+            if (is_audio_stream(pkt->stream_index))
             {
-                int64_t pkt_pts = ffmpeg_rescale_q(pkt.pts, m_in.m_audio.m_stream->time_base);
+                int64_t pkt_pts = ffmpeg_rescale_q(pkt->pts, m_in.m_audio.m_stream->time_base);
                 if (pkt_pts > m_virtualfile->m_cuesheet_track.m_start + m_virtualfile->m_cuesheet_track.m_duration)
                 {
                     Logging::trace(virtname(), "Read to end of track.");
@@ -4274,7 +4283,7 @@ int FFmpeg_Transcoder::read_decode_convert_and_store(int *finished)
             // Decode one packet, at least with the old API (!LAV_NEW_PACKET_INTERFACE)
             // it seems a packet can contain more than one frame so loop around it
             // if necessary...
-            ret = decode_frame(&pkt);
+            ret = decode_frame(pkt);
 
             if (ret < 0 && ret != AVERROR(EAGAIN))
             {
@@ -4293,8 +4302,6 @@ int FFmpeg_Transcoder::read_decode_convert_and_store(int *finished)
     {
         ret = _ret;
     }
-
-    av_packet_unref(&pkt);
 
     return ret;
 }
@@ -4385,18 +4392,13 @@ void FFmpeg_Transcoder::produce_audio_dts(AVPacket *pkt)
 int FFmpeg_Transcoder::encode_audio_frame(const AVFrame *frame, int *data_present)
 {
     // Packet used for temporary storage.
-#if !LAVC_DEP_AV_INIT_PACKET
-    AVPacket tmp_pkt;
-#endif // !LAVC_DEP_AV_INIT_PACKET
-    AVPacket *pkt;
-    int ret = 0;
+    FFmpeg_Packet pkt;
+    int ret = pkt.res();
 
-#if LAVC_DEP_AV_INIT_PACKET
-    pkt = av_packet_alloc();
-#else // !LAVC_DEP_AV_INIT_PACKET
-    pkt = &tmp_pkt;
-    init_packet(pkt);
-#endif // !LAVC_DEP_AV_INIT_PACKET
+    if (ret < 0)
+    {
+        return ret;
+    }
 
     try
     {
@@ -4445,17 +4447,13 @@ int FFmpeg_Transcoder::encode_audio_frame(const AVFrame *frame, int *data_presen
             }
         }
 
-        av_packet_unref(pkt);
+        pkt.unref();
     }
     catch (int _ret)
     {
-        av_packet_unref(pkt);
+        pkt.unref();
         ret = _ret;
     }
-
-#if LAVC_DEP_AV_INIT_PACKET
-    av_packet_free(&pkt);
-#endif // LAVC_DEP_AV_INIT_PACKET
 
     return ret;
 }
@@ -4484,11 +4482,13 @@ int FFmpeg_Transcoder::encode_image_frame(const AVFrame *frame, int *data_presen
         return AVERROR(EINVAL);
     }
 
-#if !LAVC_DEP_AV_INIT_PACKET
-    AVPacket tmp_pkt;
-#endif // !LAVC_DEP_AV_INIT_PACKET
-    AVPacket *pkt = nullptr;
-    int ret = 0;
+    FFmpeg_Packet pkt;
+    int ret = pkt.res();
+
+    if (ret < 0)
+    {
+        return ret;
+    }
 
     try
     {
@@ -4500,13 +4500,6 @@ int FFmpeg_Transcoder::encode_image_frame(const AVFrame *frame, int *data_presen
             Logging::error(virtname(), "Could not encode image frame (error '%1').", ffmpeg_geterror(ret).c_str());
             throw ret;
         }
-
-#if LAVC_DEP_AV_INIT_PACKET
-        pkt = av_packet_alloc();
-#else // !LAVC_DEP_AV_INIT_PACKET
-        pkt = &tmp_pkt;
-        init_packet(pkt);
-#endif // !LAVC_DEP_AV_INIT_PACKET
 
         uint32_t frame_no = pts_to_frame(m_in.m_video.m_stream, frame->pts);
 
@@ -4534,7 +4527,7 @@ int FFmpeg_Transcoder::encode_image_frame(const AVFrame *frame, int *data_presen
             ret = avcodec_receive_packet(m_out.m_video.m_codec_ctx.get(), pkt);
             if (ret == AVERROR(EAGAIN) || ret == AVERROR_EOF)
             {
-                av_packet_unref(pkt);
+                pkt.unref();
                 break;
             }
             else if (ret < 0)
@@ -4561,18 +4554,14 @@ int FFmpeg_Transcoder::encode_image_frame(const AVFrame *frame, int *data_presen
                 }
             }
 
-            av_packet_unref(pkt);
+            pkt.unref();
         }
     }
     catch (int _ret)
     {
-        av_packet_unref(pkt);
+        pkt.unref();
         ret = _ret;
     }
-
-#if LAVC_DEP_AV_INIT_PACKET
-    av_packet_free(&pkt);
-#endif // LAVC_DEP_AV_INIT_PACKET
 
     return ret;
 }
@@ -4617,12 +4606,14 @@ int FFmpeg_Transcoder::encode_video_frame(const AVFrame *frame, int *data_presen
             m_out.m_video.m_stream->codecpar->field_order = AV_FIELD_PROGRESSIVE;
         }
     }
-#if !LAVC_DEP_AV_INIT_PACKET
-    AVPacket tmp_pkt;
-#endif // !LAVC_DEP_AV_INIT_PACKET
     FFmpeg_Frame *hw_frame = nullptr;
-    AVPacket *pkt = nullptr;
-    int ret = 0;
+    FFmpeg_Packet pkt;
+    int ret = pkt.res();
+
+    if (ret < 0)
+    {
+        return ret;
+    }
 
     try
     {
@@ -4652,13 +4643,6 @@ int FFmpeg_Transcoder::encode_video_frame(const AVFrame *frame, int *data_presen
             frame = *hw_frame;  // Copy, not clone!
         }
 
-#if LAVC_DEP_AV_INIT_PACKET
-        pkt = av_packet_alloc();
-#else // !LAVC_DEP_AV_INIT_PACKET
-        pkt = &tmp_pkt;
-        init_packet(pkt);
-#endif // !LAVC_DEP_AV_INIT_PACKET
-
         // Encode the video frame and store it in the temporary packet.
         // The output video stream encoder is used to do this.
 
@@ -4680,7 +4664,7 @@ int FFmpeg_Transcoder::encode_video_frame(const AVFrame *frame, int *data_presen
             ret = avcodec_receive_packet(m_out.m_video.m_codec_ctx.get(), pkt);
             if (ret == AVERROR(EAGAIN) || ret == AVERROR_EOF)
             {
-                av_packet_unref(pkt);
+                pkt.unref();
                 break;
             }
             else if (ret < 0)
@@ -4754,23 +4738,16 @@ int FFmpeg_Transcoder::encode_video_frame(const AVFrame *frame, int *data_presen
                 }
             }
 
-            av_packet_unref(pkt);
+            pkt.unref();
         }
     }
     catch (int _ret)
     {
-        if (pkt != nullptr)
-        {
-            av_packet_unref(pkt);
-        }
+        pkt.unref();
         ret = _ret;
     }
 
     delete hw_frame;
-
-#if LAVC_DEP_AV_INIT_PACKET
-    av_packet_free(&pkt);
-#endif // LAVC_DEP_AV_INIT_PACKET
 
     return ret;
 }
@@ -4788,18 +4765,13 @@ int FFmpeg_Transcoder::encode_subtitle(const AVSubtitle *sub, int out_stream_idx
     }
 
     // Packet used for temporary storage.
-#if !LAVC_DEP_AV_INIT_PACKET
-    AVPacket tmp_pkt;
-#endif // !LAVC_DEP_AV_INIT_PACKET
-    AVPacket *pkt;
-    int ret = 0;
+    FFmpeg_Packet pkt;
+    int ret = pkt.res();
 
-#if LAVC_DEP_AV_INIT_PACKET
-    pkt = av_packet_alloc();
-#else // !LAVC_DEP_AV_INIT_PACKET
-    pkt = &tmp_pkt;
-    init_packet(pkt);
-#endif // !LAVC_DEP_AV_INIT_PACKET
+    if (ret < 0)
+    {
+        return ret;
+    }
 
     AVSubtitle subtmp;
 
@@ -4898,17 +4870,13 @@ int FFmpeg_Transcoder::encode_subtitle(const AVSubtitle *sub, int out_stream_idx
 
             *data_present = 1;
         }
-        av_packet_unref(pkt);
+        pkt.unref();
     }
     catch (int _ret)
     {
-        av_packet_unref(pkt);
+        pkt.unref();
         ret = _ret;
     }
-
-#if LAVC_DEP_AV_INIT_PACKET
-    av_packet_free(&pkt);
-#endif // LAVC_DEP_AV_INIT_PACKET
 
     return ret;
 }
@@ -5769,7 +5737,7 @@ int FFmpeg_Transcoder::start_new_segment()
     while (!m_hls_packet_fifo.empty())
     {
         int ret = 0;
-        AVPacket *pkt = m_hls_packet_fifo.front();
+        FFmpeg_Packet pkt(std::move(m_hls_packet_fifo.front()));
         m_hls_packet_fifo.pop();
 
         ret = av_write_frame(m_out.m_format_ctx, pkt);
@@ -5780,7 +5748,6 @@ int FFmpeg_Transcoder::start_new_segment()
             return ret;
         }
 
-        av_packet_unref(pkt);
     }
     return 0;
 }
@@ -6476,10 +6443,7 @@ size_t FFmpeg_Transcoder::purge_hls_fifo()
 
     while (!m_hls_packet_fifo.empty())
     {
-        AVPacket *pkt = m_hls_packet_fifo.front();
         m_hls_packet_fifo.pop();
-
-        av_packet_unref(pkt);
     }
 
     return hls_packets_left;
@@ -7889,13 +7853,19 @@ int FFmpeg_Transcoder::add_external_subtitle_stream(const std::string & subtitle
                     throw ret;
                 }
 
-                AVPacket pkt;
                 int output_stream_index = ret;
+                FFmpeg_Packet pkt;
+                ret = pkt.res();
+                if (ret < 0)
+                {
+                    throw ret;
+                }
+
                 // Read one frame from the input file into a temporary packet.
-                while ((ret = av_read_frame(format_ctx, &pkt)) == 0)
+                while ((ret = av_read_frame(format_ctx, pkt)) == 0)
                 {
                     int decoded;
-                    ret = decode_subtitle(codec_ctx, &pkt, &decoded, output_stream_index);
+                    ret = decode_subtitle(codec_ctx, pkt, &decoded, output_stream_index);
                     if (ret < 0)
                     {
                         throw ret;

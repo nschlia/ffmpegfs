@@ -36,6 +36,7 @@
 
 #include "ffmpeg_base.h"
 #include "ffmpeg_frame.h"
+#include "ffmpeg_packet.h"
 #include "ffmpeg_subtitle.h"
 #include "id3v1tag.h"
 #include "fileio.h"
@@ -47,6 +48,7 @@
 #include <functional>
 #include <optional>
 #include <atomic>
+#include <utility>
 
 class Buffer;
 struct SwrContext;
@@ -1298,7 +1300,7 @@ private:
 
     uint32_t                    m_active_stream_msk;            /**< @brief HLS: Currently active streams bit mask. Set FFMPEGFS_AUDIO and/or FFMPEGFS_VIDEO */
     uint32_t                    m_inhibit_stream_msk;           /**< @brief HLS: Currently inhibited streams bit mask. Packets temporarly go to m_hls_packet_fifo and will be prepended to next segment. Set FFMPEGFS_AUDIO and/or FFMPEGFS_VIDEO */
-    std::queue<AVPacket*>       m_hls_packet_fifo;              /**< @brief HLS packet FIFO */
+    std::queue<FFmpeg_Packet>  m_hls_packet_fifo;              /**< @brief HLS packet FIFO */
 };
 
 #endif // FFMPEG_TRANSCODER_H

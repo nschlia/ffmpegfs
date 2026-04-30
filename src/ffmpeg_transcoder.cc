@@ -54,6 +54,7 @@ extern "C" {
 #endif
 
 #include "ffmpeg_transcoder.h"
+#include "ffmpeg_dictionary.h"
 #include "buffer.h"
 #include "wave.h"
 #include "aiff.h"
@@ -292,7 +293,7 @@ bool FFmpeg_Transcoder::is_open() const
 
 int FFmpeg_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, std::shared_ptr<FileIO> fio)
 {
-    AVDictionary * opt = nullptr;
+    FFmpeg_Dictionary opt;
     int ret;
 
     if (virtualfile == nullptr)
@@ -315,28 +316,28 @@ int FFmpeg_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, std::shared_pt
     // This allows selecting if the demuxer should consider all streams to be
     // found after the first PMT and add further streams during decoding or if it rather
     // should scan all that are within the analyze-duration and other limits
-    ret = dict_set_with_check(&opt, "scan_all_pmts", "1", AV_DICT_DONT_OVERWRITE);
+    ret = dict_set_with_check(opt.address(), "scan_all_pmts", "1", AV_DICT_DONT_OVERWRITE);
     if (ret < 0)
     {
         return ret;
     }
 
     // avioflags direct: Reduce buffering.
-    //ret = dict_set_with_check(&opt, "avioflags", "direct", AV_DICT_DONT_OVERWRITE);
+    //ret = dict_set_with_check(opt.address(), "avioflags", "direct", AV_DICT_DONT_OVERWRITE);
     //if (ret < 0)
     //{
     //    return ret;
     //}
 
     // analyzeduration: Defaults to 5,000,000 microseconds = 5 seconds.
-    ret = dict_set_with_check(&opt, "analyzeduration", "15000000", 0);    // <<== honored: 15 seconds
+    ret = dict_set_with_check(opt.address(), "analyzeduration", "15000000", 0);    // <<== honored: 15 seconds
     if (ret < 0)
     {
         return ret;
     }
 
     // probesize: 5000000 by default.
-    ret = dict_set_with_check(&opt, "probesize", "15000000", 0);          // <<== honoured: ~15 MB
+    ret = dict_set_with_check(opt.address(), "probesize", "15000000", 0);          // <<== honoured: ~15 MB
     if (ret < 0)
     {
         return ret;
@@ -451,7 +452,7 @@ int FFmpeg_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, std::shared_pt
       */
 
     // Open the input file to read from it.
-    ret = avformat_open_input(m_in.m_format_ctx.address(), filename(), infmt, &opt);
+    ret = avformat_open_input(m_in.m_format_ctx.address(), filename(), infmt, opt.address());
     if (ret < 0)
     {
         Logging::error(filename(), "Could not open input file (error '%1').", ffmpeg_geterror(ret).c_str());
@@ -962,14 +963,14 @@ int FFmpeg_Transcoder::open_decoder(AVFormatContext *format_ctx, AVCodecContext 
     {
         AVCodecContext *input_codec_ctx     = nullptr;
         AVStream *      input_stream        = nullptr;
-        AVDictionary *  opt                 = nullptr;
+        FFmpeg_Dictionary opt;
         AVCodecID       codec_id            = AV_CODEC_ID_NONE;
         int ret;
 
         input_stream = format_ctx->streams[stream_idx];
 
         // Init the decoders, with or without reference counting
-        // av_dict_set_with_check(&opt, "refcounted_frames", refcount ? "1" : "0", 0);
+        // av_dict_set_with_check(opt.address(), "refcounted_frames", refcount ? "1" : "0", 0);
 
         // allocate a new decoding context
         input_codec_ctx = avcodec_alloc_context3(nullptr);
@@ -1081,9 +1082,7 @@ int FFmpeg_Transcoder::open_decoder(AVFormatContext *format_ctx, AVCodecContext 
 
         //input_codec_ctx->time_base = input_stream->time_base;
 
-        ret = avcodec_open2(input_codec_ctx, input_codec, &opt);
-
-        av_dict_free(&opt);
+        ret = avcodec_open2(input_codec_ctx, input_codec, opt.address());
 
         if (ret < 0)
         {
@@ -1120,7 +1119,7 @@ int FFmpeg_Transcoder::open_output_frame_set(Buffer *buffer)
 {
     const AVCodec * output_codec        = nullptr;
     AVCodecContext *output_codec_ctx    = nullptr;
-    AVDictionary * opt                  = nullptr;
+    FFmpeg_Dictionary opt;
     int ret = 0;
 
     m_buffer            = buffer;
@@ -1213,7 +1212,7 @@ int FFmpeg_Transcoder::open_output_frame_set(Buffer *buffer)
     case AV_CODEC_ID_MJPEG:
     {
         // set -strict -1 for JPG
-        dict_set_with_check(&opt, "strict", "-1", 0);
+        dict_set_with_check(opt.address(), "strict", "-1", 0);
 
         // Allow the use of unoffical extensions
         output_codec_ctx->strict_std_compliance = FF_COMPLIANCE_UNOFFICIAL;
@@ -1238,7 +1237,7 @@ int FFmpeg_Transcoder::open_output_frame_set(Buffer *buffer)
     //codec_ctx->sample_aspect_ratio  = frame->sample_aspect_ratio;
     //codec_ctx->sample_aspect_ratio  = m_in.m_video.m_codec_ctx->sample_aspect_ratio;
 
-    ret = avcodec_open2(output_codec_ctx, output_codec, &opt);
+    ret = avcodec_open2(output_codec_ctx, output_codec, opt.address());
     if (ret < 0)
     {
         Logging::error(virtname(), "The image codec could not be opened.");
@@ -1665,7 +1664,7 @@ int FFmpeg_Transcoder::add_stream(AVCodecID codec_id)
 #else // !IF_DECLARED_CONST
     AVCodec * output_codec              = nullptr;
 #endif // !IF_DECLARED_CONST
-    AVDictionary *  opt                 = nullptr;
+    FFmpeg_Dictionary opt;
     int ret;
 
     std::string codec_name;
@@ -1973,7 +1972,7 @@ int FFmpeg_Transcoder::add_stream(AVCodecID codec_id)
         output_codec_ctx->time_base             = output_stream->time_base;
 
         // set -strict -2 for aac (required for FFmpeg 2)
-        dict_set_with_check(&opt, "strict", "-2", 0);
+        dict_set_with_check(opt.address(), "strict", "-2", 0);
 
         // Allow the use of the experimental AAC encoder
         output_codec_ctx->strict_std_compliance = FF_COMPLIANCE_EXPERIMENTAL;
@@ -2258,7 +2257,7 @@ int FFmpeg_Transcoder::add_stream(AVCodecID codec_id)
         }
 
         // set -strict -2 for aac (required for FFmpeg 2)
-        dict_set_with_check(&opt, "strict", "-2", 0);
+        dict_set_with_check(opt.address(), "strict", "-2", 0);
 
         // Allow the use of the experimental AAC encoder
         output_codec_ctx->strict_std_compliance = FF_COMPLIANCE_EXPERIMENTAL;
@@ -2314,11 +2313,11 @@ int FFmpeg_Transcoder::add_stream(AVCodecID codec_id)
     if (!av_dict_get(opt, "threads", nullptr, 0))
     {
         Logging::trace(virtname(), "Setting threads to auto for codec %1.", get_codec_name(output_codec_ctx->codec_id));
-        dict_set_with_check(&opt, "threads", "auto", 0, virtname());
+        dict_set_with_check(opt.address(), "threads", "auto", 0, virtname());
     }
 
     // Open the encoder for the stream to use it later.
-    ret = avcodec_open2(output_codec_ctx, output_codec, &opt);
+    ret = avcodec_open2(output_codec_ctx, output_codec, opt.address());
     if (ret < 0)
     {
         Logging::error(virtname(), "Could not open %1 output codec %2 for stream #%3 (error '%4').", get_media_type_string(output_codec->type), get_codec_name(codec_id), output_stream->index, ffmpeg_geterror(ret).c_str());
@@ -2346,7 +2345,7 @@ int FFmpeg_Transcoder::add_subtitle_stream(AVCodecID codec_id, StreamRef & input
 #else // !IF_DECLARED_CONST
     AVCodec * output_codec              = nullptr;
 #endif // !IF_DECLARED_CONST
-    AVDictionary *  opt                 = nullptr;
+    FFmpeg_Dictionary opt;
     int ret;
 
     // find the encoder
@@ -2377,7 +2376,7 @@ int FFmpeg_Transcoder::add_subtitle_stream(AVCodecID codec_id, StreamRef & input
     output_codec_ctx->time_base             = output_stream->time_base;
 
     // set -strict -2 for aac (required for FFmpeg 2)
-    dict_set_with_check(&opt, "strict", "-2", 0);
+    dict_set_with_check(opt.address(), "strict", "-2", 0);
 
     // Allow the use of the experimental AAC encoder
     output_codec_ctx->strict_std_compliance = FF_COMPLIANCE_EXPERIMENTAL;
@@ -2427,7 +2426,7 @@ int FFmpeg_Transcoder::add_subtitle_stream(AVCodecID codec_id, StreamRef & input
     }
 
     // Open the encoder for the stream to use it later.
-    ret = avcodec_open2(output_codec_ctx, output_codec, &opt);
+    ret = avcodec_open2(output_codec_ctx, output_codec, opt.address());
     if (ret < 0)
     {
         Logging::error(virtname(), "Could not open %1 output codec %2 for stream #%3 (error '%4').", get_media_type_string(output_codec->type), get_codec_name(codec_id), output_stream->index, ffmpeg_geterror(ret).c_str());
@@ -2562,7 +2561,7 @@ int FFmpeg_Transcoder::add_albumart_stream(const AVCodecContext * input_codec_ct
     AVStream * output_stream            = nullptr;
     const AVCodec * input_codec         = input_codec_ctx->codec;
     const AVCodec * output_codec        = nullptr;
-    AVDictionary *  opt                 = nullptr;
+    FFmpeg_Dictionary opt;
     int ret;
 
     // find the encoder
@@ -2637,7 +2636,7 @@ int FFmpeg_Transcoder::add_albumart_stream(const AVCodecContext * input_codec_ct
     }
 
     // Open the encoder for the stream to use it later.
-    ret = avcodec_open2(output_codec_ctx, output_codec, &opt);
+    ret = avcodec_open2(output_codec_ctx, output_codec, opt.address());
     if (ret < 0)
     {
         Logging::error(virtname(), "Could not open %1 output codec %2 for stream #%3 (error '%4').", get_media_type_string(output_codec->type), get_codec_name(input_codec->id), output_stream->index, ffmpeg_geterror(ret).c_str());
@@ -3241,16 +3240,16 @@ int FFmpeg_Transcoder::create_fake_aiff_header() const
 
 int FFmpeg_Transcoder::write_output_file_header()
 {
-    AVDictionary* dict = nullptr;
+    FFmpeg_Dictionary dict;
     int ret;
 
-    ret = prepare_format(&dict, m_out.m_filetype);
+    ret = prepare_format(dict.address(), m_out.m_filetype);
     if (ret < 0)
     {
         return ret;
     }
 
-    ret = avformat_write_header(m_out.m_format_ctx, &dict);
+    ret = avformat_write_header(m_out.m_format_ctx, dict.address());
     if (ret < 0)
     {
         Logging::error(virtname(), "Could not write output file header (error '%1').", ffmpeg_geterror(ret).c_str());

@@ -35,6 +35,7 @@
 #pragma once
 
 #include "ffmpeg_base.h"
+#include "ffmpeg_audiofifo.h"
 #include "ffmpeg_frame.h"
 #include "ffmpeg_formatcontext.h"
 #include "ffmpeg_packet.h"
@@ -56,7 +57,6 @@ struct SwrContext;
 struct SwsContext;
 struct AVFilterContext;
 struct AVFilterGraph;
-struct AVAudioFifo;
 struct AVCodecContext;
 struct AVSubtitle;
 
@@ -1249,7 +1249,7 @@ private:
     uint64_t                    m_cur_channel_layout;           /**< @brief Currently selected audio channel layout */
 #endif  // !LAVU_DEP_OLD_CHANNEL_LAYOUT
     SwrContext *                m_audio_resample_ctx;           /**< @brief SwResample context for audio resampling */
-    AVAudioFifo *               m_audio_fifo;                   /**< @brief Audio sample FIFO */
+    FFmpeg_AudioFifo            m_audio_fifo;                   /**< @brief Audio sample FIFO */
 
     // Video conversion and buffering
     SwsContext *                m_sws_ctx;                      /**< @brief Context for video filtering */

@@ -223,7 +223,6 @@ FFmpeg_Transcoder::FFmpeg_Transcoder()
     , m_cur_sample_fmt(AV_SAMPLE_FMT_NONE)
     , m_cur_sample_rate(-1)
     , m_audio_resample_ctx(nullptr)
-    , m_audio_fifo(nullptr)
     , m_sws_ctx(nullptr)
     , m_buffer_sink_context(nullptr)
     , m_buffer_source_context(nullptr)
@@ -3013,11 +3012,11 @@ int FFmpeg_Transcoder::init_resampler()
 int FFmpeg_Transcoder::init_audio_fifo()
 {
     // Create the audio FIFO buffer based on the specified output sample format.
-    m_audio_fifo = av_audio_fifo_alloc(m_out.m_audio.m_codec_ctx->sample_fmt, get_channels(m_out.m_audio.m_codec_ctx.get()), 1);
-    if (m_audio_fifo == nullptr)
+    int ret = m_audio_fifo.alloc(m_out.m_audio.m_codec_ctx->sample_fmt, get_channels(m_out.m_audio.m_codec_ctx.get()), 1);
+    if (ret < 0)
     {
         Logging::error(virtname(), "Could not allocate an audio FIFO.");
-        return AVERROR(ENOMEM);
+        return ret;
     }
     return 0;
 }
@@ -4142,7 +4141,7 @@ int FFmpeg_Transcoder::add_samples_to_fifo(uint8_t **converted_input_samples, in
     // Make the audio FIFO as large as it needs to be to hold both,
     // the old and the new samples.
 
-    ret = av_audio_fifo_realloc(m_audio_fifo, av_audio_fifo_size(m_audio_fifo) + frame_size);
+    ret = m_audio_fifo.realloc(m_audio_fifo.size() + frame_size);
     if (ret < 0)
     {
         Logging::error(virtname(), "Could not reallocate the audio FIFO.");
@@ -4150,7 +4149,7 @@ int FFmpeg_Transcoder::add_samples_to_fifo(uint8_t **converted_input_samples, in
     }
 
     // Store the new samples in the audio FIFO buffer.
-    ret = av_audio_fifo_write(m_audio_fifo, reinterpret_cast<void **>(converted_input_samples), frame_size);
+    ret = m_audio_fifo.write(reinterpret_cast<void **>(converted_input_samples), frame_size);
     if (ret < frame_size)
     {
         if (ret < 0)
@@ -4908,7 +4907,7 @@ int FFmpeg_Transcoder::create_audio_frame(int frame_size)
     // If there is less than the maximum possible frame size in the audio FIFO
     // buffer use this number. Otherwise, use the maximum possible frame size
 
-    frame_size = FFMIN(av_audio_fifo_size(m_audio_fifo), frame_size);
+    frame_size = FFMIN(m_audio_fifo.size(), frame_size);
 
     // Initialise temporary storage for one output frame.
     ret = init_audio_output_frame(output_frame, frame_size);
@@ -4920,7 +4919,7 @@ int FFmpeg_Transcoder::create_audio_frame(int frame_size)
     // Read as many samples from the FIFO buffer as required to fill the frame.
     // The samples are stored in the frame temporarily.
 
-    ret = av_audio_fifo_read(m_audio_fifo, reinterpret_cast<void **>(output_frame->data), frame_size);
+    ret = m_audio_fifo.read(reinterpret_cast<void **>(output_frame->data), frame_size);
     if (ret < frame_size)
     {
         if (ret < 0)
@@ -5312,7 +5311,7 @@ int FFmpeg_Transcoder::copy_audio_to_frame_buffer(int *finished)
     // need to FIFO buffer to store as many frames worth of input samples
     // that they make up at least one frame worth of output samples.
 
-    while (av_audio_fifo_size(m_audio_fifo) < output_frame_size)
+    while (m_audio_fifo.size() < output_frame_size)
     {
         int ret = 0;
 
@@ -5338,7 +5337,7 @@ int FFmpeg_Transcoder::copy_audio_to_frame_buffer(int *finished)
     // At the end of the file, we pass the remaining samples to
     // the encoder.
 
-    while (av_audio_fifo_size(m_audio_fifo) >= output_frame_size || (*finished && av_audio_fifo_size(m_audio_fifo) > 0))
+    while (m_audio_fifo.size() >= output_frame_size || (*finished && m_audio_fifo.size() > 0))
     {
         int ret = 0;
 
@@ -6428,11 +6427,10 @@ int FFmpeg_Transcoder::purge_audio_fifo()
 {
     int audio_samples_left = 0;
 
-    if (m_audio_fifo != nullptr)
+    if (!m_audio_fifo.empty())
     {
-        audio_samples_left = av_audio_fifo_size(m_audio_fifo);
-        av_audio_fifo_free(m_audio_fifo);
-        m_audio_fifo = nullptr;
+        audio_samples_left = m_audio_fifo.size();
+        m_audio_fifo.reset();
     }
 
     return audio_samples_left;

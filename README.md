@@ -35,6 +35,11 @@ To see what's been done so far, checkout the [windows](https://github.com/nschli
 
 ---
 
+### Version 2.19 under development:
+
+- **Bugfix:** Fixed audio/video synchronization issues during transcoding.
+- **Bugfix:** Fixed HLS playback stopping unexpectedly, especially near the final segment.
+
 ### New in 2.18 (2026-04-10):
 
 - **Feature:** Added ALAC profile for iTunes (`--desttype=ALAC --profile=ITUNES`). Playback of the file will not commence until it is fully recoded; however, it can be played in iTunes.
@@ -52,16 +57,6 @@ To see what's been done so far, checkout the [windows](https://github.com/nschli
 - **Bugfix:** Updated Dockerfile for Trixie
 - **Bugfix:** Closes [#1115015](https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=1115015): Fix build with FFmpeg 8 (already applied in Debian via NMU)
 - **Bugfix:** Closes [#1119414](https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=1119414) Changed configure.ac and makefile.am to preserve the default build flags
-
----
-
-### New in 2.17 (2024-11-10)
-
-- **Bugfix:** Issue [#164](https://github.com/nschlia/ffmpegfs/issues/164): Fixed incorrectly discarded HLS seek requests.
-- **Bugfix:** Wrong error message fixed when an invalid audio/video codec was selected. The message should rather say "unsupported codec" instead of talking about "sample format not supported.".
-- **Bugfix:** Issue [#162](https://github.com/nschlia/ffmpegfs/issues/162): If not present, add time stamps to the copied streams.
-- Changed quality from 34 to 40 for hardware encoded video streams to create slightly smaller files.
-- [Closes#1084487:](https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=1084487): Moved from the FUSE 2 to the FUSE 3 API.
 
 📜 See [HISTORY.md](HISTORY.md) for the complete changelog.
 

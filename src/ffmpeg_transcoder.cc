@@ -4435,7 +4435,27 @@ int FFmpeg_Transcoder::encode_audio_frame(const AVFrame *frame, int *data_presen
             {
                 pkt->stream_index = m_out.m_audio.m_stream_idx;
 
+                const bool packet_has_timestamps =
+                    pkt->pts != AV_NOPTS_VALUE || pkt->dts != AV_NOPTS_VALUE;
+
                 produce_audio_dts(pkt);
+
+                /*
+                 * AVFrame::pts passed to the encoder is in codec time base.
+                 * Therefore packet timestamps returned by the encoder are in
+                 * codec time base as well and must be converted to the output
+                 * stream time base before muxing/storing.
+                 *
+                 * If produce_audio_dts() had to invent timestamps, it used the
+                 * existing m_out.m_audio_pts fallback in output stream time base;
+                 * do not rescale those invented values a second time.
+                 */
+                if (packet_has_timestamps)
+                {
+                    av_packet_rescale_ts(pkt,
+                                         m_out.m_audio.m_codec_ctx->time_base,
+                                         m_out.m_audio.m_stream->time_base);
+                }
 
                 ret = store_packet(pkt, AVMEDIA_TYPE_AUDIO);
                 if (ret < 0)
@@ -4957,22 +4977,29 @@ int FFmpeg_Transcoder::create_audio_frame(int frame_size)
         return ret;
     }
 
-    // Build correct PTS
+    /*
+     * Build the output frame PTS.
+     *
+     * Keep m_out.m_audio_pts in the output stream time base because that is
+     * what the cache/frame map and muxing side use. However, AVFrame::pts
+     * handed to avcodec_send_frame() must use the encoder codec time base.
+     *
+     * This mirrors the video path: frames are passed to the encoder in codec
+     * time base, and encoded packets are converted back to stream time base
+     * before they are stored.
+     */
+    const int64_t stream_pts = m_out.m_audio_pts;
+
     if (output_frame->sample_rate)
     {
-        /*
-        * FFmpeg API docs say:
-        *
-        * best_effort_timestamp: frame timestamp estimated using various heuristics, in stream time base.
-        * Unused for encoding, but we set it anyways.
-        *
-        * pts: Presentation timestamp, they say in ffmpeg time_base units, but nevertheless it seems to be
-        * in stream time base. When not converted the audio comes out wobbly.
-        */
+        // Not used for encoding, but keep it meaningful for diagnostics.
+        output_frame->best_effort_timestamp = ffmpeg_rescale_q(stream_pts,
+                                                               m_out.m_audio.m_stream->time_base,
+                                                               m_in.m_audio.m_stream->time_base);
 
-        // Not sure if this is use anywhere, but let's set it anyway.
-        output_frame->best_effort_timestamp = ffmpeg_rescale_q(m_out.m_audio_pts, m_out.m_audio.m_stream->time_base, m_in.m_audio.m_stream->time_base);
-        output_frame->pts = m_out.m_audio_pts;
+        output_frame->pts = ffmpeg_rescale_q(stream_pts,
+                                             m_out.m_audio.m_stream->time_base,
+                                             m_out.m_audio.m_codec_ctx->time_base);
 
         // duration = `a * b / c` = AV_TIME_BASE * output_frame->nb_samples / output_frame->sample_rate;
         int64_t sample_duration = av_rescale(AV_TIME_BASE, output_frame->nb_samples, output_frame->sample_rate);
@@ -4982,7 +5009,7 @@ int FFmpeg_Transcoder::create_audio_frame(int frame_size)
         m_out.m_audio_pts += sample_duration;
     }
 
-    int64_t pos = ffmpeg_rescale_q_rnd(output_frame->pts - m_out.m_audio.m_start_time, m_out.m_audio.m_stream->time_base);
+    int64_t pos = ffmpeg_rescale_q_rnd(stream_pts - m_out.m_audio.m_start_time, m_out.m_audio.m_stream->time_base);
 
     m_frame_map.insert(std::make_pair(pos, output_frame));
 

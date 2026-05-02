@@ -1,5 +1,11 @@
 FFmpegfs NEWS
 
+Important changes in 2.19 (2026-XX-XX):
+
+* Bugfix: Fixed audio/video synchronization issues during transcoding.
+* Bugfix: Fixed HLS playback stopping unexpectedly, especially near the final
+  segment.
+
 Important changes in 2.18 (2026-04-10):
 
 * Feature: Added ALAC profile for iTunes (--desttype=ALAC --profile=ITUNES).

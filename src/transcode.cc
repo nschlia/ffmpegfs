@@ -920,7 +920,7 @@ static bool transcode(std::shared_ptr<THREAD_DATA> thread_data, Cache_Entry *cac
             if (!unlocked && cache_entry->m_buffer->buffer_watermark() > params.m_prebuffer_size && transcoder.pts() > static_cast<int64_t>(params.m_prebuffer_time) * AV_TIME_BASE)
             {
                 unlocked = true;
-                Logging::debug(cache_entry->virtname(), "Pre-buffer limit reached.");
+                Logging::info(cache_entry->virtname(), "Pre-buffer limit reached.");
 
                 thread_data->m_thread_running_lock_guard = true;
                 thread_data->m_thread_running_cond.notify_all();       // signal that we are running
@@ -935,7 +935,7 @@ static bool transcode(std::shared_ptr<THREAD_DATA> thread_data, Cache_Entry *cac
                     thread_data->m_thread_running_cond.notify_all();  // signal that we are running
                 }
 
-                Logging::info(cache_entry->virtname(), "Suspend timeout. Transcoding suspended after %1 seconds inactivity.", params.m_max_inactive_suspend);
+                Logging::info(cache_entry->virtname(), "Timeout! Transcoding suspended after %1 seconds inactivity.", params.m_max_inactive_suspend);
 
                 while (cache_entry->suspend_timeout() && !(*timeout = cache_entry->decode_timeout()) && !thread_exit)
                 {

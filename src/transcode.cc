@@ -1023,25 +1023,25 @@ static int transcoder_thread(std::shared_ptr<THREAD_DATA> thread_data)
 
     cache_entry->m_is_decoding          = false;
 
+    if (timeout)
+    {
+        Logging::warning(cache_entry->virtname(), "Timeout! Transcoding aborted after %1 seconds inactivity.", params.m_max_inactive_abort);
+    }
+    else if (thread_exit)
+    {
+        Logging::info(cache_entry->virtname(), "Thread exit! Transcoding aborted.");
+    }
+    else
+    {
+        Logging::info(cache_entry->virtname(), "Transcoding completed.");
+    }
+			
     if (timeout || thread_exit || transcoder.have_seeked())
     {
         if (!transcoder.have_seeked())
         {
             cache_entry->m_cache_info.m_error       = true;
             cache_entry->m_cache_info.m_errno       = EIO;      // Report I/O error
-
-            if (timeout)
-            {
-                Logging::warning(cache_entry->virtname(), "Timeout! Transcoding aborted after %1 seconds inactivity.", params.m_max_inactive_abort);
-            }
-            else if (thread_exit)
-            {
-                Logging::info(cache_entry->virtname(), "Thread exit! Transcoding aborted.");
-            }
-            else
-            {
-                Logging::info(cache_entry->virtname(), "Transcoding aborted.");
-            }
         }
         else
         {

@@ -6514,6 +6514,12 @@ bool FFmpeg_Transcoder::close_output_file()
 
     close_resample();
 
+    // The deinterlace filter graph belongs to the current output/transcoding
+    // pipeline. HLS seeks and output reopens can rebuild that pipeline without
+    // closing the input file, so do not leave an old AVFilterGraph attached
+    // until close_input_file().
+    free_filters();
+
     m_sws_ctx.reset();
 
     // Close output file
@@ -6593,15 +6599,17 @@ const char *FFmpeg_Transcoder::virtname() const
 // create
 int FFmpeg_Transcoder::init_deinterlace_filters(AVCodecContext *codec_ctx, AVPixelFormat pix_fmt, const AVRational & avg_frame_rate, const AVRational & time_base)
 {
+    // Defensive cleanup: this function may be called again when the output
+    // pipeline is rebuilt, for example after an HLS seek.  Do not overwrite the
+    // old filter pointers with nullptr before the old AVFilterGraph has been
+    // freed, otherwise the graph and its internal buffers become unreachable.
+    free_filters();
+
     const AVFilter * buffer_src  = avfilter_get_by_name("buffer");
     const AVFilter * buffer_sink = avfilter_get_by_name("buffersink");
     AVFilterInOut * outputs      = avfilter_inout_alloc();
     AVFilterInOut * inputs       = avfilter_inout_alloc();
     int ret = 0;
-
-    m_buffer_sink_context   = nullptr;
-    m_buffer_source_context = nullptr;
-    m_filter_graph          = nullptr;
 
     try
     {
@@ -6744,6 +6752,11 @@ int FFmpeg_Transcoder::init_deinterlace_filters(AVCodecContext *codec_ctx, AVPix
     catch (int _ret)
     {
         ret = _ret;
+
+        // If graph creation/configuration failed halfway through, release the
+        // partial graph immediately.  Otherwise the next retry/seek would start
+        // with stale filter pointers and retained filter buffers.
+        free_filters();
     }
 
     if (inputs != nullptr)
@@ -6817,23 +6830,18 @@ int FFmpeg_Transcoder::send_filters(FFmpeg_Frame *srcframe, int & ret)
 
 void FFmpeg_Transcoder::free_filters()
 {
-    if (m_buffer_sink_context != nullptr)
-    {
-        avfilter_free(m_buffer_sink_context);
-        m_buffer_sink_context = nullptr;
-    }
-
-    if (m_buffer_source_context != nullptr)
-    {
-        avfilter_free(m_buffer_source_context);
-        m_buffer_source_context = nullptr;
-    }
-
+    // Filter contexts are owned by the graph once they have been attached to it.
+    // Freeing the AVFilterGraph releases the source/sink contexts and all
+    // buffers owned by the filter pipeline in one place.  The member pointers
+    // must be reset afterwards because they become dangling pointers.
     if (m_filter_graph != nullptr)
     {
         avfilter_graph_free(&m_filter_graph);
-        m_filter_graph = nullptr;
     }
+
+    m_buffer_source_context = nullptr;
+    m_buffer_sink_context   = nullptr;
+    m_filter_graph          = nullptr;
 }
 
 int FFmpeg_Transcoder::stack_seek_frame(uint32_t frame_no)

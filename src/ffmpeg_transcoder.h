@@ -35,7 +35,12 @@
 #pragma once
 
 #include "ffmpeg_base.h"
+#include "ffmpeg_audiofifo.h"
 #include "ffmpeg_frame.h"
+#include "ffmpeg_formatcontext.h"
+#include "ffmpeg_swrcontext.h"
+#include "ffmpeg_swscontext.h"
+#include "ffmpeg_packet.h"
 #include "ffmpeg_subtitle.h"
 #include "id3v1tag.h"
 #include "fileio.h"
@@ -47,13 +52,11 @@
 #include <functional>
 #include <optional>
 #include <atomic>
+#include <utility>
 
 class Buffer;
-struct SwrContext;
-struct SwsContext;
 struct AVFilterContext;
 struct AVFilterGraph;
-struct AVAudioFifo;
 struct AVCodecContext;
 struct AVSubtitle;
 
@@ -141,13 +144,13 @@ protected:
     {
         INPUTFILE() :
             m_filetype(FILETYPE::UNKNOWN),
-            m_format_ctx(nullptr),
+            m_format_ctx(FFmpeg_FormatContext::TYPE::INPUT),
             m_pix_fmt(AV_PIX_FMT_NONE)
         {}
 
         FILETYPE                m_filetype;                         /**< @brief File type, MP3, MP4, OPUS etc. */
 
-        AVFormatContext *       m_format_ctx;                       /**< @brief Output format context */
+        FFmpeg_FormatContext    m_format_ctx;                       /**< @brief Format context */
 
         StreamRef               m_audio;                            /**< @brief Audio stream information */
         StreamRef               m_video;                            /**< @brief Video stream information */
@@ -1245,11 +1248,11 @@ private:
 #else   // !LAVU_DEP_OLD_CHANNEL_LAYOUT
     uint64_t                    m_cur_channel_layout;           /**< @brief Currently selected audio channel layout */
 #endif  // !LAVU_DEP_OLD_CHANNEL_LAYOUT
-    SwrContext *                m_audio_resample_ctx;           /**< @brief SwResample context for audio resampling */
-    AVAudioFifo *               m_audio_fifo;                   /**< @brief Audio sample FIFO */
+    FFmpeg_SwrContext           m_audio_resample_ctx;           /**< @brief SwResample context for audio resampling */
+    FFmpeg_AudioFifo            m_audio_fifo;                   /**< @brief Audio sample FIFO */
 
     // Video conversion and buffering
-    SwsContext *                m_sws_ctx;                      /**< @brief Context for video filtering */
+    FFmpeg_SwsContext           m_sws_ctx;                      /**< @brief Context for video filtering */
     AVFilterContext *           m_buffer_sink_context;          /**< @brief Video filter sink context */
     AVFilterContext *           m_buffer_source_context;        /**< @brief Video filter source context */
     AVFilterGraph *             m_filter_graph;                 /**< @brief Video filter graph */
@@ -1298,7 +1301,7 @@ private:
 
     uint32_t                    m_active_stream_msk;            /**< @brief HLS: Currently active streams bit mask. Set FFMPEGFS_AUDIO and/or FFMPEGFS_VIDEO */
     uint32_t                    m_inhibit_stream_msk;           /**< @brief HLS: Currently inhibited streams bit mask. Packets temporarly go to m_hls_packet_fifo and will be prepended to next segment. Set FFMPEGFS_AUDIO and/or FFMPEGFS_VIDEO */
-    std::queue<AVPacket*>       m_hls_packet_fifo;              /**< @brief HLS packet FIFO */
+    std::queue<FFmpeg_Packet>  m_hls_packet_fifo;              /**< @brief HLS packet FIFO */
 };
 
 #endif // FFMPEG_TRANSCODER_H

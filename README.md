@@ -39,6 +39,12 @@ To see what's been done so far, checkout the [windows](https://github.com/nschli
 
 - **Bugfix:** Fixed audio/video synchronization issues during transcoding.
 - **Bugfix:** Fixed HLS playback stopping unexpectedly, especially near the final segment.
+- Refactored FFmpeg resource handling to use RAII wrappers for AVPacket, AVFormatContext, AVAudioFifo, AVDictionary, SwrContext, and SwsContext.
+- Removed deprecated av_init_packet() usage and switched packet handling to allocation-based AVPacket lifetime management.
+- Improved cleanup of FFmpeg input/output contexts, including custom AVIOContext handling and error paths during context allocation.
+- Improved audio FIFO, resampler, scaler, and dictionary lifetime management to reduce manual cleanup code and avoid leaks on error paths.
+- Cleaned up transcoder shutdown paths by centralizing FFmpeg resource cleanup in dedicated wrapper classes.
+- **Bugfix:** Fixed retained FFmpeg deinterlace filter graphs when the output pipeline is rebuilt, especially after HLS seeks. Old filter graphs are now released before reinitialisation and when closing the current output, preventing stale filter pointers and retained filter buffers.
 
 ### New in 2.18 (2026-04-10):
 

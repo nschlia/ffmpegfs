@@ -54,6 +54,7 @@ extern "C" {
 #endif
 
 #include "ffmpeg_transcoder.h"
+#include "ffmpeg_dictionary.h"
 #include "buffer.h"
 #include "wave.h"
 #include "aiff.h"
@@ -222,9 +223,6 @@ FFmpeg_Transcoder::FFmpeg_Transcoder()
     , m_is_video(false)
     , m_cur_sample_fmt(AV_SAMPLE_FMT_NONE)
     , m_cur_sample_rate(-1)
-    , m_audio_resample_ctx(nullptr)
-    , m_audio_fifo(nullptr)
-    , m_sws_ctx(nullptr)
     , m_buffer_sink_context(nullptr)
     , m_buffer_source_context(nullptr)
     , m_filter_graph(nullptr)
@@ -293,7 +291,7 @@ bool FFmpeg_Transcoder::is_open() const
 
 int FFmpeg_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, std::shared_ptr<FileIO> fio)
 {
-    AVDictionary * opt = nullptr;
+    FFmpeg_Dictionary opt;
     int ret;
 
     if (virtualfile == nullptr)
@@ -316,28 +314,28 @@ int FFmpeg_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, std::shared_pt
     // This allows selecting if the demuxer should consider all streams to be
     // found after the first PMT and add further streams during decoding or if it rather
     // should scan all that are within the analyze-duration and other limits
-    ret = dict_set_with_check(&opt, "scan_all_pmts", "1", AV_DICT_DONT_OVERWRITE);
+    ret = dict_set_with_check(opt.address(), "scan_all_pmts", "1", AV_DICT_DONT_OVERWRITE);
     if (ret < 0)
     {
         return ret;
     }
 
     // avioflags direct: Reduce buffering.
-    //ret = dict_set_with_check(&opt, "avioflags", "direct", AV_DICT_DONT_OVERWRITE);
+    //ret = dict_set_with_check(opt.address(), "avioflags", "direct", AV_DICT_DONT_OVERWRITE);
     //if (ret < 0)
     //{
     //    return ret;
     //}
 
     // analyzeduration: Defaults to 5,000,000 microseconds = 5 seconds.
-    ret = dict_set_with_check(&opt, "analyzeduration", "15000000", 0);    // <<== honored: 15 seconds
+    ret = dict_set_with_check(opt.address(), "analyzeduration", "15000000", 0);    // <<== honored: 15 seconds
     if (ret < 0)
     {
         return ret;
     }
 
     // probesize: 5000000 by default.
-    ret = dict_set_with_check(&opt, "probesize", "15000000", 0);          // <<== honoured: ~15 MB
+    ret = dict_set_with_check(opt.address(), "probesize", "15000000", 0);          // <<== honoured: ~15 MB
     if (ret < 0)
     {
         return ret;
@@ -368,19 +366,18 @@ int FFmpeg_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, std::shared_pt
         return AVERROR(ret);
     }
 
-    m_in.m_format_ctx = avformat_alloc_context();
-    if (m_in.m_format_ctx == nullptr)
+    ret = m_in.m_format_ctx.alloc_input_context();
+    if (ret < 0)
     {
         Logging::error(filename(), "Out of memory opening file: format context could not be allocated.");
-        return AVERROR(ENOMEM);
+        return ret;
     }
 
     unsigned char *iobuffer = static_cast<unsigned char *>(av_malloc(m_fileio->bufsize() + FF_INPUT_BUFFER_PADDING_SIZE));
     if (iobuffer == nullptr)
     {
         Logging::error(filename(), "Out of memory opening file: I/O buffer could not be allocated.");
-        avformat_free_context(m_in.m_format_ctx);
-        m_in.m_format_ctx = nullptr;
+        m_in.m_format_ctx.reset();
         return AVERROR(ENOMEM);
     }
 
@@ -392,7 +389,15 @@ int FFmpeg_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, std::shared_pt
                 input_read,
                 nullptr,    // input_write
                 seek);      // input_seek
+    if (pb == nullptr)
+    {
+        Logging::error(filename(), "Out of memory opening file: I/O context could not be allocated.");
+        av_freep(&iobuffer);
+        m_in.m_format_ctx.reset();
+        return AVERROR(ENOMEM);
+    }
     m_in.m_format_ctx->pb = pb;
+    m_in.m_format_ctx.set_custom_io();
 
 #if IF_DECLARED_CONST
     const AVInputFormat * infmt = nullptr;
@@ -445,7 +450,7 @@ int FFmpeg_Transcoder::open_input_file(LPVIRTUALFILE virtualfile, std::shared_pt
       */
 
     // Open the input file to read from it.
-    ret = avformat_open_input(&m_in.m_format_ctx, filename(), infmt, &opt);
+    ret = avformat_open_input(m_in.m_format_ctx.address(), filename(), infmt, opt.address());
     if (ret < 0)
     {
         Logging::error(filename(), "Could not open input file (error '%1').", ffmpeg_geterror(ret).c_str());
@@ -956,14 +961,14 @@ int FFmpeg_Transcoder::open_decoder(AVFormatContext *format_ctx, AVCodecContext 
     {
         AVCodecContext *input_codec_ctx     = nullptr;
         AVStream *      input_stream        = nullptr;
-        AVDictionary *  opt                 = nullptr;
+        FFmpeg_Dictionary opt;
         AVCodecID       codec_id            = AV_CODEC_ID_NONE;
         int ret;
 
         input_stream = format_ctx->streams[stream_idx];
 
         // Init the decoders, with or without reference counting
-        // av_dict_set_with_check(&opt, "refcounted_frames", refcount ? "1" : "0", 0);
+        // av_dict_set_with_check(opt.address(), "refcounted_frames", refcount ? "1" : "0", 0);
 
         // allocate a new decoding context
         input_codec_ctx = avcodec_alloc_context3(nullptr);
@@ -1075,9 +1080,7 @@ int FFmpeg_Transcoder::open_decoder(AVFormatContext *format_ctx, AVCodecContext 
 
         //input_codec_ctx->time_base = input_stream->time_base;
 
-        ret = avcodec_open2(input_codec_ctx, input_codec, &opt);
-
-        av_dict_free(&opt);
+        ret = avcodec_open2(input_codec_ctx, input_codec, opt.address());
 
         if (ret < 0)
         {
@@ -1114,7 +1117,7 @@ int FFmpeg_Transcoder::open_output_frame_set(Buffer *buffer)
 {
     const AVCodec * output_codec        = nullptr;
     AVCodecContext *output_codec_ctx    = nullptr;
-    AVDictionary * opt                  = nullptr;
+    FFmpeg_Dictionary opt;
     int ret = 0;
 
     m_buffer            = buffer;
@@ -1207,7 +1210,7 @@ int FFmpeg_Transcoder::open_output_frame_set(Buffer *buffer)
     case AV_CODEC_ID_MJPEG:
     {
         // set -strict -1 for JPG
-        dict_set_with_check(&opt, "strict", "-1", 0);
+        dict_set_with_check(opt.address(), "strict", "-1", 0);
 
         // Allow the use of unoffical extensions
         output_codec_ctx->strict_std_compliance = FF_COMPLIANCE_UNOFFICIAL;
@@ -1232,7 +1235,7 @@ int FFmpeg_Transcoder::open_output_frame_set(Buffer *buffer)
     //codec_ctx->sample_aspect_ratio  = frame->sample_aspect_ratio;
     //codec_ctx->sample_aspect_ratio  = m_in.m_video.m_codec_ctx->sample_aspect_ratio;
 
-    ret = avcodec_open2(output_codec_ctx, output_codec, &opt);
+    ret = avcodec_open2(output_codec_ctx, output_codec, opt.address());
     if (ret < 0)
     {
         Logging::error(virtname(), "The image codec could not be opened.");
@@ -1630,7 +1633,7 @@ int FFmpeg_Transcoder::init_rescaler(AVPixelFormat in_pix_fmt, int in_width, int
                            out_width, out_height);
         }
 
-        m_sws_ctx = sws_getContext(
+        m_sws_ctx.reset(sws_getContext(
                     // Source settings
                     in_width,               // width
                     in_height,              // height
@@ -1639,7 +1642,7 @@ int FFmpeg_Transcoder::init_rescaler(AVPixelFormat in_pix_fmt, int in_width, int
                     out_width,              // width
                     out_height,             // height
                     out_pix_fmt,            // format
-                    SWS_FAST_BILINEAR, nullptr, nullptr, nullptr);    // Maybe SWS_LANCZOS | SWS_ACCURATE_RND
+                    SWS_FAST_BILINEAR, nullptr, nullptr, nullptr));    // Maybe SWS_LANCZOS | SWS_ACCURATE_RND
         if (m_sws_ctx == nullptr)
         {
             Logging::error(virtname(), "Could not allocate a scaling/conversion context.");
@@ -1659,7 +1662,7 @@ int FFmpeg_Transcoder::add_stream(AVCodecID codec_id)
 #else // !IF_DECLARED_CONST
     AVCodec * output_codec              = nullptr;
 #endif // !IF_DECLARED_CONST
-    AVDictionary *  opt                 = nullptr;
+    FFmpeg_Dictionary opt;
     int ret;
 
     std::string codec_name;
@@ -1967,7 +1970,7 @@ int FFmpeg_Transcoder::add_stream(AVCodecID codec_id)
         output_codec_ctx->time_base             = output_stream->time_base;
 
         // set -strict -2 for aac (required for FFmpeg 2)
-        dict_set_with_check(&opt, "strict", "-2", 0);
+        dict_set_with_check(opt.address(), "strict", "-2", 0);
 
         // Allow the use of the experimental AAC encoder
         output_codec_ctx->strict_std_compliance = FF_COMPLIANCE_EXPERIMENTAL;
@@ -2252,7 +2255,7 @@ int FFmpeg_Transcoder::add_stream(AVCodecID codec_id)
         }
 
         // set -strict -2 for aac (required for FFmpeg 2)
-        dict_set_with_check(&opt, "strict", "-2", 0);
+        dict_set_with_check(opt.address(), "strict", "-2", 0);
 
         // Allow the use of the experimental AAC encoder
         output_codec_ctx->strict_std_compliance = FF_COMPLIANCE_EXPERIMENTAL;
@@ -2308,11 +2311,11 @@ int FFmpeg_Transcoder::add_stream(AVCodecID codec_id)
     if (!av_dict_get(opt, "threads", nullptr, 0))
     {
         Logging::trace(virtname(), "Setting threads to auto for codec %1.", get_codec_name(output_codec_ctx->codec_id));
-        dict_set_with_check(&opt, "threads", "auto", 0, virtname());
+        dict_set_with_check(opt.address(), "threads", "auto", 0, virtname());
     }
 
     // Open the encoder for the stream to use it later.
-    ret = avcodec_open2(output_codec_ctx, output_codec, &opt);
+    ret = avcodec_open2(output_codec_ctx, output_codec, opt.address());
     if (ret < 0)
     {
         Logging::error(virtname(), "Could not open %1 output codec %2 for stream #%3 (error '%4').", get_media_type_string(output_codec->type), get_codec_name(codec_id), output_stream->index, ffmpeg_geterror(ret).c_str());
@@ -2340,7 +2343,7 @@ int FFmpeg_Transcoder::add_subtitle_stream(AVCodecID codec_id, StreamRef & input
 #else // !IF_DECLARED_CONST
     AVCodec * output_codec              = nullptr;
 #endif // !IF_DECLARED_CONST
-    AVDictionary *  opt                 = nullptr;
+    FFmpeg_Dictionary opt;
     int ret;
 
     // find the encoder
@@ -2371,7 +2374,7 @@ int FFmpeg_Transcoder::add_subtitle_stream(AVCodecID codec_id, StreamRef & input
     output_codec_ctx->time_base             = output_stream->time_base;
 
     // set -strict -2 for aac (required for FFmpeg 2)
-    dict_set_with_check(&opt, "strict", "-2", 0);
+    dict_set_with_check(opt.address(), "strict", "-2", 0);
 
     // Allow the use of the experimental AAC encoder
     output_codec_ctx->strict_std_compliance = FF_COMPLIANCE_EXPERIMENTAL;
@@ -2421,7 +2424,7 @@ int FFmpeg_Transcoder::add_subtitle_stream(AVCodecID codec_id, StreamRef & input
     }
 
     // Open the encoder for the stream to use it later.
-    ret = avcodec_open2(output_codec_ctx, output_codec, &opt);
+    ret = avcodec_open2(output_codec_ctx, output_codec, opt.address());
     if (ret < 0)
     {
         Logging::error(virtname(), "Could not open %1 output codec %2 for stream #%3 (error '%4').", get_media_type_string(output_codec->type), get_codec_name(codec_id), output_stream->index, ffmpeg_geterror(ret).c_str());
@@ -2556,7 +2559,7 @@ int FFmpeg_Transcoder::add_albumart_stream(const AVCodecContext * input_codec_ct
     AVStream * output_stream            = nullptr;
     const AVCodec * input_codec         = input_codec_ctx->codec;
     const AVCodec * output_codec        = nullptr;
-    AVDictionary *  opt                 = nullptr;
+    FFmpeg_Dictionary opt;
     int ret;
 
     // find the encoder
@@ -2631,7 +2634,7 @@ int FFmpeg_Transcoder::add_albumart_stream(const AVCodecContext * input_codec_ct
     }
 
     // Open the encoder for the stream to use it later.
-    ret = avcodec_open2(output_codec_ctx, output_codec, &opt);
+    ret = avcodec_open2(output_codec_ctx, output_codec, opt.address());
     if (ret < 0)
     {
         Logging::error(virtname(), "Could not open %1 output codec %2 for stream #%3 (error '%4').", get_media_type_string(output_codec->type), get_codec_name(input_codec->id), output_stream->index, ffmpeg_geterror(ret).c_str());
@@ -2660,13 +2663,11 @@ int FFmpeg_Transcoder::add_albumart_stream(const AVCodecContext * input_codec_ct
 
 int FFmpeg_Transcoder::add_albumart_frame(AVStream *output_stream, AVPacket *pkt_in)
 {
-    AVPacket *tmp_pkt;
-    int ret = 0;
+    FFmpeg_Packet tmp_pkt(pkt_in);
+    int ret = tmp_pkt.res();
 
-    tmp_pkt = av_packet_clone(pkt_in);
-    if (tmp_pkt == nullptr)
+    if (ret < 0)
     {
-        ret = AVERROR(ENOMEM);
         Logging::error(virtname(), "Could not write album art packet (error '%1').", ffmpeg_geterror(ret).c_str());
         return ret;
     }
@@ -2678,11 +2679,7 @@ int FFmpeg_Transcoder::add_albumart_frame(AVStream *output_stream, AVPacket *pkt
     tmp_pkt->pos = 0;
     tmp_pkt->dts = 0;
 
-    ret = store_packet(tmp_pkt, AVMEDIA_TYPE_ATTACHMENT);
-
-    av_packet_unref(tmp_pkt);
-
-    return ret;
+    return store_packet(tmp_pkt, AVMEDIA_TYPE_ATTACHMENT);
 }
 
 int FFmpeg_Transcoder::open_output_filestreams(Buffer *buffer)
@@ -2700,19 +2697,20 @@ int FFmpeg_Transcoder::open_output_filestreams(Buffer *buffer)
     m_copy_video = can_copy_stream(m_in.m_video.m_stream);
 
     // Create a new format context for the output container format.
+    int ret = 0;
     if (m_current_format->format_name() != "m4a")
     {
-        avformat_alloc_output_context2(&m_out.m_format_ctx, nullptr, m_current_format->format_name().c_str(), nullptr);
+        ret = m_out.m_format_ctx.alloc_output_context(m_current_format->format_name().c_str(), nullptr);
     }
     else
     {
-        avformat_alloc_output_context2(&m_out.m_format_ctx, nullptr, nullptr, ".m4a");
+        ret = m_out.m_format_ctx.alloc_output_context(nullptr, ".m4a");
     }
 
-    if (m_out.m_format_ctx == nullptr)
+    if (ret < 0 || m_out.m_format_ctx == nullptr)
     {
         Logging::error(virtname(), "Could not allocate an output format context.");
-        return AVERROR(ENOMEM);
+        return (ret < 0) ? ret : AVERROR(ENOMEM);
     }
 
     if (!m_is_video)
@@ -2849,8 +2847,10 @@ int FFmpeg_Transcoder::open_output_filestreams(Buffer *buffer)
     if (m_out.m_format_ctx->pb == nullptr)
     {
         Logging::error(virtname(), "Out of memory opening output file: Unable to allocate format context.");
+        av_freep(&iobuffer);
         return AVERROR(ENOMEM);
     }
+    m_out.m_format_ctx.set_custom_io();
 
     return 0;
 }
@@ -2964,7 +2964,7 @@ int FFmpeg_Transcoder::init_resampler()
         // Create a resampler context for the conversion.
         // Set the conversion parameters.
 #if SWR_DEP_ALLOC_SET_OPTS
-        ret = swr_alloc_set_opts2(&m_audio_resample_ctx,
+        ret = swr_alloc_set_opts2(m_audio_resample_ctx.address(),
                                   &m_out.m_audio.m_codec_ctx->ch_layout,
                                   m_out.m_audio.m_codec_ctx->sample_fmt,
                                   m_out.m_audio.m_codec_ctx->sample_rate,
@@ -2978,14 +2978,14 @@ int FFmpeg_Transcoder::init_resampler()
             return ret;
         }
 #else
-        m_audio_resample_ctx = swr_alloc_set_opts(nullptr,
-                                                  static_cast<int64_t>(m_out.m_audio.m_codec_ctx->channel_layout),
-                                                  m_out.m_audio.m_codec_ctx->sample_fmt,
-                                                  m_out.m_audio.m_codec_ctx->sample_rate,
-                                                  static_cast<int64_t>(m_in.m_audio.m_codec_ctx->channel_layout),
-                                                  m_in.m_audio.m_codec_ctx->sample_fmt,
-                                                  m_in.m_audio.m_codec_ctx->sample_rate,
-                                                  0, nullptr);
+        m_audio_resample_ctx.reset(swr_alloc_set_opts(nullptr,
+                                                       static_cast<int64_t>(m_out.m_audio.m_codec_ctx->channel_layout),
+                                                       m_out.m_audio.m_codec_ctx->sample_fmt,
+                                                       m_out.m_audio.m_codec_ctx->sample_rate,
+                                                       static_cast<int64_t>(m_in.m_audio.m_codec_ctx->channel_layout),
+                                                       m_in.m_audio.m_codec_ctx->sample_fmt,
+                                                       m_in.m_audio.m_codec_ctx->sample_rate,
+                                                       0, nullptr));
         if (m_audio_resample_ctx == nullptr)
         {
             Logging::error(virtname(), "Could not allocate a resample context.");
@@ -2998,8 +2998,7 @@ int FFmpeg_Transcoder::init_resampler()
         if (ret < 0)
         {
             Logging::error(virtname(), "Could not open resampler context (error '%1').", ffmpeg_geterror(ret).c_str());
-            swr_free(&m_audio_resample_ctx);
-            m_audio_resample_ctx = nullptr;
+            m_audio_resample_ctx.reset();
             return ret;
         }
     }
@@ -3009,11 +3008,11 @@ int FFmpeg_Transcoder::init_resampler()
 int FFmpeg_Transcoder::init_audio_fifo()
 {
     // Create the audio FIFO buffer based on the specified output sample format.
-    m_audio_fifo = av_audio_fifo_alloc(m_out.m_audio.m_codec_ctx->sample_fmt, get_channels(m_out.m_audio.m_codec_ctx.get()), 1);
-    if (m_audio_fifo == nullptr)
+    int ret = m_audio_fifo.alloc(m_out.m_audio.m_codec_ctx->sample_fmt, get_channels(m_out.m_audio.m_codec_ctx.get()), 1);
+    if (ret < 0)
     {
         Logging::error(virtname(), "Could not allocate an audio FIFO.");
-        return AVERROR(ENOMEM);
+        return ret;
     }
     return 0;
 }
@@ -3238,16 +3237,16 @@ int FFmpeg_Transcoder::create_fake_aiff_header() const
 
 int FFmpeg_Transcoder::write_output_file_header()
 {
-    AVDictionary* dict = nullptr;
+    FFmpeg_Dictionary dict;
     int ret;
 
-    ret = prepare_format(&dict, m_out.m_filetype);
+    ret = prepare_format(dict.address(), m_out.m_filetype);
     if (ret < 0)
     {
         return ret;
     }
 
-    ret = avformat_write_header(m_out.m_format_ctx, &dict);
+    ret = avformat_write_header(m_out.m_format_ctx, dict.address());
     if (ret < 0)
     {
         Logging::error(virtname(), "Could not write output file header (error '%1').", ffmpeg_geterror(ret).c_str());
@@ -3740,6 +3739,7 @@ int FFmpeg_Transcoder::decode_subtitle(AVCodecContext *codec_ctx, AVPacket *pkt,
 
 int FFmpeg_Transcoder::store_packet(AVPacket *pkt, AVMediaType mediatype)
 {
+    int ret;
     if (is_hls() && pkt->pts != AV_NOPTS_VALUE)
     {
         switch (mediatype)
@@ -3762,7 +3762,13 @@ int FFmpeg_Transcoder::store_packet(AVPacket *pkt, AVMediaType mediatype)
                     Logging::trace(virtname(), "Buffering audio packets until the next segment no. %1 from position %2 (%3).", next_segment, pos, format_duration(pos).c_str());
                 }
 
-                m_hls_packet_fifo.push(av_packet_clone(pkt));
+                FFmpeg_Packet fifo_pkt(pkt);
+                ret = fifo_pkt.res();
+                if (ret < 0)
+                {
+                    return ret;
+                }
+                m_hls_packet_fifo.push(std::move(fifo_pkt));
                 return 0;
             }
             break;
@@ -3785,7 +3791,13 @@ int FFmpeg_Transcoder::store_packet(AVPacket *pkt, AVMediaType mediatype)
                     Logging::trace(virtname(), "Buffering video packets until the next segment no. %1 from position %2 (%3).", next_segment, pos, format_duration(pos).c_str());
                 }
 
-                m_hls_packet_fifo.push(av_packet_clone(pkt));
+                FFmpeg_Packet fifo_pkt(pkt);
+                ret = fifo_pkt.res();
+                if (ret < 0)
+                {
+                    return ret;
+                }
+                m_hls_packet_fifo.push(std::move(fifo_pkt));
                 return 0;
             }
             break;
@@ -3805,7 +3817,13 @@ int FFmpeg_Transcoder::store_packet(AVPacket *pkt, AVMediaType mediatype)
 
                 if (goto_next_segment(next_segment))
                 {
-                    m_hls_packet_fifo.push(av_packet_clone(pkt));
+                    FFmpeg_Packet fifo_pkt(pkt);
+                    ret = fifo_pkt.res();
+                    if (ret < 0)
+                    {
+                        return ret;
+                    }
+                    m_hls_packet_fifo.push(std::move(fifo_pkt));
                     return 0;
                 }
             }
@@ -3818,7 +3836,7 @@ int FFmpeg_Transcoder::store_packet(AVPacket *pkt, AVMediaType mediatype)
         }
     }
 
-    int ret = av_write_frame(m_out.m_format_ctx, pkt);
+    ret = av_write_frame(m_out.m_format_ctx, pkt);
 
     if (ret < 0)
     {
@@ -4119,7 +4137,7 @@ int FFmpeg_Transcoder::add_samples_to_fifo(uint8_t **converted_input_samples, in
     // Make the audio FIFO as large as it needs to be to hold both,
     // the old and the new samples.
 
-    ret = av_audio_fifo_realloc(m_audio_fifo, av_audio_fifo_size(m_audio_fifo) + frame_size);
+    ret = m_audio_fifo.realloc(m_audio_fifo.size() + frame_size);
     if (ret < 0)
     {
         Logging::error(virtname(), "Could not reallocate the audio FIFO.");
@@ -4127,7 +4145,7 @@ int FFmpeg_Transcoder::add_samples_to_fifo(uint8_t **converted_input_samples, in
     }
 
     // Store the new samples in the audio FIFO buffer.
-    ret = av_audio_fifo_write(m_audio_fifo, reinterpret_cast<void **>(converted_input_samples), frame_size);
+    ret = m_audio_fifo.write(reinterpret_cast<void **>(converted_input_samples), frame_size);
     if (ret < frame_size)
     {
         if (ret < 0)
@@ -4188,40 +4206,31 @@ int FFmpeg_Transcoder::flush_frames_single(int stream_idx, bool use_flush_packet
 
         if (decode_frame_ptr != nullptr)
         {
-#if !LAVC_DEP_AV_INIT_PACKET
-            AVPacket pkt;
-#endif // !LAVC_DEP_AV_INIT_PACKET
-            AVPacket *flush_packet = nullptr;
+            FFmpeg_Packet flush_packet(stream_idx);
+            AVPacket *flush_packet_ptr = nullptr;
+
+            if (flush_packet.res() < 0)
+            {
+                return flush_packet.res();
+            }
 
             if (use_flush_packet)
             {
-#if LAVC_DEP_AV_INIT_PACKET
-                flush_packet = av_packet_alloc();
-#else // !LAVC_DEP_AV_INIT_PACKET
-                flush_packet = &pkt;
-
-                init_packet(flush_packet);
-#endif // !LAVC_DEP_AV_INIT_PACKET
-
                 flush_packet->data          = nullptr;
                 flush_packet->size          = 0;
                 flush_packet->stream_index  = stream_idx;
+                flush_packet_ptr            = flush_packet;
             }
 
             // cppcheck-suppress knownConditionTrueFalse
             for (int decoded = 1; decoded;)
             {
-                ret = (this->*decode_frame_ptr)(flush_packet, &decoded);
+                ret = (this->*decode_frame_ptr)(flush_packet_ptr, &decoded);
                 if (ret < 0 && ret != AVERROR(EAGAIN))
                 {
                     break;
                 }
             }
-
-            av_packet_unref(flush_packet);
-#if LAVC_DEP_AV_INIT_PACKET
-            av_packet_free(&flush_packet);
-#endif // LAVC_DEP_AV_INIT_PACKET
         }
     }
 
@@ -4231,13 +4240,18 @@ int FFmpeg_Transcoder::flush_frames_single(int stream_idx, bool use_flush_packet
 int FFmpeg_Transcoder::read_decode_convert_and_store(int *finished)
 {
     // Packet used for temporary storage.
-    AVPacket pkt;
-    int ret = 0;
+    FFmpeg_Packet pkt;
+    int ret = pkt.res();
+
+    if (ret < 0)
+    {
+        return ret;
+    }
 
     try
     {
         // Read one frame from the input file into a temporary packet.
-        ret = av_read_frame(m_in.m_format_ctx, &pkt);
+        ret = av_read_frame(m_in.m_format_ctx, pkt);
         if (ret < 0)
         {
             if (ret == AVERROR_EOF)
@@ -4257,9 +4271,9 @@ int FFmpeg_Transcoder::read_decode_convert_and_store(int *finished)
         {
             // Check for end of cue sheet track
             ///<* @todo Cue sheet track: Must check video stream, too and end if both all video and audio packets arrived. Discard packets exceeding duration.
-            if (is_audio_stream(pkt.stream_index))
+            if (is_audio_stream(pkt->stream_index))
             {
-                int64_t pkt_pts = ffmpeg_rescale_q(pkt.pts, m_in.m_audio.m_stream->time_base);
+                int64_t pkt_pts = ffmpeg_rescale_q(pkt->pts, m_in.m_audio.m_stream->time_base);
                 if (pkt_pts > m_virtualfile->m_cuesheet_track.m_start + m_virtualfile->m_cuesheet_track.m_duration)
                 {
                     Logging::trace(virtname(), "Read to end of track.");
@@ -4274,7 +4288,7 @@ int FFmpeg_Transcoder::read_decode_convert_and_store(int *finished)
             // Decode one packet, at least with the old API (!LAV_NEW_PACKET_INTERFACE)
             // it seems a packet can contain more than one frame so loop around it
             // if necessary...
-            ret = decode_frame(&pkt);
+            ret = decode_frame(pkt);
 
             if (ret < 0 && ret != AVERROR(EAGAIN))
             {
@@ -4293,8 +4307,6 @@ int FFmpeg_Transcoder::read_decode_convert_and_store(int *finished)
     {
         ret = _ret;
     }
-
-    av_packet_unref(&pkt);
 
     return ret;
 }
@@ -4385,18 +4397,13 @@ void FFmpeg_Transcoder::produce_audio_dts(AVPacket *pkt)
 int FFmpeg_Transcoder::encode_audio_frame(const AVFrame *frame, int *data_present)
 {
     // Packet used for temporary storage.
-#if !LAVC_DEP_AV_INIT_PACKET
-    AVPacket tmp_pkt;
-#endif // !LAVC_DEP_AV_INIT_PACKET
-    AVPacket *pkt;
-    int ret = 0;
+    FFmpeg_Packet pkt;
+    int ret = pkt.res();
 
-#if LAVC_DEP_AV_INIT_PACKET
-    pkt = av_packet_alloc();
-#else // !LAVC_DEP_AV_INIT_PACKET
-    pkt = &tmp_pkt;
-    init_packet(pkt);
-#endif // !LAVC_DEP_AV_INIT_PACKET
+    if (ret < 0)
+    {
+        return ret;
+    }
 
     try
     {
@@ -4465,17 +4472,13 @@ int FFmpeg_Transcoder::encode_audio_frame(const AVFrame *frame, int *data_presen
             }
         }
 
-        av_packet_unref(pkt);
+        pkt.unref();
     }
     catch (int _ret)
     {
-        av_packet_unref(pkt);
+        pkt.unref();
         ret = _ret;
     }
-
-#if LAVC_DEP_AV_INIT_PACKET
-    av_packet_free(&pkt);
-#endif // LAVC_DEP_AV_INIT_PACKET
 
     return ret;
 }
@@ -4504,11 +4507,13 @@ int FFmpeg_Transcoder::encode_image_frame(const AVFrame *frame, int *data_presen
         return AVERROR(EINVAL);
     }
 
-#if !LAVC_DEP_AV_INIT_PACKET
-    AVPacket tmp_pkt;
-#endif // !LAVC_DEP_AV_INIT_PACKET
-    AVPacket *pkt = nullptr;
-    int ret = 0;
+    FFmpeg_Packet pkt;
+    int ret = pkt.res();
+
+    if (ret < 0)
+    {
+        return ret;
+    }
 
     try
     {
@@ -4520,13 +4525,6 @@ int FFmpeg_Transcoder::encode_image_frame(const AVFrame *frame, int *data_presen
             Logging::error(virtname(), "Could not encode image frame (error '%1').", ffmpeg_geterror(ret).c_str());
             throw ret;
         }
-
-#if LAVC_DEP_AV_INIT_PACKET
-        pkt = av_packet_alloc();
-#else // !LAVC_DEP_AV_INIT_PACKET
-        pkt = &tmp_pkt;
-        init_packet(pkt);
-#endif // !LAVC_DEP_AV_INIT_PACKET
 
         uint32_t frame_no = pts_to_frame(m_in.m_video.m_stream, frame->pts);
 
@@ -4554,7 +4552,7 @@ int FFmpeg_Transcoder::encode_image_frame(const AVFrame *frame, int *data_presen
             ret = avcodec_receive_packet(m_out.m_video.m_codec_ctx.get(), pkt);
             if (ret == AVERROR(EAGAIN) || ret == AVERROR_EOF)
             {
-                av_packet_unref(pkt);
+                pkt.unref();
                 break;
             }
             else if (ret < 0)
@@ -4581,18 +4579,14 @@ int FFmpeg_Transcoder::encode_image_frame(const AVFrame *frame, int *data_presen
                 }
             }
 
-            av_packet_unref(pkt);
+            pkt.unref();
         }
     }
     catch (int _ret)
     {
-        av_packet_unref(pkt);
+        pkt.unref();
         ret = _ret;
     }
-
-#if LAVC_DEP_AV_INIT_PACKET
-    av_packet_free(&pkt);
-#endif // LAVC_DEP_AV_INIT_PACKET
 
     return ret;
 }
@@ -4637,12 +4631,14 @@ int FFmpeg_Transcoder::encode_video_frame(const AVFrame *frame, int *data_presen
             m_out.m_video.m_stream->codecpar->field_order = AV_FIELD_PROGRESSIVE;
         }
     }
-#if !LAVC_DEP_AV_INIT_PACKET
-    AVPacket tmp_pkt;
-#endif // !LAVC_DEP_AV_INIT_PACKET
     FFmpeg_Frame *hw_frame = nullptr;
-    AVPacket *pkt = nullptr;
-    int ret = 0;
+    FFmpeg_Packet pkt;
+    int ret = pkt.res();
+
+    if (ret < 0)
+    {
+        return ret;
+    }
 
     try
     {
@@ -4672,13 +4668,6 @@ int FFmpeg_Transcoder::encode_video_frame(const AVFrame *frame, int *data_presen
             frame = *hw_frame;  // Copy, not clone!
         }
 
-#if LAVC_DEP_AV_INIT_PACKET
-        pkt = av_packet_alloc();
-#else // !LAVC_DEP_AV_INIT_PACKET
-        pkt = &tmp_pkt;
-        init_packet(pkt);
-#endif // !LAVC_DEP_AV_INIT_PACKET
-
         // Encode the video frame and store it in the temporary packet.
         // The output video stream encoder is used to do this.
 
@@ -4700,7 +4689,7 @@ int FFmpeg_Transcoder::encode_video_frame(const AVFrame *frame, int *data_presen
             ret = avcodec_receive_packet(m_out.m_video.m_codec_ctx.get(), pkt);
             if (ret == AVERROR(EAGAIN) || ret == AVERROR_EOF)
             {
-                av_packet_unref(pkt);
+                pkt.unref();
                 break;
             }
             else if (ret < 0)
@@ -4774,23 +4763,16 @@ int FFmpeg_Transcoder::encode_video_frame(const AVFrame *frame, int *data_presen
                 }
             }
 
-            av_packet_unref(pkt);
+            pkt.unref();
         }
     }
     catch (int _ret)
     {
-        if (pkt != nullptr)
-        {
-            av_packet_unref(pkt);
-        }
+        pkt.unref();
         ret = _ret;
     }
 
     delete hw_frame;
-
-#if LAVC_DEP_AV_INIT_PACKET
-    av_packet_free(&pkt);
-#endif // LAVC_DEP_AV_INIT_PACKET
 
     return ret;
 }
@@ -4808,18 +4790,13 @@ int FFmpeg_Transcoder::encode_subtitle(const AVSubtitle *sub, int out_stream_idx
     }
 
     // Packet used for temporary storage.
-#if !LAVC_DEP_AV_INIT_PACKET
-    AVPacket tmp_pkt;
-#endif // !LAVC_DEP_AV_INIT_PACKET
-    AVPacket *pkt;
-    int ret = 0;
+    FFmpeg_Packet pkt;
+    int ret = pkt.res();
 
-#if LAVC_DEP_AV_INIT_PACKET
-    pkt = av_packet_alloc();
-#else // !LAVC_DEP_AV_INIT_PACKET
-    pkt = &tmp_pkt;
-    init_packet(pkt);
-#endif // !LAVC_DEP_AV_INIT_PACKET
+    if (ret < 0)
+    {
+        return ret;
+    }
 
     AVSubtitle subtmp;
 
@@ -4918,17 +4895,13 @@ int FFmpeg_Transcoder::encode_subtitle(const AVSubtitle *sub, int out_stream_idx
 
             *data_present = 1;
         }
-        av_packet_unref(pkt);
+        pkt.unref();
     }
     catch (int _ret)
     {
-        av_packet_unref(pkt);
+        pkt.unref();
         ret = _ret;
     }
-
-#if LAVC_DEP_AV_INIT_PACKET
-    av_packet_free(&pkt);
-#endif // LAVC_DEP_AV_INIT_PACKET
 
     return ret;
 }
@@ -4950,7 +4923,7 @@ int FFmpeg_Transcoder::create_audio_frame(int frame_size)
     // If there is less than the maximum possible frame size in the audio FIFO
     // buffer use this number. Otherwise, use the maximum possible frame size
 
-    frame_size = FFMIN(av_audio_fifo_size(m_audio_fifo), frame_size);
+    frame_size = FFMIN(m_audio_fifo.size(), frame_size);
 
     // Initialise temporary storage for one output frame.
     ret = init_audio_output_frame(output_frame, frame_size);
@@ -4962,7 +4935,7 @@ int FFmpeg_Transcoder::create_audio_frame(int frame_size)
     // Read as many samples from the FIFO buffer as required to fill the frame.
     // The samples are stored in the frame temporarily.
 
-    ret = av_audio_fifo_read(m_audio_fifo, reinterpret_cast<void **>(output_frame->data), frame_size);
+    ret = m_audio_fifo.read(reinterpret_cast<void **>(output_frame->data), frame_size);
     if (ret < frame_size)
     {
         if (ret < 0)
@@ -5361,7 +5334,7 @@ int FFmpeg_Transcoder::copy_audio_to_frame_buffer(int *finished)
     // need to FIFO buffer to store as many frames worth of input samples
     // that they make up at least one frame worth of output samples.
 
-    while (av_audio_fifo_size(m_audio_fifo) < output_frame_size)
+    while (m_audio_fifo.size() < output_frame_size)
     {
         int ret = 0;
 
@@ -5387,7 +5360,7 @@ int FFmpeg_Transcoder::copy_audio_to_frame_buffer(int *finished)
     // At the end of the file, we pass the remaining samples to
     // the encoder.
 
-    while (av_audio_fifo_size(m_audio_fifo) >= output_frame_size || (*finished && av_audio_fifo_size(m_audio_fifo) > 0))
+    while (m_audio_fifo.size() >= output_frame_size || (*finished && m_audio_fifo.size() > 0))
     {
         int ret = 0;
 
@@ -5796,7 +5769,7 @@ int FFmpeg_Transcoder::start_new_segment()
     while (!m_hls_packet_fifo.empty())
     {
         int ret = 0;
-        AVPacket *pkt = m_hls_packet_fifo.front();
+        FFmpeg_Packet pkt(std::move(m_hls_packet_fifo.front()));
         m_hls_packet_fifo.pop();
 
         ret = av_write_frame(m_out.m_format_ctx, pkt);
@@ -5807,7 +5780,6 @@ int FFmpeg_Transcoder::start_new_segment()
             return ret;
         }
 
-        av_packet_unref(pkt);
     }
     return 0;
 }
@@ -6464,25 +6436,17 @@ int64_t FFmpeg_Transcoder::seek(void * opaque, int64_t offset, int whence)
 
 bool FFmpeg_Transcoder::close_resample()
 {
-    if (m_audio_resample_ctx)
-    {
-        swr_free(&m_audio_resample_ctx);
-        m_audio_resample_ctx = nullptr;
-        return true;
-    }
-
-    return false;
+    return m_audio_resample_ctx.reset();
 }
 
 int FFmpeg_Transcoder::purge_audio_fifo()
 {
     int audio_samples_left = 0;
 
-    if (m_audio_fifo != nullptr)
+    if (!m_audio_fifo.empty())
     {
-        audio_samples_left = av_audio_fifo_size(m_audio_fifo);
-        av_audio_fifo_free(m_audio_fifo);
-        m_audio_fifo = nullptr;
+        audio_samples_left = m_audio_fifo.size();
+        m_audio_fifo.reset();
     }
 
     return audio_samples_left;
@@ -6503,10 +6467,7 @@ size_t FFmpeg_Transcoder::purge_hls_fifo()
 
     while (!m_hls_packet_fifo.empty())
     {
-        AVPacket *pkt = m_hls_packet_fifo.front();
         m_hls_packet_fifo.pop();
-
-        av_packet_unref(pkt);
     }
 
     return hls_packets_left;
@@ -6553,8 +6514,13 @@ bool FFmpeg_Transcoder::close_output_file()
 
     close_resample();
 
-    sws_freeContext(m_sws_ctx);
-    m_sws_ctx = nullptr;
+    // The deinterlace filter graph belongs to the current output/transcoding
+    // pipeline. HLS seeks and output reopens can rebuild that pipeline without
+    // closing the input file, so do not leave an old AVFilterGraph attached
+    // until close_input_file().
+    free_filters();
+
+    m_sws_ctx.reset();
 
     // Close output file
     m_out.m_audio.reset();
@@ -6563,27 +6529,7 @@ bool FFmpeg_Transcoder::close_output_file()
     m_out.m_album_art.clear();
     m_out.m_subtitle.clear();
 
-    if (m_out.m_format_ctx != nullptr)
-    {
-        closed = true;
-
-        if (m_out.m_format_ctx->pb != nullptr)
-        {
-            // 2017-09-01 - xxxxxxx - lavf 57.80.100 / 57.11.0 - avio.h
-            //  Add avio_context_free(). From now on it must be used for freeing AVIOContext.
-#if (LIBAVFORMAT_VERSION_INT >= AV_VERSION_INT(57, 80, 0))
-            av_freep(&m_out.m_format_ctx->pb->buffer);
-            avio_context_free(&m_out.m_format_ctx->pb);
-#else
-            av_freep(m_out.m_format_ctx->pb);
-#endif
-            m_out.m_format_ctx->pb = nullptr;
-        }
-
-        avformat_free_context(m_out.m_format_ctx);
-
-        m_out.m_format_ctx = nullptr;
-    }
+    closed = m_out.m_format_ctx.reset();
 
     return closed;
 }
@@ -6600,28 +6546,13 @@ bool FFmpeg_Transcoder::close_input_file()
 
     if (m_in.m_format_ctx != nullptr)
     {
-        closed = true;
-
         if (m_fileio.use_count() <= 1 && m_fileio != nullptr)
         {
             m_fileio->closeio();
         }
         m_fileio.reset();
 
-        if (m_in.m_format_ctx->pb != nullptr)
-        {
-            // 2017-09-01 - xxxxxxx - lavf 57.80.100 / 57.11.0 - avio.h
-            //  Add avio_context_free(). From now on it must be used for freeing AVIOContext.
-#if (LIBAVFORMAT_VERSION_INT >= AV_VERSION_INT(57, 80, 0))
-            avio_context_free(&m_in.m_format_ctx->pb);
-#else
-            av_freep(m_in.m_format_ctx->pb);
-#endif
-            m_in.m_format_ctx->pb = nullptr;
-        }
-
-        avformat_close_input(&m_in.m_format_ctx);
-        m_in.m_format_ctx = nullptr;
+        closed = m_in.m_format_ctx.reset();
     }
 
     free_filters();
@@ -6668,15 +6599,17 @@ const char *FFmpeg_Transcoder::virtname() const
 // create
 int FFmpeg_Transcoder::init_deinterlace_filters(AVCodecContext *codec_ctx, AVPixelFormat pix_fmt, const AVRational & avg_frame_rate, const AVRational & time_base)
 {
+    // Defensive cleanup: this function may be called again when the output
+    // pipeline is rebuilt, for example after an HLS seek.  Do not overwrite the
+    // old filter pointers with nullptr before the old AVFilterGraph has been
+    // freed, otherwise the graph and its internal buffers become unreachable.
+    free_filters();
+
     const AVFilter * buffer_src  = avfilter_get_by_name("buffer");
     const AVFilter * buffer_sink = avfilter_get_by_name("buffersink");
     AVFilterInOut * outputs      = avfilter_inout_alloc();
     AVFilterInOut * inputs       = avfilter_inout_alloc();
     int ret = 0;
-
-    m_buffer_sink_context   = nullptr;
-    m_buffer_source_context = nullptr;
-    m_filter_graph          = nullptr;
 
     try
     {
@@ -6819,6 +6752,11 @@ int FFmpeg_Transcoder::init_deinterlace_filters(AVCodecContext *codec_ctx, AVPix
     catch (int _ret)
     {
         ret = _ret;
+
+        // If graph creation/configuration failed halfway through, release the
+        // partial graph immediately.  Otherwise the next retry/seek would start
+        // with stale filter pointers and retained filter buffers.
+        free_filters();
     }
 
     if (inputs != nullptr)
@@ -6892,23 +6830,18 @@ int FFmpeg_Transcoder::send_filters(FFmpeg_Frame *srcframe, int & ret)
 
 void FFmpeg_Transcoder::free_filters()
 {
-    if (m_buffer_sink_context != nullptr)
-    {
-        avfilter_free(m_buffer_sink_context);
-        m_buffer_sink_context = nullptr;
-    }
-
-    if (m_buffer_source_context != nullptr)
-    {
-        avfilter_free(m_buffer_source_context);
-        m_buffer_source_context = nullptr;
-    }
-
+    // Filter contexts are owned by the graph once they have been attached to it.
+    // Freeing the AVFilterGraph releases the source/sink contexts and all
+    // buffers owned by the filter pipeline in one place.  The member pointers
+    // must be reset afterwards because they become dangling pointers.
     if (m_filter_graph != nullptr)
     {
         avfilter_graph_free(&m_filter_graph);
-        m_filter_graph = nullptr;
     }
+
+    m_buffer_source_context = nullptr;
+    m_buffer_sink_context   = nullptr;
+    m_filter_graph          = nullptr;
 }
 
 int FFmpeg_Transcoder::stack_seek_frame(uint32_t frame_no)
@@ -7916,13 +7849,19 @@ int FFmpeg_Transcoder::add_external_subtitle_stream(const std::string & subtitle
                     throw ret;
                 }
 
-                AVPacket pkt;
                 int output_stream_index = ret;
+                FFmpeg_Packet pkt;
+                ret = pkt.res();
+                if (ret < 0)
+                {
+                    throw ret;
+                }
+
                 // Read one frame from the input file into a temporary packet.
-                while ((ret = av_read_frame(format_ctx, &pkt)) == 0)
+                while ((ret = av_read_frame(format_ctx, pkt)) == 0)
                 {
                     int decoded;
-                    ret = decode_subtitle(codec_ctx, &pkt, &decoded, output_stream_index);
+                    ret = decode_subtitle(codec_ctx, pkt, &decoded, output_stream_index);
                     if (ret < 0)
                     {
                         throw ret;

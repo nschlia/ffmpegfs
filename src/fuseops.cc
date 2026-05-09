@@ -1631,8 +1631,8 @@ static FILENAME_MAP::const_iterator find_prefix(const FILENAME_MAP & map, const 
  */
 static void insert(const VIRTUALFILE & virtualfile)
 {
-    filenames.insert(make_pair(virtualfile.m_destfile, virtualfile));
-    rfilenames.insert(make_pair(virtualfile.m_origfile, virtualfile));
+    filenames.emplace(virtualfile.m_destfile, virtualfile);
+    rfilenames.emplace(virtualfile.m_origfile, virtualfile);
 }
 
 LPVIRTUALFILE insert_file(VIRTUALTYPE type, const std::string & virtfile, const struct stat * stbuf, int flags)

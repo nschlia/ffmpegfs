@@ -744,7 +744,7 @@ int FFmpeg_Transcoder::open_subtitles()
         input_streamref.m_stream      = stream;
         input_streamref.m_stream_idx  = stream_idx;
 
-        m_in.m_subtitle.insert(std::make_pair(input_streamref.m_stream_idx, input_streamref));
+        m_in.m_subtitle.emplace(input_streamref.m_stream_idx, input_streamref);
 
         subtitle_info(false, m_in.m_format_ctx, input_streamref.m_stream);
     }
@@ -2466,7 +2466,7 @@ int FFmpeg_Transcoder::add_subtitle_stream(AVCodecID codec_id, StreamRef & input
     // Save output audio stream for faster reference
     output_streamref.m_stream                  = output_stream;
 
-    m_out.m_subtitle.insert(std::make_pair(output_streamref.m_stream_idx, output_streamref));
+    m_out.m_subtitle.emplace(output_streamref.m_stream_idx, output_streamref);
 
     // Update input to output stream map
     add_stream_map(input_streamref.m_stream_idx, output_streamref.m_stream_idx);
@@ -3654,11 +3654,11 @@ int FFmpeg_Transcoder::decode_video_frame(AVPacket *pkt, int *decoded)
                         }
                     }
 
-                    m_frame_map.insert(std::make_pair(pos, frame));
+                    m_frame_map.emplace(pos, frame);
                 }
                 else
                 {
-                    m_frame_map.insert(std::make_pair(0, frame));
+                    m_frame_map.emplace(0, frame);
                 }
             }
         }
@@ -3731,7 +3731,7 @@ int FFmpeg_Transcoder::decode_subtitle(AVCodecContext *codec_ctx, AVPacket *pkt,
     {
         // If there is decoded data, store it
         // sub->pts is already in AV_TIME_BASE
-        m_frame_map.insert(std::make_pair(subtitle->pts, subtitle));
+        m_frame_map.emplace(subtitle->pts, subtitle);
     }
 
     return ret;
@@ -4984,7 +4984,7 @@ int FFmpeg_Transcoder::create_audio_frame(int frame_size)
 
     int64_t pos = ffmpeg_rescale_q_rnd(stream_pts - m_out.m_audio.m_start_time, m_out.m_audio.m_stream->time_base);
 
-    m_frame_map.insert(std::make_pair(pos, output_frame));
+    m_frame_map.emplace(pos, output_frame);
 
     return ret;
 }
@@ -7665,7 +7665,7 @@ void FFmpeg_Transcoder::add_stream_map(int in_stream_idx, int out_stream_idx)
 {
     if (in_stream_idx != INVALID_STREAM)
     {
-        m_stream_map.insert(std::make_pair(in_stream_idx, out_stream_idx));
+        m_stream_map.emplace(in_stream_idx, out_stream_idx);
     }
 }
 

@@ -1033,7 +1033,7 @@ Cache_Entry* Cache::create_entry(LPVIRTUALFILE virtualfile, const std::string & 
         return nullptr;
     }
 
-    m_cache.insert(make_pair(make_pair(virtualfile->m_destfile, desttype), cache_entry));
+    m_cache.emplace(std::pair<std::string, std::string>{virtualfile->m_destfile, desttype}, cache_entry);
 
     return cache_entry;
 }

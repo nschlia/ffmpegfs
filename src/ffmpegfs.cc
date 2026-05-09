@@ -2049,6 +2049,11 @@ static void build_device_type_list()
     }
 }
 
+const char *value_or_none(const char *value)
+{
+	return (value != nullptr ? value : "NONE");
+}
+
 /**
  * @brief Print currently selected parameters.
  */
@@ -2118,11 +2123,11 @@ static void print_params()
     Logging::trace(nullptr, "---- Hardware Acceleration ----");
     Logging::trace(nullptr, "Hardware Decoder:");
     Logging::trace(nullptr, "API               : %1", get_hwaccel_API_text(params.m_hwaccel_dec_API).c_str());
-    Logging::trace(nullptr, "Frame Buffering   : %1", av_hwdevice_get_type_name(params.m_hwaccel_dec_device_type));
+    Logging::trace(nullptr, "Frame Buffering   : %1", value_or_none(av_hwdevice_get_type_name(params.m_hwaccel_dec_device_type)));
     Logging::trace(nullptr, "Device            : %1", params.m_hwaccel_dec_device.c_str());
     Logging::trace(nullptr, "Hardware Encoder:");
     Logging::trace(nullptr, "API               : %1", get_hwaccel_API_text(params.m_hwaccel_enc_API).c_str());
-    Logging::trace(nullptr, "Frame Buffering   : %1", av_hwdevice_get_type_name(params.m_hwaccel_enc_device_type));
+    Logging::trace(nullptr, "Frame Buffering   : %1", value_or_none(av_hwdevice_get_type_name(params.m_hwaccel_enc_device_type)));
     Logging::trace(nullptr, "Device            : %1", params.m_hwaccel_enc_device.c_str());
     Logging::trace(nullptr, "--------- Subtitles ---------");
     Logging::trace(nullptr, "No subtitles      : %1", params.m_no_subtitles ? "yes" : "no");

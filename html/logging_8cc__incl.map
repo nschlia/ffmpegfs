@@ -1,31 +1,65 @@
 <map id="src/logging.cc" name="src/logging.cc">
-<area shape="rect" id="node1" title="Log facilities implementation." alt="" coords="941,5,1043,32"/>
-<area shape="rect" id="node2" href="$logging_8h.html" title="Provide various log facilities to stderr, disk or syslog." alt="" coords="220,155,295,181"/>
-<area shape="rect" id="node8" href="$ffmpegfs_8h.html" title="Main include for FFmpegfs project." alt="" coords="743,80,827,107"/>
-<area shape="rect" id="node25" title=" " alt="" coords="852,80,935,107"/>
-<area shape="rect" id="node26" title=" " alt="" coords="959,80,1025,107"/>
-<area shape="rect" id="node27" title=" " alt="" coords="1049,80,1121,107"/>
-<area shape="rect" id="node28" title=" " alt="" coords="1146,80,1217,107"/>
-<area shape="rect" id="node29" title=" " alt="" coords="1241,80,1311,107"/>
-<area shape="rect" id="node3" title=" " alt="" coords="273,229,319,256"/>
-<area shape="rect" id="node4" title=" " alt="" coords="5,229,72,256"/>
-<area shape="rect" id="node5" title=" " alt="" coords="96,229,165,256"/>
-<area shape="rect" id="node6" title=" " alt="" coords="523,229,578,256"/>
-<area shape="rect" id="node7" title=" " alt="" coords="189,229,248,256"/>
-<area shape="rect" id="node9" title=" " alt="" coords="756,155,815,181"/>
-<area shape="rect" id="node10" title=" " alt="" coords="839,155,908,181"/>
-<area shape="rect" id="node11" href="$ffmpeg__utils_8h.html" title="Various FFmpegfs utility functions." alt="" coords="1017,155,1121,181"/>
-<area shape="rect" id="node20" href="$fileio_8h.html" title="FileIO class." alt="" coords="671,155,731,181"/>
-<area shape="rect" id="node12" href="$ffmpeg__compat_8h.html" title="FFmpeg API compatibility." alt="" coords="1428,229,1551,256"/>
-<area shape="rect" id="node13" title=" " alt="" coords="918,229,973,256"/>
-<area shape="rect" id="node14" title=" " alt="" coords="997,229,1056,256"/>
-<area shape="rect" id="node15" title=" " alt="" coords="1575,229,1615,256"/>
-<area shape="rect" id="node16" title=" " alt="" coords="843,229,893,256"/>
-<area shape="rect" id="node17" title=" " alt="" coords="1081,229,1143,256"/>
-<area shape="rect" id="node18" title=" " alt="" coords="1167,229,1227,256"/>
-<area shape="rect" id="node19" title=" " alt="" coords="1252,229,1404,256"/>
-<area shape="rect" id="node21" title=" " alt="" coords="739,229,819,256"/>
-<area shape="rect" id="node22" title=" " alt="" coords="344,229,405,256"/>
-<area shape="rect" id="node23" title=" " alt="" coords="429,229,499,256"/>
-<area shape="rect" id="node24" title=" " alt="" coords="603,229,715,256"/>
+<area shape="rect" id="Node000001" title="Log facilities implementation." alt="" coords="720,5,831,31"/>
+<area shape="rect" id="Node000002" href="$logging_8h.html" title="Provide various log facilities to stderr, disk or syslog." alt="" coords="243,152,326,177"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="720,31,616,51,496,81,402,115,323,149,321,144,400,110,495,76,614,46,719,26"/>
+<area shape="rect" id="Node000008" href="$ffmpegfs_8h.html" title="Main include for FFmpegfs project." alt="" coords="508,79,600,104"/>
+<area shape="poly" id="edge7_Node000001_Node000008" title=" " alt="" coords="741,33,603,77,602,72,739,28"/>
+<area shape="rect" id="Node000025" title=" " alt="" coords="625,79,715,104"/>
+<area shape="poly" id="edge30_Node000001_Node000025" title=" " alt="" coords="760,33,700,73,697,69,757,28"/>
+<area shape="rect" id="Node000026" title=" " alt="" coords="740,79,811,104"/>
+<area shape="poly" id="edge31_Node000001_Node000026" title=" " alt="" coords="778,31,778,65,773,65,773,31"/>
+<area shape="rect" id="Node000027" title=" " alt="" coords="835,79,915,104"/>
+<area shape="poly" id="edge32_Node000001_Node000027" title=" " alt="" coords="793,29,849,68,846,73,790,33"/>
+<area shape="rect" id="Node000028" title=" " alt="" coords="940,79,1016,104"/>
+<area shape="poly" id="edge33_Node000001_Node000028" title=" " alt="" coords="809,28,933,72,932,77,807,33"/>
+<area shape="rect" id="Node000029" title=" " alt="" coords="1040,79,1116,104"/>
+<area shape="poly" id="edge34_Node000001_Node000029" title=" " alt="" coords="825,28,1027,75,1026,81,823,33"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="919,225,970,251"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="327,169,377,175,524,186,641,191,757,200,906,223,905,228,757,205,640,197,524,192,376,180,326,174"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="5,225,79,251"/>
+<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="246,180,92,225,91,220,245,175"/>
+<area shape="rect" id="Node000005" title=" " alt="" coords="274,225,349,251"/>
+<area shape="poly" id="edge4_Node000002_Node000005" title=" " alt="" coords="292,177,305,212,300,214,287,179"/>
+<area shape="rect" id="Node000006" title=" " alt="" coords="191,225,250,251"/>
+<area shape="poly" id="edge5_Node000002_Node000006" title=" " alt="" coords="276,179,242,217,238,213,272,176"/>
+<area shape="rect" id="Node000007" title=" " alt="" coords="103,225,167,251"/>
+<area shape="poly" id="edge6_Node000002_Node000007" title=" " alt="" coords="262,180,173,222,171,217,260,175"/>
+<area shape="rect" id="Node000009" title=" " alt="" coords="389,152,492,177"/>
+<area shape="poly" id="edge8_Node000008_Node000009" title=" " alt="" coords="537,106,472,147,469,142,534,102"/>
+<area shape="rect" id="Node000010" title=" " alt="" coords="517,152,591,177"/>
+<area shape="poly" id="edge9_Node000008_Node000010" title=" " alt="" coords="557,104,557,138,551,138,551,104"/>
+<area shape="rect" id="Node000011" href="$ffmpeg__utils_8h.html" title="Various FFmpegfs utility functions." alt="" coords="615,152,730,177"/>
+<area shape="poly" id="edge10_Node000008_Node000011" title=" " alt="" coords="574,102,643,142,640,147,572,106"/>
+<area shape="rect" id="Node000020" href="$fileio_8h.html" title="FileIO class." alt="" coords="1222,152,1289,177"/>
+<area shape="poly" id="edge21_Node000008_Node000020" title=" " alt="" coords="600,99,613,101,785,123,954,139,1209,158,1208,163,954,144,784,128,612,107,600,105"/>
+<area shape="poly" id="edge13_Node000011_Node000005" title=" " alt="" coords="616,179,363,228,362,222,615,174"/>
+<area shape="poly" id="edge15_Node000011_Node000006" title=" " alt="" coords="616,178,604,180,435,201,360,211,264,228,263,223,359,205,435,196,603,175,615,173"/>
+<area shape="rect" id="Node000012" href="$ffmpeg__compat_8h.html" title="FFmpeg API compatibility." alt="" coords="759,225,895,251"/>
+<area shape="poly" id="edge11_Node000011_Node000012" title=" " alt="" coords="699,175,791,217,789,222,696,180"/>
+<area shape="rect" id="Node000013" title=" " alt="" coords="1141,225,1199,251"/>
+<area shape="poly" id="edge12_Node000011_Node000013" title=" " alt="" coords="731,168,905,187,1014,203,1128,223,1127,228,1013,208,904,193,730,174"/>
+<area shape="rect" id="Node000014" title=" " alt="" coords="1224,225,1287,251"/>
+<area shape="poly" id="edge14_Node000011_Node000014" title=" " alt="" coords="730,167,938,185,1072,201,1211,223,1210,228,1072,207,938,190,730,172"/>
+<area shape="rect" id="Node000015" title=" " alt="" coords="994,225,1037,251"/>
+<area shape="poly" id="edge16_Node000011_Node000015" title=" " alt="" coords="731,172,843,192,981,223,980,228,842,197,730,177"/>
+<area shape="rect" id="Node000016" title=" " alt="" coords="1061,225,1117,251"/>
+<area shape="poly" id="edge17_Node000011_Node000016" title=" " alt="" coords="731,170,871,190,1048,223,1047,228,870,195,730,176"/>
+<area shape="rect" id="Node000017" title=" " alt="" coords="373,225,444,251"/>
+<area shape="poly" id="edge18_Node000011_Node000017" title=" " alt="" coords="631,180,458,226,457,221,630,175"/>
+<area shape="rect" id="Node000018" title=" " alt="" coords="469,225,535,251"/>
+<area shape="poly" id="edge19_Node000011_Node000018" title=" " alt="" coords="646,180,543,222,541,218,644,175"/>
+<area shape="rect" id="Node000019" title=" " alt="" coords="560,225,735,251"/>
+<area shape="poly" id="edge20_Node000011_Node000019" title=" " alt="" coords="671,179,658,213,653,212,666,177"/>
+<area shape="poly" id="edge25_Node000020_Node000003" title=" " alt="" coords="1222,175,1120,196,984,228,983,223,1119,191,1221,170"/>
+<area shape="poly" id="edge23_Node000020_Node000013" title=" " alt="" coords="1243,179,1196,219,1193,214,1240,175"/>
+<area shape="poly" id="edge24_Node000020_Node000014" title=" " alt="" coords="1258,178,1258,212,1253,212,1253,178"/>
+<area shape="poly" id="edge28_Node000020_Node000016" title=" " alt="" coords="1230,180,1129,222,1127,217,1228,175"/>
+<area shape="rect" id="Node000021" title=" " alt="" coords="1311,225,1397,251"/>
+<area shape="poly" id="edge22_Node000020_Node000021" title=" " alt="" coords="1273,175,1328,215,1325,219,1270,180"/>
+<area shape="rect" id="Node000022" title=" " alt="" coords="1421,225,1487,251"/>
+<area shape="poly" id="edge26_Node000020_Node000022" title=" " alt="" coords="1288,175,1409,218,1408,223,1286,180"/>
+<area shape="rect" id="Node000023" title=" " alt="" coords="1511,225,1589,251"/>
+<area shape="poly" id="edge27_Node000020_Node000023" title=" " alt="" coords="1290,172,1499,222,1497,227,1289,177"/>
+<area shape="rect" id="Node000024" title=" " alt="" coords="1613,225,1741,251"/>
+<area shape="poly" id="edge29_Node000020_Node000024" title=" " alt="" coords="1289,169,1600,221,1599,226,1288,174"/>
 </map>

@@ -1,16 +1,31 @@
 <map id="src/ffmpeg_subtitle.cc" name="src/ffmpeg_subtitle.cc">
-<area shape="rect" id="node1" title="FFmpeg_Subtitle class implementation." alt="" coords="315,5,466,32"/>
-<area shape="rect" id="node2" title=" " alt="" coords="237,80,385,107"/>
-<area shape="rect" id="node3" href="$ffmpeg__subtitle_8h.html" title="FFmpeg AVSubtitle extension." alt="" coords="409,80,532,107"/>
-<area shape="rect" id="node4" href="$ffmpeg__utils_8h.html" title="Various FFmpegfs utility functions." alt="" coords="363,155,467,181"/>
-<area shape="rect" id="node14" title=" " alt="" coords="491,155,560,181"/>
-<area shape="rect" id="node5" href="$ffmpeg__compat_8h.html" title="FFmpeg API compatibility." alt="" coords="5,229,128,256"/>
-<area shape="rect" id="node6" title=" " alt="" coords="153,229,207,256"/>
-<area shape="rect" id="node7" title=" " alt="" coords="232,229,291,256"/>
-<area shape="rect" id="node8" title=" " alt="" coords="315,229,370,256"/>
-<area shape="rect" id="node9" title=" " alt="" coords="395,229,435,256"/>
-<area shape="rect" id="node10" title=" " alt="" coords="459,229,509,256"/>
-<area shape="rect" id="node11" title=" " alt="" coords="534,229,597,256"/>
-<area shape="rect" id="node12" title=" " alt="" coords="621,229,681,256"/>
-<area shape="rect" id="node13" title=" " alt="" coords="705,229,857,256"/>
+<area shape="rect" id="Node000001" title="FFmpeg_Subtitle class implementation." alt="" coords="392,5,557,31"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="307,79,469,104"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="462,33,414,72,411,68,459,29"/>
+<area shape="rect" id="Node000003" href="$ffmpeg__subtitle_8h.html" title="FFmpeg AVSubtitle extension." alt="" coords="493,79,629,104"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="490,29,538,68,535,72,487,33"/>
+<area shape="rect" id="Node000004" href="$ffmpeg__utils_8h.html" title="Various FFmpegfs utility functions." alt="" coords="444,152,559,177"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="553,106,522,143,518,140,549,103"/>
+<area shape="rect" id="Node000015" title=" " alt="" coords="583,152,660,177"/>
+<area shape="poly" id="edge14_Node000003_Node000015" title=" " alt="" coords="573,103,605,140,601,143,569,106"/>
+<area shape="rect" id="Node000005" href="$ffmpeg__compat_8h.html" title="FFmpeg API compatibility." alt="" coords="5,225,141,251"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="444,178,156,226,155,221,443,173"/>
+<area shape="rect" id="Node000006" title=" " alt="" coords="165,225,224,251"/>
+<area shape="poly" id="edge5_Node000004_Node000006" title=" " alt="" coords="447,180,238,228,237,222,446,175"/>
+<area shape="rect" id="Node000007" title=" " alt="" coords="248,225,323,251"/>
+<area shape="poly" id="edge6_Node000004_Node000007" title=" " alt="" coords="467,180,334,223,332,218,466,175"/>
+<area shape="rect" id="Node000008" title=" " alt="" coords="347,225,410,251"/>
+<area shape="poly" id="edge7_Node000004_Node000008" title=" " alt="" coords="483,180,412,221,409,216,480,175"/>
+<area shape="rect" id="Node000009" title=" " alt="" coords="435,225,493,251"/>
+<area shape="poly" id="edge8_Node000004_Node000009" title=" " alt="" coords="498,179,479,215,474,212,493,176"/>
+<area shape="rect" id="Node000010" title=" " alt="" coords="517,225,560,251"/>
+<area shape="poly" id="edge9_Node000004_Node000010" title=" " alt="" coords="510,176,529,212,524,215,505,179"/>
+<area shape="rect" id="Node000011" title=" " alt="" coords="584,225,640,251"/>
+<area shape="poly" id="edge10_Node000004_Node000011" title=" " alt="" coords="521,175,584,215,581,220,518,180"/>
+<area shape="rect" id="Node000012" title=" " alt="" coords="665,225,735,251"/>
+<area shape="poly" id="edge11_Node000004_Node000012" title=" " alt="" coords="534,175,655,218,654,223,532,180"/>
+<area shape="rect" id="Node000013" title=" " alt="" coords="760,225,827,251"/>
+<area shape="poly" id="edge12_Node000004_Node000013" title=" " alt="" coords="550,175,747,222,746,228,548,180"/>
+<area shape="rect" id="Node000014" title=" " alt="" coords="851,225,1026,251"/>
+<area shape="poly" id="edge13_Node000004_Node000014" title=" " alt="" coords="559,173,571,175,855,220,854,226,570,180,558,178"/>
 </map>

@@ -1,7 +1,12 @@
 <map id="VIRTUALFILE::CUESHEET_TRACK" name="VIRTUALFILE::CUESHEET_TRACK">
-<area shape="rect" id="node1" title="Extra value structure for cue sheets." alt="" coords="5,5,195,47"/>
-<area shape="rect" id="node2" href="$structVIRTUALFILE.html" title="Virtual file definition." alt="" coords="280,109,387,136"/>
-<area shape="rect" id="node3" href="$structVIRTUALFILE_1_1VCD__CHAPTER.html" title="Extra value structure for Video CDs." alt="" coords="221,13,437,39"/>
-<area shape="rect" id="node4" href="$structVIRTUALFILE_1_1DVD__CHAPTER.html" title="Extra value structure for DVDs." alt="" coords="461,13,677,39"/>
-<area shape="rect" id="node5" href="$structVIRTUALFILE_1_1BLURAY__CHAPTER.html" title="Extra value structure for Blu&#45;ray disks." alt="" coords="702,5,869,47"/>
+<area shape="rect" id="Node000001" title="Extra value structure for cue sheets." alt="" coords="5,5,187,45"/>
+<area shape="rect" id="Node000002" href="$structVIRTUALFILE.html" title="Virtual file definition." alt="" coords="283,108,387,133"/>
+<area shape="poly" id="edge5_Node000002_Node000001" title=" " alt="" coords="80,58,78,71,82,82,95,92,114,99,166,110,227,115,283,117,283,122,226,121,166,115,112,105,92,96,78,86,72,72,75,57"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="292,105,143,48,145,43,294,101"/>
+<area shape="rect" id="Node000003" href="$structVIRTUALFILE_1_1VCD__CHAPTER.html" title="Extra value structure for Video CDs." alt="" coords="220,13,428,38"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="330,51,336,108,331,108,324,52"/>
+<area shape="rect" id="Node000004" href="$structVIRTUALFILE_1_1DVD__CHAPTER.html" title="Extra value structure for DVDs." alt="" coords="453,13,662,38"/>
+<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="519,46,363,110,361,105,517,41"/>
+<area shape="rect" id="Node000005" href="$structVIRTUALFILE_1_1BLURAY__CHAPTER.html" title="Extra value structure for Blu&#45;ray disks." alt="" coords="687,5,849,45"/>
+<area shape="poly" id="edge4_Node000002_Node000005" title=" " alt="" coords="673,51,507,87,388,111,386,106,506,81,672,45"/>
 </map>

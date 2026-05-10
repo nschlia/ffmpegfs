@@ -1,4 +1,5 @@
 <map id="Cache" name="Cache">
-<area shape="rect" id="node1" title="The Cache class." alt="" coords="47,109,107,136"/>
-<area shape="rect" id="node2" href="$structCache_1_1TABLE__DEF.html" title="Definition of sql table." alt="" coords="5,5,148,32"/>
+<area shape="rect" id="Node000001" title="The Cache class." alt="" coords="45,108,108,133"/>
+<area shape="rect" id="Node000002" href="$structCache_1_1TABLE__DEF.html" title="Definition of sql table." alt="" coords="5,5,148,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="79,45,79,108,74,108,74,45"/>
 </map>

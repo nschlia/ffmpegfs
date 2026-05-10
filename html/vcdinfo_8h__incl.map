@@ -1,6 +1,9 @@
 <map id="src/vcd/vcdinfo.h" name="src/vcd/vcdinfo.h">
-<area shape="rect" id="node1" title="S/VCD VcdInfo class." alt="" coords="16,5,139,32"/>
-<area shape="rect" id="node2" href="$vcdchapter_8h.html" title="S/VCD VcdChapter class." alt="" coords="29,80,125,107"/>
-<area shape="rect" id="node3" title=" " alt="" coords="5,155,67,181"/>
-<area shape="rect" id="node4" title=" " alt="" coords="91,155,146,181"/>
+<area shape="rect" id="Node000001" title="S/VCD VcdInfo class." alt="" coords="15,5,147,31"/>
+<area shape="rect" id="Node000002" href="$vcdchapter_8h.html" title="S/VCD VcdChapter class." alt="" coords="29,79,134,104"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="84,31,84,65,79,65,79,31"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="5,152,72,177"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="77,106,55,142,50,139,72,103"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="96,152,155,177"/>
+<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="91,103,113,139,109,142,86,106"/>
 </map>

@@ -1,8 +1,13 @@
 <map id="src/transcode.h" name="src/transcode.h">
-<area shape="rect" id="node1" title="File transcoder interface (for use with by FUSE)" alt="" coords="339,5,451,32"/>
-<area shape="rect" id="node2" href="$blurayparser_8cc.html" title="Blu&#45;ray disk parser implementation." alt="" coords="5,80,137,107"/>
-<area shape="rect" id="node3" href="$cuesheetparser_8cc.html" title="Cue sheet parser implementation." alt="" coords="161,80,312,107"/>
-<area shape="rect" id="node4" href="$dvdparser_8cc.html" title="dvdparser class implementation" alt="" coords="336,80,455,107"/>
-<area shape="rect" id="node5" href="$fuseops_8cc.html" title="Fuse operations implementation." alt="" coords="479,80,587,107"/>
-<area shape="rect" id="node6" href="$transcode_8cc.html" title="File transcoder interface implementation." alt="" coords="611,80,729,107"/>
+<area shape="rect" id="Node000001" title="File transcoder interface (for use with by FUSE)" alt="" coords="363,5,485,31"/>
+<area shape="rect" id="Node000002" href="$blurayparser_8cc.html" title="Blu&#45;ray disk parser implementation." alt="" coords="5,79,149,104"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="355,36,134,81,133,76,354,31"/>
+<area shape="rect" id="Node000003" href="$cuesheetparser_8cc.html" title="Cue sheet parser implementation." alt="" coords="173,79,336,104"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="385,38,283,81,281,76,383,34"/>
+<area shape="rect" id="Node000004" href="$dvdparser_8cc.html" title="dvdparser class implementation" alt="" coords="361,79,487,104"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="427,44,427,79,421,79,421,44"/>
+<area shape="rect" id="Node000005" href="$fuseops_8cc.html" title="Fuse operations implementation." alt="" coords="512,79,627,104"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="461,34,547,76,544,81,458,39"/>
+<area shape="rect" id="Node000006" href="$transcode_8cc.html" title="File transcoder interface implementation." alt="" coords="651,79,778,104"/>
+<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="485,31,668,76,667,81,483,37"/>
 </map>

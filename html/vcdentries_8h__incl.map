@@ -1,8 +1,13 @@
 <map id="src/vcd/vcdentries.h" name="src/vcd/vcdentries.h">
-<area shape="rect" id="node1" title="S/VCD VcdEntries class." alt="" coords="109,5,249,32"/>
-<area shape="rect" id="node2" href="$vcdchapter_8h.html" title="S/VCD VcdChapter class." alt="" coords="29,80,125,107"/>
-<area shape="rect" id="node5" title=" " alt="" coords="149,80,208,107"/>
-<area shape="rect" id="node6" title=" " alt="" coords="232,80,283,107"/>
-<area shape="rect" id="node3" title=" " alt="" coords="5,155,67,181"/>
-<area shape="rect" id="node4" title=" " alt="" coords="91,155,146,181"/>
+<area shape="rect" id="Node000001" title="S/VCD VcdEntries class." alt="" coords="113,5,265,31"/>
+<area shape="rect" id="Node000002" href="$vcdchapter_8h.html" title="S/VCD VcdChapter class." alt="" coords="29,79,134,104"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="173,33,112,73,109,69,171,28"/>
+<area shape="rect" id="Node000005" title=" " alt="" coords="158,79,221,104"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="192,31,192,65,187,65,187,31"/>
+<area shape="rect" id="Node000006" title=" " alt="" coords="245,79,301,104"/>
+<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="205,29,251,67,247,72,201,33"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="5,152,72,177"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="77,106,55,142,50,139,72,103"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="96,152,155,177"/>
+<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="91,103,113,139,109,142,86,106"/>
 </map>

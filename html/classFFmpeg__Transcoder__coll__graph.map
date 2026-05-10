@@ -1,19 +1,46 @@
 <map id="FFmpeg_Transcoder" name="FFmpeg_Transcoder">
-<area shape="rect" id="node1" title="The FFmpeg_Transcoder class." alt="" coords="1287,183,1429,209"/>
-<area shape="rect" id="node2" href="$classFFmpeg__Base.html" title="The FFmpeg_Base class." alt="" coords="851,108,957,135"/>
-<area shape="rect" id="node3" href="$structVIRTUALFILE.html" title="Virtual file definition." alt="" coords="349,129,455,156"/>
-<area shape="rect" id="node7" href="$structVIRTUALFILE_1_1CUESHEET__TRACK.html" title="Extra value structure for cue sheets." alt="" coords="637,158,827,199"/>
-<area shape="rect" id="node16" href="$classFileIO.html" title="Base class for I/O." alt="" coords="703,56,761,83"/>
-<area shape="rect" id="node4" href="$structVIRTUALFILE_1_1VCD__CHAPTER.html" title="Extra value structure for Video CDs." alt="" coords="5,79,221,105"/>
-<area shape="rect" id="node5" href="$structVIRTUALFILE_1_1DVD__CHAPTER.html" title="Extra value structure for DVDs." alt="" coords="5,129,221,156"/>
-<area shape="rect" id="node6" href="$structVIRTUALFILE_1_1BLURAY__CHAPTER.html" title="Extra value structure for Blu&#45;ray disks." alt="" coords="30,181,197,222"/>
-<area shape="rect" id="node8" href="$classFFmpeg__Profiles.html" title="The FFmpeg_Profiles class." alt="" coords="996,165,1117,192"/>
-<area shape="rect" id="node9" href="$structFFmpeg__Transcoder_1_1INPUTFILE.html" title="Input file definition." alt="" coords="657,281,807,322"/>
-<area shape="rect" id="node11" href="$structFFmpeg__Transcoder_1_1OUTPUTFILE.html" title="Output file definition." alt="" coords="981,217,1132,258"/>
-<area shape="rect" id="node10" href="$classFFmpeg__Transcoder_1_1StreamRef.html" title="In/output stream reference data." alt="" coords="327,281,477,322"/>
-<area shape="rect" id="node12" href="$structID3v1.html" title="ID3 version 1 tag" alt="" coords="703,224,761,251"/>
-<area shape="rect" id="node13" href="$classFFmpegfs__Format.html" title="The FFmpegfs_Format class." alt="" coords="992,356,1121,383"/>
-<area shape="rect" id="node14" href="$structFormat__Options.html" title=" " alt="" coords="675,356,789,383"/>
-<area shape="rect" id="node15" href="$classBuffer.html" title="The Buffer class." alt="" coords="1028,56,1085,83"/>
-<area shape="rect" id="node17" href="$structBuffer_1_1__tagCACHEINFO.html" title="Structure to hold current cache state." alt="" coords="647,5,817,32"/>
+<area shape="rect" id="Node000001" title="The FFmpeg_Transcoder class." alt="" coords="1389,287,1541,312"/>
+<area shape="rect" id="Node000002" href="$classFFmpeg__Base.html" title="The FFmpeg_Base class." alt="" coords="885,153,1000,179"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="1014,155,1090,152,1180,155,1276,171,1322,185,1367,204,1395,222,1421,244,1457,285,1453,288,1417,248,1392,226,1364,208,1320,190,1274,176,1180,161,1090,157,1014,161"/>
+<area shape="rect" id="Node000003" href="$structVIRTUALFILE.html" title="Virtual file definition." alt="" coords="365,96,469,121"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="455,125,491,142,531,154,627,169,725,174,813,173,885,169,885,174,814,178,724,179,627,174,530,159,489,147,453,130"/>
+<area shape="rect" id="Node000007" href="$structVIRTUALFILE_1_1CUESHEET__TRACK.html" title="Extra value structure for cue sheets." alt="" coords="679,105,860,145"/>
+<area shape="poly" id="edge7_Node000007_Node000003" title=" " alt="" coords="481,122,531,130,606,133,678,131,678,136,606,139,530,135,480,127"/>
+<area shape="rect" id="Node000020" href="$classFileIO.html" title="Base class for I/O." alt="" coords="740,5,799,31"/>
+<area shape="poly" id="edge22_Node000020_Node000003" title=" " alt="" coords="480,90,739,23,740,28,481,95"/>
+<area shape="rect" id="Node000004" href="$structVIRTUALFILE_1_1VCD__CHAPTER.html" title="Extra value structure for Video CDs." alt="" coords="6,47,214,72"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="212,71,304,86,366,97,365,102,304,91,211,77"/>
+<area shape="rect" id="Node000005" href="$structVIRTUALFILE_1_1DVD__CHAPTER.html" title="Extra value structure for DVDs." alt="" coords="5,96,215,121"/>
+<area shape="poly" id="edge4_Node000003_Node000005" title=" " alt="" coords="229,106,365,106,365,111,229,111"/>
+<area shape="rect" id="Node000006" href="$structVIRTUALFILE_1_1BLURAY__CHAPTER.html" title="Extra value structure for Blu&#45;ray disks." alt="" coords="29,146,191,186"/>
+<area shape="poly" id="edge5_Node000003_Node000006" title=" " alt="" coords="204,146,365,116,366,121,205,151"/>
+<area shape="poly" id="edge6_Node000003_Node000007" title=" " alt="" coords="665,119,655,118,469,112,469,107,655,113,665,113"/>
+<area shape="rect" id="Node000008" href="$classFFmpeg__Profiles.html" title="The FFmpeg_Profiles class." alt="" coords="1040,188,1171,213"/>
+<area shape="poly" id="edge8_Node000001_Node000008" title=" " alt="" coords="1185,202,1273,214,1320,224,1366,238,1412,260,1449,284,1446,289,1409,265,1364,243,1319,229,1272,219,1184,208"/>
+<area shape="rect" id="Node000009" href="$classFFmpeg__SwrContext.html" title="RAII wrapper for SwrContext." alt="" coords="1027,237,1184,263"/>
+<area shape="poly" id="edge9_Node000001_Node000009" title=" " alt="" coords="1198,256,1366,277,1406,284,1405,289,1365,282,1198,261"/>
+<area shape="rect" id="Node000010" href="$classFFmpeg__AudioFifo.html" title="RAII wrapper for AVAudioFifo." alt="" coords="1034,287,1177,312"/>
+<area shape="poly" id="edge10_Node000001_Node000010" title=" " alt="" coords="1191,297,1389,297,1389,302,1191,302"/>
+<area shape="rect" id="Node000011" href="$classFFmpeg__SwsContext.html" title="RAII wrapper for SwsContext." alt="" coords="1026,336,1185,361"/>
+<area shape="poly" id="edge11_Node000001_Node000011" title=" " alt="" coords="1198,338,1365,317,1405,309,1406,315,1366,322,1199,343"/>
+<area shape="rect" id="Node000012" href="$structFFmpeg__Transcoder_1_1INPUTFILE.html" title="Input file definition." alt="" coords="689,386,849,426"/>
+<area shape="poly" id="edge12_Node000001_Node000012" title=" " alt="" coords="863,407,968,405,1095,397,1231,377,1299,362,1364,342,1439,310,1441,315,1366,347,1300,367,1232,382,1095,402,968,411,863,412"/>
+<area shape="rect" id="Node000015" href="$structFFmpeg__Transcoder_1_1OUTPUTFILE.html" title="Output file definition." alt="" coords="1025,449,1185,489"/>
+<area shape="poly" id="edge16_Node000015_Node000012" title=" " alt="" coords="863,421,1025,451,1025,456,863,426"/>
+<area shape="rect" id="Node000013" href="$classFFmpeg__FormatContext.html" title="RAII wrapper for AVFormatContext." alt="" coords="328,363,507,388"/>
+<area shape="poly" id="edge13_Node000012_Node000013" title=" " alt="" coords="520,382,689,396,689,402,520,387"/>
+<area shape="rect" id="Node000014" href="$classFFmpeg__Transcoder_1_1StreamRef.html" title="In/output stream reference data." alt="" coords="337,415,497,455"/>
+<area shape="poly" id="edge14_Node000012_Node000014" title=" " alt="" coords="511,437,582,437,654,431,697,423,698,429,655,437,582,442,511,443"/>
+<area shape="poly" id="edge15_Node000001_Node000015" title=" " alt="" coords="1199,471,1240,468,1283,462,1325,450,1364,432,1397,405,1424,371,1444,337,1456,311,1461,313,1449,340,1428,374,1401,408,1367,436,1327,455,1284,467,1240,474,1199,476"/>
+<area shape="rect" id="Node000016" href="$structID3v1.html" title="ID3 version 1 tag" alt="" coords="739,456,799,481"/>
+<area shape="poly" id="edge17_Node000015_Node000016" title=" " alt="" coords="813,466,1025,466,1025,471,813,471"/>
+<area shape="rect" id="Node000017" href="$classFFmpegfs__Format.html" title="The FFmpegfs_Format class." alt="" coords="1035,515,1175,540"/>
+<area shape="poly" id="edge18_Node000001_Node000017" title=" " alt="" coords="1189,533,1232,532,1278,526,1323,513,1364,492,1386,473,1404,450,1433,399,1450,349,1459,312,1464,313,1455,350,1437,401,1409,453,1390,476,1367,496,1325,518,1279,531,1233,537,1189,538"/>
+<area shape="rect" id="Node000018" href="$structFormat__Options.html" title=" " alt="" coords="707,516,832,541"/>
+<area shape="poly" id="edge19_Node000017_Node000018" title=" " alt="" coords="846,526,1035,525,1035,530,846,531"/>
+<area shape="rect" id="Node000019" href="$classBuffer.html" title="The Buffer class." alt="" coords="1075,55,1136,80"/>
+<area shape="poly" id="edge20_Node000001_Node000019" title=" " alt="" coords="1150,66,1198,70,1255,81,1313,100,1367,131,1404,168,1432,212,1451,254,1463,286,1458,287,1446,256,1427,215,1400,171,1364,135,1311,105,1253,86,1197,76,1149,71"/>
+<area shape="poly" id="edge21_Node000019_Node000020" title=" " alt="" coords="812,20,1002,45,1075,58,1074,64,1001,50,812,25"/>
+<area shape="rect" id="Node000021" href="$structBuffer_1_1__tagCACHEINFO.html" title="Structure to hold current cache state." alt="" coords="682,55,857,80"/>
+<area shape="poly" id="edge23_Node000019_Node000021" title=" " alt="" coords="871,65,1074,65,1074,70,871,70"/>
 </map>

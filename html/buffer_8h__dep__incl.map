@@ -1,11 +1,24 @@
 <map id="src/buffer.h" name="src/buffer.h">
-<area shape="rect" id="node1" title="Buffer class." alt="" coords="345,5,432,32"/>
-<area shape="rect" id="node2" href="$buffer_8cc.html" title="Buffer class implementation." alt="" coords="5,80,100,107"/>
-<area shape="rect" id="node3" href="$cache_8h.html" title="Data cache management." alt="" coords="243,80,334,107"/>
-<area shape="rect" id="node6" href="$cache__entry_8cc.html" title="Cache_Entry class implementation." alt="" coords="343,229,474,256"/>
-<area shape="rect" id="node7" href="$fuseops_8cc.html" title="Fuse operations implementation." alt="" coords="499,229,607,256"/>
-<area shape="rect" id="node8" href="$transcode_8cc.html" title="File transcoder interface implementation." alt="" coords="79,229,197,256"/>
-<area shape="rect" id="node9" href="$ffmpeg__transcoder_8cc.html" title="FFmpeg_Transcoder class implementation." alt="" coords="528,80,697,107"/>
-<area shape="rect" id="node4" href="$cache_8cc.html" title="Cache class implementation." alt="" coords="221,229,319,256"/>
-<area shape="rect" id="node5" href="$cache__entry_8h.html" title="Cache entry" alt="" coords="277,155,401,181"/>
+<area shape="rect" id="Node000001" title="Buffer class." alt="" coords="355,5,449,31"/>
+<area shape="rect" id="Node000002" href="$buffer_8cc.html" title="Buffer class implementation." alt="" coords="5,79,105,104"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="342,34,106,82,105,77,341,29"/>
+<area shape="rect" id="Node000003" href="$cache_8h.html" title="Data cache management." alt="" coords="249,79,344,104"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="375,41,315,81,312,76,372,36"/>
+<area shape="rect" id="Node000006" href="$cache__entry_8cc.html" title="Cache_Entry class implementation." alt="" coords="357,225,497,251"/>
+<area shape="poly" id="edge10_Node000001_Node000006" title=" " alt="" coords="411,43,423,93,433,152,433,177,431,225,425,225,427,177,427,152,418,94,406,45"/>
+<area shape="rect" id="Node000007" href="$fuseops_8cc.html" title="Fuse operations implementation." alt="" coords="522,225,637,251"/>
+<area shape="poly" id="edge12_Node000001_Node000007" title=" " alt="" coords="422,40,572,223,568,227,418,44"/>
+<area shape="rect" id="Node000008" href="$transcode_8cc.html" title="File transcoder interface implementation." alt="" coords="80,225,207,251"/>
+<area shape="poly" id="edge13_Node000001_Node000008" title=" " alt="" coords="342,33,289,51,262,64,238,81,205,117,179,158,149,226,145,224,174,156,201,113,235,77,260,60,287,46,341,28"/>
+<area shape="rect" id="Node000009" href="$ffmpeg__transcoder_8cc.html" title="FFmpeg_Transcoder class implementation." alt="" coords="543,79,727,104"/>
+<area shape="poly" id="edge11_Node000001_Node000009" title=" " alt="" coords="453,32,598,76,597,81,452,37"/>
+<area shape="rect" id="Node000004" href="$cache_8cc.html" title="Cache class implementation." alt="" coords="231,225,333,251"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="286,117,273,153,271,172,272,192,280,224,275,226,267,193,265,172,267,151,281,115"/>
+<area shape="rect" id="Node000005" href="$cache__entry_8h.html" title="Cache entry" alt="" coords="283,152,417,177"/>
+<area shape="poly" id="edge4_Node000003_Node000005" title=" " alt="" coords="316,113,343,150,339,153,311,117"/>
+<area shape="poly" id="edge9_Node000003_Node000008" title=" " alt="" coords="276,116,157,227,154,223,272,112"/>
+<area shape="poly" id="edge5_Node000005_Node000004" title=" " alt="" coords="331,189,295,227,291,223,328,185"/>
+<area shape="poly" id="edge6_Node000005_Node000006" title=" " alt="" coords="374,185,416,223,413,227,371,189"/>
+<area shape="poly" id="edge7_Node000005_Node000007" title=" " alt="" coords="401,179,543,223,541,228,399,184"/>
+<area shape="poly" id="edge8_Node000005_Node000008" title=" " alt="" coords="305,184,178,228,176,223,303,179"/>
 </map>

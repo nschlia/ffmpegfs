@@ -1,0 +1,7 @@
+<map id="src/ffmpeg_dictionary.h" name="src/ffmpeg_dictionary.h">
+<area shape="rect" id="Node000001" title="FFmpeg AVDictionary RAII wrapper." alt="" coords="111,5,284,31"/>
+<area shape="rect" id="Node000002" href="$ffmpeg__dictionary_8cc.html" title="FFmpeg_Dictionary class implementation." alt="" coords="5,79,184,104"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="171,41,113,81,110,76,168,36"/>
+<area shape="rect" id="Node000003" href="$ffmpeg__transcoder_8cc.html" title="FFmpeg_Transcoder class implementation." alt="" coords="208,79,392,104"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="227,36,285,76,282,81,224,41"/>
+</map>

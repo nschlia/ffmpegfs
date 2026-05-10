@@ -1,10 +1,18 @@
 <map id="Buffer" name="Buffer">
-<area shape="rect" id="node1" title="The Buffer class." alt="" coords="888,111,945,137"/>
-<area shape="rect" id="node2" href="$classFileIO.html" title="Base class for I/O." alt="" coords="659,11,717,37"/>
-<area shape="rect" id="node3" href="$structVIRTUALFILE.html" title="Virtual file definition." alt="" coords="327,56,433,83"/>
-<area shape="rect" id="node7" href="$structVIRTUALFILE_1_1CUESHEET__TRACK.html" title="Extra value structure for cue sheets." alt="" coords="593,62,783,103"/>
-<area shape="rect" id="node4" href="$structVIRTUALFILE_1_1VCD__CHAPTER.html" title="Extra value structure for Video CDs." alt="" coords="5,5,221,32"/>
-<area shape="rect" id="node5" href="$structVIRTUALFILE_1_1DVD__CHAPTER.html" title="Extra value structure for DVDs." alt="" coords="5,56,221,83"/>
-<area shape="rect" id="node6" href="$structVIRTUALFILE_1_1BLURAY__CHAPTER.html" title="Extra value structure for Blu&#45;ray disks." alt="" coords="30,107,197,149"/>
-<area shape="rect" id="node8" href="$structBuffer_1_1__tagCACHEINFO.html" title="Structure to hold current cache state." alt="" coords="603,128,773,155"/>
+<area shape="rect" id="Node000001" title="The Buffer class." alt="" coords="896,107,957,132"/>
+<area shape="rect" id="Node000002" href="$classFileIO.html" title="Base class for I/O." alt="" coords="665,9,724,35"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="738,29,786,45,852,75,905,104,902,109,849,80,784,50,737,34"/>
+<area shape="rect" id="Node000003" href="$structVIRTUALFILE.html" title="Virtual file definition." alt="" coords="328,55,432,80"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="445,51,456,49,572,32,665,22,665,27,572,38,456,54,446,56"/>
+<area shape="rect" id="Node000007" href="$structVIRTUALFILE_1_1CUESHEET__TRACK.html" title="Extra value structure for cue sheets." alt="" coords="604,59,785,99"/>
+<area shape="poly" id="edge7_Node000007_Node000003" title=" " alt="" coords="446,67,604,73,603,79,446,72"/>
+<area shape="rect" id="Node000004" href="$structVIRTUALFILE_1_1VCD__CHAPTER.html" title="Extra value structure for Video CDs." alt="" coords="6,5,214,31"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="223,30,305,45,335,52,334,57,303,50,222,35"/>
+<area shape="rect" id="Node000005" href="$structVIRTUALFILE_1_1DVD__CHAPTER.html" title="Extra value structure for DVDs." alt="" coords="5,55,215,80"/>
+<area shape="poly" id="edge4_Node000003_Node000005" title=" " alt="" coords="228,65,328,65,328,70,228,70"/>
+<area shape="rect" id="Node000006" href="$structVIRTUALFILE_1_1BLURAY__CHAPTER.html" title="Extra value structure for Blu&#45;ray disks." alt="" coords="29,105,191,145"/>
+<area shape="poly" id="edge5_Node000003_Node000006" title=" " alt="" coords="204,105,303,85,333,77,334,83,305,90,206,110"/>
+<area shape="poly" id="edge6_Node000003_Node000007" title=" " alt="" coords="624,106,586,115,543,120,499,121,455,114,423,100,396,82,399,78,425,95,457,109,499,116,543,115,585,109,623,100"/>
+<area shape="rect" id="Node000008" href="$structBuffer_1_1__tagCACHEINFO.html" title="Structure to hold current cache state." alt="" coords="607,124,782,149"/>
+<area shape="poly" id="edge8_Node000001_Node000008" title=" " alt="" coords="796,126,895,119,896,124,796,132"/>
 </map>

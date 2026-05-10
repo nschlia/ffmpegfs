@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['kick_5fnext_0',['kick_next',['../fuseops_8cc.html#ac422769b0b726d7438d3e0f39eebf00f',1,'fuseops.cc']]]
+  ['_3a_0',['New in 2.18 (2026-04-10):',['../md_README.html#autotoc_md11',1,'']]],
+  ['_3a_20all_20audio_20checks_20fail_1',['&quot;make check&quot;: all audio checks fail',['../md_INSTALL.html#autotoc_md58',1,'']]]
 ];

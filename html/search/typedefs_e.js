@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['vcdchapter_0',['VCDCHAPTER',['../vcdchapter_8h.html#a974ad6f048352c2402590ac801ed16c7',1,'VCDCHAPTER():&#160;vcdchapter.h'],['../vcdutils_8h.html#a974ad6f048352c2402590ac801ed16c7',1,'VCDCHAPTER():&#160;vcdutils.h']]],
+  ['vcdchapter_0',['vcdchapter',['../vcdchapter_8h.html#a974ad6f048352c2402590ac801ed16c7',1,'VCDCHAPTER:&#160;vcdchapter.h'],['../vcdutils_8h.html#a974ad6f048352c2402590ac801ed16c7',1,'VCDCHAPTER:&#160;vcdutils.h']]],
   ['vcdentry_1',['VCDENTRY',['../vcdutils_8h.html#ac4b7fb77f8bde509b8ce364376225b1b',1,'vcdutils.h']]],
   ['vcdinfo_2',['VCDINFO',['../vcdinfo_8cc.html#a0651ebf7b3d2e1a11abc2660765c1e45',1,'vcdinfo.cc']]],
   ['vcdmsf_3',['VCDMSF',['../vcdutils_8h.html#ade44e77c0a5ef3931219345979dfc7b4',1,'vcdutils.h']]],

@@ -1,12 +1,25 @@
 <map id="src/vcd/vcdchapter.h" name="src/vcd/vcdchapter.h">
-<area shape="rect" id="node1" title="S/VCD VcdChapter class." alt="" coords="459,5,601,32"/>
-<area shape="rect" id="node2" href="$vcdchapter_8cc.html" title="S/VCD VcdChapter class implementation." alt="" coords="320,155,471,181"/>
-<area shape="rect" id="node3" href="$vcdentries_8h.html" title="S/VCD VcdEntries class." alt="" coords="152,80,292,107"/>
-<area shape="rect" id="node6" href="$vcdinfo_8h.html" title="S/VCD VcdInfo class." alt="" coords="617,80,739,107"/>
-<area shape="rect" id="node8" href="$vcdutils_8cc.html" title="S/VCD utility functions implementation." alt="" coords="767,155,899,181"/>
-<area shape="rect" id="node9" href="$vcdutils_8h.html" title="S/VCD utility functions." alt="" coords="467,80,593,107"/>
-<area shape="rect" id="node4" href="$vcdentries_8cc.html" title="S/VCD VcdEntries class implementation." alt="" coords="149,155,295,181"/>
-<area shape="rect" id="node5" href="$vcdparser_8cc.html" title="Video/Super Video CD parser implementation." alt="" coords="5,155,124,181"/>
-<area shape="rect" id="node7" href="$vcdinfo_8cc.html" title="S/VCD VcdInfo class implementation." alt="" coords="613,155,743,181"/>
-<area shape="rect" id="node10" href="$vcdio_8cc.html" title="VcdIO class implementation." alt="" coords="495,155,589,181"/>
+<area shape="rect" id="Node000001" title="S/VCD VcdChapter class." alt="" coords="482,5,637,31"/>
+<area shape="rect" id="Node000002" href="$vcdchapter_8cc.html" title="S/VCD VcdChapter class implementation." alt="" coords="339,152,500,177"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="531,41,481,81,450,119,428,153,424,150,446,116,477,77,527,36"/>
+<area shape="rect" id="Node000003" href="$vcdentries_8h.html" title="S/VCD VcdEntries class." alt="" coords="159,79,311,104"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="495,36,288,81,287,76,493,31"/>
+<area shape="rect" id="Node000006" href="$vcdinfo_8h.html" title="S/VCD VcdInfo class." alt="" coords="651,79,783,104"/>
+<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="598,34,692,76,690,81,596,39"/>
+<area shape="rect" id="Node000008" href="$vcdutils_8cc.html" title="S/VCD utility functions implementation." alt="" coords="810,152,951,177"/>
+<area shape="poly" id="edge7_Node000001_Node000008" title=" " alt="" coords="651,28,724,46,761,59,797,76,821,93,843,113,874,150,870,153,839,117,818,97,794,81,759,64,723,51,650,33"/>
+<area shape="rect" id="Node000009" href="$vcdutils_8h.html" title="S/VCD utility functions." alt="" coords="492,79,627,104"/>
+<area shape="poly" id="edge8_Node000001_Node000009" title=" " alt="" coords="562,44,562,79,557,79,557,44"/>
+<area shape="rect" id="Node000004" href="$vcdentries_8cc.html" title="S/VCD VcdEntries class implementation." alt="" coords="156,152,315,177"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="238,118,238,152,233,152,233,118"/>
+<area shape="rect" id="Node000005" href="$vcdparser_8cc.html" title="Video/Super Video CD parser implementation." alt="" coords="5,152,132,177"/>
+<area shape="poly" id="edge4_Node000003_Node000005" title=" " alt="" coords="197,112,97,154,95,149,195,107"/>
+<area shape="rect" id="Node000007" href="$vcdinfo_8cc.html" title="S/VCD VcdInfo class implementation." alt="" coords="647,152,786,177"/>
+<area shape="poly" id="edge6_Node000006_Node000007" title=" " alt="" coords="719,118,719,152,714,152,714,118"/>
+<area shape="poly" id="edge9_Node000009_Node000002" title=" " alt="" coords="526,113,443,154,441,149,523,108"/>
+<area shape="poly" id="edge10_Node000009_Node000004" title=" " alt="" coords="495,110,288,154,287,149,493,104"/>
+<area shape="poly" id="edge11_Node000009_Node000007" title=" " alt="" coords="598,107,692,149,690,154,596,112"/>
+<area shape="poly" id="edge12_Node000009_Node000008" title=" " alt="" coords="625,104,829,149,828,154,624,110"/>
+<area shape="rect" id="Node000010" href="$vcdio_8cc.html" title="VcdIO class implementation." alt="" coords="525,152,623,177"/>
+<area shape="poly" id="edge13_Node000009_Node000010" title=" " alt="" coords="567,117,574,151,569,152,562,118"/>
 </map>

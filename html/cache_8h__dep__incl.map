@@ -1,8 +1,15 @@
 <map id="src/cache.h" name="src/cache.h">
-<area shape="rect" id="node1" title="Data cache management." alt="" coords="193,5,283,32"/>
-<area shape="rect" id="node2" href="$cache_8cc.html" title="Cache class implementation." alt="" coords="5,155,103,181"/>
-<area shape="rect" id="node3" href="$cache__entry_8h.html" title="Cache entry" alt="" coords="176,80,300,107"/>
-<area shape="rect" id="node6" href="$transcode_8cc.html" title="File transcoder interface implementation." alt="" coords="415,155,533,181"/>
-<area shape="rect" id="node4" href="$cache__entry_8cc.html" title="Cache_Entry class implementation." alt="" coords="127,155,258,181"/>
-<area shape="rect" id="node5" href="$fuseops_8cc.html" title="Fuse operations implementation." alt="" coords="283,155,391,181"/>
+<area shape="rect" id="Node000001" title="Data cache management." alt="" coords="202,5,297,31"/>
+<area shape="rect" id="Node000002" href="$cache_8cc.html" title="Cache class implementation." alt="" coords="5,152,107,177"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="225,41,171,81,73,154,70,150,168,77,221,37"/>
+<area shape="rect" id="Node000003" href="$cache__entry_8h.html" title="Cache entry" alt="" coords="182,79,317,104"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="252,44,252,79,247,79,247,44"/>
+<area shape="rect" id="Node000006" href="$transcode_8cc.html" title="File transcoder interface implementation." alt="" coords="435,152,562,177"/>
+<area shape="poly" id="edge7_Node000001_Node000006" title=" " alt="" coords="283,36,480,150,478,154,280,40"/>
+<area shape="poly" id="edge3_Node000003_Node000002" title=" " alt="" coords="207,111,89,154,87,149,205,106"/>
+<area shape="rect" id="Node000004" href="$cache__entry_8cc.html" title="Cache_Entry class implementation." alt="" coords="131,152,271,177"/>
+<area shape="poly" id="edge4_Node000003_Node000004" title=" " alt="" coords="236,117,211,153,207,150,232,114"/>
+<area shape="rect" id="Node000005" href="$fuseops_8cc.html" title="Fuse operations implementation." alt="" coords="296,152,411,177"/>
+<area shape="poly" id="edge5_Node000003_Node000005" title=" " alt="" coords="279,110,338,150,335,154,276,114"/>
+<area shape="poly" id="edge6_Node000003_Node000006" title=" " alt="" coords="303,105,459,149,458,154,302,110"/>
 </map>

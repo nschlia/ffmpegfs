@@ -1,5 +1,7 @@
 <map id="src/dvdparser.h" name="src/dvdparser.h">
-<area shape="rect" id="node1" title="DVD parser." alt="" coords="77,5,188,32"/>
-<area shape="rect" id="node2" href="$dvdparser_8cc.html" title="dvdparser class implementation" alt="" coords="5,80,124,107"/>
-<area shape="rect" id="node3" href="$fuseops_8cc.html" title="Fuse operations implementation." alt="" coords="148,80,256,107"/>
+<area shape="rect" id="Node000001" title="DVD parser." alt="" coords="80,5,201,31"/>
+<area shape="rect" id="Node000002" href="$dvdparser_8cc.html" title="dvdparser class implementation" alt="" coords="5,79,132,104"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="121,43,82,80,78,77,117,39"/>
+<area shape="rect" id="Node000003" href="$fuseops_8cc.html" title="Fuse operations implementation." alt="" coords="157,79,271,104"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="164,38,204,77,200,80,161,42"/>
 </map>

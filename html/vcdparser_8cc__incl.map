@@ -1,31 +1,68 @@
 <map id="src/vcdparser.cc" name="src/vcdparser.cc">
-<area shape="rect" id="node1" title="Video/Super Video CD parser implementation." alt="" coords="817,5,935,32"/>
-<area shape="rect" id="node2" href="$ffmpegfs_8h.html" title="Main include for FFmpegfs project." alt="" coords="595,80,679,107"/>
-<area shape="rect" id="node21" href="$vcdparser_8h.html" title="Video CD and Super Video CD parser." alt="" coords="703,80,793,107"/>
-<area shape="rect" id="node22" href="$logging_8h.html" title="Provide various log facilities to stderr, disk or syslog." alt="" coords="1412,155,1487,181"/>
-<area shape="rect" id="node26" href="$vcdentries_8h.html" title="S/VCD VcdEntries class." alt="" coords="817,80,935,107"/>
-<area shape="rect" id="node29" title=" " alt="" coords="1011,80,1133,107"/>
-<area shape="rect" id="node3" title=" " alt="" coords="564,155,623,181"/>
-<area shape="rect" id="node4" title=" " alt="" coords="647,155,716,181"/>
-<area shape="rect" id="node5" href="$ffmpeg__utils_8h.html" title="Various FFmpegfs utility functions." alt="" coords="436,155,540,181"/>
-<area shape="rect" id="node15" href="$fileio_8h.html" title="FileIO class." alt="" coords="842,155,902,181"/>
-<area shape="rect" id="node6" href="$ffmpeg__compat_8h.html" title="FFmpeg API compatibility." alt="" coords="5,229,128,256"/>
-<area shape="rect" id="node7" title=" " alt="" coords="722,229,777,256"/>
-<area shape="rect" id="node8" title=" " alt="" coords="564,229,623,256"/>
-<area shape="rect" id="node9" title=" " alt="" coords="1221,229,1275,256"/>
-<area shape="rect" id="node10" title=" " alt="" coords="500,229,540,256"/>
-<area shape="rect" id="node11" title=" " alt="" coords="647,229,697,256"/>
-<area shape="rect" id="node12" title=" " alt="" coords="153,229,215,256"/>
-<area shape="rect" id="node13" title=" " alt="" coords="239,229,299,256"/>
-<area shape="rect" id="node14" title=" " alt="" coords="324,229,476,256"/>
-<area shape="rect" id="node16" title=" " alt="" coords="801,229,881,256"/>
-<area shape="rect" id="node17" title=" " alt="" coords="1386,229,1433,256"/>
-<area shape="rect" id="node18" title=" " alt="" coords="905,229,967,256"/>
-<area shape="rect" id="node19" title=" " alt="" coords="991,229,1060,256"/>
-<area shape="rect" id="node20" title=" " alt="" coords="1084,229,1196,256"/>
-<area shape="rect" id="node23" title=" " alt="" coords="1457,229,1524,256"/>
-<area shape="rect" id="node24" title=" " alt="" coords="1548,229,1617,256"/>
-<area shape="rect" id="node25" title=" " alt="" coords="1641,229,1700,256"/>
-<area shape="rect" id="node27" href="$vcdchapter_8h.html" title="S/VCD VcdChapter class." alt="" coords="927,155,1023,181"/>
-<area shape="rect" id="node28" title=" " alt="" coords="1300,229,1361,256"/>
+<area shape="rect" id="Node000001" title="Video/Super Video CD parser implementation." alt="" coords="726,5,853,31"/>
+<area shape="rect" id="Node000002" href="$ffmpegfs_8h.html" title="Main include for FFmpegfs project." alt="" coords="501,79,593,104"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="751,33,600,77,598,72,750,28"/>
+<area shape="rect" id="Node000022" href="$vcdparser_8h.html" title="Video CD and Super Video CD parser." alt="" coords="827,79,925,104"/>
+<area shape="poly" id="edge24_Node000001_Node000022" title=" " alt="" coords="805,29,853,68,850,72,802,33"/>
+<area shape="rect" id="Node000023" href="$logging_8h.html" title="Provide various log facilities to stderr, disk or syslog." alt="" coords="1529,152,1612,177"/>
+<area shape="poly" id="edge25_Node000001_Node000023" title=" " alt="" coords="792,31,796,67,804,86,816,102,831,109,854,116,924,129,1124,146,1344,156,1516,160,1516,165,1344,161,1124,151,924,134,853,122,829,114,813,106,799,89,791,68,786,31"/>
+<area shape="rect" id="Node000026" href="$vcdentries_8h.html" title="S/VCD VcdEntries class." alt="" coords="622,79,751,104"/>
+<area shape="poly" id="edge31_Node000001_Node000026" title=" " alt="" coords="774,33,716,73,713,68,771,28"/>
+<area shape="rect" id="Node000029" title=" " alt="" coords="949,79,1091,104"/>
+<area shape="poly" id="edge37_Node000001_Node000029" title=" " alt="" coords="827,28,971,72,969,77,826,33"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="495,152,598,177"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="549,104,549,138,544,138,544,104"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="396,152,471,177"/>
+<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="530,106,465,147,462,142,527,102"/>
+<area shape="rect" id="Node000005" href="$ffmpeg__utils_8h.html" title="Various FFmpegfs utility functions." alt="" coords="924,152,1039,177"/>
+<area shape="poly" id="edge4_Node000002_Node000005" title=" " alt="" coords="593,99,610,101,911,150,910,155,609,107,592,104"/>
+<area shape="rect" id="Node000016" href="$fileio_8h.html" title="FileIO class." alt="" coords="305,152,372,177"/>
+<area shape="poly" id="edge15_Node000002_Node000016" title=" " alt="" coords="514,107,386,150,384,145,512,101"/>
+<area shape="rect" id="Node000006" href="$ffmpeg__compat_8h.html" title="FFmpeg API compatibility." alt="" coords="800,225,936,251"/>
+<area shape="poly" id="edge5_Node000005_Node000006" title=" " alt="" coords="965,180,899,220,896,216,962,175"/>
+<area shape="rect" id="Node000007" title=" " alt="" coords="717,225,776,251"/>
+<area shape="poly" id="edge6_Node000005_Node000007" title=" " alt="" coords="944,180,790,226,788,221,943,175"/>
+<area shape="rect" id="Node000008" title=" " alt="" coords="1488,225,1563,251"/>
+<area shape="poly" id="edge7_Node000005_Node000008" title=" " alt="" coords="1039,168,1229,188,1475,223,1474,228,1228,193,1038,174"/>
+<area shape="rect" id="Node000009" title=" " alt="" coords="539,225,602,251"/>
+<area shape="poly" id="edge8_Node000005_Node000009" title=" " alt="" coords="924,176,788,197,616,228,615,223,787,191,923,171"/>
+<area shape="rect" id="Node000010" title=" " alt="" coords="1587,225,1645,251"/>
+<area shape="poly" id="edge9_Node000005_Node000010" title=" " alt="" coords="1039,166,1269,183,1419,199,1573,223,1573,228,1418,204,1269,188,1039,171"/>
+<area shape="rect" id="Node000011" title=" " alt="" coords="960,225,1003,251"/>
+<area shape="poly" id="edge10_Node000005_Node000011" title=" " alt="" coords="984,178,984,212,979,212,979,178"/>
+<area shape="rect" id="Node000012" title=" " alt="" coords="459,225,515,251"/>
+<area shape="poly" id="edge11_Node000005_Node000012" title=" " alt="" coords="924,173,751,192,642,208,529,228,528,223,641,203,750,187,924,168"/>
+<area shape="rect" id="Node000013" title=" " alt="" coords="1102,225,1173,251"/>
+<area shape="poly" id="edge12_Node000005_Node000013" title=" " alt="" coords="1007,175,1100,217,1098,222,1005,180"/>
+<area shape="rect" id="Node000014" title=" " alt="" coords="1197,225,1264,251"/>
+<area shape="poly" id="edge13_Node000005_Node000014" title=" " alt="" coords="1022,175,1185,221,1183,226,1021,180"/>
+<area shape="rect" id="Node000015" title=" " alt="" coords="1289,225,1463,251"/>
+<area shape="poly" id="edge14_Node000005_Node000015" title=" " alt="" coords="1039,174,1300,220,1299,226,1038,179"/>
+<area shape="poly" id="edge17_Node000016_Node000007" title=" " alt="" coords="373,172,385,175,472,190,542,198,614,207,704,223,703,228,613,212,542,203,472,195,383,180,372,177"/>
+<area shape="poly" id="edge18_Node000016_Node000009" title=" " alt="" coords="373,174,527,221,525,226,372,179"/>
+<area shape="poly" id="edge22_Node000016_Node000012" title=" " alt="" coords="364,175,451,217,449,222,361,180"/>
+<area shape="rect" id="Node000017" title=" " alt="" coords="5,225,91,251"/>
+<area shape="poly" id="edge16_Node000016_Node000017" title=" " alt="" coords="306,177,105,226,104,220,305,172"/>
+<area shape="rect" id="Node000018" title=" " alt="" coords="1027,225,1077,251"/>
+<area shape="poly" id="edge19_Node000016_Node000018" title=" " alt="" coords="373,172,384,175,478,187,559,194,697,196,836,200,918,208,1014,223,1013,228,917,213,836,206,697,202,558,199,478,193,384,180,372,178"/>
+<area shape="rect" id="Node000019" title=" " alt="" coords="115,225,181,251"/>
+<area shape="poly" id="edge20_Node000016_Node000019" title=" " alt="" coords="309,180,193,223,191,218,307,175"/>
+<area shape="rect" id="Node000020" title=" " alt="" coords="205,225,283,251"/>
+<area shape="poly" id="edge21_Node000016_Node000020" title=" " alt="" coords="325,179,272,219,269,215,322,175"/>
+<area shape="rect" id="Node000021" title=" " alt="" coords="307,225,435,251"/>
+<area shape="poly" id="edge23_Node000016_Node000021" title=" " alt="" coords="346,177,362,212,358,214,342,179"/>
+<area shape="poly" id="edge28_Node000023_Node000008" title=" " alt="" coords="1565,179,1542,215,1538,212,1561,176"/>
+<area shape="poly" id="edge29_Node000023_Node000010" title=" " alt="" coords="1580,176,1604,212,1599,215,1576,179"/>
+<area shape="poly" id="edge26_Node000023_Node000018" title=" " alt="" coords="1529,171,1343,189,1219,205,1091,228,1090,223,1219,200,1342,184,1529,166"/>
+<area shape="rect" id="Node000024" title=" " alt="" coords="1670,225,1743,251"/>
+<area shape="poly" id="edge27_Node000023_Node000024" title=" " alt="" coords="1594,175,1674,217,1671,221,1591,180"/>
+<area shape="rect" id="Node000025" title=" " alt="" coords="1768,225,1832,251"/>
+<area shape="poly" id="edge30_Node000023_Node000025" title=" " alt="" coords="1608,175,1755,220,1754,225,1607,180"/>
+<area shape="poly" id="edge35_Node000026_Node000009" title=" " alt="" coords="687,105,677,140,657,179,633,203,607,221,604,216,630,198,653,176,672,138,682,103"/>
+<area shape="poly" id="edge36_Node000026_Node000012" title=" " alt="" coords="680,106,652,141,611,179,570,205,529,224,527,219,567,200,608,175,648,138,676,103"/>
+<area shape="rect" id="Node000027" href="$vcdchapter_8h.html" title="S/VCD VcdChapter class." alt="" coords="725,152,830,177"/>
+<area shape="poly" id="edge32_Node000026_Node000027" title=" " alt="" coords="703,102,753,141,750,145,700,106"/>
+<area shape="poly" id="edge34_Node000027_Node000007" title=" " alt="" coords="775,179,759,214,755,212,770,177"/>
+<area shape="rect" id="Node000028" title=" " alt="" coords="627,225,693,251"/>
+<area shape="poly" id="edge33_Node000027_Node000028" title=" " alt="" coords="760,180,692,220,690,216,757,175"/>
 </map>

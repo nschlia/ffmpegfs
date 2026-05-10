@@ -1,5 +1,7 @@
 <map id="FFmpeg_Transcoder" name="FFmpeg_Transcoder">
-<area shape="rect" id="node1" title="The FFmpeg_Transcoder class." alt="" coords="57,80,199,107"/>
-<area shape="rect" id="node2" href="$classFFmpeg__Base.html" title="The FFmpeg_Base class." alt="" coords="5,5,112,32"/>
-<area shape="rect" id="node3" href="$classFFmpeg__Profiles.html" title="The FFmpeg_Profiles class." alt="" coords="137,5,258,32"/>
+<area shape="rect" id="Node000001" title="The FFmpeg_Transcoder class." alt="" coords="60,79,212,104"/>
+<area shape="rect" id="Node000002" href="$classFFmpeg__Base.html" title="The FFmpeg_Base class." alt="" coords="5,5,120,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="86,38,126,77,122,80,83,42"/>
+<area shape="rect" id="Node000003" href="$classFFmpeg__Profiles.html" title="The FFmpeg_Profiles class." alt="" coords="144,5,275,31"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="189,42,150,80,146,77,186,38"/>
 </map>

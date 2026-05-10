@@ -1,6 +1,9 @@
 <map id="src/thread_pool.h" name="src/thread_pool.h">
-<area shape="rect" id="node1" title="Thread pool class implementation." alt="" coords="141,5,263,32"/>
-<area shape="rect" id="node2" href="$fuseops_8cc.html" title="Fuse operations implementation." alt="" coords="5,80,113,107"/>
-<area shape="rect" id="node3" href="$thread__pool_8cc.html" title="Thread pool class implementation." alt="" coords="137,80,267,107"/>
-<area shape="rect" id="node4" href="$transcode_8cc.html" title="File transcoder interface implementation." alt="" coords="291,80,409,107"/>
+<area shape="rect" id="Node000001" title="Thread pool class implementation." alt="" coords="147,5,282,31"/>
+<area shape="rect" id="Node000002" href="$fuseops_8cc.html" title="Fuse operations implementation." alt="" coords="5,79,120,104"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="179,39,89,81,86,76,177,34"/>
+<area shape="rect" id="Node000003" href="$thread__pool_8cc.html" title="Thread pool class implementation." alt="" coords="145,79,285,104"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="217,44,217,79,212,79,212,44"/>
+<area shape="rect" id="Node000004" href="$transcode_8cc.html" title="File transcoder interface implementation." alt="" coords="309,79,435,104"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="254,34,347,76,345,81,251,39"/>
 </map>

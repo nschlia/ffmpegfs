@@ -1,0 +1,25 @@
+<map id="src/ffmpeg_packet.h" name="src/ffmpeg_packet.h">
+<area shape="rect" id="Node000001" title="FFmpeg AVPacket RAII wrapper." alt="" coords="425,5,578,31"/>
+<area shape="rect" id="Node000002" href="$ffmpeg__utils_8h.html" title="Various FFmpegfs utility functions." alt="" coords="444,79,559,104"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="504,31,504,65,499,65,499,31"/>
+<area shape="rect" id="Node000003" href="$ffmpeg__compat_8h.html" title="FFmpeg API compatibility." alt="" coords="5,152,141,177"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="444,105,156,152,155,147,443,100"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="165,152,224,177"/>
+<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="447,107,238,154,237,149,446,101"/>
+<area shape="rect" id="Node000005" title=" " alt="" coords="248,152,323,177"/>
+<area shape="poly" id="edge4_Node000002_Node000005" title=" " alt="" coords="467,107,334,150,332,145,466,101"/>
+<area shape="rect" id="Node000006" title=" " alt="" coords="347,152,410,177"/>
+<area shape="poly" id="edge5_Node000002_Node000006" title=" " alt="" coords="483,106,412,147,409,143,480,102"/>
+<area shape="rect" id="Node000007" title=" " alt="" coords="435,152,493,177"/>
+<area shape="poly" id="edge6_Node000002_Node000007" title=" " alt="" coords="498,106,479,141,474,139,493,103"/>
+<area shape="rect" id="Node000008" title=" " alt="" coords="517,152,560,177"/>
+<area shape="poly" id="edge7_Node000002_Node000008" title=" " alt="" coords="510,103,529,139,524,141,505,106"/>
+<area shape="rect" id="Node000009" title=" " alt="" coords="584,152,640,177"/>
+<area shape="poly" id="edge8_Node000002_Node000009" title=" " alt="" coords="521,102,584,142,581,147,518,106"/>
+<area shape="rect" id="Node000010" title=" " alt="" coords="665,152,735,177"/>
+<area shape="poly" id="edge9_Node000002_Node000010" title=" " alt="" coords="534,102,655,145,654,150,532,107"/>
+<area shape="rect" id="Node000011" title=" " alt="" coords="760,152,827,177"/>
+<area shape="poly" id="edge10_Node000002_Node000011" title=" " alt="" coords="550,101,747,149,746,154,548,107"/>
+<area shape="rect" id="Node000012" title=" " alt="" coords="851,152,1026,177"/>
+<area shape="poly" id="edge11_Node000002_Node000012" title=" " alt="" coords="559,99,855,147,854,152,559,105"/>
+</map>

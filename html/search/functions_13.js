@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['vcdchapter_0',['VcdChapter',['../classVcdChapter.html#aeeef7eb547cfeaa423797bfdeddec4df',1,'VcdChapter::VcdChapter(const VCDCHAPTER &amp;VcdChapter, bool is_svcd)'],['../classVcdChapter.html#af2cf5a10342d9d5fcd0fc9495501a7e3',1,'VcdChapter::VcdChapter(int track_no, int min, int sec, int frame, bool is_svcd, int64_t duration)'],['../classVcdChapter.html#af9372ea33d51cad2138a136e20ab5a33',1,'VcdChapter::VcdChapter(bool is_svcd)']]],
+  ['vcdchapter_0',['vcdchapter',['../classVcdChapter.html#aeeef7eb547cfeaa423797bfdeddec4df',1,'VcdChapter::VcdChapter(const VCDCHAPTER &amp;VcdChapter, bool is_svcd)'],['../classVcdChapter.html#af2cf5a10342d9d5fcd0fc9495501a7e3',1,'VcdChapter::VcdChapter(int track_no, int min, int sec, int frame, bool is_svcd, int64_t duration)'],['../classVcdChapter.html#af9372ea33d51cad2138a136e20ab5a33',1,'VcdChapter::VcdChapter(bool is_svcd)']]],
   ['vcdentries_1',['VcdEntries',['../classVcdEntries.html#a0147a0a468f695a3a9a786ed8e284f5b',1,'VcdEntries']]],
   ['vcdinfo_2',['VcdInfo',['../classVcdInfo.html#a43b20795ddcc432d60e65608fdfbb9b0',1,'VcdInfo']]],
   ['vcdio_3',['VcdIO',['../classVcdIO.html#a4a1879343a44bcef4ac4caa57ad3e6f7',1,'VcdIO']]],

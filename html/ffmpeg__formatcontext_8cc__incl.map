@@ -1,0 +1,32 @@
+<map id="src/ffmpeg_formatcontext.cc" name="src/ffmpeg_formatcontext.cc">
+<area shape="rect" id="Node000001" title="FFmpeg_FormatContext class implementation." alt="" coords="201,5,411,31"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="5,225,180,251"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="235,33,187,51,165,64,145,80,124,111,109,147,101,182,97,212,91,211,96,181,104,145,119,109,141,77,162,60,185,46,234,28"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="156,79,299,104"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="295,33,252,71,248,68,292,29"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="323,79,449,104"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="321,29,365,68,361,72,317,33"/>
+<area shape="rect" id="Node000005" href="$ffmpeg__formatcontext_8h.html" title="FFmpeg AVFormatContext RAII wrapper." alt="" coords="483,79,663,104"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="350,28,517,72,515,78,348,33"/>
+<area shape="rect" id="Node000006" href="$ffmpeg__utils_8h.html" title="Various FFmpegfs utility functions." alt="" coords="521,152,635,177"/>
+<area shape="poly" id="edge5_Node000005_Node000006" title=" " alt="" coords="576,104,579,138,573,139,571,105"/>
+<area shape="poly" id="edge15_Node000006_Node000002" title=" " alt="" coords="521,177,185,226,184,221,520,172"/>
+<area shape="rect" id="Node000007" href="$ffmpeg__compat_8h.html" title="FFmpeg API compatibility." alt="" coords="205,225,341,251"/>
+<area shape="poly" id="edge6_Node000006_Node000007" title=" " alt="" coords="530,180,336,225,335,220,528,175"/>
+<area shape="rect" id="Node000008" title=" " alt="" coords="365,225,423,251"/>
+<area shape="poly" id="edge7_Node000006_Node000008" title=" " alt="" coords="549,180,437,223,435,218,547,175"/>
+<area shape="rect" id="Node000009" title=" " alt="" coords="447,225,522,251"/>
+<area shape="poly" id="edge8_Node000006_Node000009" title=" " alt="" coords="565,179,512,219,509,215,561,175"/>
+<area shape="rect" id="Node000010" title=" " alt="" coords="547,225,609,251"/>
+<area shape="poly" id="edge9_Node000006_Node000010" title=" " alt="" coords="581,178,581,212,575,212,575,178"/>
+<area shape="rect" id="Node000011" title=" " alt="" coords="634,225,693,251"/>
+<area shape="poly" id="edge10_Node000006_Node000011" title=" " alt="" coords="593,175,641,214,637,219,590,179"/>
+<area shape="rect" id="Node000012" title=" " alt="" coords="717,225,759,251"/>
+<area shape="poly" id="edge11_Node000006_Node000012" title=" " alt="" coords="605,175,705,219,703,224,603,180"/>
+<area shape="rect" id="Node000013" title=" " alt="" coords="783,225,839,251"/>
+<area shape="poly" id="edge12_Node000006_Node000013" title=" " alt="" coords="616,175,771,222,769,227,615,180"/>
+<area shape="rect" id="Node000014" title=" " alt="" coords="864,225,935,251"/>
+<area shape="poly" id="edge13_Node000006_Node000014" title=" " alt="" coords="633,175,851,223,850,228,631,180"/>
+<area shape="rect" id="Node000015" title=" " alt="" coords="959,225,1026,251"/>
+<area shape="poly" id="edge14_Node000006_Node000015" title=" " alt="" coords="636,171,774,192,946,223,945,228,773,197,635,176"/>
+</map>

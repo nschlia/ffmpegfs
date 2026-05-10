@@ -1,12 +1,22 @@
 <map id="src/blurayio.h" name="src/blurayio.h">
-<area shape="rect" id="node1" title="Blu&#45;ray I/O." alt="" coords="358,5,458,32"/>
-<area shape="rect" id="node2" href="$fileio_8h.html" title="FileIO class." alt="" coords="345,80,405,107"/>
-<area shape="rect" id="node9" title=" " alt="" coords="659,155,709,181"/>
-<area shape="rect" id="node3" title=" " alt="" coords="5,155,85,181"/>
-<area shape="rect" id="node4" title=" " alt="" coords="110,155,165,181"/>
-<area shape="rect" id="node5" title=" " alt="" coords="189,155,248,181"/>
-<area shape="rect" id="node6" title=" " alt="" coords="273,155,319,181"/>
-<area shape="rect" id="node7" title=" " alt="" coords="344,155,405,181"/>
-<area shape="rect" id="node8" title=" " alt="" coords="429,155,499,181"/>
-<area shape="rect" id="node10" title=" " alt="" coords="523,155,635,181"/>
+<area shape="rect" id="Node000001" title="Blu&#45;ray I/O." alt="" coords="373,5,483,31"/>
+<area shape="rect" id="Node000002" href="$fileio_8h.html" title="FileIO class." alt="" coords="360,79,427,104"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="425,32,407,67,403,65,420,30"/>
+<area shape="rect" id="Node000009" title=" " alt="" coords="704,152,760,177"/>
+<area shape="poly" id="edge10_Node000001_Node000009" title=" " alt="" coords="454,28,697,144,694,148,451,33"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="5,152,91,177"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="360,102,105,154,104,149,359,97"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="115,152,173,177"/>
+<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="360,105,187,154,186,149,359,100"/>
+<area shape="rect" id="Node000005" title=" " alt="" coords="198,152,261,177"/>
+<area shape="poly" id="edge4_Node000002_Node000005" title=" " alt="" coords="368,106,270,149,267,144,366,102"/>
+<area shape="rect" id="Node000006" title=" " alt="" coords="285,152,336,177"/>
+<area shape="poly" id="edge5_Node000002_Node000006" title=" " alt="" coords="382,106,336,145,333,141,378,102"/>
+<area shape="rect" id="Node000007" title=" " alt="" coords="360,152,427,177"/>
+<area shape="poly" id="edge6_Node000002_Node000007" title=" " alt="" coords="396,104,396,138,391,138,391,104"/>
+<area shape="rect" id="Node000008" title=" " alt="" coords="451,152,528,177"/>
+<area shape="poly" id="edge7_Node000002_Node000008" title=" " alt="" coords="410,102,464,141,461,146,407,106"/>
+<area shape="poly" id="edge8_Node000002_Node000009" title=" " alt="" coords="427,96,540,117,691,149,690,154,539,122,426,101"/>
+<area shape="rect" id="Node000010" title=" " alt="" coords="552,152,680,177"/>
+<area shape="poly" id="edge9_Node000002_Node000010" title=" " alt="" coords="427,101,568,145,566,150,426,106"/>
 </map>

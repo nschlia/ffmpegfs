@@ -1,5 +1,7 @@
 <map id="src/diskio.h" name="src/diskio.h">
-<area shape="rect" id="node1" title="Direct disk I/O." alt="" coords="67,5,157,32"/>
-<area shape="rect" id="node2" href="$diskio_8cc.html" title="DiskIO class implementation." alt="" coords="5,80,101,107"/>
-<area shape="rect" id="node3" href="$fileio_8cc.html" title="FileIO class implementation." alt="" coords="126,80,215,107"/>
+<area shape="rect" id="Node000001" title="Direct disk I/O." alt="" coords="70,5,166,31"/>
+<area shape="rect" id="Node000002" href="$diskio_8cc.html" title="DiskIO class implementation." alt="" coords="5,79,108,104"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="101,43,69,80,65,77,97,40"/>
+<area shape="rect" id="Node000003" href="$fileio_8cc.html" title="FileIO class implementation." alt="" coords="132,79,227,104"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="139,40,171,77,167,80,135,43"/>
 </map>

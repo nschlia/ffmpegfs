@@ -1,22 +1,45 @@
 <map id="src/ffmpegfs.h" name="src/ffmpegfs.h">
-<area shape="rect" id="node1" title="Main include for FFmpegfs project." alt="" coords="1102,5,1209,32"/>
-<area shape="rect" id="node2" href="$blurayparser_8cc.html" title="Blu&#45;ray disk parser implementation." alt="" coords="5,155,137,181"/>
-<area shape="rect" id="node3" href="$buffer_8cc.html" title="Buffer class implementation." alt="" coords="572,80,667,107"/>
-<area shape="rect" id="node4" href="$cache_8cc.html" title="Cache class implementation." alt="" coords="691,80,788,107"/>
-<area shape="rect" id="node5" href="$cache__entry_8cc.html" title="Cache_Entry class implementation." alt="" coords="813,80,943,107"/>
-<area shape="rect" id="node6" href="$cache__maintenance_8cc.html" title="Cache maintenance implementation" alt="" coords="967,80,1146,107"/>
-<area shape="rect" id="node7" href="$cuesheetparser_8cc.html" title="Cue sheet parser implementation." alt="" coords="161,155,312,181"/>
-<area shape="rect" id="node8" href="$dvdparser_8cc.html" title="dvdparser class implementation" alt="" coords="468,155,587,181"/>
-<area shape="rect" id="node9" href="$ffmpeg__transcoder_8cc.html" title="FFmpeg_Transcoder class implementation." alt="" coords="1171,80,1340,107"/>
-<area shape="rect" id="node10" href="$ffmpeg__utils_8cc.html" title="FFmpegfs utility set implementation." alt="" coords="1365,80,1498,107"/>
-<area shape="rect" id="node11" href="$ffmpegfs_8cc.html" title="FFmpeg main function and utilities implementation." alt="" coords="1523,80,1636,107"/>
-<area shape="rect" id="node12" href="$fileio_8cc.html" title="FileIO class implementation." alt="" coords="1660,80,1749,107"/>
-<area shape="rect" id="node13" href="$logging_8cc.html" title="Log facilities implementation." alt="" coords="1773,80,1876,107"/>
-<area shape="rect" id="node14" href="$transcode_8cc.html" title="File transcoder interface implementation." alt="" coords="611,155,729,181"/>
-<area shape="rect" id="node15" href="$transcode_8h.html" title="File transcoder interface (for use with by FUSE)" alt="" coords="334,80,446,107"/>
-<area shape="rect" id="node17" href="$vcdchapter_8cc.html" title="S/VCD VcdChapter class implementation." alt="" coords="1900,80,2051,107"/>
-<area shape="rect" id="node18" href="$vcdinfo_8cc.html" title="S/VCD VcdInfo class implementation." alt="" coords="2075,80,2204,107"/>
-<area shape="rect" id="node19" href="$vcdutils_8cc.html" title="S/VCD utility functions implementation." alt="" coords="2228,80,2360,107"/>
-<area shape="rect" id="node20" href="$vcdparser_8cc.html" title="Video/Super Video CD parser implementation." alt="" coords="2384,80,2503,107"/>
-<area shape="rect" id="node16" href="$fuseops_8cc.html" title="Fuse operations implementation." alt="" coords="336,155,444,181"/>
+<area shape="rect" id="Node000001" title="Main include for FFmpegfs project." alt="" coords="1165,5,1280,31"/>
+<area shape="rect" id="Node000002" href="$blurayparser_8cc.html" title="Blu&#45;ray disk parser implementation." alt="" coords="5,152,149,177"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="1152,24,718,42,478,58,378,69,303,81,245,97,189,117,102,154,100,149,187,112,244,92,302,76,378,64,477,53,718,36,1152,19"/>
+<area shape="rect" id="Node000003" href="$buffer_8cc.html" title="Buffer class implementation." alt="" coords="605,79,705,104"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="1152,29,956,50,718,81,705,83,704,78,717,76,955,45,1151,24"/>
+<area shape="rect" id="Node000004" href="$cache_8cc.html" title="Cache class implementation." alt="" coords="729,79,831,104"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="1152,33,844,81,831,84,831,78,844,76,1151,27"/>
+<area shape="rect" id="Node000005" href="$cache__entry_8cc.html" title="Cache_Entry class implementation." alt="" coords="855,79,995,104"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="1162,36,974,81,973,76,1161,31"/>
+<area shape="rect" id="Node000006" href="$cache__maintenance_8cc.html" title="Cache maintenance implementation" alt="" coords="1019,79,1213,104"/>
+<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="1196,40,1135,81,1132,76,1193,36"/>
+<area shape="rect" id="Node000007" href="$cuesheetparser_8cc.html" title="Cue sheet parser implementation." alt="" coords="173,152,336,177"/>
+<area shape="poly" id="edge6_Node000001_Node000007" title=" " alt="" coords="1151,24,702,43,474,60,392,70,345,81,319,96,297,116,264,154,260,150,293,112,316,92,343,76,391,65,473,54,701,38,1151,19"/>
+<area shape="rect" id="Node000008" href="$dvdparser_8cc.html" title="dvdparser class implementation" alt="" coords="499,152,626,177"/>
+<area shape="poly" id="edge7_Node000001_Node000008" title=" " alt="" coords="1152,24,1001,30,822,40,665,57,611,68,582,81,570,97,565,116,564,152,559,152,560,115,566,94,578,77,609,63,664,52,822,35,1001,24,1151,19"/>
+<area shape="rect" id="Node000009" href="$ffmpeg__transcoder_8cc.html" title="FFmpeg_Transcoder class implementation." alt="" coords="1237,79,1421,104"/>
+<area shape="poly" id="edge8_Node000001_Node000009" title=" " alt="" coords="1252,36,1313,76,1310,81,1250,40"/>
+<area shape="rect" id="Node000010" href="$ffmpeg__utils_8cc.html" title="FFmpegfs utility set implementation." alt="" coords="1445,79,1589,104"/>
+<area shape="poly" id="edge9_Node000001_Node000010" title=" " alt="" coords="1284,31,1470,76,1469,81,1282,36"/>
+<area shape="rect" id="Node000011" href="$ffmpegfs_8cc.html" title="FFmpeg main function and utilities implementation." alt="" coords="1614,79,1735,104"/>
+<area shape="poly" id="edge10_Node000001_Node000011" title=" " alt="" coords="1294,28,1614,78,1613,83,1294,33"/>
+<area shape="rect" id="Node000012" href="$fileio_8cc.html" title="FileIO class implementation." alt="" coords="1759,79,1854,104"/>
+<area shape="poly" id="edge11_Node000001_Node000012" title=" " alt="" coords="1294,23,1499,44,1748,76,1760,78,1759,83,1748,81,1498,49,1294,28"/>
+<area shape="rect" id="Node000013" href="$logging_8cc.html" title="Log facilities implementation." alt="" coords="1878,79,1989,104"/>
+<area shape="poly" id="edge12_Node000001_Node000013" title=" " alt="" coords="1294,21,1547,42,1867,76,1878,78,1877,83,1866,81,1547,47,1293,27"/>
+<area shape="rect" id="Node000014" href="$transcode_8cc.html" title="File transcoder interface implementation." alt="" coords="650,152,777,177"/>
+<area shape="poly" id="edge13_Node000001_Node000014" title=" " alt="" coords="1151,23,1003,28,828,39,674,56,622,67,595,81,589,91,589,101,595,110,606,120,638,136,673,149,671,154,635,141,603,124,591,114,584,102,584,90,592,77,621,62,674,50,827,33,1003,23,1151,18"/>
+<area shape="rect" id="Node000015" href="$transcode_8h.html" title="File transcoder interface (for use with by FUSE)" alt="" coords="357,79,478,104"/>
+<area shape="poly" id="edge14_Node000001_Node000015" title=" " alt="" coords="1152,26,866,47,498,81,478,84,478,78,497,76,865,42,1151,21"/>
+<area shape="rect" id="Node000017" href="$vcdchapter_8cc.html" title="S/VCD VcdChapter class implementation." alt="" coords="2013,79,2174,104"/>
+<area shape="poly" id="edge20_Node000001_Node000017" title=" " alt="" coords="1294,21,1602,42,2002,76,2013,77,2012,82,2001,81,1601,47,1294,26"/>
+<area shape="rect" id="Node000018" href="$vcdinfo_8cc.html" title="S/VCD VcdInfo class implementation." alt="" coords="2199,79,2337,104"/>
+<area shape="poly" id="edge21_Node000001_Node000018" title=" " alt="" coords="1294,19,1675,37,1929,54,2187,76,2199,77,2198,83,2186,81,1929,59,1675,43,1294,24"/>
+<area shape="rect" id="Node000019" href="$vcdutils_8cc.html" title="S/VCD utility functions implementation." alt="" coords="2361,79,2503,104"/>
+<area shape="poly" id="edge22_Node000001_Node000019" title=" " alt="" coords="1294,18,1740,35,2042,52,2350,76,2362,77,2361,83,2349,81,2042,57,1739,40,1294,24"/>
+<area shape="rect" id="Node000020" href="$vcdparser_8cc.html" title="Video/Super Video CD parser implementation." alt="" coords="2527,79,2654,104"/>
+<area shape="poly" id="edge23_Node000001_Node000020" title=" " alt="" coords="1294,17,1501,21,1803,31,2156,48,2515,76,2528,77,2527,83,2514,81,2155,53,1803,36,1501,27,1293,23"/>
+<area shape="poly" id="edge15_Node000015_Node000002" title=" " alt="" coords="350,109,133,155,132,149,349,104"/>
+<area shape="poly" id="edge16_Node000015_Node000007" title=" " alt="" coords="380,112,282,154,280,149,378,107"/>
+<area shape="poly" id="edge17_Node000015_Node000008" title=" " alt="" coords="454,108,540,149,538,154,452,112"/>
+<area shape="poly" id="edge19_Node000015_Node000014" title=" " alt="" coords="479,105,666,149,665,154,477,110"/>
+<area shape="rect" id="Node000016" href="$fuseops_8cc.html" title="Fuse operations implementation." alt="" coords="360,152,475,177"/>
+<area shape="poly" id="edge18_Node000015_Node000016" title=" " alt="" coords="420,118,420,152,415,152,415,118"/>
 </map>

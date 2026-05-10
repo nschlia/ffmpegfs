@@ -1,5 +1,7 @@
 <map id="src/blurayparser.h" name="src/blurayparser.h">
-<area shape="rect" id="node1" title="Blu&#45;ray parser." alt="" coords="81,5,206,32"/>
-<area shape="rect" id="node2" href="$blurayparser_8cc.html" title="Blu&#45;ray disk parser implementation." alt="" coords="5,80,137,107"/>
-<area shape="rect" id="node3" href="$fuseops_8cc.html" title="Fuse operations implementation." alt="" coords="161,80,269,107"/>
+<area shape="rect" id="Node000001" title="Blu&#45;ray parser." alt="" coords="84,5,223,31"/>
+<area shape="rect" id="Node000002" href="$blurayparser_8cc.html" title="Blu&#45;ray disk parser implementation." alt="" coords="5,79,149,104"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="133,42,92,80,88,76,129,38"/>
+<area shape="rect" id="Node000003" href="$fuseops_8cc.html" title="Fuse operations implementation." alt="" coords="173,79,288,104"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="178,38,220,76,216,80,174,42"/>
 </map>

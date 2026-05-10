@@ -1,3 +1,13 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="node1" href="$classLogging.html" title="Logging facility" alt="" coords="5,5,72,32"/>
+<area shape="rect" id="Node000000" href="$classFileIO.html" title="Base class for I/O." alt="" coords="5,104,64,129"/>
+<area shape="rect" id="Node000001" href="$classBlurayIO.html" title="Blu&#45;ray I/O class." alt="" coords="112,5,191,31"/>
+<area shape="poly" id="edge4_Node000000_Node000001" title=" " alt="" coords="55,92,110,40,127,29,130,33,114,44,59,96"/>
+<area shape="rect" id="Node000002" href="$classBuffer.html" title="The Buffer class." alt="" coords="121,55,182,80"/>
+<area shape="poly" id="edge5_Node000000_Node000002" title=" " alt="" coords="75,97,119,78,122,83,78,102"/>
+<area shape="rect" id="Node000003" href="$classDiskIO.html" title="Disk file I/O class." alt="" coords="119,104,184,129"/>
+<area shape="poly" id="edge6_Node000000_Node000003" title=" " alt="" coords="78,114,119,114,119,119,78,119"/>
+<area shape="rect" id="Node000004" href="$classDvdIO.html" title="DVD I/O class." alt="" coords="120,153,183,179"/>
+<area shape="poly" id="edge7_Node000000_Node000004" title=" " alt="" coords="78,132,122,151,119,156,75,137"/>
+<area shape="rect" id="Node000005" href="$classVcdIO.html" title="Video CD and Super Video CD I/O class." alt="" coords="121,203,181,228"/>
+<area shape="poly" id="edge8_Node000000_Node000005" title=" " alt="" coords="60,138,114,188,131,200,128,205,110,192,56,142"/>
 </map>

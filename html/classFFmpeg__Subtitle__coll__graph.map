@@ -1,4 +1,5 @@
 <map id="FFmpeg_Subtitle" name="FFmpeg_Subtitle">
-<area shape="rect" id="node1" title="The FFmpeg_Subtitle class." alt="" coords="41,80,162,107"/>
-<area shape="rect" id="node2" title=" " alt="" coords="5,5,197,32"/>
+<area shape="rect" id="Node000001" title="The FFmpeg_Subtitle class." alt="" coords="47,79,179,104"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="5,5,221,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="116,44,116,79,111,79,111,44"/>
 </map>

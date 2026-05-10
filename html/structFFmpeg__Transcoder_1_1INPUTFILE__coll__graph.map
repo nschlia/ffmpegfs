@@ -1,4 +1,7 @@
 <map id="FFmpeg_Transcoder::INPUTFILE" name="FFmpeg_Transcoder::INPUTFILE">
-<area shape="rect" id="node1" title="Input file definition." alt="" coords="5,124,156,165"/>
-<area shape="rect" id="node2" href="$classFFmpeg__Transcoder_1_1StreamRef.html" title="In/output stream reference data." alt="" coords="5,5,156,47"/>
+<area shape="rect" id="Node000001" title="Input file definition." alt="" coords="111,123,271,163"/>
+<area shape="rect" id="Node000002" href="$classFFmpeg__FormatContext.html" title="RAII wrapper for AVFormatContext." alt="" coords="5,13,184,38"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="115,47,177,121,173,124,111,50"/>
+<area shape="rect" id="Node000003" href="$classFFmpeg__Transcoder_1_1StreamRef.html" title="In/output stream reference data." alt="" coords="208,5,368,45"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="281,59,271,80,258,100,229,125,226,120,254,97,267,78,276,57"/>
 </map>

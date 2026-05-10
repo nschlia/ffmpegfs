@@ -1,6 +1,11 @@
 <map id="FFmpeg_Transcoder::OUTPUTFILE" name="FFmpeg_Transcoder::OUTPUTFILE">
-<area shape="rect" id="node1" title="Output file definition." alt="" coords="101,228,252,269"/>
-<area shape="rect" id="node2" href="$structFFmpeg__Transcoder_1_1INPUTFILE.html" title="Input file definition." alt="" coords="5,124,156,165"/>
-<area shape="rect" id="node3" href="$classFFmpeg__Transcoder_1_1StreamRef.html" title="In/output stream reference data." alt="" coords="5,5,156,47"/>
-<area shape="rect" id="node4" href="$structID3v1.html" title="ID3 version 1 tag" alt="" coords="180,131,237,158"/>
+<area shape="rect" id="Node000001" title="Output file definition." alt="" coords="177,225,337,265"/>
+<area shape="rect" id="Node000002" href="$structFFmpeg__Transcoder_1_1INPUTFILE.html" title="Input file definition." alt="" coords="111,123,271,163"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="213,173,247,224,243,227,209,176"/>
+<area shape="rect" id="Node000003" href="$classFFmpeg__FormatContext.html" title="RAII wrapper for AVFormatContext." alt="" coords="5,13,184,38"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="115,47,177,121,173,124,111,50"/>
+<area shape="rect" id="Node000004" href="$classFFmpeg__Transcoder_1_1StreamRef.html" title="In/output stream reference data." alt="" coords="208,5,368,45"/>
+<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="281,59,271,80,258,100,229,125,226,120,254,97,267,78,276,57"/>
+<area shape="rect" id="Node000005" href="$structID3v1.html" title="ID3 version 1 tag" alt="" coords="295,130,355,155"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="312,168,272,227,268,224,307,165"/>
 </map>

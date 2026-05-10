@@ -1,5 +1,7 @@
 <map id="src/vcdio.h" name="src/vcdio.h">
-<area shape="rect" id="node1" title="Video CD and Super Video CD I/O." alt="" coords="64,5,151,32"/>
-<area shape="rect" id="node2" href="$fileio_8cc.html" title="FileIO class implementation." alt="" coords="5,80,95,107"/>
-<area shape="rect" id="node3" href="$vcdio_8cc.html" title="VcdIO class implementation." alt="" coords="119,80,213,107"/>
+<area shape="rect" id="Node000001" title="Video CD and Super Video CD I/O." alt="" coords="67,5,159,31"/>
+<area shape="rect" id="Node000002" href="$fileio_8cc.html" title="FileIO class implementation." alt="" coords="5,79,100,104"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="96,43,64,80,60,77,92,40"/>
+<area shape="rect" id="Node000003" href="$vcdio_8cc.html" title="VcdIO class implementation." alt="" coords="125,79,223,104"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="134,40,166,77,162,80,130,43"/>
 </map>

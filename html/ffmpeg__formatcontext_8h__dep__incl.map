@@ -1,0 +1,13 @@
+<map id="src/ffmpeg_formatcontext.h" name="src/ffmpeg_formatcontext.h">
+<area shape="rect" id="Node000001" title="FFmpeg AVFormatContext RAII wrapper." alt="" coords="118,5,321,31"/>
+<area shape="rect" id="Node000002" href="$ffmpeg__formatcontext_8cc.html" title="FFmpeg_FormatContext class implementation." alt="" coords="5,79,215,104"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="192,40,129,81,126,76,189,36"/>
+<area shape="rect" id="Node000003" href="$ffmpeg__transcoder_8h.html" title="FFmpeg transcoder." alt="" coords="239,79,418,104"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="250,36,312,76,309,81,247,40"/>
+<area shape="rect" id="Node000004" href="$ffmpeg__profiles_8cc.html" title="Make audience audience specific optimisations." alt="" coords="48,152,212,177"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="285,111,163,154,162,149,283,106"/>
+<area shape="rect" id="Node000005" href="$ffmpeg__transcoder_8cc.html" title="FFmpeg_Transcoder class implementation." alt="" coords="237,152,421,177"/>
+<area shape="poly" id="edge4_Node000003_Node000005" title=" " alt="" coords="331,118,331,152,326,152,326,118"/>
+<area shape="rect" id="Node000006" href="$transcode_8cc.html" title="File transcoder interface implementation." alt="" coords="445,152,572,177"/>
+<area shape="poly" id="edge5_Node000003_Node000006" title=" " alt="" coords="371,106,480,149,478,154,369,111"/>
+</map>

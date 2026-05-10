@@ -1,4 +1,5 @@
 <map id="VcdIO" name="VcdIO">
-<area shape="rect" id="node1" title="Video CD and Super Video CD I/O class." alt="" coords="5,80,64,107"/>
-<area shape="rect" id="node2" href="$classFileIO.html" title="Base class for I/O." alt="" coords="6,5,63,32"/>
+<area shape="rect" id="Node000001" title="Video CD and Super Video CD I/O class." alt="" coords="5,79,65,104"/>
+<area shape="rect" id="Node000002" href="$classFileIO.html" title="Base class for I/O." alt="" coords="6,5,65,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="38,44,38,79,33,79,33,44"/>
 </map>

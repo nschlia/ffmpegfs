@@ -1,5 +1,7 @@
 <map id="src/blurayio.h" name="src/blurayio.h">
-<area shape="rect" id="node1" title="Blu&#45;ray I/O." alt="" coords="70,5,170,32"/>
-<area shape="rect" id="node2" href="$blurayio_8cc.html" title="BlurayIO class implementation." alt="" coords="5,80,112,107"/>
-<area shape="rect" id="node3" href="$fileio_8cc.html" title="FileIO class implementation." alt="" coords="137,80,226,107"/>
+<area shape="rect" id="Node000001" title="Blu&#45;ray I/O." alt="" coords="72,5,183,31"/>
+<area shape="rect" id="Node000002" href="$blurayio_8cc.html" title="BlurayIO class implementation." alt="" coords="5,79,121,104"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="110,43,76,80,72,77,106,39"/>
+<area shape="rect" id="Node000003" href="$fileio_8cc.html" title="FileIO class implementation." alt="" coords="145,79,240,104"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="149,39,184,77,180,80,145,43"/>
 </map>

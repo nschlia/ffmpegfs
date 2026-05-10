@@ -1,7 +1,12 @@
 <map id="VIRTUALFILE" name="VIRTUALFILE">
-<area shape="rect" id="node1" title="Virtual file definition." alt="" coords="327,56,433,83"/>
-<area shape="rect" id="node5" href="$structVIRTUALFILE_1_1CUESHEET__TRACK.html" title="Extra value structure for cue sheets." alt="" coords="593,49,783,90"/>
-<area shape="rect" id="node2" href="$structVIRTUALFILE_1_1VCD__CHAPTER.html" title="Extra value structure for Video CDs." alt="" coords="5,5,221,32"/>
-<area shape="rect" id="node3" href="$structVIRTUALFILE_1_1DVD__CHAPTER.html" title="Extra value structure for DVDs." alt="" coords="5,56,221,83"/>
-<area shape="rect" id="node4" href="$structVIRTUALFILE_1_1BLURAY__CHAPTER.html" title="Extra value structure for Blu&#45;ray disks." alt="" coords="30,107,197,149"/>
+<area shape="rect" id="Node000001" title="Virtual file definition." alt="" coords="328,55,432,80"/>
+<area shape="rect" id="Node000005" href="$structVIRTUALFILE_1_1CUESHEET__TRACK.html" title="Extra value structure for cue sheets." alt="" coords="604,47,785,87"/>
+<area shape="poly" id="edge5_Node000005_Node000001" title=" " alt="" coords="446,65,603,65,603,70,446,70"/>
+<area shape="rect" id="Node000002" href="$structVIRTUALFILE_1_1VCD__CHAPTER.html" title="Extra value structure for Video CDs." alt="" coords="6,5,214,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="223,30,305,45,335,52,334,57,303,50,222,35"/>
+<area shape="rect" id="Node000003" href="$structVIRTUALFILE_1_1DVD__CHAPTER.html" title="Extra value structure for DVDs." alt="" coords="5,55,215,80"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="228,65,328,65,328,70,228,70"/>
+<area shape="rect" id="Node000004" href="$structVIRTUALFILE_1_1BLURAY__CHAPTER.html" title="Extra value structure for Blu&#45;ray disks." alt="" coords="29,105,191,145"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="204,105,303,85,333,77,334,83,305,90,206,110"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="591,90,580,91,518,96,456,91,418,83,419,77,456,86,518,91,580,86,590,85"/>
 </map>

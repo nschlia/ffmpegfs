@@ -2049,6 +2049,12 @@ int FFmpeg_Transcoder::add_stream(AVCodecID codec_id)
 
         video_stream_setup(output_codec_ctx, output_stream, m_in.m_video.m_codec_ctx.get(), m_in.m_video.m_stream->avg_frame_rate, m_enc_hw_pix_fmt);
 
+        if (!m_hwaccel_enable_enc_buffering && output_codec_ctx->codec_id == AV_CODEC_ID_H264 && m_out.m_filetype == FILETYPE::HLS && output_codec_ctx->pix_fmt != AV_PIX_FMT_YUV420P)
+        {
+            Logging::info(virtname(), "Forcing HLS/H.264 output pixel format from %1 to yuv420p for browser-compatible 8-bit output.", get_pix_fmt_name(output_codec_ctx->pix_fmt).c_str());
+            output_codec_ctx->pix_fmt = AV_PIX_FMT_YUV420P;
+        }
+
         AVRational sample_aspect_ratio                      = m_in.m_video.m_stream->codecpar->sample_aspect_ratio;
 
         if (output_codec_ctx->codec_id != AV_CODEC_ID_VP9 && m_out.m_filetype != FILETYPE::MKV)
@@ -2109,6 +2115,19 @@ int FFmpeg_Transcoder::add_stream(AVCodecID codec_id)
                 {
                     switch (output_codec_ctx->pix_fmt)
                     {
+                    case AV_PIX_FMT_YUV420P9BE:
+                    case AV_PIX_FMT_YUV420P9LE:
+                    case AV_PIX_FMT_YUV420P10BE:
+                    case AV_PIX_FMT_YUV420P10LE:
+                    {
+                        ret = av_opt_set(output_codec_ctx->priv_data, "profile", "high10", 0);
+                        if (ret < 0)
+                        {
+                            Logging::error(virtname(), "Could not set profile=high10 for %1 output codec %2 (error '%3').", get_media_type_string(output_codec->type), get_codec_name(codec_id), ffmpeg_geterror(ret).c_str());
+                            return ret;
+                        }
+                        break;
+                    }
                     case AV_PIX_FMT_YUYV422:
                     case AV_PIX_FMT_YUV422P:
                     case AV_PIX_FMT_YUVJ422P:

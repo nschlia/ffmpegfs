@@ -86,15 +86,20 @@ $(function() {
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-types" name="pub-types"></a>
 Public Types</h2></td></tr>
-<tr class="memitem:a50dd5500f1388d244c842416acf4229d" id="r_a50dd5500f1388d244c842416acf4229d"><td class="memItemLeft" align="right" valign="top">enum class &#160;</td><td class="memItemRight" valign="bottom"><b>TYPE</b> { <b>INPUT</b>
-, <b>OUTPUT</b>
+<tr class="memitem:a50dd5500f1388d244c842416acf4229d" id="r_a50dd5500f1388d244c842416acf4229d"><td class="memItemLeft" align="right" valign="top">enum class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFFmpeg__FormatContext.html#a50dd5500f1388d244c842416acf4229d">TYPE</a> { <a class="el" href="classFFmpeg__FormatContext.html#a50dd5500f1388d244c842416acf4229daa84cc046d48610b05c21fd3670d0c829">INPUT</a>
+, <a class="el" href="classFFmpeg__FormatContext.html#a50dd5500f1388d244c842416acf4229da50a87f0d71f7221582dad4bf507a0f34">OUTPUT</a>
  }</td></tr>
+<tr class="memdesc:a50dd5500f1388d244c842416acf4229d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Managed AVFormatContext direction.  <a href="classFFmpeg__FormatContext.html#a50dd5500f1388d244c842416acf4229d">More...</a><br /></td></tr>
 <tr class="separator:a50dd5500f1388d244c842416acf4229d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a501d15bc2b27af042f217fceb3b867b4" id="r_a501d15bc2b27af042f217fceb3b867b4"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFFmpeg__FormatContext.html#a501d15bc2b27af042f217fceb3b867b4">FFmpeg_FormatContext</a> (TYPE type=TYPE::INPUT)</td></tr>
+<tr class="memitem:a501d15bc2b27af042f217fceb3b867b4" id="r_a501d15bc2b27af042f217fceb3b867b4"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFFmpeg__FormatContext.html#a501d15bc2b27af042f217fceb3b867b4">FFmpeg_FormatContext</a> (<a class="el" href="classFFmpeg__FormatContext.html#a50dd5500f1388d244c842416acf4229d">TYPE</a> type=<a class="el" href="classFFmpeg__FormatContext.html#a50dd5500f1388d244c842416acf4229daa84cc046d48610b05c21fd3670d0c829">TYPE::INPUT</a>)</td></tr>
+<tr class="memdesc:a501d15bc2b27af042f217fceb3b867b4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Construct an empty format-context wrapper.  <br /></td></tr>
 <tr class="separator:a501d15bc2b27af042f217fceb3b867b4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1b7ad472c58df8ae60c41828ab8321e6" id="r_a1b7ad472c58df8ae60c41828ab8321e6"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFFmpeg__FormatContext.html#a1b7ad472c58df8ae60c41828ab8321e6">~FFmpeg_FormatContext</a> ()</td></tr>
+<tr class="memdesc:a1b7ad472c58df8ae60c41828ab8321e6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Release the owned format context, if any.  <br /></td></tr>
+<tr class="separator:a1b7ad472c58df8ae60c41828ab8321e6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9e4b9904d8df7fd49a58437d85d5c519" id="r_a9e4b9904d8df7fd49a58437d85d5c519"><td class="memItemLeft" align="right" valign="top"><a id="a9e4b9904d8df7fd49a58437d85d5c519" name="a9e4b9904d8df7fd49a58437d85d5c519"></a>
 &#160;</td><td class="memItemRight" valign="bottom"><b>FFmpeg_FormatContext</b> (const <a class="el" href="classFFmpeg__FormatContext.html">FFmpeg_FormatContext</a> &amp;)=delete</td></tr>
 <tr class="separator:a9e4b9904d8df7fd49a58437d85d5c519"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -102,41 +107,58 @@ Public Member Functions</h2></td></tr>
 <a class="el" href="classFFmpeg__FormatContext.html">FFmpeg_FormatContext</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>operator=</b> (const <a class="el" href="classFFmpeg__FormatContext.html">FFmpeg_FormatContext</a> &amp;)=delete</td></tr>
 <tr class="separator:a5d0e5272a3fdc54284fc83daa551dcb8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1164188a90ea0b69a6b8acb46a11e8c7" id="r_a1164188a90ea0b69a6b8acb46a11e8c7"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFFmpeg__FormatContext.html#a1164188a90ea0b69a6b8acb46a11e8c7">FFmpeg_FormatContext</a> (<a class="el" href="classFFmpeg__FormatContext.html">FFmpeg_FormatContext</a> &amp;&amp;context) noexcept</td></tr>
+<tr class="memdesc:a1164188a90ea0b69a6b8acb46a11e8c7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Move-construct a format-context wrapper.  <br /></td></tr>
 <tr class="separator:a1164188a90ea0b69a6b8acb46a11e8c7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7c03f3bb8335648e5d09075195e62ee1" id="r_a7c03f3bb8335648e5d09075195e62ee1"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classFFmpeg__FormatContext.html">FFmpeg_FormatContext</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFFmpeg__FormatContext.html#a7c03f3bb8335648e5d09075195e62ee1">operator=</a> (<a class="el" href="classFFmpeg__FormatContext.html">FFmpeg_FormatContext</a> &amp;&amp;context) noexcept</td></tr>
+<tr class="memdesc:a7c03f3bb8335648e5d09075195e62ee1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Move-assign a format-context wrapper.  <br /></td></tr>
 <tr class="separator:a7c03f3bb8335648e5d09075195e62ee1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a52319fa6fb481a7863da765d52b6f6e9" id="r_a52319fa6fb481a7863da765d52b6f6e9"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFFmpeg__FormatContext.html#a52319fa6fb481a7863da765d52b6f6e9">alloc_input_context</a> ()</td></tr>
+<tr class="memdesc:a52319fa6fb481a7863da765d52b6f6e9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Allocate a new input format context.  <br /></td></tr>
 <tr class="separator:a52319fa6fb481a7863da765d52b6f6e9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae8b5a6d8b8a8f9afca73cc5bab082834" id="r_ae8b5a6d8b8a8f9afca73cc5bab082834"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFFmpeg__FormatContext.html#ae8b5a6d8b8a8f9afca73cc5bab082834">alloc_output_context</a> (const char *format_name, const char *filename=nullptr)</td></tr>
+<tr class="memdesc:ae8b5a6d8b8a8f9afca73cc5bab082834"><td class="mdescLeft">&#160;</td><td class="mdescRight">Allocate a new output format context.  <br /></td></tr>
 <tr class="separator:ae8b5a6d8b8a8f9afca73cc5bab082834"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a237042b4d3ea159b42a89d4e35dff828" id="r_a237042b4d3ea159b42a89d4e35dff828"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFFmpeg__FormatContext.html#a237042b4d3ea159b42a89d4e35dff828">set_type</a> (TYPE type)</td></tr>
+<tr class="memitem:a237042b4d3ea159b42a89d4e35dff828" id="r_a237042b4d3ea159b42a89d4e35dff828"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFFmpeg__FormatContext.html#a237042b4d3ea159b42a89d4e35dff828">set_type</a> (<a class="el" href="classFFmpeg__FormatContext.html#a50dd5500f1388d244c842416acf4229d">TYPE</a> type)</td></tr>
+<tr class="memdesc:a237042b4d3ea159b42a89d4e35dff828"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the context direction used for later cleanup.  <br /></td></tr>
 <tr class="separator:a237042b4d3ea159b42a89d4e35dff828"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad8288dccb8ec4542689b45d0cf4c8f37" id="r_ad8288dccb8ec4542689b45d0cf4c8f37"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFFmpeg__FormatContext.html#ad8288dccb8ec4542689b45d0cf4c8f37">set_custom_io</a> (bool custom_io=true)</td></tr>
+<tr class="memdesc:ad8288dccb8ec4542689b45d0cf4c8f37"><td class="mdescLeft">&#160;</td><td class="mdescRight">Mark whether the context owns a custom AVIOContext.  <br /></td></tr>
 <tr class="separator:ad8288dccb8ec4542689b45d0cf4c8f37"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a524914c718e63c4deb22aba21cf01f7f" id="r_a524914c718e63c4deb22aba21cf01f7f"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFFmpeg__FormatContext.html#a524914c718e63c4deb22aba21cf01f7f">reset</a> ()</td></tr>
+<tr class="memdesc:a524914c718e63c4deb22aba21cf01f7f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Free the owned format context and reset the wrapper to empty.  <br /></td></tr>
 <tr class="separator:a524914c718e63c4deb22aba21cf01f7f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae8e97344cfeabf43354a2f153bee4f92" id="r_ae8e97344cfeabf43354a2f153bee4f92"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFFmpeg__FormatContext.html#ae8e97344cfeabf43354a2f153bee4f92">empty</a> () const</td></tr>
+<tr class="memdesc:ae8e97344cfeabf43354a2f153bee4f92"><td class="mdescLeft">&#160;</td><td class="mdescRight">Check whether the wrapper currently owns a format context.  <br /></td></tr>
 <tr class="separator:ae8e97344cfeabf43354a2f153bee4f92"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a920f04bdb85a64b84eee468c728c723b" id="r_a920f04bdb85a64b84eee468c728c723b"><td class="memItemLeft" align="right" valign="top">AVFormatContext *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFFmpeg__FormatContext.html#a920f04bdb85a64b84eee468c728c723b">get</a> ()</td></tr>
+<tr class="memdesc:a920f04bdb85a64b84eee468c728c723b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the owned FFmpeg format context pointer.  <br /></td></tr>
 <tr class="separator:a920f04bdb85a64b84eee468c728c723b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1f9a91bfc1a21ff74d01d1c356cb0665" id="r_a1f9a91bfc1a21ff74d01d1c356cb0665"><td class="memItemLeft" align="right" valign="top">const AVFormatContext *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFFmpeg__FormatContext.html#a1f9a91bfc1a21ff74d01d1c356cb0665">get</a> () const</td></tr>
+<tr class="memdesc:a1f9a91bfc1a21ff74d01d1c356cb0665"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the owned FFmpeg format context pointer.  <br /></td></tr>
 <tr class="separator:a1f9a91bfc1a21ff74d01d1c356cb0665"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9e704517811a0160b5674f8a75f5981a" id="r_a9e704517811a0160b5674f8a75f5981a"><td class="memItemLeft" align="right" valign="top">AVFormatContext **&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFFmpeg__FormatContext.html#a9e704517811a0160b5674f8a75f5981a">address</a> ()</td></tr>
+<tr class="memdesc:a9e704517811a0160b5674f8a75f5981a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get a writable pointer-to-pointer for FFmpeg APIs.  <br /></td></tr>
 <tr class="separator:a9e704517811a0160b5674f8a75f5981a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad7b01f6ef6569f141983c3f345945ee3" id="r_ad7b01f6ef6569f141983c3f345945ee3"><td class="memItemLeft" align="right" valign="top">AVFormatContext *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFFmpeg__FormatContext.html#ad7b01f6ef6569f141983c3f345945ee3">release</a> ()</td></tr>
+<tr class="memdesc:ad7b01f6ef6569f141983c3f345945ee3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Release ownership without freeing the format context.  <br /></td></tr>
 <tr class="separator:ad7b01f6ef6569f141983c3f345945ee3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af95ab98f9833d17df3f3ea57a579a7f3" id="r_af95ab98f9833d17df3f3ea57a579a7f3"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFFmpeg__FormatContext.html#af95ab98f9833d17df3f3ea57a579a7f3">operator AVFormatContext *</a> ()</td></tr>
+<tr class="memdesc:af95ab98f9833d17df3f3ea57a579a7f3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Convert to the underlying mutable format context pointer.  <br /></td></tr>
 <tr class="separator:af95ab98f9833d17df3f3ea57a579a7f3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a60eb9b1fd29a055d7da275f5f4144efb" id="r_a60eb9b1fd29a055d7da275f5f4144efb"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFFmpeg__FormatContext.html#a60eb9b1fd29a055d7da275f5f4144efb">operator const AVFormatContext *</a> () const</td></tr>
+<tr class="memdesc:a60eb9b1fd29a055d7da275f5f4144efb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Convert to the underlying const format context pointer.  <br /></td></tr>
 <tr class="separator:a60eb9b1fd29a055d7da275f5f4144efb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab7183ac2fa2424e253e7668ea195c148" id="r_ab7183ac2fa2424e253e7668ea195c148"><td class="memItemLeft" align="right" valign="top">AVFormatContext *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFFmpeg__FormatContext.html#ab7183ac2fa2424e253e7668ea195c148">operator-&gt;</a> ()</td></tr>
+<tr class="memdesc:ab7183ac2fa2424e253e7668ea195c148"><td class="mdescLeft">&#160;</td><td class="mdescRight">Access members of the underlying mutable format context.  <br /></td></tr>
 <tr class="separator:ab7183ac2fa2424e253e7668ea195c148"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a238fa7e02bc6fbf6bc9588501df93750" id="r_a238fa7e02bc6fbf6bc9588501df93750"><td class="memItemLeft" align="right" valign="top">const AVFormatContext *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFFmpeg__FormatContext.html#a238fa7e02bc6fbf6bc9588501df93750">operator-&gt;</a> () const</td></tr>
+<tr class="memdesc:a238fa7e02bc6fbf6bc9588501df93750"><td class="mdescLeft">&#160;</td><td class="mdescRight">Access members of the underlying const format context.  <br /></td></tr>
 <tr class="separator:a238fa7e02bc6fbf6bc9588501df93750"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pri-methods" name="pri-methods"></a>
 Private Member Functions</h2></td></tr>
 <tr class="memitem:ade17bfcb5f82dc602ce52139ced45fa0" id="r_ade17bfcb5f82dc602ce52139ced45fa0"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFFmpeg__FormatContext.html#ade17bfcb5f82dc602ce52139ced45fa0">free_custom_io</a> ()</td></tr>
+<tr class="memdesc:ade17bfcb5f82dc602ce52139ced45fa0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Free the custom AVIOContext attached to the format context.  <br /></td></tr>
 <tr class="separator:ade17bfcb5f82dc602ce52139ced45fa0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pri-attribs" name="pri-attribs"></a>
@@ -144,11 +166,11 @@ Private Attributes</h2></td></tr>
 <tr class="memitem:a42100ab0f218bc210df0b5fa8f9fedbc" id="r_a42100ab0f218bc210df0b5fa8f9fedbc"><td class="memItemLeft" align="right" valign="top">AVFormatContext *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFFmpeg__FormatContext.html#a42100ab0f218bc210df0b5fa8f9fedbc">m_context</a></td></tr>
 <tr class="memdesc:a42100ab0f218bc210df0b5fa8f9fedbc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pointer to underlying AVFormatContext.  <br /></td></tr>
 <tr class="separator:a42100ab0f218bc210df0b5fa8f9fedbc"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4d5878b5d217639e3d46afcf358dd62c" id="r_a4d5878b5d217639e3d46afcf358dd62c"><td class="memItemLeft" align="right" valign="top">TYPE&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFFmpeg__FormatContext.html#a4d5878b5d217639e3d46afcf358dd62c">m_type</a></td></tr>
+<tr class="memitem:a4d5878b5d217639e3d46afcf358dd62c" id="r_a4d5878b5d217639e3d46afcf358dd62c"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classFFmpeg__FormatContext.html#a50dd5500f1388d244c842416acf4229d">TYPE</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFFmpeg__FormatContext.html#a4d5878b5d217639e3d46afcf358dd62c">m_type</a></td></tr>
 <tr class="memdesc:a4d5878b5d217639e3d46afcf358dd62c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Input or output context.  <br /></td></tr>
 <tr class="separator:a4d5878b5d217639e3d46afcf358dd62c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4ad6c09c908763d4d4cc4b3ea2aeabc2" id="r_a4ad6c09c908763d4d4cc4b3ea2aeabc2"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFFmpeg__FormatContext.html#a4ad6c09c908763d4d4cc4b3ea2aeabc2">m_custom_io</a></td></tr>
-<tr class="memdesc:a4ad6c09c908763d4d4cc4b3ea2aeabc2"><td class="mdescLeft">&#160;</td><td class="mdescRight">true if pb was allocated with avio_alloc_context()  <br /></td></tr>
+<tr class="memdesc:a4ad6c09c908763d4d4cc4b3ea2aeabc2"><td class="mdescLeft">&#160;</td><td class="mdescRight">true if pb was allocated with avio_alloc_context().  <br /></td></tr>
 <tr class="separator:a4ad6c09c908763d4d4cc4b3ea2aeabc2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
@@ -167,7 +189,7 @@ Private Attributes</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">enum class FFmpeg_FormatContext::TYPE</td>
+          <td class="memname">enum class <a class="el" href="classFFmpeg__FormatContext.html#a50dd5500f1388d244c842416acf4229d">FFmpeg_FormatContext::TYPE</a></td>
         </tr>
       </table>
   </td>
@@ -177,7 +199,15 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ffmpeg__formatcontext_8h_source.html#l00035">35</a> of file <a class="el" href="ffmpeg__formatcontext_8h_source.html">ffmpeg_formatcontext.h</a>.</p>
+<p>Managed AVFormatContext direction. </p>
+<table class="fieldtable">
+<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="a50dd5500f1388d244c842416acf4229daa84cc046d48610b05c21fd3670d0c829" name="a50dd5500f1388d244c842416acf4229daa84cc046d48610b05c21fd3670d0c829"></a>INPUT&#160;</td><td class="fielddoc"><p>Input context closed with avformat_close_input(). </p>
+</td></tr>
+<tr><td class="fieldname"><a id="a50dd5500f1388d244c842416acf4229da50a87f0d71f7221582dad4bf507a0f34" name="a50dd5500f1388d244c842416acf4229da50a87f0d71f7221582dad4bf507a0f34"></a>OUTPUT&#160;</td><td class="fielddoc"><p>Output context freed with avformat_free_context(). </p>
+</td></tr>
+</table>
+
+<p class="definition">Definition at line <a class="el" href="ffmpeg__formatcontext_8h_source.html#l00038">38</a> of file <a class="el" href="ffmpeg__formatcontext_8h_source.html">ffmpeg_formatcontext.h</a>.</p>
 
 </div>
 </div>
@@ -194,8 +224,8 @@ Private Attributes</h2></td></tr>
         <tr>
           <td class="memname">FFmpeg_FormatContext::FFmpeg_FormatContext </td>
           <td>(</td>
-          <td class="paramtype">TYPE&#160;</td>
-          <td class="paramname"><em>type</em> = <code>TYPE::INPUT</code></td><td>)</td>
+          <td class="paramtype"><a class="el" href="classFFmpeg__FormatContext.html#a50dd5500f1388d244c842416acf4229d">TYPE</a>&#160;</td>
+          <td class="paramname"><em>type</em> = <code><a class="el" href="classFFmpeg__FormatContext.html#a50dd5500f1388d244c842416acf4229daa84cc046d48610b05c21fd3670d0c829">TYPE::INPUT</a></code></td><td>)</td>
           <td></td>
         </tr>
       </table>
@@ -205,6 +235,14 @@ Private Attributes</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
+<p>Construct an empty format-context wrapper. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">type</td><td>Initial context direction used when resetting/freeing. </td></tr>
+  </table>
+  </dd>
+</dl>
 
 <p class="definition">Definition at line <a class="el" href="ffmpeg__formatcontext_8cc_source.html#l00033">33</a> of file <a class="el" href="ffmpeg__formatcontext_8cc_source.html">ffmpeg_formatcontext.cc</a>.</p>
 
@@ -225,7 +263,11 @@ Private Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Release the owned format context, if any. </p>
+
 <p class="definition">Definition at line <a class="el" href="ffmpeg__formatcontext_8cc_source.html#l00040">40</a> of file <a class="el" href="ffmpeg__formatcontext_8cc_source.html">ffmpeg_formatcontext.cc</a>.</p>
+
+<p class="reference">References <a class="el" href="ffmpeg__formatcontext_8cc_source.html#l00106">reset()</a>.</p>
 
 </div>
 </div>
@@ -253,6 +295,14 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
+<p>Move-construct a format-context wrapper. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in,out]</td><td class="paramname">context</td><td>Source wrapper whose context ownership is transferred. </td></tr>
+  </table>
+  </dd>
+</dl>
+
 <p class="definition">Definition at line <a class="el" href="ffmpeg__formatcontext_8cc_source.html#l00045">45</a> of file <a class="el" href="ffmpeg__formatcontext_8cc_source.html">ffmpeg_formatcontext.cc</a>.</p>
 
 </div>
@@ -273,7 +323,15 @@ Private Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Get a writable pointer-to-pointer for FFmpeg APIs. </p>
+<p>Any currently owned context is released first so that FFmpeg can write a fresh context pointer without leaking the previous one.</p>
+<dl class="section return"><dt>Returns</dt><dd>Address of the managed context pointer. </dd></dl>
+
 <p class="definition">Definition at line <a class="el" href="ffmpeg__formatcontext_8cc_source.html#l00145">145</a> of file <a class="el" href="ffmpeg__formatcontext_8cc_source.html">ffmpeg_formatcontext.cc</a>.</p>
+
+<p class="reference">References <a class="el" href="ffmpeg__formatcontext_8h_source.html#l00166">m_context</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="ffmpeg__transcoder_8cc_source.html#l00292">FFmpeg_Transcoder::open_input_file()</a>.</p>
 
 </div>
 </div>
@@ -292,7 +350,14 @@ Private Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Allocate a new input format context. </p>
+<dl class="section return"><dt>Returns</dt><dd>0 on success, or a negative FFmpeg error code. </dd></dl>
+
 <p class="definition">Definition at line <a class="el" href="ffmpeg__formatcontext_8cc_source.html#l00071">71</a> of file <a class="el" href="ffmpeg__formatcontext_8cc_source.html">ffmpeg_formatcontext.cc</a>.</p>
+
+<p class="reference">References <a class="el" href="classFFmpeg__FormatContext.html#a50dd5500f1388d244c842416acf4229daa84cc046d48610b05c21fd3670d0c829">INPUT</a>, <a class="el" href="ffmpeg__formatcontext_8h_source.html#l00166">m_context</a>, <a class="el" href="ffmpeg__formatcontext_8h_source.html#l00167">m_type</a>, and <a class="el" href="ffmpeg__formatcontext_8cc_source.html#l00106">reset()</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="ffmpeg__transcoder_8cc_source.html#l00292">FFmpeg_Transcoder::open_input_file()</a>.</p>
 
 </div>
 </div>
@@ -322,7 +387,21 @@ Private Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Allocate a new output format context. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">format_name</td><td>Output container format name, or nullptr for automatic selection. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">filename</td><td>Optional output file name used by FFmpeg for format probing. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>0 on success, or a negative FFmpeg error code. </dd></dl>
+
 <p class="definition">Definition at line <a class="el" href="ffmpeg__formatcontext_8cc_source.html#l00081">81</a> of file <a class="el" href="ffmpeg__formatcontext_8cc_source.html">ffmpeg_formatcontext.cc</a>.</p>
+
+<p class="reference">References <a class="el" href="ffmpeg__formatcontext_8h_source.html#l00166">m_context</a>, <a class="el" href="ffmpeg__formatcontext_8h_source.html#l00167">m_type</a>, <a class="el" href="classFFmpeg__FormatContext.html#a50dd5500f1388d244c842416acf4229da50a87f0d71f7221582dad4bf507a0f34">OUTPUT</a>, and <a class="el" href="ffmpeg__formatcontext_8cc_source.html#l00106">reset()</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="ffmpeg__transcoder_8cc_source.html#l02704">FFmpeg_Transcoder::open_output_filestreams()</a>.</p>
 
 </div>
 </div>
@@ -341,7 +420,12 @@ Private Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Check whether the wrapper currently owns a format context. </p>
+<dl class="section return"><dt>Returns</dt><dd>true if no format context is owned, false otherwise. </dd></dl>
+
 <p class="definition">Definition at line <a class="el" href="ffmpeg__formatcontext_8cc_source.html#l00130">130</a> of file <a class="el" href="ffmpeg__formatcontext_8cc_source.html">ffmpeg_formatcontext.cc</a>.</p>
+
+<p class="reference">References <a class="el" href="ffmpeg__formatcontext_8h_source.html#l00166">m_context</a>.</p>
 
 </div>
 </div>
@@ -368,7 +452,13 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
+<p>Free the custom AVIOContext attached to the format context. </p>
+
 <p class="definition">Definition at line <a class="el" href="ffmpeg__formatcontext_8cc_source.html#l00180">180</a> of file <a class="el" href="ffmpeg__formatcontext_8cc_source.html">ffmpeg_formatcontext.cc</a>.</p>
+
+<p class="reference">References <a class="el" href="ffmpeg__formatcontext_8h_source.html#l00166">m_context</a>, and <a class="el" href="ffmpeg__formatcontext_8h_source.html#l00168">m_custom_io</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="ffmpeg__formatcontext_8cc_source.html#l00106">reset()</a>.</p>
 
 </div>
 </div>
@@ -387,7 +477,12 @@ Private Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Get the owned FFmpeg format context pointer. </p>
+<dl class="section return"><dt>Returns</dt><dd>Mutable AVFormatContext pointer, or nullptr if empty. </dd></dl>
+
 <p class="definition">Definition at line <a class="el" href="ffmpeg__formatcontext_8cc_source.html#l00135">135</a> of file <a class="el" href="ffmpeg__formatcontext_8cc_source.html">ffmpeg_formatcontext.cc</a>.</p>
+
+<p class="reference">References <a class="el" href="ffmpeg__formatcontext_8h_source.html#l00166">m_context</a>.</p>
 
 </div>
 </div>
@@ -406,7 +501,12 @@ Private Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Get the owned FFmpeg format context pointer. </p>
+<dl class="section return"><dt>Returns</dt><dd>Const AVFormatContext pointer, or nullptr if empty. </dd></dl>
+
 <p class="definition">Definition at line <a class="el" href="ffmpeg__formatcontext_8cc_source.html#l00140">140</a> of file <a class="el" href="ffmpeg__formatcontext_8cc_source.html">ffmpeg_formatcontext.cc</a>.</p>
+
+<p class="reference">References <a class="el" href="ffmpeg__formatcontext_8h_source.html#l00166">m_context</a>.</p>
 
 </div>
 </div>
@@ -424,6 +524,8 @@ Private Attributes</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Convert to the underlying mutable format context pointer. </p>
 
 <p class="definition">Definition at line <a class="el" href="ffmpeg__formatcontext_8cc_source.html#l00160">160</a> of file <a class="el" href="ffmpeg__formatcontext_8cc_source.html">ffmpeg_formatcontext.cc</a>.</p>
 
@@ -444,6 +546,8 @@ Private Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Convert to the underlying const format context pointer. </p>
+
 <p class="definition">Definition at line <a class="el" href="ffmpeg__formatcontext_8cc_source.html#l00165">165</a> of file <a class="el" href="ffmpeg__formatcontext_8cc_source.html">ffmpeg_formatcontext.cc</a>.</p>
 
 </div>
@@ -463,7 +567,12 @@ Private Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Access members of the underlying mutable format context. </p>
+<dl class="section return"><dt>Returns</dt><dd>Mutable AVFormatContext pointer. </dd></dl>
+
 <p class="definition">Definition at line <a class="el" href="ffmpeg__formatcontext_8cc_source.html#l00170">170</a> of file <a class="el" href="ffmpeg__formatcontext_8cc_source.html">ffmpeg_formatcontext.cc</a>.</p>
+
+<p class="reference">References <a class="el" href="ffmpeg__formatcontext_8h_source.html#l00166">m_context</a>.</p>
 
 </div>
 </div>
@@ -482,7 +591,12 @@ Private Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Access members of the underlying const format context. </p>
+<dl class="section return"><dt>Returns</dt><dd>Const AVFormatContext pointer. </dd></dl>
+
 <p class="definition">Definition at line <a class="el" href="ffmpeg__formatcontext_8cc_source.html#l00175">175</a> of file <a class="el" href="ffmpeg__formatcontext_8cc_source.html">ffmpeg_formatcontext.cc</a>.</p>
+
+<p class="reference">References <a class="el" href="ffmpeg__formatcontext_8h_source.html#l00166">m_context</a>.</p>
 
 </div>
 </div>
@@ -510,6 +624,15 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
+<p>Move-assign a format-context wrapper. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in,out]</td><td class="paramname">context</td><td>Source wrapper whose context ownership is transferred. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Reference to this wrapper. </dd></dl>
+
 <p class="definition">Definition at line <a class="el" href="ffmpeg__formatcontext_8cc_source.html#l00054">54</a> of file <a class="el" href="ffmpeg__formatcontext_8cc_source.html">ffmpeg_formatcontext.cc</a>.</p>
 
 </div>
@@ -529,7 +652,12 @@ Private Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Release ownership without freeing the format context. </p>
+<dl class="section return"><dt>Returns</dt><dd>Previously owned AVFormatContext pointer, or nullptr if empty. </dd></dl>
+
 <p class="definition">Definition at line <a class="el" href="ffmpeg__formatcontext_8cc_source.html#l00150">150</a> of file <a class="el" href="ffmpeg__formatcontext_8cc_source.html">ffmpeg_formatcontext.cc</a>.</p>
+
+<p class="reference">References <a class="el" href="ffmpeg__formatcontext_8h_source.html#l00166">m_context</a>, and <a class="el" href="ffmpeg__formatcontext_8h_source.html#l00168">m_custom_io</a>.</p>
 
 </div>
 </div>
@@ -548,7 +676,14 @@ Private Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Free the owned format context and reset the wrapper to empty. </p>
+<dl class="section return"><dt>Returns</dt><dd>true if a context or custom IO object was released, false otherwise. </dd></dl>
+
 <p class="definition">Definition at line <a class="el" href="ffmpeg__formatcontext_8cc_source.html#l00106">106</a> of file <a class="el" href="ffmpeg__formatcontext_8cc_source.html">ffmpeg_formatcontext.cc</a>.</p>
+
+<p class="reference">References <a class="el" href="ffmpeg__formatcontext_8cc_source.html#l00180">free_custom_io()</a>, <a class="el" href="ffmpeg__formatcontext_8h_source.html#l00166">m_context</a>, <a class="el" href="ffmpeg__formatcontext_8h_source.html#l00168">m_custom_io</a>, <a class="el" href="ffmpeg__formatcontext_8h_source.html#l00167">m_type</a>, and <a class="el" href="classFFmpeg__FormatContext.html#a50dd5500f1388d244c842416acf4229da50a87f0d71f7221582dad4bf507a0f34">OUTPUT</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="ffmpeg__formatcontext_8cc_source.html#l00071">alloc_input_context()</a>, <a class="el" href="ffmpeg__formatcontext_8cc_source.html#l00081">alloc_output_context()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l06556">FFmpeg_Transcoder::close_input_file()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l06528">FFmpeg_Transcoder::close_output_file()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l00292">FFmpeg_Transcoder::open_input_file()</a>, and <a class="el" href="ffmpeg__formatcontext_8cc_source.html#l00040">~FFmpeg_FormatContext()</a>.</p>
 
 </div>
 </div>
@@ -568,7 +703,19 @@ Private Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Mark whether the context owns a custom AVIOContext. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">custom_io</td><td>true if pb was allocated with avio_alloc_context(). </td></tr>
+  </table>
+  </dd>
+</dl>
+
 <p class="definition">Definition at line <a class="el" href="ffmpeg__formatcontext_8cc_source.html#l00101">101</a> of file <a class="el" href="ffmpeg__formatcontext_8cc_source.html">ffmpeg_formatcontext.cc</a>.</p>
+
+<p class="reference">References <a class="el" href="ffmpeg__formatcontext_8h_source.html#l00168">m_custom_io</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="ffmpeg__transcoder_8cc_source.html#l00292">FFmpeg_Transcoder::open_input_file()</a>, and <a class="el" href="ffmpeg__transcoder_8cc_source.html#l02704">FFmpeg_Transcoder::open_output_filestreams()</a>.</p>
 
 </div>
 </div>
@@ -581,14 +728,24 @@ Private Attributes</h2></td></tr>
         <tr>
           <td class="memname">void FFmpeg_FormatContext::set_type </td>
           <td>(</td>
-          <td class="paramtype">TYPE&#160;</td>
+          <td class="paramtype"><a class="el" href="classFFmpeg__FormatContext.html#a50dd5500f1388d244c842416acf4229d">TYPE</a>&#160;</td>
           <td class="paramname"><em>type</em></td><td>)</td>
           <td></td>
         </tr>
       </table>
 </div><div class="memdoc">
 
+<p>Set the context direction used for later cleanup. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">type</td><td>Input or output context direction. </td></tr>
+  </table>
+  </dd>
+</dl>
+
 <p class="definition">Definition at line <a class="el" href="ffmpeg__formatcontext_8cc_source.html#l00096">96</a> of file <a class="el" href="ffmpeg__formatcontext_8cc_source.html">ffmpeg_formatcontext.cc</a>.</p>
+
+<p class="reference">References <a class="el" href="ffmpeg__formatcontext_8h_source.html#l00167">m_type</a>.</p>
 
 </div>
 </div>
@@ -615,7 +772,9 @@ Private Attributes</h2></td></tr>
 
 <p>Pointer to underlying AVFormatContext. </p>
 
-<p class="definition">Definition at line <a class="el" href="ffmpeg__formatcontext_8h_source.html#l00074">74</a> of file <a class="el" href="ffmpeg__formatcontext_8h_source.html">ffmpeg_formatcontext.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ffmpeg__formatcontext_8h_source.html#l00166">166</a> of file <a class="el" href="ffmpeg__formatcontext_8h_source.html">ffmpeg_formatcontext.h</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="ffmpeg__formatcontext_8cc_source.html#l00145">address()</a>, <a class="el" href="ffmpeg__formatcontext_8cc_source.html#l00071">alloc_input_context()</a>, <a class="el" href="ffmpeg__formatcontext_8cc_source.html#l00081">alloc_output_context()</a>, <a class="el" href="ffmpeg__formatcontext_8cc_source.html#l00130">empty()</a>, <a class="el" href="ffmpeg__formatcontext_8cc_source.html#l00180">free_custom_io()</a>, <a class="el" href="ffmpeg__formatcontext_8cc_source.html#l00135">get()</a>, <a class="el" href="ffmpeg__formatcontext_8cc_source.html#l00140">get()</a>, <a class="el" href="ffmpeg__formatcontext_8cc_source.html#l00170">operator-&gt;()</a>, <a class="el" href="ffmpeg__formatcontext_8cc_source.html#l00175">operator-&gt;()</a>, <a class="el" href="ffmpeg__formatcontext_8cc_source.html#l00150">release()</a>, and <a class="el" href="ffmpeg__formatcontext_8cc_source.html#l00106">reset()</a>.</p>
 
 </div>
 </div>
@@ -639,9 +798,11 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>true if pb was allocated with avio_alloc_context() </p>
+<p>true if pb was allocated with avio_alloc_context(). </p>
 
-<p class="definition">Definition at line <a class="el" href="ffmpeg__formatcontext_8h_source.html#l00076">76</a> of file <a class="el" href="ffmpeg__formatcontext_8h_source.html">ffmpeg_formatcontext.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ffmpeg__formatcontext_8h_source.html#l00168">168</a> of file <a class="el" href="ffmpeg__formatcontext_8h_source.html">ffmpeg_formatcontext.h</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="ffmpeg__formatcontext_8cc_source.html#l00180">free_custom_io()</a>, <a class="el" href="ffmpeg__formatcontext_8cc_source.html#l00150">release()</a>, <a class="el" href="ffmpeg__formatcontext_8cc_source.html#l00106">reset()</a>, and <a class="el" href="ffmpeg__formatcontext_8cc_source.html#l00101">set_custom_io()</a>.</p>
 
 </div>
 </div>
@@ -655,7 +816,7 @@ Private Attributes</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">TYPE FFmpeg_FormatContext::m_type</td>
+          <td class="memname"><a class="el" href="classFFmpeg__FormatContext.html#a50dd5500f1388d244c842416acf4229d">TYPE</a> FFmpeg_FormatContext::m_type</td>
         </tr>
       </table>
   </td>
@@ -667,7 +828,9 @@ Private Attributes</h2></td></tr>
 
 <p>Input or output context. </p>
 
-<p class="definition">Definition at line <a class="el" href="ffmpeg__formatcontext_8h_source.html#l00075">75</a> of file <a class="el" href="ffmpeg__formatcontext_8h_source.html">ffmpeg_formatcontext.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ffmpeg__formatcontext_8h_source.html#l00167">167</a> of file <a class="el" href="ffmpeg__formatcontext_8h_source.html">ffmpeg_formatcontext.h</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="ffmpeg__formatcontext_8cc_source.html#l00071">alloc_input_context()</a>, <a class="el" href="ffmpeg__formatcontext_8cc_source.html#l00081">alloc_output_context()</a>, <a class="el" href="ffmpeg__formatcontext_8cc_source.html#l00106">reset()</a>, and <a class="el" href="ffmpeg__formatcontext_8cc_source.html#l00096">set_type()</a>.</p>
 
 </div>
 </div>

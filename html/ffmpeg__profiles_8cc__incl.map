@@ -10,9 +10,9 @@
 <area shape="poly" id="edge16_Node000002_Node000016" title=" " alt="" coords="1342,98,961,115,708,132,447,155,447,149,708,126,961,110,1341,92"/>
 <area shape="rect" id="Node000017" href="$ffmpeg__formatcontext_8h.html" title="FFmpeg AVFormatContext RAII wrapper." alt="" coords="995,152,1175,177"/>
 <area shape="poly" id="edge17_Node000002_Node000017" title=" " alt="" coords="1366,107,1153,152,1152,146,1365,101"/>
-<area shape="rect" id="Node000018" href="$ffmpeg__swrcontext_8h_source.html" title=" " alt="" coords="627,152,785,177"/>
+<area shape="rect" id="Node000018" href="$ffmpeg__swrcontext_8h.html" title="FFmpeg SwrContext RAII wrapper." alt="" coords="627,152,785,177"/>
 <area shape="poly" id="edge19_Node000002_Node000018" title=" " alt="" coords="1342,102,799,155,799,149,1342,97"/>
-<area shape="rect" id="Node000019" href="$ffmpeg__swscontext_8h_source.html" title=" " alt="" coords="809,152,971,177"/>
+<area shape="rect" id="Node000019" href="$ffmpeg__swscontext_8h.html" title="FFmpeg SwsContext RAII wrapper." alt="" coords="809,152,971,177"/>
 <area shape="poly" id="edge20_Node000002_Node000019" title=" " alt="" coords="1342,106,985,153,984,148,1341,100"/>
 <area shape="rect" id="Node000020" href="$ffmpeg__packet_8h.html" title="FFmpeg AVPacket RAII wrapper." alt="" coords="1199,152,1330,177"/>
 <area shape="poly" id="edge21_Node000002_Node000020" title=" " alt="" coords="1396,106,1303,149,1301,144,1393,102"/>

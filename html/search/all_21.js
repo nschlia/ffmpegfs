@@ -1,7 +1,7 @@
 var searchData=
 [
   ['warning_0',['warning',['../classLogging.html#a442c637ecbac6edac3dc753ffb3625c6',1,'Logging']]],
-  ['wav_5fdata_5fheader_1',['wav_data_header',['../structWAV__DATA__HEADER.html',1,'WAV_DATA_HEADER'],['../wave_8h.html#ad5cd1ffaa51721b87e97be238f8cb9d2',1,'WAV_DATA_HEADER:&#160;wave.h']]],
+  ['wav_5fdata_5fheader_1',['wav_data_header',['../wave_8h.html#ad5cd1ffaa51721b87e97be238f8cb9d2',1,'WAV_DATA_HEADER:&#160;wave.h'],['../structWAV__DATA__HEADER.html',1,'WAV_DATA_HEADER']]],
   ['wav_5ffact_2',['wav_fact',['../structWAV__FACT.html',1,'WAV_FACT'],['../wave_8h.html#adfaa9da52e605e6b5cac7ccb777525d9',1,'WAV_FACT:&#160;wave.h']]],
   ['wav_5fheader_3',['wav_header',['../wave_8h.html#ac67d8ba28a962154b0a6db75d4fa5947',1,'WAV_HEADER:&#160;wave.h'],['../structWAV__HEADER.html',1,'WAV_HEADER']]],
   ['wav_5fheader_5fex_4',['wav_header_ex',['../wave_8h.html#ae35fc796aafa0f824b5296e68cbe36ce',1,'WAV_HEADER_EX:&#160;wave.h'],['../structWAV__HEADER__EX.html',1,'WAV_HEADER_EX']]],
@@ -15,10 +15,11 @@ var searchData=
   ['words_20on_20prores_12',['A Few Words On ProRes',['../md_FEATURES.html#autotoc_md98',1,'']]],
   ['work_20under_20php7_13',['If the videotag.php script does not work under PHP7',['../md_INSTALL.html#autotoc_md57',1,'']]],
   ['works_14',['works',['../md_README.html#autotoc_md28',1,'How It Works'],['../md_FEATURES.html#autotoc_md83',1,'How It Works']]],
-  ['write_5fframe_15',['write_frame',['../classBuffer.html#a812f0147433355162b1d0bb215aae3bd',1,'Buffer']]],
-  ['write_5finfo_16',['write_info',['../classCache.html#a5f80bba1525601063c40b6da90a40f32',1,'Cache::write_info()'],['../classCache__Entry.html#a6b2f23bd7561705dabcc344a800a7694',1,'Cache_Entry::write_info()']]],
-  ['write_5foutput_5ffile_5fheader_17',['write_output_file_header',['../classFFmpeg__Transcoder.html#a9e8f3a668b66cec31e5b10042cf80c2a',1,'FFmpeg_Transcoder']]],
-  ['write_5foutput_5ffile_5ftrailer_18',['write_output_file_trailer',['../classFFmpeg__Transcoder.html#aad58ed3d5a8dc2f608e94a696d4cc3ac',1,'FFmpeg_Transcoder']]],
-  ['write_5fprepare_19',['write_prepare',['../classBuffer.html#a303fc10672c2812a7b34bd203a6882ef',1,'Buffer']]],
-  ['writeio_20',['writeio',['../classBuffer.html#a45f05afcc82a5107db5ef8dbbd457572',1,'Buffer']]]
+  ['write_15',['write',['../classFFmpeg__AudioFifo.html#a1321acb8bdc4769f5297b44733423a96',1,'FFmpeg_AudioFifo']]],
+  ['write_5fframe_16',['write_frame',['../classBuffer.html#a812f0147433355162b1d0bb215aae3bd',1,'Buffer']]],
+  ['write_5finfo_17',['write_info',['../classCache__Entry.html#a6b2f23bd7561705dabcc344a800a7694',1,'Cache_Entry::write_info()'],['../classCache.html#a5f80bba1525601063c40b6da90a40f32',1,'Cache::write_info()']]],
+  ['write_5foutput_5ffile_5fheader_18',['write_output_file_header',['../classFFmpeg__Transcoder.html#a9e8f3a668b66cec31e5b10042cf80c2a',1,'FFmpeg_Transcoder']]],
+  ['write_5foutput_5ffile_5ftrailer_19',['write_output_file_trailer',['../classFFmpeg__Transcoder.html#aad58ed3d5a8dc2f608e94a696d4cc3ac',1,'FFmpeg_Transcoder']]],
+  ['write_5fprepare_20',['write_prepare',['../classBuffer.html#a303fc10672c2812a7b34bd203a6882ef',1,'Buffer']]],
+  ['writeio_21',['writeio',['../classBuffer.html#a45f05afcc82a5107db5ef8dbbd457572',1,'Buffer']]]
 ];

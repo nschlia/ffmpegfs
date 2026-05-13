@@ -84,8 +84,15 @@ $(function() {
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
+<tr class="memitem:a1532fba95f97d04cc6d519954ebcae6a" id="r_a1532fba95f97d04cc6d519954ebcae6a"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFFmpeg__AudioFifo.html#a1532fba95f97d04cc6d519954ebcae6a">FFmpeg_AudioFifo</a> ()</td></tr>
+<tr class="memdesc:a1532fba95f97d04cc6d519954ebcae6a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Construct an empty FIFO wrapper.  <br /></td></tr>
+<tr class="separator:a1532fba95f97d04cc6d519954ebcae6a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a40981dd601a4354d72096d22b87d09ca" id="r_a40981dd601a4354d72096d22b87d09ca"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFFmpeg__AudioFifo.html#a40981dd601a4354d72096d22b87d09ca">FFmpeg_AudioFifo</a> (AVSampleFormat sample_fmt, int channels, int nb_samples=1)</td></tr>
+<tr class="memdesc:a40981dd601a4354d72096d22b87d09ca"><td class="mdescLeft">&#160;</td><td class="mdescRight">Construct and allocate an audio FIFO.  <br /></td></tr>
 <tr class="separator:a40981dd601a4354d72096d22b87d09ca"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae37b84cb05431a1fdb4228e09f42d53b" id="r_ae37b84cb05431a1fdb4228e09f42d53b"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFFmpeg__AudioFifo.html#ae37b84cb05431a1fdb4228e09f42d53b">~FFmpeg_AudioFifo</a> ()</td></tr>
+<tr class="memdesc:ae37b84cb05431a1fdb4228e09f42d53b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Release the owned FIFO, if any.  <br /></td></tr>
+<tr class="separator:ae37b84cb05431a1fdb4228e09f42d53b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a02db21f6d76a3fceae06bb87fbf075f9" id="r_a02db21f6d76a3fceae06bb87fbf075f9"><td class="memItemLeft" align="right" valign="top"><a id="a02db21f6d76a3fceae06bb87fbf075f9" name="a02db21f6d76a3fceae06bb87fbf075f9"></a>
 &#160;</td><td class="memItemRight" valign="bottom"><b>FFmpeg_AudioFifo</b> (const <a class="el" href="classFFmpeg__AudioFifo.html">FFmpeg_AudioFifo</a> &amp;)=delete</td></tr>
 <tr class="separator:a02db21f6d76a3fceae06bb87fbf075f9"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -93,32 +100,46 @@ Public Member Functions</h2></td></tr>
 <a class="el" href="classFFmpeg__AudioFifo.html">FFmpeg_AudioFifo</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>operator=</b> (const <a class="el" href="classFFmpeg__AudioFifo.html">FFmpeg_AudioFifo</a> &amp;)=delete</td></tr>
 <tr class="separator:ae57db1fcf37f76fa12ecf5b740abde2f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5800456b8858b36934fa88a0354ff162" id="r_a5800456b8858b36934fa88a0354ff162"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFFmpeg__AudioFifo.html#a5800456b8858b36934fa88a0354ff162">FFmpeg_AudioFifo</a> (<a class="el" href="classFFmpeg__AudioFifo.html">FFmpeg_AudioFifo</a> &amp;&amp;fifo) noexcept</td></tr>
+<tr class="memdesc:a5800456b8858b36934fa88a0354ff162"><td class="mdescLeft">&#160;</td><td class="mdescRight">Move-construct a FIFO wrapper.  <br /></td></tr>
 <tr class="separator:a5800456b8858b36934fa88a0354ff162"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab845dae0706d5ca3698d40a55d9c25e6" id="r_ab845dae0706d5ca3698d40a55d9c25e6"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classFFmpeg__AudioFifo.html">FFmpeg_AudioFifo</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFFmpeg__AudioFifo.html#ab845dae0706d5ca3698d40a55d9c25e6">operator=</a> (<a class="el" href="classFFmpeg__AudioFifo.html">FFmpeg_AudioFifo</a> &amp;&amp;fifo) noexcept</td></tr>
+<tr class="memdesc:ab845dae0706d5ca3698d40a55d9c25e6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Move-assign a FIFO wrapper.  <br /></td></tr>
 <tr class="separator:ab845dae0706d5ca3698d40a55d9c25e6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af380b22be04311724aca9815c6b20f1c" id="r_af380b22be04311724aca9815c6b20f1c"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFFmpeg__AudioFifo.html#af380b22be04311724aca9815c6b20f1c">alloc</a> (AVSampleFormat sample_fmt, int channels, int nb_samples=1)</td></tr>
+<tr class="memdesc:af380b22be04311724aca9815c6b20f1c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Allocate a new audio FIFO, replacing any existing one.  <br /></td></tr>
 <tr class="separator:af380b22be04311724aca9815c6b20f1c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a64afeebbc2d9d0e735b2ad72e9cd688b" id="r_a64afeebbc2d9d0e735b2ad72e9cd688b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFFmpeg__AudioFifo.html#a64afeebbc2d9d0e735b2ad72e9cd688b">reset</a> ()</td></tr>
+<tr class="memdesc:a64afeebbc2d9d0e735b2ad72e9cd688b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Free the owned FIFO and reset the wrapper to empty.  <br /></td></tr>
 <tr class="separator:a64afeebbc2d9d0e735b2ad72e9cd688b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acfe2052df54d275c0f71118c463728c4" id="r_acfe2052df54d275c0f71118c463728c4"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFFmpeg__AudioFifo.html#acfe2052df54d275c0f71118c463728c4">empty</a> () const</td></tr>
+<tr class="memdesc:acfe2052df54d275c0f71118c463728c4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Check whether the wrapper currently owns a FIFO.  <br /></td></tr>
 <tr class="separator:acfe2052df54d275c0f71118c463728c4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aef36581645af4a873a9979b8ead6538c" id="r_aef36581645af4a873a9979b8ead6538c"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFFmpeg__AudioFifo.html#aef36581645af4a873a9979b8ead6538c">size</a> () const</td></tr>
+<tr class="memdesc:aef36581645af4a873a9979b8ead6538c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the number of samples currently stored in the FIFO.  <br /></td></tr>
 <tr class="separator:aef36581645af4a873a9979b8ead6538c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af035bfef46775a6f2f5b8386b2c81d07" id="r_af035bfef46775a6f2f5b8386b2c81d07"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFFmpeg__AudioFifo.html#af035bfef46775a6f2f5b8386b2c81d07">realloc</a> (int nb_samples)</td></tr>
+<tr class="memdesc:af035bfef46775a6f2f5b8386b2c81d07"><td class="mdescLeft">&#160;</td><td class="mdescRight">Resize the FIFO allocation.  <br /></td></tr>
 <tr class="separator:af035bfef46775a6f2f5b8386b2c81d07"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1321acb8bdc4769f5297b44733423a96" id="r_a1321acb8bdc4769f5297b44733423a96"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFFmpeg__AudioFifo.html#a1321acb8bdc4769f5297b44733423a96">write</a> (void **data, int nb_samples)</td></tr>
+<tr class="memdesc:a1321acb8bdc4769f5297b44733423a96"><td class="mdescLeft">&#160;</td><td class="mdescRight">Write audio samples into the FIFO.  <br /></td></tr>
 <tr class="separator:a1321acb8bdc4769f5297b44733423a96"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acb80ac6b61424dacb5f88ea935b44398" id="r_acb80ac6b61424dacb5f88ea935b44398"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFFmpeg__AudioFifo.html#acb80ac6b61424dacb5f88ea935b44398">read</a> (void **data, int nb_samples)</td></tr>
+<tr class="memdesc:acb80ac6b61424dacb5f88ea935b44398"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read audio samples from the FIFO.  <br /></td></tr>
 <tr class="separator:acb80ac6b61424dacb5f88ea935b44398"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa71bb3e9ec9c42f9758d0d294ab26306" id="r_aa71bb3e9ec9c42f9758d0d294ab26306"><td class="memItemLeft" align="right" valign="top">AVAudioFifo *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFFmpeg__AudioFifo.html#aa71bb3e9ec9c42f9758d0d294ab26306">get</a> ()</td></tr>
+<tr class="memdesc:aa71bb3e9ec9c42f9758d0d294ab26306"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the owned FFmpeg FIFO pointer.  <br /></td></tr>
 <tr class="separator:aa71bb3e9ec9c42f9758d0d294ab26306"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a326051f3bf36e3b1b767c04fcf05b7a4" id="r_a326051f3bf36e3b1b767c04fcf05b7a4"><td class="memItemLeft" align="right" valign="top">const AVAudioFifo *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFFmpeg__AudioFifo.html#a326051f3bf36e3b1b767c04fcf05b7a4">get</a> () const</td></tr>
+<tr class="memdesc:a326051f3bf36e3b1b767c04fcf05b7a4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the owned FFmpeg FIFO pointer.  <br /></td></tr>
 <tr class="separator:a326051f3bf36e3b1b767c04fcf05b7a4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a36eee9616cfa7c25343cce247905668c" id="r_a36eee9616cfa7c25343cce247905668c"><td class="memItemLeft" align="right" valign="top">AVAudioFifo *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFFmpeg__AudioFifo.html#a36eee9616cfa7c25343cce247905668c">release</a> ()</td></tr>
+<tr class="memdesc:a36eee9616cfa7c25343cce247905668c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Release ownership without freeing the FIFO.  <br /></td></tr>
 <tr class="separator:a36eee9616cfa7c25343cce247905668c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a65a541a021e54e2cc0ec0a85b8cf847e" id="r_a65a541a021e54e2cc0ec0a85b8cf847e"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFFmpeg__AudioFifo.html#a65a541a021e54e2cc0ec0a85b8cf847e">operator AVAudioFifo *</a> ()</td></tr>
+<tr class="memdesc:a65a541a021e54e2cc0ec0a85b8cf847e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Convert to the underlying mutable FIFO pointer.  <br /></td></tr>
 <tr class="separator:a65a541a021e54e2cc0ec0a85b8cf847e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:adac45b428a4d3c43dfa1546a316461ba" id="r_adac45b428a4d3c43dfa1546a316461ba"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFFmpeg__AudioFifo.html#adac45b428a4d3c43dfa1546a316461ba">operator const AVAudioFifo *</a> () const</td></tr>
+<tr class="memdesc:adac45b428a4d3c43dfa1546a316461ba"><td class="mdescLeft">&#160;</td><td class="mdescRight">Convert to the underlying const FIFO pointer.  <br /></td></tr>
 <tr class="separator:adac45b428a4d3c43dfa1546a316461ba"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pri-attribs" name="pri-attribs"></a>
@@ -147,6 +168,8 @@ Private Attributes</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Construct an empty FIFO wrapper. </p>
 
 <p class="definition">Definition at line <a class="el" href="ffmpeg__audiofifo_8cc_source.html#l00031">31</a> of file <a class="el" href="ffmpeg__audiofifo_8cc_source.html">ffmpeg_audiofifo.cc</a>.</p>
 
@@ -184,7 +207,19 @@ Private Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Construct and allocate an audio FIFO. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">sample_fmt</td><td>Sample format stored in the FIFO. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">channels</td><td>Number of audio channels. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">nb_samples</td><td>Initial allocation size in samples. </td></tr>
+  </table>
+  </dd>
+</dl>
+
 <p class="definition">Definition at line <a class="el" href="ffmpeg__audiofifo_8cc_source.html#l00036">36</a> of file <a class="el" href="ffmpeg__audiofifo_8cc_source.html">ffmpeg_audiofifo.cc</a>.</p>
+
+<p class="reference">References <a class="el" href="ffmpeg__audiofifo_8cc_source.html#l00064">alloc()</a>.</p>
 
 </div>
 </div>
@@ -203,7 +238,11 @@ Private Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Release the owned FIFO, if any. </p>
+
 <p class="definition">Definition at line <a class="el" href="ffmpeg__audiofifo_8cc_source.html#l00042">42</a> of file <a class="el" href="ffmpeg__audiofifo_8cc_source.html">ffmpeg_audiofifo.cc</a>.</p>
+
+<p class="reference">References <a class="el" href="ffmpeg__audiofifo_8cc_source.html#l00077">reset()</a>.</p>
 
 </div>
 </div>
@@ -230,6 +269,14 @@ Private Attributes</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
+<p>Move-construct a FIFO wrapper. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in,out]</td><td class="paramname">fifo</td><td>Source wrapper whose FIFO ownership is transferred. </td></tr>
+  </table>
+  </dd>
+</dl>
 
 <p class="definition">Definition at line <a class="el" href="ffmpeg__audiofifo_8cc_source.html#l00047">47</a> of file <a class="el" href="ffmpeg__audiofifo_8cc_source.html">ffmpeg_audiofifo.cc</a>.</p>
 
@@ -268,7 +315,22 @@ Private Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Allocate a new audio FIFO, replacing any existing one. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">sample_fmt</td><td>Sample format stored in the FIFO. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">channels</td><td>Number of audio channels. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">nb_samples</td><td>Initial allocation size in samples. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>0 on success, or a negative FFmpeg error code. </dd></dl>
+
 <p class="definition">Definition at line <a class="el" href="ffmpeg__audiofifo_8cc_source.html#l00064">64</a> of file <a class="el" href="ffmpeg__audiofifo_8cc_source.html">ffmpeg_audiofifo.cc</a>.</p>
+
+<p class="reference">References <a class="el" href="ffmpeg__audiofifo_8h_source.html#l00147">m_fifo</a>, and <a class="el" href="ffmpeg__audiofifo_8cc_source.html#l00077">reset()</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="ffmpeg__audiofifo_8cc_source.html#l00036">FFmpeg_AudioFifo()</a>, and <a class="el" href="ffmpeg__transcoder_8cc_source.html#l03027">FFmpeg_Transcoder::init_audio_fifo()</a>.</p>
 
 </div>
 </div>
@@ -287,7 +349,14 @@ Private Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Check whether the wrapper currently owns a FIFO. </p>
+<dl class="section return"><dt>Returns</dt><dd>true if no FIFO is owned, false otherwise. </dd></dl>
+
 <p class="definition">Definition at line <a class="el" href="ffmpeg__audiofifo_8cc_source.html#l00086">86</a> of file <a class="el" href="ffmpeg__audiofifo_8cc_source.html">ffmpeg_audiofifo.cc</a>.</p>
+
+<p class="reference">References <a class="el" href="ffmpeg__audiofifo_8h_source.html#l00147">m_fifo</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="ffmpeg__transcoder_8cc_source.html#l06461">FFmpeg_Transcoder::purge_audio_fifo()</a>.</p>
 
 </div>
 </div>
@@ -306,7 +375,12 @@ Private Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Get the owned FFmpeg FIFO pointer. </p>
+<dl class="section return"><dt>Returns</dt><dd>Mutable AVAudioFifo pointer, or nullptr if empty. </dd></dl>
+
 <p class="definition">Definition at line <a class="el" href="ffmpeg__audiofifo_8cc_source.html#l00127">127</a> of file <a class="el" href="ffmpeg__audiofifo_8cc_source.html">ffmpeg_audiofifo.cc</a>.</p>
+
+<p class="reference">References <a class="el" href="ffmpeg__audiofifo_8h_source.html#l00147">m_fifo</a>.</p>
 
 </div>
 </div>
@@ -325,7 +399,12 @@ Private Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Get the owned FFmpeg FIFO pointer. </p>
+<dl class="section return"><dt>Returns</dt><dd>Const AVAudioFifo pointer, or nullptr if empty. </dd></dl>
+
 <p class="definition">Definition at line <a class="el" href="ffmpeg__audiofifo_8cc_source.html#l00132">132</a> of file <a class="el" href="ffmpeg__audiofifo_8cc_source.html">ffmpeg_audiofifo.cc</a>.</p>
+
+<p class="reference">References <a class="el" href="ffmpeg__audiofifo_8h_source.html#l00147">m_fifo</a>.</p>
 
 </div>
 </div>
@@ -343,6 +422,8 @@ Private Attributes</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Convert to the underlying mutable FIFO pointer. </p>
 
 <p class="definition">Definition at line <a class="el" href="ffmpeg__audiofifo_8cc_source.html#l00144">144</a> of file <a class="el" href="ffmpeg__audiofifo_8cc_source.html">ffmpeg_audiofifo.cc</a>.</p>
 
@@ -362,6 +443,8 @@ Private Attributes</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Convert to the underlying const FIFO pointer. </p>
 
 <p class="definition">Definition at line <a class="el" href="ffmpeg__audiofifo_8cc_source.html#l00149">149</a> of file <a class="el" href="ffmpeg__audiofifo_8cc_source.html">ffmpeg_audiofifo.cc</a>.</p>
 
@@ -390,6 +473,15 @@ Private Attributes</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
+<p>Move-assign a FIFO wrapper. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in,out]</td><td class="paramname">fifo</td><td>Source wrapper whose FIFO ownership is transferred. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Reference to this wrapper. </dd></dl>
 
 <p class="definition">Definition at line <a class="el" href="ffmpeg__audiofifo_8cc_source.html#l00053">53</a> of file <a class="el" href="ffmpeg__audiofifo_8cc_source.html">ffmpeg_audiofifo.cc</a>.</p>
 
@@ -421,7 +513,21 @@ Private Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Read audio samples from the FIFO. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[out]</td><td class="paramname">data</td><td>Per-channel destination buffers as expected by FFmpeg. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">nb_samples</td><td>Number of samples to read. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Number of samples read, or a negative FFmpeg error code. </dd></dl>
+
 <p class="definition">Definition at line <a class="el" href="ffmpeg__audiofifo_8cc_source.html#l00118">118</a> of file <a class="el" href="ffmpeg__audiofifo_8cc_source.html">ffmpeg_audiofifo.cc</a>.</p>
+
+<p class="reference">References <a class="el" href="ffmpeg__audiofifo_8h_source.html#l00147">m_fifo</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="ffmpeg__transcoder_8cc_source.html#l04928">FFmpeg_Transcoder::create_audio_frame()</a>.</p>
 
 </div>
 </div>
@@ -441,7 +547,20 @@ Private Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Resize the FIFO allocation. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">nb_samples</td><td>New allocation size in samples. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>0 on success, or a negative FFmpeg error code. </dd></dl>
+
 <p class="definition">Definition at line <a class="el" href="ffmpeg__audiofifo_8cc_source.html#l00100">100</a> of file <a class="el" href="ffmpeg__audiofifo_8cc_source.html">ffmpeg_audiofifo.cc</a>.</p>
+
+<p class="reference">References <a class="el" href="ffmpeg__audiofifo_8h_source.html#l00147">m_fifo</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="ffmpeg__transcoder_8cc_source.html#l04152">FFmpeg_Transcoder::add_samples_to_fifo()</a>.</p>
 
 </div>
 </div>
@@ -460,7 +579,12 @@ Private Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Release ownership without freeing the FIFO. </p>
+<dl class="section return"><dt>Returns</dt><dd>Previously owned AVAudioFifo pointer, or nullptr if empty. </dd></dl>
+
 <p class="definition">Definition at line <a class="el" href="ffmpeg__audiofifo_8cc_source.html#l00137">137</a> of file <a class="el" href="ffmpeg__audiofifo_8cc_source.html">ffmpeg_audiofifo.cc</a>.</p>
+
+<p class="reference">References <a class="el" href="ffmpeg__audiofifo_8h_source.html#l00147">m_fifo</a>.</p>
 
 </div>
 </div>
@@ -479,7 +603,13 @@ Private Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Free the owned FIFO and reset the wrapper to empty. </p>
+
 <p class="definition">Definition at line <a class="el" href="ffmpeg__audiofifo_8cc_source.html#l00077">77</a> of file <a class="el" href="ffmpeg__audiofifo_8cc_source.html">ffmpeg_audiofifo.cc</a>.</p>
+
+<p class="reference">References <a class="el" href="ffmpeg__audiofifo_8h_source.html#l00147">m_fifo</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="ffmpeg__audiofifo_8cc_source.html#l00064">alloc()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l06461">FFmpeg_Transcoder::purge_audio_fifo()</a>, and <a class="el" href="ffmpeg__audiofifo_8cc_source.html#l00042">~FFmpeg_AudioFifo()</a>.</p>
 
 </div>
 </div>
@@ -498,7 +628,14 @@ Private Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Return the number of samples currently stored in the FIFO. </p>
+<dl class="section return"><dt>Returns</dt><dd>Number of queued samples, or 0 if the wrapper is empty. </dd></dl>
+
 <p class="definition">Definition at line <a class="el" href="ffmpeg__audiofifo_8cc_source.html#l00091">91</a> of file <a class="el" href="ffmpeg__audiofifo_8cc_source.html">ffmpeg_audiofifo.cc</a>.</p>
+
+<p class="reference">References <a class="el" href="ffmpeg__audiofifo_8h_source.html#l00147">m_fifo</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="ffmpeg__transcoder_8cc_source.html#l04152">FFmpeg_Transcoder::add_samples_to_fifo()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l05335">FFmpeg_Transcoder::copy_audio_to_frame_buffer()</a>, <a class="el" href="ffmpeg__transcoder_8cc_source.html#l04928">FFmpeg_Transcoder::create_audio_frame()</a>, and <a class="el" href="ffmpeg__transcoder_8cc_source.html#l06461">FFmpeg_Transcoder::purge_audio_fifo()</a>.</p>
 
 </div>
 </div>
@@ -528,7 +665,21 @@ Private Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Write audio samples into the FIFO. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">data</td><td>Per-channel sample buffers as expected by FFmpeg. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">nb_samples</td><td>Number of samples to write. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Number of samples written, or a negative FFmpeg error code. </dd></dl>
+
 <p class="definition">Definition at line <a class="el" href="ffmpeg__audiofifo_8cc_source.html#l00109">109</a> of file <a class="el" href="ffmpeg__audiofifo_8cc_source.html">ffmpeg_audiofifo.cc</a>.</p>
+
+<p class="reference">References <a class="el" href="ffmpeg__audiofifo_8h_source.html#l00147">m_fifo</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="ffmpeg__transcoder_8cc_source.html#l04152">FFmpeg_Transcoder::add_samples_to_fifo()</a>.</p>
 
 </div>
 </div>
@@ -555,7 +706,9 @@ Private Attributes</h2></td></tr>
 
 <p>Pointer to underlying AVAudioFifo. </p>
 
-<p class="definition">Definition at line <a class="el" href="ffmpeg__audiofifo_8h_source.html#l00062">62</a> of file <a class="el" href="ffmpeg__audiofifo_8h_source.html">ffmpeg_audiofifo.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ffmpeg__audiofifo_8h_source.html#l00147">147</a> of file <a class="el" href="ffmpeg__audiofifo_8h_source.html">ffmpeg_audiofifo.h</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="ffmpeg__audiofifo_8cc_source.html#l00064">alloc()</a>, <a class="el" href="ffmpeg__audiofifo_8cc_source.html#l00086">empty()</a>, <a class="el" href="ffmpeg__audiofifo_8cc_source.html#l00127">get()</a>, <a class="el" href="ffmpeg__audiofifo_8cc_source.html#l00132">get()</a>, <a class="el" href="ffmpeg__audiofifo_8cc_source.html#l00118">read()</a>, <a class="el" href="ffmpeg__audiofifo_8cc_source.html#l00100">realloc()</a>, <a class="el" href="ffmpeg__audiofifo_8cc_source.html#l00137">release()</a>, <a class="el" href="ffmpeg__audiofifo_8cc_source.html#l00077">reset()</a>, <a class="el" href="ffmpeg__audiofifo_8cc_source.html#l00091">size()</a>, and <a class="el" href="ffmpeg__audiofifo_8cc_source.html#l00109">write()</a>.</p>
 
 </div>
 </div>

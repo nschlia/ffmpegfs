@@ -9,7 +9,7 @@
 
 /**
  * @file ffmpeg_dictionary.h
- * @brief FFmpeg AVDictionary RAII wrapper
+ * @brief FFmpeg AVDictionary RAII wrapper.
  *
  * @ingroup ffmpegfs
  */
@@ -30,28 +30,83 @@ struct AVDictionary;
 class FFmpeg_Dictionary
 {
 public:
+    /**
+     * @brief Construct an empty dictionary wrapper.
+     */
     FFmpeg_Dictionary();
+
+    /**
+     * @brief Release the owned dictionary, if any.
+     */
     ~FFmpeg_Dictionary();
 
     FFmpeg_Dictionary(const FFmpeg_Dictionary&) = delete;
     FFmpeg_Dictionary& operator=(const FFmpeg_Dictionary&) = delete;
 
+    /**
+     * @brief Move-construct a dictionary wrapper.
+     * @param[in,out] dict Source wrapper whose dictionary ownership is transferred.
+     */
     FFmpeg_Dictionary(FFmpeg_Dictionary&& dict) noexcept;
+
+    /**
+     * @brief Move-assign a dictionary wrapper.
+     * @param[in,out] dict Source wrapper whose dictionary ownership is transferred.
+     * @return Reference to this wrapper.
+     */
     FFmpeg_Dictionary& operator=(FFmpeg_Dictionary&& dict) noexcept;
 
+    /**
+     * @brief Free the owned dictionary and reset the wrapper to empty.
+     */
     void            reset();
+
+    /**
+     * @brief Check whether the wrapper currently owns a dictionary.
+     * @return true if no dictionary is owned, false otherwise.
+     */
     bool            empty() const;
 
+    /**
+     * @brief Get the owned FFmpeg dictionary pointer.
+     * @return Mutable AVDictionary pointer, or nullptr if empty.
+     */
     AVDictionary*   get();
+
+    /**
+     * @brief Get the owned FFmpeg dictionary pointer.
+     * @return Const AVDictionary pointer, or nullptr if empty.
+     */
     const AVDictionary* get() const;
+
+    /**
+     * @brief Get a writable pointer-to-pointer for FFmpeg APIs.
+     *
+     * Any currently owned dictionary is freed first so that FFmpeg can write a
+     * fresh dictionary pointer without leaking the previous one.
+     *
+     * @return Address of the managed dictionary pointer.
+     */
     AVDictionary**  address();
+
+    /**
+     * @brief Release ownership without freeing the dictionary.
+     * @return Previously owned AVDictionary pointer, or nullptr if empty.
+     */
     AVDictionary*   release();
 
+    /**
+     * @brief Convert to the underlying mutable dictionary pointer.
+     */
     operator        AVDictionary*();
+
+    /**
+     * @brief Convert to the underlying const dictionary pointer.
+     */
     operator const  AVDictionary*() const;
 
 private:
-    AVDictionary *  m_dict;     /**< @brief Pointer to underlying AVDictionary */
+    AVDictionary *  m_dict;     /**< @brief Pointer to underlying AVDictionary. */
 };
 
 #endif // FFMPEG_DICTIONARY_H

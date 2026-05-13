@@ -70,8 +70,10 @@ extern "C" {
 #pragma GCC diagnostic ignored "-Wimplicit-int-conversion"
 #endif
 
-// Define as FF_PROFILE_UNKNOWN in older versions
 #ifndef AV_PROFILE_UNKNOWN
+/**
+ * @brief Compatibility alias for older FFmpeg versions that only define FF_PROFILE_UNKNOWN.
+ */
 #define AV_PROFILE_UNKNOWN  FF_PROFILE_UNKNOWN
 #endif
 
@@ -2049,6 +2051,15 @@ static void build_device_type_list()
     }
 }
 
+/**
+ * @brief Return a printable parameter value.
+ *
+ * Converts nullable C strings used by optional command-line parameters into a
+ * stable text representation for diagnostic output.
+ *
+ * @param[in] value String value to print, or nullptr if the value is unset.
+ * @return value if it is not nullptr, otherwise the literal string "NONE".
+ */
 const char *value_or_none(const char *value)
 {
 	return (value != nullptr ? value : "NONE");

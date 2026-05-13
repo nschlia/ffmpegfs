@@ -46,6 +46,7 @@ To see what's been done so far, checkout the [windows](https://github.com/nschli
 - Cleaned up transcoder shutdown paths by centralizing FFmpeg resource cleanup in dedicated wrapper classes.
 - **Bugfix:** Fixed retained FFmpeg deinterlace filter graphs when the output pipeline is rebuilt, especially after HLS seeks. Old filter graphs are now released before reinitialisation and when closing the current output, preventing stale filter pointers and retained filter buffers.
 - **Bugfix:** Fixed HLS playback for 10-bit UHD/HDR sources by converting H.264 HLS output to yuv420p/8-bit. This avoids unsupported H.264 High10 streams in browser-based players such as hls.js.
+- Added elapsed-time reporting to successful transcode completion messages, showing the total transcoding time in milliseconds.
 
 ### New in 2.18 (2026-04-10):
 

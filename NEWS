@@ -21,7 +21,9 @@ Important changes in 2.19 (2026-XX-XX):
   preventing stale filter pointers and retained filter buffers.
 * Bugfix: Fixed HLS playback for 10-bit UHD/HDR sources by converting H.264
   HLS output to yuv420p/8-bit. This avoids unsupported H.264 High10 streams
-  in browser-based players such as hls.js.  
+  in browser-based players such as hls.js.
+* Added elapsed-time reporting to successful transcode completion messages,
+  showing the total transcoding time in milliseconds.
 
 Important changes in 2.18 (2026-04-10):
 

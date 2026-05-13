@@ -44,6 +44,8 @@
 
 #include <unistd.h>
 #include <atomic>
+#include <chrono>
+#include <cstdio>
 
 const int GRANULARITY = 250;                                /**< @brief Image frame conversion: ms between checks if a picture frame is available */
 const int FRAME_TIMEOUT = 60;                               /**< @brief Image frame conversion: timout seconds to wait if a picture frame is available */
@@ -1002,6 +1004,7 @@ static int transcoder_thread(std::shared_ptr<THREAD_DATA> thread_data)
     FFmpeg_Transcoder transcoder;
     bool timeout = false;
     bool success = true;
+    const auto start_time = std::chrono::steady_clock::now();
 
     std::unique_lock<std::recursive_mutex> lock_active_mutex(cache_entry->m_active_mutex);
     std::unique_lock<std::recursive_mutex> lock_restart_mutex(cache_entry->m_restart_mutex);
@@ -1057,7 +1060,13 @@ static int transcoder_thread(std::shared_ptr<THREAD_DATA> thread_data)
 
         if (success)
         {
-            Logging::info(cache_entry->virtname(), "Transcoding completed successfully.");
+            const auto end_time = std::chrono::steady_clock::now();
+            const auto elapsed_ms = std::chrono::duration<double, std::milli>(end_time - start_time).count();
+            char elapsed_ms_text[32];
+
+            std::snprintf(elapsed_ms_text, sizeof(elapsed_ms_text), "%.1f", elapsed_ms);
+
+            Logging::info(cache_entry->virtname(), "Transcoding completed successfully after %1 ms.", elapsed_ms_text);
 
             cache_entry->m_cache_info.m_errno       = 0;
             cache_entry->m_cache_info.m_averror     = 0;

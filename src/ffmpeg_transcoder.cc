@@ -1290,8 +1290,102 @@ int FFmpeg_Transcoder::open_output(Buffer *buffer)
 
     if (!m_out.m_video_pts && is_hls())
     {
-        m_current_segment = 1;
+        const bool hls_segment_preselected = m_current_segment > 1;
+
+        if (!hls_segment_preselected)
+        {
+            m_current_segment = 1;
+
+            // The first output open is special: start_new_segment() has not run yet,
+            // so a seek stacked before opening the output would otherwise not be
+            // consumed until after segment 1 had already been opened and encoded.
+            // Consume an initial HLS seek here and position the input before any
+            // output segment is opened.
+            uint32_t initial_seek_segment = 0;
+            {
+                std::lock_guard<std::recursive_mutex> lock_seek_to_fifo_mutex(m_seek_to_fifo_mutex);
+                while (!m_seek_to_fifo.empty())
+                {
+                    const uint32_t segment_no = m_seek_to_fifo.front();
+                    m_seek_to_fifo.pop();
+
+                    if (segment_no > 1)
+                    {
+                        initial_seek_segment = segment_no;
+                        break;
+                    }
+                }
+            }
+
+            if (initial_seek_segment)
+            {
+                int ret = 0;
+                const int64_t pos = (initial_seek_segment - 1) * params.m_segment_duration;
+
+                m_reset_pts    = FFMPEGFS_AUDIO | FFMPEGFS_VIDEO;
+                m_have_seeked   = true;
+
+                Logging::info(virtname(), "Performing seek request to HLS segment no. %1.", initial_seek_segment);
+
+                if (stream_exists(m_in.m_video.m_stream_idx) && m_in.m_video.m_stream != nullptr)
+                {
+                    int64_t vstream_pts = ffmpeg_rescale_q(pos, av_get_time_base_q(), m_in.m_video.m_stream->time_base);
+
+                    if (m_in.m_video.m_stream->start_time != AV_NOPTS_VALUE)
+                    {
+                        vstream_pts += m_in.m_video.m_stream->start_time;
+                    }
+
+                    ret = av_seek_frame(m_in.m_format_ctx, m_in.m_video.m_stream_idx, vstream_pts, AVSEEK_FLAG_BACKWARD);
+                }
+                else if (stream_exists(m_in.m_audio.m_stream_idx) && m_in.m_audio.m_stream != nullptr)
+                {
+                    int64_t astream_pts = ffmpeg_rescale_q(pos, av_get_time_base_q(), m_in.m_audio.m_stream->time_base);
+
+                    if (m_in.m_audio.m_stream->start_time != AV_NOPTS_VALUE)
+                    {
+                        astream_pts += m_in.m_audio.m_stream->start_time;
+                    }
+
+                    ret = av_seek_frame(m_in.m_format_ctx, m_in.m_audio.m_stream_idx, astream_pts, AVSEEK_FLAG_BACKWARD);
+                }
+
+                if (ret < 0)
+                {
+                    Logging::error(virtname(), "Seek failed on input file (error '%1').", ffmpeg_geterror(ret).c_str());
+                    return ret;
+                }
+
+                flush_buffers();
+                purge_hls_fifo();
+
+                m_current_segment = initial_seek_segment;
+            }
+        }
+
         Logging::info(virtname(), "Starting HLS segment no. %1 of %2.", m_current_segment, m_virtualfile->get_segment_count());
+
+        // HLS uses one physical cache file per segment.  Select the cache file
+        // for the current segment before opening the output format and before
+        // avformat_write_header()/process_output() can emit any data.  This is
+        // especially important for repair runs after a seek, where the first
+        // segment written may be segment 2 or later rather than segment 1.
+        const uint32_t segment_count = m_virtualfile != nullptr ? m_virtualfile->get_segment_count() : 0;
+        if (!segment_count || !m_current_segment || m_current_segment > segment_count)
+        {
+            return AVERROR(EINVAL);
+        }
+
+        size_t segment_buffsize = m_virtualfile->m_predicted_size / segment_count;
+        if (!segment_buffsize)
+        {
+            segment_buffsize = static_cast<size_t>(sysconf(_SC_PAGESIZE));
+        }
+
+        if (!buffer->set_segment(m_current_segment, segment_buffsize))
+        {
+            return AVERROR(errno);
+        }
     }
 
     while (true)
@@ -1346,12 +1440,18 @@ int FFmpeg_Transcoder::open_output(Buffer *buffer)
         subtitle_info(true, m_out.m_format_ctx, value.m_stream);
     }
 
-    // Open for read/write
-    // Pre-allocate the predicted file size to reduce memory reallocations
-    size_t buffsize = predicted_filesize();
-    if (!buffer->open_file(0, CACHE_FLAG_RW, buffsize))
+    if (!is_hls())
     {
-        return AVERROR(EPERM);
+        // Open regular output files for read/write.
+        // HLS output uses one cache file per segment; the active segment was
+        // already selected above with Buffer::set_segment().  Opening segment
+        // 0 here would switch the active cache file back to the first segment
+        // and make repair/seek runs append the following output to 000001.ts.
+        size_t buffsize = predicted_filesize();
+        if (!buffer->open_file(0, CACHE_FLAG_RW, buffsize))
+        {
+            return AVERROR(EPERM);
+        }
     }
 
     ret = process_output();
@@ -2105,6 +2205,78 @@ int FFmpeg_Transcoder::add_stream(AVCodecID codec_id)
                 // "Driver does not support any RC mode compatible with selected options (supported modes: CQP)."
                 output_codec_ctx->global_quality = 40;
             }
+
+            //#define EXPERIMENTAL
+#ifdef EXPERIMENTAL
+            if (m_hwaccel_enable_enc_buffering)
+            {
+                // For hardware encoding only
+#if 0
+                // From libavcodec/vaapi_encode.c:
+                //
+                // Rate control mode selection:
+                // * If the user has set a mode explicitly with the rc_mode option,
+                //   use it and fail if it is not available.
+                // * If an explicit QP option has been set, use CQP.
+                // * If the codec is CQ-only, use CQP.
+                // * If the QSCALE avcodec option is set, use CQP.
+                // * If bitrate and quality are both set, try QVBR.
+                // * If quality is set, try ICQ, then CQP.
+                // * If bitrate and maxrate are set and have the same value, try CBR.
+                // * If a bitrate is set, try AVBR, then VBR, then CBR.
+                // * If no bitrate is set, try ICQ, then CQP.
+                ret = av_opt_set(output_codec_ctx->priv_data, "rc_mode", "CQP", AV_OPT_SEARCH_CHILDREN);
+                if (ret < 0)
+                {
+                    Logging::error(virtname(), "Could not set 'rc_mode=CQP' for %1 output codec %2 (error '%3').", get_media_type_string(output_codec->type), get_codec_name(codec_id), ffmpeg_geterror(ret).c_str());
+                    return ret;
+                }
+
+                // The range of the CRF scale is 0–51, where 0 is lossless (for 8 bit only, for 10 bit use -qp 0),
+                // 23 is the default, and 51 is worst quality possible. A lower value generally leads to higher
+                // quality, and a subjectively sane range is 17–28. Consider 17 or 18 to be visually lossless or
+                // nearly so; it should look the same or nearly the same as the input but it isn't technically lossless.
+                // See https://trac.ffmpeg.org/wiki/Encode/H.264
+                ret = av_opt_set(output_codec_ctx->priv_data, "qp", "30", AV_OPT_SEARCH_CHILDREN);
+                if (ret < 0)
+                {
+                    Logging::error(virtname(), "Could not set 'qp' for %1 output codec %2 (error '%3').", get_media_type_string(output_codec->type), get_codec_name(codec_id), ffmpeg_geterror(ret).c_str());
+                    return ret;
+                }
+#endif
+            }
+            else
+            {
+                // Software encoding
+#if 0
+                // Affects hard- and software encoding
+                //
+                // The range of the CRF scale is 0–51, where 0 is lossless (for 8 bit only, for 10 bit use -qp 0),
+                // 23 is the default, and 51 is worst quality possible. A lower value generally leads to higher
+                // quality, and a subjectively sane range is 17–28. Consider 17 or 18 to be visually lossless or
+                // nearly so; it should look the same or nearly the same as the input but it isn't technically lossless.
+                // See https://trac.ffmpeg.org/wiki/Encode/H.264
+                ret = av_opt_set(output_codec_ctx->priv_data, "qp", "30", AV_OPT_SEARCH_CHILDREN);
+                if (ret < 0)
+                {
+                    Logging::error(virtname(), "Could not set 'qp' for %1 output codec %2 (error '%3').", get_media_type_string(output_codec->type), get_codec_name(codec_id), ffmpeg_geterror(ret).c_str());
+                    return ret;
+                }
+#endif
+
+#if 0
+                // Set constant rate factor to avoid getting huge result files
+                // The default is 23, but values between 30..40 create properly sized results.
+                // Possible values are 0 (lossless) to 51 (very small but ugly results).
+                ret = av_opt_set(output_codec_ctx->priv_data, "crf", "30", AV_OPT_SEARCH_CHILDREN);
+                if (ret < 0)
+                {
+                    Logging::error(virtname(), "Could not set 'crf' for %1 output codec %2 (error '%3').", get_media_type_string(output_codec->type), get_codec_name(codec_id), ffmpeg_geterror(ret).c_str());
+                    return ret;
+                }
+#endif
+            }
+#endif // EXPERIMENTAL
 
             // Avoid mismatches for H264 and profile
             uint8_t   *out_val;
@@ -5744,6 +5916,12 @@ int FFmpeg_Transcoder::start_new_segment()
 
             purge_hls_fifo();   // We do not need the packets for the next frame, we start a new one at another position!
 
+            // open_output() selects the active HLS cache file before
+            // process_output()/avformat_write_header() can emit data.  Make
+            // the requested seek segment visible before reopening the output,
+            // otherwise a mid-stream repair can reopen the previous segment.
+            m_current_segment = segment_no;
+
             ret = open_output(m_buffer);
             if (ret < 0)
             {
@@ -6789,6 +6967,13 @@ int FFmpeg_Transcoder::init_deinterlace_filters(AVCodecContext *codec_ctx, AVPix
 
     return ret;
 }
+
+
+//    Aug 26 21:41:22 plattenlurch ffmpegfs[1999231]: WARNING: FILTER  [out @ 0x7f99a4193bc0] The "pix_fmts" option is deprecated: set the supported pixel formats
+//    Aug 26 21:41:22 plattenlurch ffmpegfs[1999231]: WARNING: FILTER  [in @ 0x7f99a40f8700] Changing video frame properties on the fly is not supported by all filters.
+//    Aug 26 21:41:22 plattenlurch ffmpegfs[1999231]: WARNING: FILTER  [in @ 0x7f99a40f8700] filter context - w: 720 h: 480 fmt: 0 csp: unknown range: unknown, incoming frame - w: 720 h: 480 fmt: 0 csp: unknown range: tv pts_time: 1117.2298
+//    Aug 26 21:41:22 plattenlurch ffmpegfs[1999231]: WARNING: ENCODER [libx264 @ 0x7f99a40c9080] non-strictly-monotonic PTS
+
 
 int FFmpeg_Transcoder::send_filters(FFmpeg_Frame *srcframe, int & ret)
 {

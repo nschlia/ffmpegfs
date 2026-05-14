@@ -166,6 +166,30 @@ public:
      */
     bool                    segment_exists(uint32_t segment_no);
     /**
+     * @brief Check whether the physical cache file for the requested segment exists and contains data.
+     *
+     * This checks the cache file on disk, not the logical in-memory/database
+     * cache state.  It is used by the read paths to detect stale cache index
+     * entries after manual cache file deletion or aborted writes.
+     *
+     * @param[in] segment_no - [1..n] HLS segment file number or 0 for the current/single cache file.
+     * @return Returns true if the cache file exists, is a regular file, and has a non-zero size.
+     */
+    bool                    cachefile_valid(uint32_t segment_no);
+    /**
+     * @brief Invalidate the requested cache segment/file.
+     *
+     * Clears the logical finished state, drops any open mapping for the cache
+     * file, removes the physical cache file, and resets the buffered size
+     * counters.  For frame-set caches, invalidating segment 0 also clears the
+     * frame index because offsets into a missing cache file are no longer
+     * trustworthy.
+     *
+     * @param[in] segment_no - [1..n] HLS segment file number or 0 for the current/single cache file.
+     * @return Returns true if the segment was invalidated successfully.
+     */
+    bool                    invalidate_segment(uint32_t segment_no = 0);
+    /**
      * @brief Release cache buffer.
      * @param[in] flags - One of the CACHE_CLOSE_* flags.
      * @return Returns true on success; false on error.

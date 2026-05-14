@@ -79,7 +79,7 @@ static int                          selector(const struct dirent * de);
 static int                          scandir(const char *dirp, std::vector<struct dirent> * _namelist, int (*selector) (const struct dirent *), int (*cmp) (const struct dirent **, const struct dirent **));
 
 static int                          ffmpegfs_readlink(const char *path, char *buf, size_t size);
-static int                          ffmpegfs_readdir(const char *path, void *buf, fuse_fill_dir_t filler, off_t offset, struct fuse_file_info *fi, enum fuse_readdir_flags);
+static int                          ffmpegfs_readdir(const char *path, void *buf, fuse_fill_dir_t filler, off_t offset, struct fuse_file_info *fi, enum fuse_readdir_flags flags);
 static int                          ffmpegfs_getattr(const char *path, struct stat *stbuf, fuse_file_info *fi);
 //static int                          ffmpegfs_fgetattr(const char *path, struct stat * stbuf, struct fuse_file_info *fi);
 static int                          ffmpegfs_open(const char *path, struct fuse_file_info *fi);
@@ -295,14 +295,20 @@ static int ffmpegfs_readlink(const char *path, char *buf, size_t size)
 }
 
 /**
- * @brief Read directory
- * @param[in] path - Physical path to load.
- * @param[in] buf - FUSE buffer to fill.
- * @param[in] filler - Filler function.
+ * @brief Read directory contents.
+ * @param[in] path Virtual path to list.
+ * @param[in] buf FUSE buffer to fill.
+ * @param[in] filler FUSE callback used to add directory entries.
+ * @param[in] offset Directory offset supplied by FUSE; currently unused.
+ * @param[in] fi FUSE file information; currently unused.
+ * @param[in] flags FUSE readdir flags; currently unused.
  * @return On success, returns 0. On error, returns -errno.
  */
-static int ffmpegfs_readdir(const char *path, void *buf, fuse_fill_dir_t filler, off_t /*offset*/, struct fuse_file_info * /*fi*/, enum fuse_readdir_flags)
+static int ffmpegfs_readdir(const char *path, void *buf, fuse_fill_dir_t filler, off_t offset, struct fuse_file_info *fi, enum fuse_readdir_flags flags)
 {
+    (void) offset;
+    (void) fi;
+    (void) flags;
     std::string origpath;
 
     Logging::trace(path, "readdir");
@@ -850,11 +856,11 @@ static int ffmpegfs_getattr(const char *path, struct stat *stbuf, struct fuse_fi
     return 0;
 }
 
-/**
- * @brief Get attributes from an open file
- * @param[in] path
- * @param[in] stbuf
- * @param[in] fi
+/*
+ * @brief Get attributes from an open file.
+ * @param[in] path Virtual path to inspect.
+ * @param[out] stbuf Buffer receiving the attributes.
+ * @param[in] fi FUSE file information.
  * @return On success, returns 0. On error, returns -errno.
  */
 //static int ffmpegfs_fgetattr(const char *path, struct stat * stbuf, struct fuse_file_info *fi)
@@ -963,9 +969,9 @@ static int ffmpegfs_getattr(const char *path, struct stat *stbuf, struct fuse_fi
 //}
 
 /**
- * @brief File open operation
- * @param[in] path
- * @param[in] fi
+ * @brief Open a virtual or passthrough file.
+ * @param[in] path Virtual path to open.
+ * @param[in,out] fi FUSE file information. For transcoded files, fh receives the cache entry handle.
  * @return On success, returns 0. On error, returns -errno.
  */
 static int ffmpegfs_open(const char *path, struct fuse_file_info *fi)
@@ -1030,7 +1036,12 @@ static int ffmpegfs_open(const char *path, struct fuse_file_info *fi)
             {
                 Cache_Entry* cache_entry;
 
-                cache_entry = transcoder_new(parent_file, true);
+                // HLS segments and frame-set files are opened through their
+                // parent cache entry.  The exact segment/frame number is only
+                // known in ffmpegfs_read(), so do not start transcoding here.
+                // Starting here would always begin at segment/frame 1 and only
+                // seek afterwards.
+                cache_entry = transcoder_new(parent_file, false);
                 if (cache_entry == nullptr)
                 {
                     return -errno;
@@ -1329,12 +1340,15 @@ static int ffmpegfs_release(const char *path, struct fuse_file_info *fi)
 }
 
 /**
- * @brief Initialise filesystem
- * @param[in] conn - fuse_conn_info structure of FUSE. See FUSE docs for details.
- * @return nullptr
+ * @brief Initialise the filesystem.
+ * @param[in,out] conn FUSE connection information. Currently not modified.
+ * @param[in,out] cfg FUSE configuration. Currently not modified.
+ * @return nullptr.
  */
-static void *ffmpegfs_init(struct fuse_conn_info * /*conn*/, struct fuse_config * /*cfg*/)
+static void *ffmpegfs_init(struct fuse_conn_info *conn, struct fuse_config *cfg)
 {
+    (void) conn;
+    (void) cfg;
     Logging::info(nullptr, "%1 V%2 initialising.", PACKAGE_NAME, FFMPEFS_VERSION);
     Logging::info(nullptr, "Mapping '%1' to '%2'.", params.m_basepath.c_str(), params.m_mountpath.c_str());
     if (docker_client)

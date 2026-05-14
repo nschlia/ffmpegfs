@@ -84,7 +84,10 @@ bool Cache_Entry::destroy()
 
 void Cache_Entry::clear(bool fetch_file_time /*= true*/)
 {
-    m_is_decoding = false;
+    // Do not touch m_is_decoding here.  clear() is also used by an already
+    // running transcoder to remove stale cache contents before a full recode;
+    // resetting the flag in that window allows a second reader to start a
+    // second transcoder for the same cache entry.
 
     // Initialise ID3v1.1 tag structure
     init_id3v1(&m_id3v1);
@@ -167,6 +170,28 @@ bool Cache_Entry::openio(bool create_cache /*= true*/)
 
     if (m_ref_count++ > 0)	// fetch_and_add
     {
+        // Already open.  This can happen when an entry was first opened only
+        // for metadata (create_cache == false) and the actual HLS/frame-set
+        // buffer is created later when the requested segment is known.
+        if (create_cache && m_buffer->segment_count() == 0)
+        {
+            bool erase_cache = !is_finished();
+
+            Logging::trace(filename(), "Initialising cache buffer for an already referenced entry. Result %1 Erasing cache: %2.", static_cast<int>(m_cache_info.m_result), erase_cache);
+
+            update_access(true);
+
+            if (m_buffer->init(erase_cache))
+            {
+                return true;
+            }
+            else
+            {
+                clear(false);
+                return false;
+            }
+        }
+
         // Already open
         return true;
     }
@@ -387,7 +412,7 @@ bool Cache_Entry::outdated() const
         if (m_cache_info.m_videowidth && m_cache_info.m_videoheight)
         {
             // Report if old dimensions is known
-            Logging::debug(filename(), "Triggering re-transcode: Selected video witdh/height changed from %1/%2 to %3/%4.", m_cache_info.m_videowidth, m_cache_info.m_videoheight, params.m_videowidth, params.m_videoheight);
+            Logging::debug(filename(), "Triggering re-transcode: Selected video width/height changed from %1/%2 to %3/%4.", m_cache_info.m_videowidth, m_cache_info.m_videoheight, params.m_videowidth, params.m_videoheight);
         }
         return true;
     }

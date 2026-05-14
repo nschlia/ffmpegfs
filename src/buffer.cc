@@ -348,11 +348,109 @@ bool Buffer::segment_exists(uint32_t segment_no)
 {
     std::lock_guard<std::recursive_mutex> lock_mutex(m_mutex);
 
-    if (!segment_count() || m_cur_ci == nullptr)
+    if (!segment_count())
     {
         return false;
     }
-    return file_exists(m_ci[segment_no - 1].m_cachefile);
+
+    uint32_t index = segment_no;
+    if (index)
+    {
+        index--;
+    }
+
+    if (index >= m_ci.size())
+    {
+        errno = EBADF;
+        return false;
+    }
+
+    return file_exists(m_ci[index].m_cachefile);
+}
+
+bool Buffer::cachefile_valid(uint32_t segment_no)
+{
+    std::lock_guard<std::recursive_mutex> lock_mutex(m_mutex);
+
+    LPCCACHEINFO ci = const_cacheinfo(segment_no);
+
+    if (ci == nullptr)
+    {
+        errno = EBADF;
+        return false;
+    }
+
+    struct stat sb;
+    if (stat(ci->m_cachefile.c_str(), &sb) == -1)
+    {
+        return false;
+    }
+
+    if (!S_ISREG(sb.st_mode))
+    {
+        errno = EINVAL;
+        return false;
+    }
+
+    if (sb.st_size <= 0)
+    {
+        errno = ENODATA;
+        return false;
+    }
+
+    errno = 0;
+    return true;
+}
+
+bool Buffer::invalidate_segment(uint32_t segment_no)
+{
+    std::lock_guard<std::recursive_mutex> lock_mutex(m_mutex);
+
+    LPCACHEINFO ci = cacheinfo(segment_no);
+
+    if (ci == nullptr)
+    {
+        errno = EBADF;
+        return false;
+    }
+
+    bool success = true;
+
+    ci->m_seg_finished      = false;
+    ci->m_buffer_pos        = 0;
+    ci->m_buffer_watermark  = 0;
+    ci->m_buffer_write_size = 0;
+    ci->m_buffer_writes     = 0;
+    ci->m_flags             = 0;
+
+    if (ci->m_fd != -1 || ci->m_buffer != nullptr)
+    {
+        if (!unmap_file(ci->m_cachefile, &ci->m_fd, &ci->m_buffer, ci->m_buffer_size, &ci->m_buffer_watermark))
+        {
+            success = false;
+        }
+
+        if (m_cur_open > 0)
+        {
+            --m_cur_open;
+        }
+    }
+
+    ci->m_buffer_pos        = 0;
+    ci->m_buffer_watermark  = 0;
+    ci->m_buffer_size       = 0;
+
+    if (!remove_file(ci->m_cachefile))
+    {
+        success = false;
+    }
+
+    if (segment_no == 0 && ci->m_buffer_idx != nullptr && ci->m_buffer_size_idx)
+    {
+        std::memset(ci->m_buffer_idx, 0, ci->m_buffer_size_idx);
+    }
+
+    return success;
 }
 
 bool Buffer::map_file(const std::string & filename, volatile int *fd, uint8_t **p, size_t *filesize, bool *isdefaultsize, size_t defaultsize, bool truncate) const

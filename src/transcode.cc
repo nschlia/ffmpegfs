@@ -67,8 +67,12 @@ static std::atomic_bool         thread_exit;                /**< @brief Used for
 
 static bool transcode(std::shared_ptr<THREAD_DATA> thread_data, Cache_Entry *cache_entry, FFmpeg_Transcoder & transcoder, bool *timeout);
 static int  transcoder_thread(std::shared_ptr<THREAD_DATA> thread_data);
+static int  start_transcoder_thread(Cache_Entry* cache_entry);
 static bool transcode_until(Cache_Entry* cache_entry, size_t offset, size_t len, uint32_t segment_no);
 static int  transcode_finish(Cache_Entry* cache_entry, FFmpeg_Transcoder & transcoder);
+static void reopen_finished_incomplete_cache(Cache_Entry* cache_entry, uint32_t item_no, const char* item_name);
+static bool cached_item_available(Cache_Entry* cache_entry, size_t offset, size_t len, uint32_t segment_no);
+static bool invalidate_stale_cache_file(Cache_Entry* cache_entry, uint32_t segment_no, uint32_t item_no, const char* item_name);
 
 /**
  * @brief Transcode the buffer until the buffer has enough or until an error occurs.
@@ -82,10 +86,9 @@ static int  transcode_finish(Cache_Entry* cache_entry, FFmpeg_Transcoder & trans
  */
 static bool transcode_until(Cache_Entry* cache_entry, size_t offset, size_t len, uint32_t segment_no)
 {
-    size_t end = offset + len; // Cast OK: offset will never be < 0.
-    bool success = true;
+    bool success = false;
 
-    if (cache_entry->is_finished() || cache_entry->m_buffer->is_segment_finished(segment_no) || cache_entry->m_buffer->tell(segment_no) >= end)
+    if (cached_item_available(cache_entry, offset, len, segment_no))
     {
         return true;
     }
@@ -96,7 +99,7 @@ static bool transcode_until(Cache_Entry* cache_entry, size_t offset, size_t len,
         if (cache_entry->m_is_decoding)
         {
             bool reported = false;
-            while (!(cache_entry->is_finished() || cache_entry->m_buffer->is_segment_finished(segment_no) || cache_entry->m_buffer->tell(segment_no) >= end) && !cache_entry->m_cache_info.m_error)
+            while (!cached_item_available(cache_entry, offset, len, segment_no) && !cache_entry->m_cache_info.m_error)
             {
                 if (fuse_interrupted())
                 {
@@ -138,7 +141,7 @@ static bool transcode_until(Cache_Entry* cache_entry, size_t offset, size_t len,
                     Logging::trace(cache_entry->virtname(), "Cache hit at offset %1 with length %2 for segment no. %3.", offset, len, segment_no);
                 }
             }
-            success = !cache_entry->m_cache_info.m_error;
+            success = !cache_entry->m_cache_info.m_error && cached_item_available(cache_entry, offset, len, segment_no);
         }
     }
     catch (bool _success)
@@ -192,6 +195,142 @@ static int transcode_finish(Cache_Entry* cache_entry, FFmpeg_Transcoder & transc
     cache_entry->flush();
 
     return 0;
+}
+
+/**
+ * @brief Re-open an incomplete multi-format cache for an on-demand repair run.
+ *
+ * HLS and frame-set caches may intentionally be marked FINISHED_INCOMPLETE
+ * after a seek/direct access reached EOF.  That state means that existing
+ * segments/frames are usable, but missing items may still be generated later.
+ * Before starting such a repair worker, clear only the finished/error state;
+ * do not clear the buffer, because the already valid segments/frames must be
+ * kept.
+ *
+ * @param[inout] cache_entry Cache entry to re-open.
+ * @param[in] item_no Requested HLS segment or frame number.
+ * @param[in] item_name Human-readable item name for logging.
+ */
+static void reopen_finished_incomplete_cache(Cache_Entry* cache_entry, uint32_t item_no, const char* item_name)
+{
+    if (cache_entry == nullptr || !cache_entry->is_finished_incomplete())
+    {
+        return;
+    }
+
+    Logging::warning(cache_entry->virtname(),
+                     "Re-opening incomplete cache to generate missing %1 no. %2.",
+                     item_name,
+                     item_no);
+
+    cache_entry->m_cache_info.m_result  = RESULTCODE::NONE;
+    cache_entry->m_cache_info.m_error   = false;
+    cache_entry->m_cache_info.m_errno   = 0;
+    cache_entry->m_cache_info.m_averror = 0;
+}
+
+/**
+ * @brief Invalidate a stale physical cache file and make the entry eligible for recoding.
+ *
+ * The cache database/in-memory state may still say that a file or segment is
+ * available even though the physical cache file has been deleted or truncated.
+ * In that case the on-disk state wins: the affected cache item is invalidated
+ * and the cache entry is re-opened for transcoding/repair.
+ *
+ * @param[inout] cache_entry Cache entry containing the stale cache file.
+ * @param[in] segment_no HLS segment number, or 0 for the single cache file used by normal files and frame sets.
+ * @param[in] item_no Human-readable item number used in the log message.
+ * @param[in] item_name Human-readable item name used in the log message.
+ * @return Always returns false, so the caller can directly use it as a cache-miss result.
+ */
+static bool invalidate_stale_cache_file(Cache_Entry* cache_entry, uint32_t segment_no, uint32_t item_no, const char* item_name)
+{
+    if (cache_entry == nullptr || cache_entry->m_buffer == nullptr)
+    {
+        errno = EINVAL;
+        return false;
+    }
+
+    const std::string cachefile = cache_entry->m_buffer->cachefile(segment_no);
+
+    if (item_no)
+    {
+        Logging::warning(cache_entry->virtname(),
+                         "Cached %1 no. %2 is marked available, but cache file '%3' is missing or empty. Recreating it.",
+                         item_name,
+                         item_no,
+                         cachefile.c_str());
+    }
+    else
+    {
+        Logging::warning(cache_entry->virtname(),
+                         "Cached file is marked available, but cache file '%1' is missing or empty. Recreating it.",
+                         cachefile.c_str());
+    }
+
+    cache_entry->m_buffer->invalidate_segment(segment_no);
+
+    cache_entry->m_cache_info.m_result        = RESULTCODE::NONE;
+    cache_entry->m_cache_info.m_error         = false;
+    cache_entry->m_cache_info.m_errno         = 0;
+    cache_entry->m_cache_info.m_averror       = 0;
+    cache_entry->m_suspend_timeout            = false;
+
+    if (!segment_no)
+    {
+        cache_entry->m_cache_info.m_encoded_filesize = 0;
+    }
+
+    const FFmpegfs_Format *current_format = params.current_format(cache_entry->virtualfile());
+    if (item_no && current_format != nullptr && current_format->is_multiformat())
+    {
+        cache_entry->m_seek_to_no = item_no;
+    }
+
+    return false;
+}
+
+/**
+ * @brief Check whether the requested cache data is available and physically readable.
+ *
+ * This combines the logical cache state (finished cache, finished HLS segment,
+ * or enough bytes already written) with a physical cache-file check.  A stale
+ * database entry must not result in an empty file being served to the client.
+ *
+ * @param[inout] cache_entry Cache entry to check.
+ * @param[in] offset Requested byte offset.
+ * @param[in] len Requested byte count.
+ * @param[in] segment_no HLS segment number, or 0 for normal files/frame sets.
+ * @return Returns true if the requested data can be read from the cache.
+ */
+static bool cached_item_available(Cache_Entry* cache_entry, size_t offset, size_t len, uint32_t segment_no)
+{
+    if (cache_entry == nullptr || cache_entry->m_buffer == nullptr)
+    {
+        errno = EINVAL;
+        return false;
+    }
+
+    const size_t end = offset + len;
+    const bool logically_available =
+            cache_entry->is_finished() ||
+            (segment_no && cache_entry->m_buffer->is_segment_finished(segment_no)) ||
+            (cache_entry->m_buffer->tell(segment_no) >= end);
+
+    if (!logically_available)
+    {
+        return false;
+    }
+
+    if (cache_entry->m_buffer->cachefile_valid(segment_no))
+    {
+        return true;
+    }
+
+    return invalidate_stale_cache_file(cache_entry,
+                                       segment_no,
+                                       segment_no,
+                                       segment_no ? "segment" : "file");
 }
 
 void transcoder_cache_path(std::string * path)
@@ -352,6 +491,102 @@ bool transcoder_predict_filesize(LPVIRTUALFILE virtualfile, Cache_Entry* cache_e
     return success;
 }
 
+/**
+ * @brief Start the transcoder thread for an existing cache entry.
+ *
+ * For HLS/frame-set partial cache repair, the caller may already have placed
+ * the requested segment/frame number in m_seek_to_no. In that case transcode()
+ * keeps existing segment files and starts directly at the requested item.
+ *
+ * @param[inout] cache_entry Cache entry to transcode.
+ * @return 0 on success, otherwise errno-compatible error code.
+ */
+static int start_transcoder_thread(Cache_Entry* cache_entry)
+{
+    if (cache_entry == nullptr)
+    {
+        return EINVAL;
+    }
+
+    bool expected_is_decoding = false;
+    if (!cache_entry->m_is_decoding.compare_exchange_strong(expected_is_decoding, true))
+    {
+        std::unique_lock<std::recursive_mutex> lock_active_mutex(cache_entry->m_active_mutex, std::try_to_lock);
+        if (!lock_active_mutex.owns_lock())
+        {
+            Logging::warning(cache_entry->virtname(), "Transcoder thread already running.");
+            return 0;
+        }
+
+        Logging::warning(cache_entry->virtname(),
+                         "Transcoder thread was marked as running, but no active worker owns the cache entry. Resetting decoding state and starting a new worker.");
+
+        cache_entry->m_is_decoding = false;
+        expected_is_decoding = false;
+        if (!cache_entry->m_is_decoding.compare_exchange_strong(expected_is_decoding, true))
+        {
+            Logging::warning(cache_entry->virtname(), "Transcoder thread already running.");
+            return 0;
+        }
+    }
+
+    const FFmpegfs_Format *current_format = params.current_format(cache_entry->virtualfile());
+    if (current_format != nullptr &&
+            current_format->is_multiformat() &&
+            !cache_entry->virtualfile()->get_segment_count() &&
+            !cache_entry->m_cache_info.m_segment_count)
+    {
+        // HLS/frame-set buffers need a known segment/frame count before
+        // Buffer::init() can create the cache file table.  With deferred
+        // transcoding this may not have happened during open(), so predict
+        // the source properties now, before the worker calls openio(true).
+        if (!transcoder_predict_filesize(cache_entry->virtualfile(), cache_entry))
+        {
+            int ret = errno;
+            if (!ret)
+            {
+                ret = EIO;
+            }
+
+            cache_entry->m_is_decoding = false;
+            return ret;
+        }
+    }
+
+    Logging::debug(cache_entry->filename(), "Starting transcoder thread.");
+
+    std::shared_ptr<THREAD_DATA> thread_data = std::make_shared<THREAD_DATA>();
+
+    thread_data->m_initialised                  = false;
+    thread_data->m_cache_entry                  = cache_entry;
+    thread_data->m_thread_running_lock_guard    = false;
+
+    {
+        std::unique_lock<std::mutex> lock_thread_running_mutex(thread_data->m_thread_running_mutex);
+
+        tp->schedule_thread(std::bind(&transcoder_thread, thread_data));
+
+        // Let decoder get into gear before returning from open/read.
+        while (!thread_data->m_thread_running_lock_guard)
+        {
+            thread_data->m_thread_running_cond.wait(lock_thread_running_mutex);
+        }
+    }
+
+    if (cache_entry->m_cache_info.m_error)
+    {
+        int ret = cache_entry->m_cache_info.m_errno;
+        if (!ret)
+        {
+            ret = EIO;
+        }
+        return ret;
+    }
+
+    Logging::debug(cache_entry->filename(), "Transcoder thread is running.");
+    return 0;
+}
+
 Cache_Entry* transcoder_new(LPVIRTUALFILE virtualfile, bool begin_transcode)
 {
     // Allocate transcoder structure
@@ -367,7 +602,13 @@ Cache_Entry* transcoder_new(LPVIRTUALFILE virtualfile, bool begin_transcode)
     {
         cache_entry->lock();
 
-        if (!cache_entry->openio(begin_transcode))
+        const FFmpegfs_Format *current_format = params.current_format(virtualfile);
+        const bool create_cache = begin_transcode ||
+                (current_format != nullptr &&
+                 current_format->is_multiformat() &&
+                 virtualfile->get_segment_count() != 0);
+
+        if (!cache_entry->openio(create_cache))
         {
             throw static_cast<int>(errno);
         }
@@ -399,47 +640,12 @@ Cache_Entry* transcoder_new(LPVIRTUALFILE virtualfile, bool begin_transcode)
         {
             if (begin_transcode)
             {
-                Logging::debug(cache_entry->filename(), "Starting transcoder thread.");
-
-                // Clear cache to remove any older remains
-                cache_entry->clear();
-
-                // Must decode the file, otherwise simply use cache
-                cache_entry->m_is_decoding                  = true;
-
-                std::shared_ptr<THREAD_DATA> thread_data = std::make_unique<THREAD_DATA>();
-
-                thread_data->m_initialised                  = false;
-                thread_data->m_cache_entry                  = cache_entry;
-                thread_data->m_thread_running_lock_guard    = false;
-
+                int ret = start_transcoder_thread(cache_entry);
+                if (ret)
                 {
-                    std::unique_lock<std::mutex> lock_thread_running_mutex(thread_data->m_thread_running_mutex);
-
-                    tp->schedule_thread(std::bind(&transcoder_thread, thread_data));
-
-                    // Let decoder get into gear before returning from open
-                    while (!thread_data->m_thread_running_lock_guard)
-                    {
-                        thread_data->m_thread_running_cond.wait(lock_thread_running_mutex);
-                    }
-                }
-
-                if (cache_entry->m_cache_info.m_error)
-                {
-                    int ret;
-
                     Logging::trace(cache_entry->filename(), "Transcoder error!");
-
-                    ret = cache_entry->m_cache_info.m_errno;
-                    if (!ret)
-                    {
-                        ret = EIO; // Must return something, be it a simple I/O error...
-                    }
                     throw ret;
                 }
-
-                Logging::debug(cache_entry->filename(), "Transcoder thread is running.");
             }
             else if (!cache_entry->m_cache_info.m_predicted_filesize)
             {
@@ -489,20 +695,93 @@ bool transcoder_read(Cache_Entry* cache_entry, char* buff, size_t offset, size_t
 
     try
     {
-        // Try to read requested segment, stack a seek to if if this fails.
-        // No seek if not HLS (segment_no) and not required if < MIN_SEGMENT
-        if (segment_no && !cache_entry->m_buffer->segment_exists(segment_no))
+        const bool segment_logically_complete = segment_no &&
+                (cache_entry->m_buffer->is_segment_finished(segment_no) || cache_entry->is_finished());
+        bool segment_complete = segment_logically_complete;
+        bool repair_requested = false;
+
+        if (segment_logically_complete && !cache_entry->m_buffer->cachefile_valid(segment_no))
         {
-            cache_entry->m_seek_to_no = segment_no;
+            invalidate_stale_cache_file(cache_entry, segment_no, segment_no, "segment");
+            segment_complete = false;
+            repair_requested = true;
         }
 
-        // Open for reading if necessary
-        if (!cache_entry->m_buffer->open_file(segment_no, CACHE_FLAG_RO))
+        if (!segment_no && cache_entry->is_finished() && !cache_entry->m_buffer->cachefile_valid(0))
         {
-            throw false;
+            invalidate_stale_cache_file(cache_entry, 0, 0, "file");
+            repair_requested = true;
         }
 
-        if (!cache_entry->is_finished_success())
+        const bool segment_missing  = segment_no && !segment_complete;
+
+        // For HLS partial caches, an incomplete cache is still usable.  Only
+        // start/restart the transcoder when the requested segment is not
+        // finished yet.  Physical cache files are checked as well: if a segment
+        // is marked as finished in memory/the cache index but the actual file
+        // has been deleted or truncated, it is treated as missing and repaired.
+        if (segment_missing)
+        {
+            if (!cache_entry->m_is_decoding)
+            {
+                // Segment 1 naturally starts at the beginning.  For later HLS
+                // segments, stack the target before the worker starts so a
+                // direct request does not first encode segment 1 and only seek
+                // afterwards.
+                cache_entry->m_seek_to_no = segment_no;
+
+                // A FINISHED_INCOMPLETE HLS cache may still contain useful
+                // segments, but a missing requested segment needs a fresh
+                // repair worker.  Only re-open it when no worker is active; an
+                // active worker must keep its current cache state.
+                reopen_finished_incomplete_cache(cache_entry, segment_no, "HLS segment");
+            }
+            else
+            {
+                // A running HLS transcoder can satisfy large jumps by
+                // consuming m_seek_to_no in transcode().  However, during
+                // normal linear playback the current or immediately following
+                // segment is often requested before it has been finalised.  Do
+                // not queue a seek for those normal sequential reads: doing so
+                // can make the encoder reopen the same segment and corrupt the
+                // cache file.
+                //
+                // Only queue a seek while the worker is active if the request
+                // is farther away than the configured minimum seek distance.
+                // The FFmpeg_Transcoder still performs its own final check and
+                // logs discarded short seeks.
+                const uint32_t current_segment = cache_entry->m_buffer->current_segment_no();
+                if (current_segment && segment_no > current_segment)
+                {
+                    uint32_t min_seek_segments = 0;
+                    if (params.m_segment_duration > 0)
+                    {
+                        min_seek_segments = static_cast<uint32_t>(params.m_min_seek_time_diff / params.m_segment_duration);
+                    }
+
+                    if (segment_no > current_segment + min_seek_segments)
+                    {
+                        cache_entry->m_seek_to_no = segment_no;
+                    }
+                }
+            }
+        }
+
+        if (repair_requested ||
+                (!cache_entry->m_is_decoding &&
+                 (segment_missing ||
+                  (!cache_entry->is_finished_success() &&
+                   !(cache_entry->is_finished_incomplete() && !segment_missing)))))
+        {
+            int ret = start_transcoder_thread(cache_entry);
+            if (ret)
+            {
+                errno = ret;
+                throw false;
+            }
+        }
+
+        if (!cache_entry->is_finished_success() && !cache_entry->is_finished_incomplete())
         {
             switch (params.current_format(cache_entry->virtualfile())->filetype())
             {
@@ -564,6 +843,14 @@ bool transcoder_read(Cache_Entry* cache_entry, char* buff, size_t offset, size_t
             throw false;
         }
 
+        // Open for reading if necessary.  This intentionally happens after
+        // transcode_until(), so a missing HLS segment is created by the
+        // transcoder, not by a read-only cache probe.
+        if (!cache_entry->m_buffer->open_file(segment_no, CACHE_FLAG_RO))
+        {
+            throw false;
+        }
+
         // truncate if we didn't actually get len
         if (cache_entry->m_buffer->buffer_watermark(segment_no) < offset)
         {
@@ -616,7 +903,15 @@ bool transcoder_read_frame(Cache_Entry* cache_entry, char* buff, size_t offset, 
 
     try
     {
-        // Open for reading if necessary
+        if (cache_entry->is_finished() && !cache_entry->m_buffer->cachefile_valid(0))
+        {
+            invalidate_stale_cache_file(cache_entry, 0, frame_no, "frame-set cache");
+            cache_entry->m_seek_to_no = frame_no;
+        }
+
+        // Open for reading if necessary.  For frame sets this only opens the
+        // frame index/cache for probing; a missing frame still has to start the
+        // transcoder below.
         if (!cache_entry->m_buffer->open_file(0, CACHE_FLAG_RO))
         {
             throw false;
@@ -624,68 +919,112 @@ bool transcoder_read_frame(Cache_Entry* cache_entry, char* buff, size_t offset, 
 
         std::vector<uint8_t> data;
 
-        // Wait until decoder thread has the requested frame available
-        if (cache_entry->m_is_decoding || cache_entry->m_suspend_timeout)
+        // Try to read the requested frame first.  Frame-set files are opened
+        // through their parent object without starting the transcoder, because
+        // the exact frame number is only known here.  Therefore a cache miss
+        // must start or wake the transcoder from this read path.
+        success = cache_entry->m_buffer->read_frame(&data, frame_no);
+        if (!success)
         {
-            // Try to read requested frame, stack a seek to if if this fails.
-            if (!cache_entry->m_buffer->read_frame(&data, frame_no))
+            if (errno != EAGAIN)
             {
-                bool reported = false;
+                Logging::error(cache_entry->virtname(), "Reading image frame no. %1: (%2) %3", frame_no, errno, strerror(errno));
+                throw false;
+            }
 
-                cache_entry->m_seek_to_no = frame_no;
+            bool reported = false;
 
-                int retries = TOTAL_RETRIES;
-                while (!cache_entry->m_buffer->read_frame(&data, frame_no) && !thread_exit)
+            // Stack the requested frame before starting the worker so a direct
+            // frame-set access does not begin at frame 1 first.
+            cache_entry->m_seek_to_no = frame_no;
+
+            // A FINISHED_INCOMPLETE frame-set cache means that some frames are
+            // valid, but the requested missing frame still has to be generated.
+            // Clear the finished state before starting the repair worker,
+            // otherwise transcode() exits immediately.
+            reopen_finished_incomplete_cache(cache_entry, frame_no, "frame");
+
+            if (!cache_entry->m_is_decoding)
+            {
+                int ret = start_transcoder_thread(cache_entry);
+                if (ret)
                 {
-                    if (errno != EAGAIN)
-                    {
-                        Logging::error(cache_entry->virtname(), "Reading image frame no. %1: (%2) %3", frame_no, errno, strerror(errno));
-                        throw false;
-                    }
-
-                    if (!cache_entry->m_suspend_timeout)
-                    {
-                        if (errno == EAGAIN && !--retries)
-                        {
-                            errno = ETIMEDOUT;
-                            Logging::error(cache_entry->virtname(), "Timeout reading image frame no. %1: (%2) %3", frame_no, errno, strerror(errno));
-                            throw false;
-                        }
-                    }
-                    else
-                    {
-                        retries = TOTAL_RETRIES;
-                    }
-
-                    if (thread_exit)
-                    {
-                        Logging::warning(cache_entry->virtname(), "Thread exit was received.");
-                        errno = EINTR;
-                        throw false;
-                    }
-
-                    if (!reported)
-                    {
-                        Logging::trace(cache_entry->virtname(), "Frame no. %1: Cache miss at offset %<11zu>2 (length %<6u>3).", frame_no, offset, len);
-                        reported = true;
-                    }
-
-                    mssleep(GRANULARITY);
+                    errno = ret;
+                    throw false;
                 }
+            }
+
+            int retries = TOTAL_RETRIES;
+            while (!cache_entry->m_buffer->read_frame(&data, frame_no) && !thread_exit)
+            {
+                if (errno != EAGAIN)
+                {
+                    Logging::error(cache_entry->virtname(), "Reading image frame no. %1: (%2) %3", frame_no, errno, strerror(errno));
+                    throw false;
+                }
+
+                // A previous frame-set worker may have reached EOF just after
+                // this request stacked m_seek_to_no.  In that case the worker
+                // exits, the requested frame is still missing, and simply
+                // waiting would time out.  Start a fresh repair worker for the
+                // same frame as soon as the old worker is no longer decoding.
+                if (!cache_entry->m_is_decoding)
+                {
+                    cache_entry->m_seek_to_no = frame_no;
+            		reopen_finished_incomplete_cache(cache_entry, frame_no, "frame");
+
+                    int ret = start_transcoder_thread(cache_entry);
+                    if (ret)
+                    {
+                        errno = ret;
+                        throw false;
+                    }
+
+                    // The new worker is now responsible for producing the
+                    // requested frame, so give it a full retry budget.
+                    retries = TOTAL_RETRIES;
+                }
+
+                if (!cache_entry->m_suspend_timeout)
+                {
+                    if (!--retries)
+                    {
+                        errno = ETIMEDOUT;
+                        Logging::error(cache_entry->virtname(), "Timeout reading image frame no. %1: (%2) %3", frame_no, errno, strerror(errno));
+                        throw false;
+                    }
+                }
+                else
+                {
+                    retries = TOTAL_RETRIES;
+                }
+
+                if (thread_exit)
+                {
+                    Logging::warning(cache_entry->virtname(), "Thread exit was received.");
+                    errno = EINTR;
+                    throw false;
+                }
+
+                if (!reported)
+                {
+                    Logging::trace(cache_entry->virtname(), "Frame no. %1: Cache miss at offset %<11zu>2 (length %<6u>3).", frame_no, offset, len);
+                    reported = true;
+                }
+
+                mssleep(GRANULARITY);
+            }
+
+            if (thread_exit)
+            {
+                Logging::warning(cache_entry->virtname(), "Thread exit was received.");
+                errno = EINTR;
+                throw false;
             }
 
             Logging::trace(cache_entry->virtname(), "Frame no. %1: Cache hit  at offset %<11zu>2 (length %<6u>3).", frame_no, offset, len);
 
             success = !cache_entry->m_cache_info.m_error;
-        }
-        else
-        {
-            success = cache_entry->m_buffer->read_frame(&data, frame_no);
-            if (!success)
-            {
-                Logging::error(cache_entry->virtname(), "Reading image frame no. %1: (%2) %3", frame_no, errno, strerror(errno));
-                throw false;
-            }
         }
 
         if (success)
@@ -780,8 +1119,26 @@ static bool transcode(std::shared_ptr<THREAD_DATA> thread_data, Cache_Entry *cac
     int syserror = 0;
     bool success = true;
 
-    // Clear cache to remove any older remains
-    cache_entry->clear();
+    const bool partial_multiformat_recode =
+            cache_entry->m_seek_to_no != 0 &&
+            params.current_format(cache_entry->virtualfile())->is_multiformat();
+
+    if (partial_multiformat_recode)
+    {
+        // HLS/frame-set repair run: keep existing segments/frames and start
+        // directly at the requested item. Existing later items may be
+        // overwritten by the encoder; missing earlier gaps intentionally stay
+        // missing.
+        cache_entry->m_cache_info.m_result  = RESULTCODE::NONE;
+        cache_entry->m_cache_info.m_error   = false;
+        cache_entry->m_cache_info.m_errno   = 0;
+        cache_entry->m_cache_info.m_averror = 0;
+    }
+    else
+    {
+        // Full transcode run: remove any older remains.
+        cache_entry->clear();
+    }
 
     // Must decode the file, otherwise simply use cache
     cache_entry->m_is_decoding  = true;
@@ -826,6 +1183,24 @@ static bool transcode(std::shared_ptr<THREAD_DATA> thread_data, Cache_Entry *cac
         if (cache != nullptr && !cache->maintenance(transcoder.predicted_filesize()))
         {
             throw (static_cast<int>(errno));
+        }
+
+        if (transcoder.is_hls())
+        {
+            const uint32_t segment_no = cache_entry->m_seek_to_no;
+            if (segment_no)
+            {
+                // Initial direct HLS access: stack the requested segment before
+                // opening the output.  open_output() consumes this immediately
+                // and seeks the input before segment 1 is opened/written.
+                cache_entry->m_seek_to_no = 0;
+
+                averror = transcoder.stack_seek_segment(segment_no);
+                if (averror < 0)
+                {
+                    throw (static_cast<int>(errno));
+                }
+            }
         }
 
         averror = transcoder.open_output_file(cache_entry->m_buffer.get());
@@ -994,6 +1369,83 @@ static bool transcode(std::shared_ptr<THREAD_DATA> thread_data, Cache_Entry *cac
 }
 
 /**
+ * @brief Log the final result of a transcoder worker run.
+ *
+ * Emits exactly one final status message for a transcoder thread after the
+ * worker has finished, timed out, been asked to exit, or failed.
+ *
+ * Successful transcodes include the elapsed runtime in milliseconds. Timeout,
+ * thread-exit, and error cases keep their specific diagnostic messages, with
+ * system and FFmpeg error details emitted when available in the cache entry.
+ *
+ * @param cache_entry Cache entry associated with the transcoder worker. If this
+ *                    is @c nullptr, no message is emitted.
+ * @param timeout     Set to @c true if transcoding was aborted because the
+ *                    inactivity timeout expired.
+ * @param success     Set to @c true if transcoding completed successfully.
+ * @param start_time  Monotonic start time captured when the transcoder worker
+ *                    started; used to calculate elapsed runtime for successful
+ *                    transcodes.
+ */
+static void log_transcoding_result(Cache_Entry* cache_entry,
+                                   const FFmpeg_Transcoder& transcoder,
+                                   bool timeout,
+                                   bool success,
+                                   const std::chrono::steady_clock::time_point& start_time)
+{
+    if (cache_entry == nullptr)
+    {
+        return;
+    }
+
+    if (timeout)
+    {
+        Logging::warning(cache_entry->virtname(),
+                         "Timeout! Transcoding aborted after %1 seconds inactivity.",
+                         params.m_max_inactive_abort);
+        return;
+    }
+
+    if (thread_exit)
+    {
+        Logging::info(cache_entry->virtname(), "Thread exit! Transcoding aborted.");
+        return;
+    }
+
+    if (success)
+    {
+        const auto end_time = std::chrono::steady_clock::now();
+        const auto elapsed_ms = std::chrono::duration<double, std::milli>(end_time - start_time).count();
+        char elapsed_ms_text[32];
+
+        std::snprintf(elapsed_ms_text, sizeof(elapsed_ms_text), "%.1f", elapsed_ms);
+
+        Logging::info(cache_entry->virtname(),
+                      "Transcoding completed successfully after %1 ms.",
+                      elapsed_ms_text);
+        return;
+    }
+
+    Logging::error(cache_entry->virtname(), "Transcoding exited with error.");
+
+    if (cache_entry->m_cache_info.m_errno)
+    {
+        Logging::error(cache_entry->virtname(),
+                       "System error: (%1) %2",
+                       cache_entry->m_cache_info.m_errno,
+                       strerror(cache_entry->m_cache_info.m_errno));
+    }
+
+    if (cache_entry->m_cache_info.m_averror)
+    {
+        Logging::error(cache_entry->virtname(),
+                       "FFMpeg error: (%1) %2",
+                       cache_entry->m_cache_info.m_averror,
+                       ffmpeg_geterror(cache_entry->m_cache_info.m_averror).c_str());
+    }
+}
+
+/**
  * @brief Transcoding thread
  * @param[in] thread_data - Corresponding thread data object.
  * @returns Returns 0 on success; or errno code on error.
@@ -1021,70 +1473,47 @@ static int transcoder_thread(std::shared_ptr<THREAD_DATA> thread_data)
         success = transcode(thread_data, cache_entry, transcoder, &timeout);
 
         seek_frame = cache_entry->m_seek_to_no != 0 ? cache_entry->m_seek_to_no.load() : transcoder.last_seek_frame_no();
+
+        if (transcoder.is_multiformat() && transcoder.have_seeked())
+        {
+            // HLS/frame-set caches are intentionally allowed to remain
+            // incomplete after a seek.  Missing segments/frames are repaired
+            // on demand; restarting from segment/frame 1 here would recreate
+            // the old loop: transcode, invalidate/restart, seek, repeat.
+            seek_frame = 0;
+        }
     }
     while (success && !thread_exit && cache != nullptr && seek_frame);
 
-    cache_entry->m_is_decoding          = false;
+cache_entry->m_is_decoding = false;
 
-    if (timeout)
-    {
-        Logging::warning(cache_entry->virtname(), "Timeout! Transcoding aborted after %1 seconds inactivity.", params.m_max_inactive_abort);
-    }
-    else if (thread_exit)
-    {
-        Logging::info(cache_entry->virtname(), "Thread exit! Transcoding aborted.");
-    }
-    else
-    {
-        Logging::info(cache_entry->virtname(), "Transcoding completed.");
-    }
-			
-    if (timeout || thread_exit || transcoder.have_seeked())
-    {
-        if (!transcoder.have_seeked())
-        {
-            cache_entry->m_cache_info.m_error       = true;
-            cache_entry->m_cache_info.m_errno       = EIO;      // Report I/O error
-        }
-        else
-        {
-            // Must restart from scratch, but this is not an error.
-            cache_entry->m_cache_info.m_error       = false;
-            cache_entry->m_cache_info.m_errno       = 0;
-            cache_entry->m_cache_info.m_averror     = 0;
-        }
-    }
-    else
-    {
-        cache_entry->m_cache_info.m_error           = !success;
+	if (timeout || thread_exit || transcoder.have_seeked())
+	{
+	    if (!transcoder.have_seeked())
+	    {
+	        cache_entry->m_cache_info.m_error   = true;
+	        cache_entry->m_cache_info.m_errno   = EIO;      // Report I/O error
+	    }
+	    else
+	    {
+	        // Must restart from scratch, but this is not an error.
+	        cache_entry->m_cache_info.m_error   = false;
+	        cache_entry->m_cache_info.m_errno   = 0;
+	        cache_entry->m_cache_info.m_averror = 0;
+	    }
+	}
+	else
+	{
+	    cache_entry->m_cache_info.m_error = !success;
 
-        if (success)
-        {
-            const auto end_time = std::chrono::steady_clock::now();
-            const auto elapsed_ms = std::chrono::duration<double, std::milli>(end_time - start_time).count();
-            char elapsed_ms_text[32];
+	    if (success)
+	    {
+	        cache_entry->m_cache_info.m_errno   = 0;
+	        cache_entry->m_cache_info.m_averror = 0;
+	    }
+	}
 
-            std::snprintf(elapsed_ms_text, sizeof(elapsed_ms_text), "%.1f", elapsed_ms);
-
-            Logging::info(cache_entry->virtname(), "Transcoding completed successfully after %1 ms.", elapsed_ms_text);
-
-            cache_entry->m_cache_info.m_errno       = 0;
-            cache_entry->m_cache_info.m_averror     = 0;
-        }
-        else
-        {
-            Logging::error(cache_entry->virtname(), "Transcoding exited with error.");
-            if (cache_entry->m_cache_info.m_errno)
-            {
-                Logging::error(cache_entry->virtname(), "System error: (%1) %2", cache_entry->m_cache_info.m_errno, strerror(cache_entry->m_cache_info.m_errno));
-            }
-
-            if (cache_entry->m_cache_info.m_averror)
-            {
-                Logging::error(cache_entry->virtname(), "FFMpeg error: (%1) %2", cache_entry->m_cache_info.m_averror, ffmpeg_geterror(cache_entry->m_cache_info.m_averror).c_str());
-            }
-        }
-    }
+	log_transcoding_result(cache_entry, transcoder, timeout, success, start_time);
 
     int _errno = cache_entry->m_cache_info.m_errno;
 

@@ -19,11 +19,31 @@ Important changes in 2.19 (2026-XX-XX):
   pipeline is rebuilt, especially after HLS seeks. Old filter graphs are now
   released before reinitialisation and when closing the current output,
   preventing stale filter pointers and retained filter buffers.
+* Bugfix: Fixed HLS playback stopping unexpectedly, especially near the last
+  HLS segment.
+* Bugfix: Improved HLS segment finalisation and state cleanup between segment
+  transitions.
+* Bugfix: Improved packet/frame lifetime handling to avoid stale state during
+  HLS playback.
 * Bugfix: Fixed HLS playback for 10-bit UHD/HDR sources by converting H.264
   HLS output to yuv420p/8-bit. This avoids unsupported H.264 High10 streams
   in browser-based players such as hls.js.
 * Added elapsed-time reporting to successful transcode completion messages,
   showing the total transcoding time in milliseconds.
+* Bugfix: Fixed a race condition in transcoder thread start-up which could
+  allow the same cache entry to be transcoded more than once concurrently.
+* Consolidated transcoder completion logging so each worker now emits one
+  clear final status message, including elapsed runtime for successful
+  transcodes.
+* Bugfix: Fixed HLS cache repair so that stale segment metadata no longer
+  leaves playback waiting indefinitely when the corresponding cache file
+  is missing or empty.
+* Improved HLS segment recovery by explicitly restarting the transcoder
+  when a segment is marked as available but its cache file is no longer
+  usable.
+* Added additional safeguards for stale decoder state to avoid leaving
+  cache entries permanently marked as decoding when no active worker is
+  available to repair them.
 
 Important changes in 2.18 (2026-04-10):
 

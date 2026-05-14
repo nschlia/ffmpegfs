@@ -1380,6 +1380,8 @@ static bool transcode(std::shared_ptr<THREAD_DATA> thread_data, Cache_Entry *cac
  *
  * @param cache_entry Cache entry associated with the transcoder worker. If this
  *                    is @c nullptr, no message is emitted.
+ * @param transcoder  Transcoder instance associated with the worker run. Used
+ *                    to obtain the virtual file name for final status logging.
  * @param timeout     Set to @c true if transcoding was aborted because the
  *                    inactivity timeout expired.
  * @param success     Set to @c true if transcoding completed successfully.

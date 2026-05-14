@@ -19,8 +19,6 @@ Important changes in 2.19 (2026-XX-XX):
   pipeline is rebuilt, especially after HLS seeks. Old filter graphs are now
   released before reinitialisation and when closing the current output,
   preventing stale filter pointers and retained filter buffers.
-* Bugfix: Fixed HLS playback stopping unexpectedly, especially near the last
-  HLS segment.
 * Bugfix: Improved HLS segment finalisation and state cleanup between segment
   transitions.
 * Bugfix: Improved packet/frame lifetime handling to avoid stale state during

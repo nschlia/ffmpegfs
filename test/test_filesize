@@ -36,8 +36,8 @@ then
 elif [ "${DESTTYPE}" == "webm" ];
 then
     # webm
-    check_filesize "raven_e.flac" 429335 548761
-    check_filesize "raven_d.ogg"  262833 393946
+    check_filesize "raven_e.flac" 429332 548761
+    check_filesize "raven_d.ogg"  262832 393946
 elif [ "${DESTTYPE}" == "opus" ];
 then
     # opus

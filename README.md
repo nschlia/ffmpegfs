@@ -54,6 +54,7 @@ To see what's been done so far, checkout the [windows](https://github.com/nschli
 - **Bugfix:** Fixed HLS cache repair so that stale segment metadata no longer leaves playback waiting indefinitely when the corresponding cache file is missing or empty.
 - Improved HLS segment recovery by explicitly restarting the transcoder when a segment is marked as available but its cache file is no longer usable.
 - Added additional safeguards for stale decoder state to avoid leaving cache entries permanently marked as decoding when no active worker is available to repair them.
+- **Bugfix:** Ignored HLS seek requests that are too close to the beginning of a stream so transcoding starts at segment 1 instead of creating an avoidable partial cache set.
 
 ### New in 2.18 (2026-04-10):
 

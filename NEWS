@@ -42,6 +42,9 @@ Important changes in 2.19 (2026-XX-XX):
 * Added additional safeguards for stale decoder state to avoid leaving cache
   entries permanently marked as decoding when no active worker is available
   to repair them.
+* Bugfix: Ignored HLS seek requests that are too close to the beginning of
+  a stream so transcoding starts at segment 1 instead of creating an
+  avoidable partial cache set.
 
 Important changes in 2.18 (2026-04-10):
 

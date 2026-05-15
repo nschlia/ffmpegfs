@@ -1303,11 +1303,23 @@ int FFmpeg_Transcoder::open_output(Buffer *buffer)
             // output segment is opened.
             uint32_t initial_seek_segment = 0;
             {
+			    const uint32_t min_seek_segments = static_cast<uint32_t>(params.m_min_seek_time_diff / params.m_segment_duration);
+				const uint32_t prebuffer_segements = static_cast<uint32_t>(params.m_prebuffer_time * AV_TIME_BASE / params.m_segment_duration);
+			
                 std::lock_guard<std::recursive_mutex> lock_seek_to_fifo_mutex(m_seek_to_fifo_mutex);
                 while (!m_seek_to_fifo.empty())
                 {
                     const uint32_t segment_no = m_seek_to_fifo.front();
                     m_seek_to_fifo.pop();
+
+					if (min_seek_segments && segment_no <= min_seek_segments + prebuffer_segements + 1)
+					{
+						if (segment_no > 1)
+						{
+					    	Logging::info(virtname(), "Discarding seek request to HLS segment no. %1, less than %2 seconds (%3 segments) from the beginning; starting from segment no. 1 instead.", segment_no, params.m_min_seek_time_diff / AV_TIME_BASE, min_seek_segments + prebuffer_segements);
+						}
+					    continue;
+					}
 
                     if (segment_no > 1)
                     {
@@ -5855,14 +5867,24 @@ int FFmpeg_Transcoder::start_new_segment()
     uint32_t next_segment = m_current_segment + 1;
 
     // ...or process any stacked seek requests.
+    // No check if m_segment_duration == 0, values <= 0 not accepted
+    // Cast is OK here, the result will always be small enough for an int32.
+    const uint32_t min_seek_segments = static_cast<uint32_t>(params.m_min_seek_time_diff / params.m_segment_duration);
+	const uint32_t prebuffer_segements = static_cast<uint32_t>(params.m_prebuffer_time * AV_TIME_BASE / params.m_segment_duration);
+
     while (!m_seek_to_fifo.empty())
     {
         uint32_t segment_no = m_seek_to_fifo.front();
         m_seek_to_fifo.pop();
 
-        // No check if m_segment_duration == 0, values <= 0 not accepted
-        // Cast is OK here, the result will always be small enough for an int32.
-        uint32_t min_seek_segments = static_cast<uint32_t>(params.m_min_seek_time_diff / params.m_segment_duration);
+		if (min_seek_segments && segment_no <= min_seek_segments + prebuffer_segements + 1)
+		{
+			if (segment_no > 1)
+			{
+		    	Logging::info(virtname(), "Discarding seek request to HLS segment no. %1, less than %2 seconds (%3 segments) from the beginning; starting from segment no. 1 instead.", segment_no, params.m_min_seek_time_diff / AV_TIME_BASE, min_seek_segments + prebuffer_segements);
+			}
+		    continue;
+		}
 
         if (min_seek_segments && segment_no >= next_segment && segment_no <= next_segment + min_seek_segments)
         {

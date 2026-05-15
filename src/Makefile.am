@@ -2,10 +2,13 @@ EXTRA_DIST = $(wildcard scripts/*)
 
 # Add fuse3
 AM_CPPFLAGS = $(fuse3_CFLAGS) -D_FILE_OFFSET_BITS=64
+AM_CFLAGS = $(PERFTOOLS_CFLAGS)
+AM_CXXFLAGS = $(PERFTOOLS_CXXFLAGS)
 
 bin_PROGRAMS = ffmpegfs
 ffmpegfs_SOURCES = ffmpegfs.cc ffmpegfs.h fuseops.cc transcode.cc transcode.h cache.cc cache.h buffer.cc buffer.h logging.cc logging.h cache_entry.cc cache_entry.h cache_maintenance.cc cache_maintenance.h id3v1tag.h aiff.h wave.h cuesheetparser.cc cuesheetparser.h diskio.cc diskio.h fileio.cc fileio.h ffmpeg_compat.h ffmpeg_profiles.h ffmpeg_audiofifo.h ffmpeg_dictionary.h ffmpeg_packet.h ffmpeg_swrcontext.h ffmpeg_swscontext.h thread_pool.cc thread_pool.h ffmpeg_formatcontext.cc
 ffmpegfs_LDADD = $(libcue_LIBS) $(fuse3_LIBS) -lrt -lstdc++fs
+ffmpegfs_LDADD += $(PERFTOOLS_LIBS)
 
 ffmpegfs_SOURCES += ffmpeg_base.cc ffmpeg_base.h ffmpeg_transcoder.cc ffmpeg_transcoder.h ffmpeg_utils.cc ffmpeg_utils.h ffmpeg_profiles.cc ffmpeg_audiofifo.cc ffmpeg_dictionary.cc ffmpeg_packet.cc ffmpeg_swrcontext.cc ffmpeg_swscontext.cc ffmpeg_frame.h ffmpeg_frame.cc ffmpeg_subtitle.h ffmpeg_subtitle.cc ffmpeg_formatcontext.h
 ffmpegfs_LDADD += $(libavcodec_LIBS) $(libavutil_LIBS) $(libavformat_LIBS) $(libswscale_LIBS) $(libavfilter_LIBS) $(libswresample_LIBS)

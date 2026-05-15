@@ -19,6 +19,8 @@ Important changes in 2.19 (2026-XX-XX):
   pipeline is rebuilt, especially after HLS seeks. Old filter graphs are now
   released before reinitialisation and when closing the current output,
   preventing stale filter pointers and retained filter buffers.
+* Bugfix: Fixed HLS playback stopping unexpectedly, especially near the last
+  HLS segment.
 * Bugfix: Improved HLS segment finalisation and state cleanup between segment
   transitions.
 * Bugfix: Improved packet/frame lifetime handling to avoid stale state during
@@ -33,12 +35,15 @@ Important changes in 2.19 (2026-XX-XX):
 * Consolidated transcoder completion logging so each worker now emits one
   clear final status message, including elapsed runtime for successful
   transcodes.
-* Bugfix: Fixed HLS cache repair so that stale segment metadata no longer
-  leaves playback waiting indefinitely when the corresponding cache file
-  is missing or empty.
-* Improved HLS segment recovery by explicitly restarting the transcoder
-  when a segment is marked as available but its cache file is no longer
-  usable.
+* Bugfix: Fixed HLS cache recovery so stale segment metadata no longer leaves
+  playback waiting indefinitely when the corresponding cache file is missing,
+  empty, or otherwise unusable.
+* Improved HLS segment recovery by explicitly restarting the transcoder when
+  a segment is marked as available but its cache file is missing, empty, or
+  otherwise unusable.
+* Bugfix: Fixed HLS segment availability checks so an incomplete cache entry
+  no longer makes segments appear available if those segments were never
+  actually produced.
 * Added additional safeguards for stale decoder state to avoid leaving cache
   entries permanently marked as decoding when no active worker is available
   to repair them.

@@ -45,14 +45,16 @@ To see what's been done so far, checkout the [windows](https://github.com/nschli
 - Improved audio FIFO, resampler, scaler, and dictionary lifetime management to reduce manual cleanup code and avoid leaks on error paths.
 - Cleaned up transcoder shutdown paths by centralizing FFmpeg resource cleanup in dedicated wrapper classes.
 - **Bugfix:** Fixed retained FFmpeg deinterlace filter graphs when the output pipeline is rebuilt, especially after HLS seeks. Old filter graphs are now released before reinitialisation and when closing the current output, preventing stale filter pointers and retained filter buffers.
+- **Bugfix:** Fixed HLS playback stopping unexpectedly, especially near the last HLS segment.
 - **Bugfix:** Improved HLS segment finalisation and state cleanup between segment transitions.
 - **Bugfix:** Improved packet/frame lifetime handling to avoid stale state during HLS playback.
 - **Bugfix:** Fixed HLS playback for 10-bit UHD/HDR sources by converting H.264 HLS output to yuv420p/8-bit. This avoids unsupported H.264 High10 streams in browser-based players such as hls.js.
 - Added elapsed-time reporting to successful transcode completion messages, showing the total transcoding time in milliseconds.
 - **Bugfix:** Fixed a race condition in transcoder thread start-up which could allow the same cache entry to be transcoded more than once concurrently.
 - Consolidated transcoder completion logging so each worker now emits one clear final status message, including elapsed runtime for successful transcodes.
-- **Bugfix:** Fixed HLS cache repair so that stale segment metadata no longer leaves playback waiting indefinitely when the corresponding cache file is missing or empty.
-- Improved HLS segment recovery by explicitly restarting the transcoder when a segment is marked as available but its cache file is no longer usable.
+- **Bugfix:** Fixed HLS cache recovery so stale segment metadata no longer leaves playback waiting indefinitely when the corresponding cache file is missing, empty, or otherwise unusable.
+- Improved HLS segment recovery by explicitly restarting the transcoder when a segment is marked as available but its cache file is missing, empty, or otherwise unusable.
+- **Bugfix:** Fixed HLS segment availability checks so incomplete cache entries no longer make segments appear available when those segments were never actually produced.
 - Added additional safeguards for stale decoder state to avoid leaving cache entries permanently marked as decoding when no active worker is available to repair them.
 - **Bugfix:** Ignored HLS seek requests that are too close to the beginning of a stream so transcoding starts at segment 1 instead of creating an avoidable partial cache set.
 

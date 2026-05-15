@@ -404,6 +404,16 @@ static bool cached_item_available(Cache_Entry* cache_entry, size_t offset, size_
                                        segment_no ? "segment" : "file");
 }
 
+/**
+ * @brief Build the base directory used for the transcoder cache.
+ *
+ * Uses the configured cache path when one was supplied.  Otherwise root uses
+ * `/var/cache`, while regular users use `$XDG_CACHE_HOME` or `~/.cache`.
+ * The package name is appended and the returned path always ends with a path
+ * separator.
+ *
+ * @param[out] path Receives the complete transcoder cache directory path.
+ */
 void transcoder_cache_path(std::string * path)
 {
     if (params.m_cachepath.size())
@@ -438,6 +448,14 @@ void transcoder_cache_path(std::string * path)
     append_sep(path);
 }
 
+/**
+ * @brief Initialise the global transcoder cache.
+ *
+ * Creates the cache manager on first use and loads the persistent cache index.
+ * Calling this function more than once is harmless.
+ *
+ * @return Returns @c true when the cache is available; otherwise @c false.
+ */
 bool transcoder_init()
 {
     if (cache == nullptr)
@@ -460,6 +478,12 @@ bool transcoder_init()
     return true;
 }
 
+/**
+ * @brief Release the global transcoder cache manager.
+ *
+ * Flushes and destroys the cache object if it has been created.  Calling this
+ * function with no active cache is harmless.
+ */
 void transcoder_free()
 {
     if (cache != nullptr)
@@ -470,6 +494,17 @@ void transcoder_free()
     }
 }
 
+/**
+ * @brief Fill a stat buffer with the cached or predicted transcoded file size.
+ *
+ * Uses the encoded size when the file has already been transcoded.  If no
+ * encoded size is known yet, the predicted transcoded size is used instead.
+ *
+ * @param[in] virtualfile Virtual file whose cached size should be queried.
+ * @param[inout] stbuf Stat buffer whose size field is updated on success.
+ * @return Returns @c true when a cached or predicted size was available;
+ *         otherwise @c false.
+ */
 bool transcoder_cached_filesize(LPVIRTUALFILE virtualfile, struct stat *stbuf)
 {
     Cache_Entry* cache_entry = cache->openio(virtualfile);
@@ -497,6 +532,26 @@ bool transcoder_cached_filesize(LPVIRTUALFILE virtualfile, struct stat *stbuf)
     }
 }
 
+/**
+ * @brief Calculate and store the predicted transcoded file size.
+ *
+ * Estimates the output size from stream duration, selected output format,
+ * audio parameters, video parameters, and container overhead.  The result is
+ * stored both in the cache entry and in the virtual file.
+ *
+ * @param[inout] virtualfile Virtual file whose predicted size should be set.
+ * @param[in] duration Media duration in FFmpeg time base units.
+ * @param[in] audio_bit_rate Target audio bit rate.
+ * @param[in] channels Number of audio channels.
+ * @param[in] sample_rate Audio sample rate in Hz.
+ * @param[in] sample_format Audio sample format.
+ * @param[in] video_bit_rate Target video bit rate.
+ * @param[in] width Video width in pixels.
+ * @param[in] height Video height in pixels.
+ * @param[in] interleaved Set to @c true for interleaved video output.
+ * @param[in] framerate Video frame rate.
+ * @return Returns @c true after updating the prediction; otherwise @c false.
+ */
 bool transcoder_set_filesize(LPVIRTUALFILE virtualfile, int64_t duration, BITRATE audio_bit_rate, int channels, int sample_rate, AVSampleFormat sample_format, BITRATE video_bit_rate, int width, int height, bool interleaved, const AVRational &framerate)
 {
     Cache_Entry* cache_entry = cache->openio(virtualfile);
@@ -537,6 +592,17 @@ bool transcoder_set_filesize(LPVIRTUALFILE virtualfile, int64_t duration, BITRAT
     return true;
 }
 
+/**
+ * @brief Probe an input file and update cached media properties.
+ *
+ * Opens the source with FFmpeg, reads the predicted transcoded size, duration,
+ * video frame count, and HLS/frame-set segment count, then stores those values
+ * in the cache entry when one was supplied.
+ *
+ * @param[inout] virtualfile Virtual file to inspect.
+ * @param[inout] cache_entry Optional cache entry to update with probed values.
+ * @return Returns @c true when probing succeeded; otherwise @c false.
+ */
 bool transcoder_predict_filesize(LPVIRTUALFILE virtualfile, Cache_Entry* cache_entry)
 {
     FFmpeg_Transcoder transcoder;
@@ -658,6 +724,17 @@ static int start_transcoder_thread(Cache_Entry* cache_entry)
     return 0;
 }
 
+/**
+ * @brief Open or create a cache entry for a virtual file.
+ *
+ * Opens the cache entry, refreshes cached metadata, clears outdated cache data,
+ * optionally starts transcoding immediately, or otherwise probes enough source
+ * information to provide predicted size and segment metadata.
+ *
+ * @param[inout] virtualfile Virtual file represented by the cache entry.
+ * @param[in] begin_transcode Start the transcoder worker immediately when @c true.
+ * @return Pointer to the opened cache entry, or @c nullptr on error with @c errno set.
+ */
 Cache_Entry* transcoder_new(LPVIRTUALFILE virtualfile, bool begin_transcode)
 {
     // Allocate transcoder structure
@@ -745,6 +822,22 @@ Cache_Entry* transcoder_new(LPVIRTUALFILE virtualfile, bool begin_transcode)
     return cache_entry;
 }
 
+/**
+ * @brief Read transcoded data from the cache, starting or repairing transcoding if needed.
+ *
+ * Handles normal file reads and HLS segment reads.  Missing HLS segments,
+ * stale cache files, and incomplete partial HLS caches are repaired on demand.
+ * The function waits until the requested byte range is available, then copies
+ * as much data as possible into the caller-provided buffer.
+ *
+ * @param[inout] cache_entry Cache entry to read from.
+ * @param[out] buff Destination buffer.
+ * @param[in] offset Byte offset within the requested cache item.
+ * @param[in] len Maximum number of bytes to read.
+ * @param[out] bytes_read Receives the number of bytes copied to @p buff.
+ * @param[in] segment_no HLS segment number, or 0 for a normal single-output file.
+ * @return Returns @c true on success; otherwise @c false with @c errno set.
+ */
 bool transcoder_read(Cache_Entry* cache_entry, char* buff, size_t offset, size_t len, int * bytes_read, uint32_t segment_no)
 {
     bool success = true;
@@ -973,6 +1066,23 @@ bool transcoder_read(Cache_Entry* cache_entry, char* buff, size_t offset, size_t
     return success;
 }
 
+/**
+ * @brief Read one frame from a frame-set cache.
+ *
+ * Reads the requested frame directly from the frame-set cache when available.
+ * If the frame is missing, the requested frame number is stacked and the
+ * transcoder is started or restarted to generate it.  The virtual file stat
+ * size is updated to the materialised frame size.
+ *
+ * @param[inout] cache_entry Cache entry containing the frame set.
+ * @param[out] buff Destination buffer.
+ * @param[in] offset Byte offset within the requested frame.
+ * @param[in] len Maximum number of bytes to read.
+ * @param[in] frame_no Frame number to read.
+ * @param[out] bytes_read Receives the number of bytes copied to @p buff.
+ * @param[inout] virtualfile Virtual frame file whose stat size is updated.
+ * @return Returns @c true on success; otherwise @c false with @c errno set.
+ */
 bool transcoder_read_frame(Cache_Entry* cache_entry, char* buff, size_t offset, size_t len, uint32_t frame_no, int * bytes_read, LPVIRTUALFILE virtualfile)
 {
     bool success = false;
@@ -1140,31 +1250,67 @@ bool transcoder_read_frame(Cache_Entry* cache_entry, char* buff, size_t offset, 
     return success;
 }
 
+/**
+ * @brief Close a cache entry previously returned by transcoder_new().
+ *
+ * @param[inout] cache_entry Cache entry to close.
+ */
 void transcoder_delete(Cache_Entry* cache_entry)
 {
     cache->closeio(&cache_entry);
 }
 
+/**
+ * @brief Return the logical size of a transcoded cache entry.
+ *
+ * @param[in] cache_entry Cache entry to query.
+ * @return Logical cached or predicted transcoded size in bytes.
+ */
 size_t transcoder_get_size(Cache_Entry* cache_entry)
 {
     return cache_entry->size();
 }
 
+/**
+ * @brief Return the number of bytes materialised for a cache item.
+ *
+ * @param[in] cache_entry Cache entry to query.
+ * @param[in] segment_no HLS segment number, or 0 for the normal cache file.
+ * @return Current cache watermark in bytes.
+ */
 size_t transcoder_buffer_watermark(Cache_Entry* cache_entry, uint32_t segment_no)
 {
     return cache_entry->m_buffer->buffer_watermark(segment_no);
 }
 
+/**
+ * @brief Return the current write position for a cache item.
+ *
+ * @param[in] cache_entry Cache entry to query.
+ * @param[in] segment_no HLS segment number, or 0 for the normal cache file.
+ * @return Current cache write position in bytes.
+ */
 size_t transcoder_buffer_tell(Cache_Entry* cache_entry, uint32_t segment_no)
 {
     return cache_entry->m_buffer->tell(segment_no);
 }
 
+/**
+ * @brief Request all transcoder workers to terminate.
+ *
+ * Sets the global shutdown flag checked by worker and wait loops.
+ */
 void transcoder_exit()
 {
     thread_exit = true;
 }
 
+/**
+ * @brief Run cache maintenance immediately.
+ *
+ * @return Returns @c true when maintenance completed successfully or no cache
+ *         work was needed; otherwise @c false.
+ */
 bool transcoder_cache_maintenance()
 {
     if (cache != nullptr)
@@ -1177,6 +1323,11 @@ bool transcoder_cache_maintenance()
     }
 }
 
+/**
+ * @brief Clear all entries from the transcoder cache.
+ *
+ * @return Returns @c true when the cache was cleared; otherwise @c false.
+ */
 bool transcoder_cache_clear()
 {
     if (cache != nullptr)
@@ -1464,8 +1615,8 @@ static bool transcode(std::shared_ptr<THREAD_DATA> thread_data, Cache_Entry *cac
  *
  * @param cache_entry Cache entry associated with the transcoder worker. If this
  *                    is @c nullptr, no message is emitted.
- * @param transcoder  Transcoder instance associated with the worker run. Used
- *                    to obtain the virtual file name for final status logging.
+ * @param transcoder  Transcoder instance used to decide whether this was a
+ *                    seeked partial multi-format run.
  * @param timeout     Set to @c true if transcoding was aborted because the
  *                    inactivity timeout expired.
  * @param success     Set to @c true if transcoding completed successfully.

@@ -73,6 +73,7 @@ static int  transcode_finish(Cache_Entry* cache_entry, FFmpeg_Transcoder & trans
 static void reopen_finished_incomplete_cache(Cache_Entry* cache_entry, uint32_t item_no, const char* item_name);
 static bool cached_item_available(Cache_Entry* cache_entry, size_t offset, size_t len, uint32_t segment_no);
 static bool invalidate_stale_cache_file(Cache_Entry* cache_entry, uint32_t segment_no, uint32_t item_no, const char* item_name);
+static void wait_for_active_transcoder(Cache_Entry* cache_entry, uint32_t item_no, const char* item_name);
 
 /**
  * @brief Transcode the buffer until the buffer has enough or until an error occurs.
@@ -127,6 +128,24 @@ static bool transcode_until(Cache_Entry* cache_entry, size_t offset, size_t len,
                     }
                     reported = true;
                 }
+
+                if (segment_no && !cache_entry->m_is_decoding)
+                {
+                    // The worker may have finished just after this read entered
+                    // the wait loop.  If the requested HLS segment is still not
+                    // physically available, do not wait forever: reopen the
+                    // incomplete HLS cache and start an on-demand repair worker.
+                    cache_entry->m_seek_to_no = segment_no;
+                    reopen_finished_incomplete_cache(cache_entry, segment_no, "HLS segment");
+
+                    int ret = start_transcoder_thread(cache_entry);
+                    if (ret)
+                    {
+                        errno = ret;
+                        throw false;
+                    }
+                }
+
                 mssleep(250);
             }
 
@@ -291,6 +310,49 @@ static bool invalidate_stale_cache_file(Cache_Entry* cache_entry, uint32_t segme
 }
 
 /**
+ * @brief Wait until an already active transcoder worker has left the cache entry.
+ *
+ * Stale physical HLS files are sometimes detected in a very small race window:
+ * the worker has just finished writing a seeked/incomplete HLS run, but still
+ * owns the cache entry while the client immediately requests an older segment.
+ * Starting a repair worker in that window is intentionally rejected by
+ * start_transcoder_thread(), because a real worker is still active.  If we then
+ * continue waiting on the missing segment, no later worker is started and the
+ * request can stall.
+ *
+ * For stale-cache repair we therefore wait until the active worker has really
+ * left the cache entry, and only then invalidate and start the repair run.
+ * Normal sequential reads do not use this path.
+ *
+ * @param[in] cache_entry Cache entry whose worker should become idle.
+ * @param[in] item_no Human-readable item number used in the log message.
+ * @param[in] item_name Human-readable item name used in the log message.
+ */
+static void wait_for_active_transcoder(Cache_Entry* cache_entry, uint32_t item_no, const char* item_name)
+{
+    if (cache_entry == nullptr || !cache_entry->m_is_decoding)
+    {
+        return;
+    }
+
+    if (item_no)
+    {
+        Logging::debug(cache_entry->virtname(),
+                       "Waiting for active transcoder to finish before repairing stale %1 no. %2.",
+                       item_name,
+                       item_no);
+    }
+    else
+    {
+        Logging::debug(cache_entry->virtname(),
+                       "Waiting for active transcoder to finish before repairing stale %1.",
+                       item_name);
+    }
+
+    std::unique_lock<std::recursive_mutex> lock_active_mutex(cache_entry->m_active_mutex);
+}
+
+/**
  * @brief Check whether the requested cache data is available and physically readable.
  *
  * This combines the logical cache state (finished cache, finished HLS segment,
@@ -312,10 +374,19 @@ static bool cached_item_available(Cache_Entry* cache_entry, size_t offset, size_
     }
 
     const size_t end = offset + len;
-    const bool logically_available =
-            cache_entry->is_finished() ||
-            (segment_no && cache_entry->m_buffer->is_segment_finished(segment_no)) ||
-            (cache_entry->m_buffer->tell(segment_no) >= end);
+
+    // For HLS each segment is materialised independently.  A
+    // FINISHED_INCOMPLETE cache only means that a seeked/direct-access run
+    // reached EOF; it must not imply that earlier skipped segments exist.
+    // Only a fully successful, non-seeked HLS transcode may make all segment
+    // files logically available through the cache entry result.  Otherwise the
+    // per-segment finished flag or the current write position is authoritative.
+    const bool logically_available = segment_no
+            ? (cache_entry->is_finished_success() ||
+               cache_entry->m_buffer->is_segment_finished(segment_no) ||
+               cache_entry->m_buffer->tell(segment_no) >= end)
+            : (cache_entry->is_finished() ||
+               cache_entry->m_buffer->tell(segment_no) >= end);
 
     if (!logically_available)
     {
@@ -695,22 +766,35 @@ bool transcoder_read(Cache_Entry* cache_entry, char* buff, size_t offset, size_t
 
     try
     {
+        // For HLS partial/seeked caches, FINISHED_INCOMPLETE must not mark
+        // skipped segments as complete.  Only FINISHED_SUCCESS covers all
+        // segments; otherwise the per-segment finished flag decides.
         const bool segment_logically_complete = segment_no &&
-                (cache_entry->m_buffer->is_segment_finished(segment_no) || cache_entry->is_finished());
+                (cache_entry->m_buffer->is_segment_finished(segment_no) || cache_entry->is_finished_success());
         bool segment_complete = segment_logically_complete;
         bool repair_requested = false;
 
         if (segment_logically_complete && !cache_entry->m_buffer->cachefile_valid(segment_no))
         {
-            invalidate_stale_cache_file(cache_entry, segment_no, segment_no, "segment");
-            segment_complete = false;
-            repair_requested = true;
+            wait_for_active_transcoder(cache_entry, segment_no, "segment");
+
+            if (!cache_entry->m_buffer->cachefile_valid(segment_no))
+            {
+                invalidate_stale_cache_file(cache_entry, segment_no, segment_no, "segment");
+                segment_complete = false;
+                repair_requested = true;
+            }
         }
 
         if (!segment_no && cache_entry->is_finished() && !cache_entry->m_buffer->cachefile_valid(0))
         {
-            invalidate_stale_cache_file(cache_entry, 0, 0, "file");
-            repair_requested = true;
+            wait_for_active_transcoder(cache_entry, 0, "file");
+
+            if (!cache_entry->m_buffer->cachefile_valid(0))
+            {
+                invalidate_stale_cache_file(cache_entry, 0, 0, "file");
+                repair_requested = true;
+            }
         }
 
         const bool segment_missing  = segment_no && !segment_complete;

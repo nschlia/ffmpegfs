@@ -39,9 +39,9 @@ Important changes in 2.19 (2026-XX-XX):
 * Improved HLS segment recovery by explicitly restarting the transcoder
   when a segment is marked as available but its cache file is no longer
   usable.
-* Added additional safeguards for stale decoder state to avoid leaving
-  cache entries permanently marked as decoding when no active worker is
-  available to repair them.
+* Added additional safeguards for stale decoder state to avoid leaving cache
+  entries permanently marked as decoding when no active worker is available
+  to repair them.
 
 Important changes in 2.18 (2026-04-10):
 

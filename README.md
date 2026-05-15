@@ -48,6 +48,8 @@ To see what's been done so far, checkout the [windows](https://github.com/nschli
 - **Bugfix:** Fixed HLS playback stopping unexpectedly, especially near the last HLS segment.
 - **Bugfix:** Improved HLS segment finalisation and state cleanup between segment transitions.
 - **Bugfix:** Improved packet/frame lifetime handling to avoid stale state during HLS playback.
+- Added a `make help` target to list the available build, test, installation, documentation and maintenance targets.
+- Added `./configure --enable-perftools` to build ffmpegfs with Google Perftools heap profiling support.
 - **Bugfix:** Fixed HLS playback for 10-bit UHD/HDR sources by converting H.264 HLS output to yuv420p/8-bit. This avoids unsupported H.264 High10 streams in browser-based players such as hls.js.
 - Added elapsed-time reporting to successful transcode completion messages, showing the total transcoding time in milliseconds.
 - **Bugfix:** Fixed a race condition in transcoder thread start-up which could allow the same cache entry to be transcoded more than once concurrently.

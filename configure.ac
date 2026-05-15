@@ -174,6 +174,32 @@ AS_CASE(["$with_libbluray"],
 AM_CONDITIONAL([USE_LIBBLURAY], [test "$with_libbluray" != "no" -a "0$HAVE_LIBBLURAY" -eq 1])
 AM_CONDITIONAL([HINT_LIBBLURAY], [test "$with_libbluray" != "no" -a "0$HAVE_LIBBLURAY" -eq 0])
 
+
+# Optional profiling support
+AC_ARG_ENABLE([perftools],
+AS_HELP_STRING([--enable-perftools],
+    [link ffmpegfs with Google perftools/tcmalloc heap profiler, default=no]),
+[case "${enableval}" in
+  yes) perftools=yes ;;
+  no)  perftools=no ;;
+  *) AC_MSG_ERROR([bad value ${enableval} for --enable-perftools]) ;;
+esac],[perftools=no])
+
+PERFTOOLS_CFLAGS=""
+PERFTOOLS_CXXFLAGS=""
+PERFTOOLS_LIBS=""
+AS_IF([test x"$perftools" = xyes],
+  [AC_CHECK_LIB([tcmalloc_and_profiler], [HeapProfilerStart],
+    [AC_DEFINE([HAVE_PERFTOOLS], [1], [Link with Google perftools/tcmalloc heap profiler.])
+     PERFTOOLS_CFLAGS="-fno-omit-frame-pointer"
+     PERFTOOLS_CXXFLAGS="-fno-omit-frame-pointer"
+     PERFTOOLS_LIBS="-Wl,--push-state,--no-as-needed -ltcmalloc_and_profiler -Wl,--pop-state"],
+    [AC_MSG_ERROR([--enable-perftools requested, but libtcmalloc_and_profiler could not be linked. Install the gperftools development package.])])])
+AC_SUBST([PERFTOOLS_CFLAGS])
+AC_SUBST([PERFTOOLS_CXXFLAGS])
+AC_SUBST([PERFTOOLS_LIBS])
+AM_CONDITIONAL([ENABLE_PERFTOOLS], [test x"$perftools" = xyes])
+
 # Check for libvcd
 AC_ARG_WITH([libvcd],
   [AS_HELP_STRING([--with-libvcd],

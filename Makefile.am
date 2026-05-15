@@ -17,6 +17,37 @@ endif
 
 export CACHEDIR = $(DESTDIR)/var/cache/ffmpegfs
 
+
+if ENABLE_PERFTOOLS
+PERFTOOLS_STATUS = enabled
+else
+PERFTOOLS_STATUS = disabled
+endif
+
+if USE_LIBDVD
+LIBDVD_STATUS = enabled
+else
+LIBDVD_STATUS = disabled
+endif
+
+if USE_LIBBLURAY
+LIBBLURAY_STATUS = enabled
+else
+LIBBLURAY_STATUS = disabled
+endif
+
+if USE_LIBVCD
+LIBVCD_STATUS = enabled
+else
+LIBVCD_STATUS = disabled
+endif
+
+if DEBUG
+DEBUG_STATUS = enabled
+else
+DEBUG_STATUS = disabled
+endif
+
 SUBDIRS = src test
 
 dist_man_MANS = ffmpegfs.1
@@ -26,6 +57,47 @@ MAINTAINERCLEANFILES = ffmpegfs.1
 EXTRA_DIST = INSTALL.md README.md HISTORY.md PROBLEMS.md FEATURES.md COPYING.CC0 ffmpegfs.1.txt src/makehelp.sh
 
 #CLEANFILES =
+
+.PHONY: help
+help:
+	@echo "FFMPEGFS make targets"
+	@echo
+	@echo "Common targets:"
+	@echo "  make                 Build ffmpegfs"
+	@echo "  make check           Run the test suite"
+	@echo "  make install         Install binaries, man page and support files"
+	@echo "  make uninstall       Uninstall installed files and remove the cache directory"
+	@echo "  make clean           Remove normal build artefacts"
+	@echo "  make distclean       Remove build artefacts and configure output"
+	@echo "  make maintainer-clean Remove generated maintainer files"
+	@echo "  make dist            Create a release tarball"
+	@echo "  make distcheck       Create and verify a release tarball"
+	@echo
+	@echo "Project documentation targets:"
+	@echo "  make help-html       Build HTML help from ffmpegfs.1.txt"
+	@echo "  make help-pdf        Build PDF help from ffmpegfs.1.txt"
+	@echo "  make doxy            Build Doxygen documentation"
+	@echo "  make doxy-clean      Remove Doxygen output"
+	@echo
+	@echo "Project maintenance/check targets:"
+	@echo "  make cppcheck        Run cppcheck and write cppcheck.log"
+	@echo "  make lint            Run clang-tidy and write lint.log"
+	@echo "  make squeaky-clean   Remove Autotools and generated project files"
+	@echo "  make wipe-all        Run distclean and remove generated Autotools/Doxygen files"
+	@echo
+	@echo "Configured options:"
+	@echo "  Debug build:         $(DEBUG_STATUS)"
+	@echo "  Google perftools:   $(PERFTOOLS_STATUS)"
+	@echo "  DVD support:        $(LIBDVD_STATUS)"
+	@echo "  Blu-ray support:    $(LIBBLURAY_STATUS)"
+	@echo "  VCD support:        $(LIBVCD_STATUS)"
+	@echo
+	@echo "Profiling build:"
+	@echo "  ./configure --enable-perftools"
+	@echo "  make"
+	@echo
+	@echo "Useful check after a perftools build:"
+	@echo "  ldd ./src/ffmpegfs | grep -E 'tcmalloc|profiler|perftools'"
 
 ffmpegfs.1: ffmpegfs.1.txt
 	$(AM_V_GEN)a2x -a revnumber="$(VERSION)" \

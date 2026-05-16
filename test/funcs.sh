@@ -1,12 +1,7 @@
 PATH=$PWD/../src:$PATH
 export LC_ALL=C
 
-if [ ! -z "$2" ]
-then
-    EXITCODE="$2"
-else
-    EXITCODE=99
-fi
+EXITCODE=${2:-99}
 
 cleanup () {
     EXIT=$?
@@ -89,7 +84,7 @@ set -e
 trap cleanup EXIT
 trap ffmpegfserr USR1
 DESTTYPE=$1
-EXTRANAME=$3
+EXTRANAME=${3:-}
 # Map filenames
 if [ "${DESTTYPE}" == "prores" ];
 then

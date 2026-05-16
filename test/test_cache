@@ -21,16 +21,16 @@ else
    XDIRNAME="${DIRNAME}/frame_test_pal.mp4"
 fi
 REFPATH="${TMPPATH}/first"
-CACHEPATH="${TMPPATH}/second"
+SECOND_PATH="${TMPPATH}/second"
 
-rm -rf "${REFPATH}" "${CACHEPATH}"
-mkdir -p "${REFPATH}" "${CACHEPATH}"
+rm -rf "${REFPATH}" "${SECOND_PATH}"
+mkdir -p "${REFPATH}" "${SECOND_PATH}"
 
 echo "First pass: generate/fill cache"
 cp -vpf "${XDIRNAME}"/${FILES} "${REFPATH}/"
 
 echo "Second pass: read from cache"
-cp -vpf "${XDIRNAME}"/${FILES} "${CACHEPATH}/"
+cp -vpf "${XDIRNAME}"/${FILES} "${SECOND_PATH}/"
 
 echo "Create hash lists"
 (
@@ -39,7 +39,7 @@ echo "Create hash lists"
 )
 
 (
-    cd "${CACHEPATH}"
+    cd "${SECOND_PATH}"
     sha256sum ${FILES} | sort -k2 > "${TMPPATH}/second.sha256"
 )
 

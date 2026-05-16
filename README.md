@@ -67,6 +67,7 @@ To see what's been done so far, checkout the [windows](https://github.com/nschli
 - Hardened output/cache setup with additional validation and null checks to avoid partially initialised stream state and provide clearer error handling.
 - Improved duration metadata handling for stream-copy and album-art output so invalid or missing input timing information is no longer used.
 - Improved test cleanup by using explicit ffmpegfs-owned temporary directory names and guarded removal logic, avoiding stale anonymous `/tmp` directories after interrupted or parallel test runs.
+- Improved deinterlacing quality by replacing `yadif` with `bwdif` while keeping one output frame per input frame. This improves playback smoothness for interlaced sources without changing the output frame rate or requiring changes to timestamp, FPS, or HLS segment timing logic.
 
 ### New in 2.18 (2026-04-10):
 

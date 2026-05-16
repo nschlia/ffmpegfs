@@ -1115,41 +1115,48 @@ int FFmpeg_Transcoder::open_decoder(AVFormatContext *format_ctx, AVCodecContext 
 
 int FFmpeg_Transcoder::open_output_frame_set(Buffer *buffer)
 {
-    const AVCodec * output_codec        = nullptr;
-    AVCodecContext *output_codec_ctx    = nullptr;
+    const AVCodec *output_codec           = nullptr;
+    AVCodecContext *const input_codec_ctx = m_in.m_video.m_codec_ctx.get();
     FFmpeg_Dictionary opt;
     int ret = 0;
 
-    m_buffer            = buffer;
+    const AVCodecID video_codec = m_current_format->video_codec();
+
+    m_buffer = buffer;
     {
         std::lock_guard<std::recursive_mutex> lock_seek_to_fifo_mutex(m_seek_to_fifo_mutex);
-        while (m_seek_to_fifo.size())
-        {
-            m_seek_to_fifo.pop();
-        }
+        m_seek_to_fifo = {};
     }
-    m_have_seeked       = false;
+    m_have_seeked = false;
 
-    output_codec = avcodec_find_encoder(m_current_format->video_codec());
+    output_codec = avcodec_find_encoder(video_codec);
     if (output_codec == nullptr)
     {
         Logging::error(virtname(), "Codec not found.");
         return AVERROR(EINVAL);
     }
 
-    output_codec_ctx = avcodec_alloc_context3(output_codec);
+    std::unique_ptr<AVCodecContext, void (*)(AVCodecContext *)> output_codec_ctx_guard(
+        avcodec_alloc_context3(output_codec),
+        [](AVCodecContext *ctx)
+        {
+            avcodec_free_context(&ctx);
+        });
+
+    AVCodecContext *output_codec_ctx = output_codec_ctx_guard.get();
+
     if (output_codec_ctx == nullptr)
     {
         Logging::error(virtname(), "The video codec context could not be allocated.");
         return AVERROR(ENOMEM);
     }
 
-    output_codec_ctx->bit_rate             = 400000;   /**  @todo Make frame image compression rate command line settable */
-    output_codec_ctx->width                = m_in.m_video.m_codec_ctx->width;
-    output_codec_ctx->height               = m_in.m_video.m_codec_ctx->height;
-    output_codec_ctx->time_base            = {1, 25};
+    output_codec_ctx->bit_rate  = 400000;   /**  @todo Make frame image compression rate command line settable */
+    output_codec_ctx->width     = input_codec_ctx->width;
+    output_codec_ctx->height    = input_codec_ctx->height;
+    output_codec_ctx->time_base = {1, 25};
 
-    const AVPixFmtDescriptor *dst_desc = av_pix_fmt_desc_get(m_in.m_video.m_codec_ctx->pix_fmt);
+    const AVPixFmtDescriptor *dst_desc = av_pix_fmt_desc_get(input_codec_ctx->pix_fmt);
     int loss = 0;
 
 #if LAVC_USE_SUPPORTED_CFG
@@ -1161,35 +1168,35 @@ int FFmpeg_Transcoder::open_output_frame_set(Buffer *buffer)
                                                    0, (const void**)&pix_list, &npix);
         if (ret_cfg >= 0 && pix_list && npix > 0)
         {
-            output_codec_ctx->pix_fmt = avcodec_find_best_pix_fmt_of_list(pix_list, m_in.m_video.m_codec_ctx->pix_fmt, (dst_desc->flags & AV_PIX_FMT_FLAG_ALPHA) ? 1 : 0, &loss);
+            output_codec_ctx->pix_fmt = avcodec_find_best_pix_fmt_of_list(pix_list, input_codec_ctx->pix_fmt, (dst_desc->flags & AV_PIX_FMT_FLAG_ALPHA) ? 1 : 0, &loss);
         }
         else
         {
-            output_codec_ctx->pix_fmt = m_in.m_video.m_codec_ctx->pix_fmt;
+            output_codec_ctx->pix_fmt = input_codec_ctx->pix_fmt;
         }
     }
 #else
-    output_codec_ctx->pix_fmt = avcodec_find_best_pix_fmt_of_list(output_codec->pix_fmts, m_in.m_video.m_codec_ctx->pix_fmt, (dst_desc->flags & AV_PIX_FMT_FLAG_ALPHA) ? 1 : 0, &loss);
+    output_codec_ctx->pix_fmt = avcodec_find_best_pix_fmt_of_list(output_codec->pix_fmts, input_codec_ctx->pix_fmt, (dst_desc->flags & AV_PIX_FMT_FLAG_ALPHA) ? 1 : 0, &loss);
 #endif
 
     if (output_codec_ctx->pix_fmt == AV_PIX_FMT_NONE)
     {
         // No best match found, use default
-        switch (m_current_format->video_codec())
+        switch (video_codec)
         {
         case AV_CODEC_ID_MJPEG:
         {
-            output_codec_ctx->pix_fmt   = AV_PIX_FMT_YUVJ444P;
+            output_codec_ctx->pix_fmt = AV_PIX_FMT_YUVJ444P;
             break;
         }
         case AV_CODEC_ID_PNG:
         {
-            output_codec_ctx->pix_fmt   = AV_PIX_FMT_RGB24;
+            output_codec_ctx->pix_fmt = AV_PIX_FMT_RGB24;
             break;
         }
         case AV_CODEC_ID_BMP:
         {
-            output_codec_ctx->pix_fmt   = AV_PIX_FMT_BGR24;
+            output_codec_ctx->pix_fmt = AV_PIX_FMT_BGR24;
             break;
         }
         default:
@@ -1205,7 +1212,7 @@ int FFmpeg_Transcoder::open_output_frame_set(Buffer *buffer)
     }
 
 
-    switch (m_current_format->video_codec())
+    switch (video_codec)
     {
     case AV_CODEC_ID_MJPEG:
     {
@@ -1218,12 +1225,12 @@ int FFmpeg_Transcoder::open_output_frame_set(Buffer *buffer)
     }
     case AV_CODEC_ID_PNG:
     {
-        output_codec_ctx->pix_fmt   = AV_PIX_FMT_RGB24;
+        output_codec_ctx->pix_fmt = AV_PIX_FMT_RGB24;
         break;
     }
     case AV_CODEC_ID_BMP:
     {
-        output_codec_ctx->pix_fmt   = AV_PIX_FMT_BGR24;
+        output_codec_ctx->pix_fmt = AV_PIX_FMT_BGR24;
         break;
     }
     default:
@@ -1233,7 +1240,7 @@ int FFmpeg_Transcoder::open_output_frame_set(Buffer *buffer)
     }
 
     //codec_ctx->sample_aspect_ratio  = frame->sample_aspect_ratio;
-    //codec_ctx->sample_aspect_ratio  = m_in.m_video.m_codec_ctx->sample_aspect_ratio;
+    //codec_ctx->sample_aspect_ratio  = input_codec_ctx->sample_aspect_ratio;
 
     ret = avcodec_open2(output_codec_ctx, output_codec, opt.address());
     if (ret < 0)
@@ -1260,14 +1267,14 @@ int FFmpeg_Transcoder::open_output_frame_set(Buffer *buffer)
         }
     }
 
-    m_out.m_video.set_codec_ctx(output_codec_ctx);
-    m_out.m_video.m_stream_idx              = INVALID_STREAM;
-    m_out.m_video.m_stream                  = nullptr;
+    m_out.m_video.set_codec_ctx(output_codec_ctx_guard.release());
+    m_out.m_video.m_stream_idx = INVALID_STREAM;
+    m_out.m_video.m_stream     = nullptr;
 
     // No audio
     m_out.m_audio.set_codec_ctx(nullptr);
-    m_out.m_audio.m_stream_idx              = INVALID_STREAM;
-    m_out.m_audio.m_stream                  = nullptr;
+    m_out.m_audio.m_stream_idx = INVALID_STREAM;
+    m_out.m_audio.m_stream     = nullptr;
 
     // Open for read/write
     // Pre-allocate the predicted file size to reduce memory reallocations
@@ -1288,122 +1295,145 @@ int FFmpeg_Transcoder::open_output(Buffer *buffer)
     m_buffer = buffer;
     m_insert_keyframe = false;
 
-    if (!m_out.m_video_pts && is_hls())
+    ret = initialise_hls_output_segment(buffer);
+    if (ret < 0)
     {
-        const bool hls_segment_preselected = m_current_segment > 1;
+        return ret;
+    }
 
-        if (!hls_segment_preselected)
+    ret = open_output_with_hwaccel_fallback(buffer);
+    if (ret < 0)
+    {
+        return ret;
+    }
+
+    ret = initialise_output_audio();
+    if (ret < 0)
+    {
+        return ret;
+    }
+
+    log_output_video_and_subtitle_info();
+
+    ret = open_regular_output_cache_file(buffer);
+    if (ret < 0)
+    {
+        return ret;
+    }
+
+    ret = process_output();
+    if (ret)
+    {
+        return ret;
+    }
+
+    // process_output() calls avformat_write_header which feels free to change the stream time bases sometimes.
+    // This means we have to do the following calculations here to use the correct values, otherwise this can cause
+    // a lot of havoc.
+    initialise_output_start_times();
+
+    return 0;
+}
+
+int FFmpeg_Transcoder::initialise_hls_output_segment(Buffer *buffer)
+{
+    if (m_out.m_video_pts || !is_hls())
+    {
+        return 0;
+    }
+
+    if (buffer == nullptr)
+    {
+        Logging::error(virtname(), "Cannot initialise HLS output segment without an output buffer.");
+        return AVERROR(EINVAL);
+    }
+
+    if (m_virtualfile == nullptr)
+    {
+        Logging::error(virtname(), "Cannot initialise HLS output segment without a virtual file.");
+        return AVERROR(EINVAL);
+    }
+
+    const bool hls_segment_preselected = m_current_segment > 1;
+
+    if (!hls_segment_preselected)
+    {
+        m_current_segment = 1;
+
+        // The first output open is special: start_new_segment() has not run yet,
+        // so a seek stacked before opening the output would otherwise not be
+        // consumed until after segment 1 had already been opened and encoded.
+        // Consume an initial HLS seek here and position the input before any
+        // output segment is opened.
+        uint32_t initial_seek_segment = 0;
         {
-            m_current_segment = 1;
-
-            // The first output open is special: start_new_segment() has not run yet,
-            // so a seek stacked before opening the output would otherwise not be
-            // consumed until after segment 1 had already been opened and encoded.
-            // Consume an initial HLS seek here and position the input before any
-            // output segment is opened.
-            uint32_t initial_seek_segment = 0;
+            std::lock_guard<std::recursive_mutex> lock_seek_to_fifo_mutex(m_seek_to_fifo_mutex);
+            while (!m_seek_to_fifo.empty())
             {
-			    const uint32_t min_seek_segments = static_cast<uint32_t>(params.m_min_seek_time_diff / params.m_segment_duration);
-				const uint32_t prebuffer_segements = static_cast<uint32_t>(params.m_prebuffer_time * AV_TIME_BASE / params.m_segment_duration);
-			
-                std::lock_guard<std::recursive_mutex> lock_seek_to_fifo_mutex(m_seek_to_fifo_mutex);
-                while (!m_seek_to_fifo.empty())
+                const uint32_t segment_no = m_seek_to_fifo.front();
+                m_seek_to_fifo.pop();
+
+                if (discard_hls_seek_near_beginning(segment_no))
                 {
-                    const uint32_t segment_no = m_seek_to_fifo.front();
-                    m_seek_to_fifo.pop();
+                    continue;
+                }
 
-					if (min_seek_segments && segment_no <= min_seek_segments + prebuffer_segements + 1)
-					{
-						if (segment_no > 1)
-						{
-					    	Logging::info(virtname(), "Discarding seek request to HLS segment no. %1, less than %2 seconds (%3 segments) from the beginning; starting from segment no. 1 instead.", segment_no, params.m_min_seek_time_diff / AV_TIME_BASE, min_seek_segments + prebuffer_segements);
-						}
-					    continue;
-					}
-
-                    if (segment_no > 1)
-                    {
-                        initial_seek_segment = segment_no;
-                        break;
-                    }
+                if (segment_no > 1)
+                {
+                    initial_seek_segment = segment_no;
+                    break;
                 }
             }
+        }
 
-            if (initial_seek_segment)
+        if (initial_seek_segment)
+        {
+            int ret = seek_hls_segment(initial_seek_segment, false);
+            if (ret < 0)
             {
-                int ret = 0;
-                const int64_t pos = (initial_seek_segment - 1) * params.m_segment_duration;
-
-                m_reset_pts    = FFMPEGFS_AUDIO | FFMPEGFS_VIDEO;
-                m_have_seeked   = true;
-
-                Logging::info(virtname(), "Performing seek request to HLS segment no. %1.", initial_seek_segment);
-
-                if (stream_exists(m_in.m_video.m_stream_idx) && m_in.m_video.m_stream != nullptr)
-                {
-                    int64_t vstream_pts = ffmpeg_rescale_q(pos, av_get_time_base_q(), m_in.m_video.m_stream->time_base);
-
-                    if (m_in.m_video.m_stream->start_time != AV_NOPTS_VALUE)
-                    {
-                        vstream_pts += m_in.m_video.m_stream->start_time;
-                    }
-
-                    ret = av_seek_frame(m_in.m_format_ctx, m_in.m_video.m_stream_idx, vstream_pts, AVSEEK_FLAG_BACKWARD);
-                }
-                else if (stream_exists(m_in.m_audio.m_stream_idx) && m_in.m_audio.m_stream != nullptr)
-                {
-                    int64_t astream_pts = ffmpeg_rescale_q(pos, av_get_time_base_q(), m_in.m_audio.m_stream->time_base);
-
-                    if (m_in.m_audio.m_stream->start_time != AV_NOPTS_VALUE)
-                    {
-                        astream_pts += m_in.m_audio.m_stream->start_time;
-                    }
-
-                    ret = av_seek_frame(m_in.m_format_ctx, m_in.m_audio.m_stream_idx, astream_pts, AVSEEK_FLAG_BACKWARD);
-                }
-
-                if (ret < 0)
-                {
-                    Logging::error(virtname(), "Seek failed on input file (error '%1').", ffmpeg_geterror(ret).c_str());
-                    return ret;
-                }
-
-                flush_buffers();
-                purge_hls_fifo();
-
-                m_current_segment = initial_seek_segment;
+                return ret;
             }
-        }
 
-        Logging::info(virtname(), "Starting HLS segment no. %1 of %2.", m_current_segment, m_virtualfile->get_segment_count());
+            purge_hls_fifo();
 
-        // HLS uses one physical cache file per segment.  Select the cache file
-        // for the current segment before opening the output format and before
-        // avformat_write_header()/process_output() can emit any data.  This is
-        // especially important for repair runs after a seek, where the first
-        // segment written may be segment 2 or later rather than segment 1.
-        const uint32_t segment_count = m_virtualfile != nullptr ? m_virtualfile->get_segment_count() : 0;
-        if (!segment_count || !m_current_segment || m_current_segment > segment_count)
-        {
-            return AVERROR(EINVAL);
-        }
-
-        size_t segment_buffsize = m_virtualfile->m_predicted_size / segment_count;
-        if (!segment_buffsize)
-        {
-            segment_buffsize = static_cast<size_t>(sysconf(_SC_PAGESIZE));
-        }
-
-        if (!buffer->set_segment(m_current_segment, segment_buffsize))
-        {
-            return AVERROR(errno);
+            m_current_segment = initial_seek_segment;
         }
     }
 
+    const uint32_t segment_count = m_virtualfile->get_segment_count();
+
+    Logging::info(virtname(), "Starting HLS segment no. %1 of %2.", m_current_segment, segment_count);
+
+    // HLS uses one physical cache file per segment. Select the cache file
+    // for the current segment before opening the output format and before
+    // avformat_write_header()/process_output() can emit any data. This is
+    // especially important for repair runs after a seek, where the first
+    // segment written may be segment 2 or later rather than segment 1.
+    if (!segment_count || !m_current_segment || m_current_segment > segment_count)
+    {
+        return AVERROR(EINVAL);
+    }
+
+    size_t segment_buffsize = m_virtualfile->m_predicted_size / segment_count;
+    if (!segment_buffsize)
+    {
+        segment_buffsize = static_cast<size_t>(sysconf(_SC_PAGESIZE));
+    }
+
+    if (!buffer->set_segment(m_current_segment, segment_buffsize))
+    {
+        return AVERROR(errno);
+    }
+
+    return 0;
+}
+
+int FFmpeg_Transcoder::open_output_with_hwaccel_fallback(Buffer *buffer)
+{
     while (true)
     {
         // Open the output file for writing. If buffer == nullptr continue using existing buffer.
-        ret = open_output_filestreams(buffer);
+        int ret = open_output_filestreams(buffer);
         if (ret)
         {
             if (m_hwaccel_enc_mode == HWACCELMODE::ENABLED)
@@ -1419,29 +1449,44 @@ int FFmpeg_Transcoder::open_output(Buffer *buffer)
 
                 close_output_file();
 
-                // Try again with a software decoder
+                // Try again with a software encoder.
                 continue;
             }
+
             return ret;
         }
+
         break;
     }
 
-    if (stream_exists(m_out.m_audio.m_stream_idx))
-    {
-        audio_info(true, m_out.m_format_ctx, m_out.m_audio.m_stream);
+    return 0;
+}
 
-        if (m_out.m_audio.m_codec_ctx != nullptr)
+
+int FFmpeg_Transcoder::initialise_output_audio()
+{
+    if (!stream_exists(m_out.m_audio.m_stream_idx))
+    {
+        return 0;
+    }
+
+    audio_info(true, m_out.m_format_ctx, m_out.m_audio.m_stream);
+
+    if (m_out.m_audio.m_codec_ctx != nullptr)
+    {
+        // If not just copying the stream, initialise the audio FIFO buffer to store audio samples to be encoded.
+        int ret = init_audio_fifo();
+        if (ret)
         {
-            // If not just copying the stream, initialise the audio FIFO buffer to store audio samples to be encoded.
-            ret = init_audio_fifo();
-            if (ret)
-            {
-                return ret;
-            }
+            return ret;
         }
     }
 
+    return 0;
+}
+
+void FFmpeg_Transcoder::log_output_video_and_subtitle_info()
+{
     if (stream_exists(m_out.m_video.m_stream_idx))
     {
         video_info(true, m_out.m_format_ctx, m_out.m_video.m_stream);
@@ -1451,31 +1496,37 @@ int FFmpeg_Transcoder::open_output(Buffer *buffer)
     {
         subtitle_info(true, m_out.m_format_ctx, value.m_stream);
     }
+}
 
-    if (!is_hls())
+int FFmpeg_Transcoder::open_regular_output_cache_file(Buffer *buffer)
+{
+    if (is_hls())
     {
-        // Open regular output files for read/write.
-        // HLS output uses one cache file per segment; the active segment was
-        // already selected above with Buffer::set_segment().  Opening segment
-        // 0 here would switch the active cache file back to the first segment
-        // and make repair/seek runs append the following output to 000001.ts.
-        size_t buffsize = predicted_filesize();
-        if (!buffer->open_file(0, CACHE_FLAG_RW, buffsize))
-        {
-            return AVERROR(EPERM);
-        }
+        return 0;
     }
 
-    ret = process_output();
-    if (ret)
+    if (buffer == nullptr)
     {
-        return ret;
+        Logging::error(virtname(), "Cannot open regular output cache file without an output buffer.");
+        return AVERROR(EINVAL);
     }
 
-    // process_output() calls avformat_write_header which feels free to change the stream time bases sometimes.
-    // This means we have to do the following calculations here to use the correct values, otherwise this can cause
-    // a lot of havoc.
+    // Open regular output files for read/write.
+    // HLS output uses one cache file per segment; the active segment was
+    // already selected above with Buffer::set_segment(). Opening segment
+    // 0 here would switch the active cache file back to the first segment
+    // and make repair/seek runs append the following output to 000001.ts.
+    size_t buffsize = predicted_filesize();
+    if (!buffer->open_file(0, CACHE_FLAG_RW, buffsize))
+    {
+        return AVERROR(EPERM);
+    }
 
+    return 0;
+}
+
+void FFmpeg_Transcoder::initialise_audio_output_start_time()
+{
     if (m_in.m_audio.m_stream != nullptr && m_out.m_audio.m_stream != nullptr && m_in.m_audio.m_stream->start_time != AV_NOPTS_VALUE)
     {
         m_in.m_audio.m_start_time               = m_in.m_audio.m_stream->start_time;
@@ -1491,7 +1542,10 @@ int FFmpeg_Transcoder::open_output(Buffer *buffer)
             m_out.m_audio.m_stream->start_time  = AV_NOPTS_VALUE;
         }
     }
+}
 
+void FFmpeg_Transcoder::initialise_video_output_start_time()
+{
     if (m_in.m_video.m_stream != nullptr && m_out.m_video.m_stream != nullptr && m_in.m_video.m_stream->start_time != AV_NOPTS_VALUE)
     {
         m_in.m_video.m_start_time               = m_in.m_video.m_stream->start_time;
@@ -1507,7 +1561,10 @@ int FFmpeg_Transcoder::open_output(Buffer *buffer)
             m_out.m_video.m_stream->start_time  = AV_NOPTS_VALUE;
         }
     }
+}
 
+void FFmpeg_Transcoder::initialise_subtitle_output_start_times()
+{
     for (auto & [key, value] : m_out.m_subtitle)
     {
         StreamRef * out_streamref = get_out_subtitle_stream(map_in_to_out_stream(key));
@@ -1518,12 +1575,17 @@ int FFmpeg_Transcoder::open_output(Buffer *buffer)
             out_streamref->m_stream->start_time     = out_streamref->m_start_time;
         }
     }
+}
+
+void FFmpeg_Transcoder::initialise_output_start_times()
+{
+    initialise_audio_output_start_time();
+    initialise_video_output_start_time();
+    initialise_subtitle_output_start_times();
 
     m_out.m_audio_pts         = m_out.m_audio.m_start_time;
     m_out.m_video_pts         = m_out.m_video.m_start_time;
     m_out.m_last_mux_dts      = AV_NOPTS_VALUE;
-
-    return 0;
 }
 
 int FFmpeg_Transcoder::process_output()
@@ -1765,26 +1827,20 @@ int FFmpeg_Transcoder::init_rescaler(AVPixelFormat in_pix_fmt, int in_width, int
     return 0;
 }
 
-int FFmpeg_Transcoder::add_stream(AVCodecID codec_id)
-{
-    AVCodecContext *output_codec_ctx    = nullptr;
-    AVStream *      output_stream       = nullptr;
 #if IF_DECLARED_CONST
-    const AVCodec * output_codec        = nullptr;
+int FFmpeg_Transcoder::find_output_encoder(AVCodecID codec_id, const AVCodec **output_codec)
 #else // !IF_DECLARED_CONST
-    AVCodec * output_codec              = nullptr;
+int FFmpeg_Transcoder::find_output_encoder(AVCodecID codec_id, AVCodec **output_codec)
 #endif // !IF_DECLARED_CONST
-    FFmpeg_Dictionary opt;
-    int ret;
-
+{
     std::string codec_name;
 
     if (get_hw_encoder_name(codec_id, &codec_name) || m_hwaccel_enc_mode == HWACCELMODE::FALLBACK)
     {
         // find the encoder
-        output_codec = avcodec_find_encoder(codec_id);
+        *output_codec = avcodec_find_encoder(codec_id);
 
-        if (output_codec == nullptr)
+        if (*output_codec == nullptr)
         {
             Logging::error(virtname(), "Could not find encoder '%1'.", avcodec_get_name(codec_id));
             return AVERROR(EINVAL);
@@ -1792,708 +1848,731 @@ int FFmpeg_Transcoder::add_stream(AVCodecID codec_id)
     }
     else
     {
-        output_codec = avcodec_find_encoder_by_name(codec_name.c_str());
+        *output_codec = avcodec_find_encoder_by_name(codec_name.c_str());
 
-        if (output_codec == nullptr)
+        if (*output_codec == nullptr)
         {
             Logging::error(virtname(), "Could not find encoder '%1'.", codec_name.c_str());
             return AVERROR(EINVAL);
         }
 
-        //Logging::info(virtname(), "Hardware encoder acceleration active with codec '%1'.", output_codec->name);
+        //Logging::info(virtname(), "Hardware encoder acceleration active with codec '%1'.", (*output_codec)->name);
 
         m_hwaccel_enc_mode = HWACCELMODE::ENABLED;
     }
 
-    output_stream = avformat_new_stream(m_out.m_format_ctx, output_codec);
-    if (output_stream == nullptr)
+    return 0;
+}
+
+#if IF_DECLARED_CONST
+int FFmpeg_Transcoder::allocate_output_stream_and_context(AVCodecID codec_id, const AVCodec *output_codec, AVStream **output_stream, AVCodecContext **output_codec_ctx)
+#else // !IF_DECLARED_CONST
+int FFmpeg_Transcoder::allocate_output_stream_and_context(AVCodecID codec_id, AVCodec *output_codec, AVStream **output_stream, AVCodecContext **output_codec_ctx)
+#endif // !IF_DECLARED_CONST
+{
+    *output_stream = avformat_new_stream(m_out.m_format_ctx, output_codec);
+    if (*output_stream == nullptr)
     {
         Logging::error(virtname(), "Could not allocate stream for encoder '%1'.",  avcodec_get_name(codec_id));
         return AVERROR(ENOMEM);
     }
-    output_stream->id = static_cast<int>(m_out.m_format_ctx->nb_streams - 1);
+    (*output_stream)->id = static_cast<int>(m_out.m_format_ctx->nb_streams - 1);
 
-    output_codec_ctx = avcodec_alloc_context3(output_codec);
-    if (output_codec_ctx == nullptr)
+    *output_codec_ctx = avcodec_alloc_context3(output_codec);
+    if (*output_codec_ctx == nullptr)
     {
         Logging::error(virtname(), "Could not allocate an encoding context.");
         return AVERROR(ENOMEM);
     }
 
-    switch (output_codec->type)
-    {
-    case AVMEDIA_TYPE_AUDIO:
-    {
-        BITRATE orig_bit_rate;
-        int orig_sample_rate;
+    return 0;
+}
 
-        // Set the basic encoder parameters
-        orig_bit_rate = (m_in.m_audio.m_stream->codecpar->bit_rate != 0) ? m_in.m_audio.m_stream->codecpar->bit_rate : m_in.m_format_ctx->bit_rate;
-        if (get_output_bit_rate(orig_bit_rate, params.m_audiobitrate, &output_codec_ctx->bit_rate))
-        {
-            // Limit bit rate
-            Logging::trace(virtname(), "Limiting audio bit rate from %1 to %2.",
-                           format_bitrate(orig_bit_rate).c_str(),
-                           format_bitrate(output_codec_ctx->bit_rate).c_str());
-        }
+#if IF_DECLARED_CONST
+int FFmpeg_Transcoder::configure_audio_output_stream(AVCodecID codec_id, const AVCodec *output_codec, AVCodecContext *output_codec_ctx, AVStream *output_stream, FFmpeg_Dictionary &opt)
+#else // !IF_DECLARED_CONST
+int FFmpeg_Transcoder::configure_audio_output_stream(AVCodecID codec_id, AVCodec *output_codec, AVCodecContext *output_codec_ctx, AVStream *output_stream, FFmpeg_Dictionary &opt)
+#endif // !IF_DECLARED_CONST
+{
 
-        if (params.m_audiochannels > 0 && get_channels(m_in.m_audio.m_codec_ctx.get()) > params.m_audiochannels)
-        {
-            Logging::trace(virtname(), "Limiting audio channels from %1 to %2.",
-                           get_channels(m_in.m_audio.m_codec_ctx.get()),
-                           params.m_audiochannels);
-            set_channels(output_codec_ctx, params.m_audiochannels);
-        }
-        else
-        {
-            set_channels(output_codec_ctx, m_in.m_audio.m_codec_ctx.get());
-        }
+    BITRATE orig_bit_rate;
+    int orig_sample_rate;
+
+    // Set the basic encoder parameters
+    orig_bit_rate = (m_in.m_audio.m_stream->codecpar->bit_rate != 0) ? m_in.m_audio.m_stream->codecpar->bit_rate : m_in.m_format_ctx->bit_rate;
+    if (get_output_bit_rate(orig_bit_rate, params.m_audiobitrate, &output_codec_ctx->bit_rate))
+    {
+        // Limit bit rate
+        Logging::trace(virtname(), "Limiting audio bit rate from %1 to %2.",
+                       format_bitrate(orig_bit_rate).c_str(),
+                       format_bitrate(output_codec_ctx->bit_rate).c_str());
+    }
+
+    if (params.m_audiochannels > 0 && get_channels(m_in.m_audio.m_codec_ctx.get()) > params.m_audiochannels)
+    {
+        Logging::trace(virtname(), "Limiting audio channels from %1 to %2.",
+                       get_channels(m_in.m_audio.m_codec_ctx.get()),
+                       params.m_audiochannels);
+        set_channels(output_codec_ctx, params.m_audiochannels);
+    }
+    else
+    {
+        set_channels(output_codec_ctx, m_in.m_audio.m_codec_ctx.get());
+    }
 
 #if LAVU_DEP_OLD_CHANNEL_LAYOUT
-        av_channel_layout_default(&output_codec_ctx->ch_layout, output_codec_ctx->ch_layout.nb_channels);
+    av_channel_layout_default(&output_codec_ctx->ch_layout, output_codec_ctx->ch_layout.nb_channels);
 #else   // !LAVU_DEP_OLD_CHANNEL_LAYOUT
-        output_codec_ctx->channel_layout        = static_cast<uint64_t>(av_get_default_channel_layout(output_codec_ctx->channels));
+    output_codec_ctx->channel_layout        = static_cast<uint64_t>(av_get_default_channel_layout(output_codec_ctx->channels));
 #endif  // !LAVU_DEP_OLD_CHANNEL_LAYOUT
 
-        output_codec_ctx->sample_rate           = m_in.m_audio.m_codec_ctx->sample_rate;
-        orig_sample_rate                        = m_in.m_audio.m_codec_ctx->sample_rate;
-        if (get_output_sample_rate(m_in.m_audio.m_stream->codecpar->sample_rate, params.m_audiosamplerate, &output_codec_ctx->sample_rate))
-        {
-            // Limit sample rate
-            Logging::trace(virtname(), "Limiting audio sample rate from %1 to %2.",
-                           format_samplerate(orig_sample_rate).c_str(),
-                           format_samplerate(output_codec_ctx->sample_rate).c_str());
-            orig_sample_rate = output_codec_ctx->sample_rate;
-        }
+    output_codec_ctx->sample_rate           = m_in.m_audio.m_codec_ctx->sample_rate;
+    orig_sample_rate                        = m_in.m_audio.m_codec_ctx->sample_rate;
+    if (get_output_sample_rate(m_in.m_audio.m_stream->codecpar->sample_rate, params.m_audiosamplerate, &output_codec_ctx->sample_rate))
+    {
+        // Limit sample rate
+        Logging::trace(virtname(), "Limiting audio sample rate from %1 to %2.",
+                       format_samplerate(orig_sample_rate).c_str(),
+                       format_samplerate(output_codec_ctx->sample_rate).c_str());
+        orig_sample_rate = output_codec_ctx->sample_rate;
+    }
 
 #if LAVC_USE_SUPPORTED_CFG
+    {
+        const int *supported_samplerates = nullptr;
+        int num_samplerates = 0;
+        int ret_cfg = avcodec_get_supported_config(output_codec_ctx, output_codec,
+                                                   AV_CODEC_CONFIG_SAMPLE_RATE,
+                                                   0, (const void**)&supported_samplerates,
+                                                   &num_samplerates);
+        if (ret_cfg >= 0 && supported_samplerates && num_samplerates > 0)
         {
-            const int *supported_samplerates = nullptr;
-            int num_samplerates = 0;
-            int ret_cfg = avcodec_get_supported_config(output_codec_ctx, output_codec,
-                                                       AV_CODEC_CONFIG_SAMPLE_RATE,
-                                                       0, (const void**)&supported_samplerates,
-                                                       &num_samplerates);
-            if (ret_cfg >= 0 && supported_samplerates && num_samplerates > 0)
+            bool exact_match = false;
+            for (int n = 0; n < num_samplerates; n++)
             {
-                bool exact_match = false;
-                for (int n = 0; n < num_samplerates; n++)
+                if (supported_samplerates[n] == output_codec_ctx->sample_rate)
                 {
-                    if (supported_samplerates[n] == output_codec_ctx->sample_rate)
-                    {
-                        exact_match = true;
-                        break;
-                    }
-                }
-                if (!exact_match)
-                {
-                    int min_samplerate = 0, max_samplerate = INT_MAX;
-                    for (int n = 0; n < num_samplerates; n++)
-                    {
-                        int s = supported_samplerates[n];
-                        if (min_samplerate <= s && output_codec_ctx->sample_rate >= s)
-                            min_samplerate = s;
-                    }
-
-                    for (int n = 0; n < num_samplerates; n++)
-                    {
-                        int s = supported_samplerates[n];
-                        if (max_samplerate >= s && output_codec_ctx->sample_rate <= s)
-                            max_samplerate = s;
-                    }
-
-                    if (min_samplerate != 0 && max_samplerate != INT_MAX)
-                    {
-                        if (output_codec_ctx->sample_rate - min_samplerate < max_samplerate - output_codec_ctx->sample_rate)
-                            output_codec_ctx->sample_rate = min_samplerate;
-                        else
-                            output_codec_ctx->sample_rate = max_samplerate;
-                    }
-                    else if (min_samplerate != 0)
-                    {
-                        output_codec_ctx->sample_rate = min_samplerate;
-                    }
-                    else if (max_samplerate != INT_MAX)
-                    {
-                        output_codec_ctx->sample_rate = max_samplerate;
-                    }
-                    else
-                    {
-                        for (int n = 0; n < num_samplerates; n++)
-                            if (supported_samplerates[n] == 48000)
-                            {
-                                output_codec_ctx->sample_rate = 48000;
-                                break;
-                            }
-
-                        if (output_codec_ctx->sample_rate <= 0)
-                            output_codec_ctx->sample_rate = supported_samplerates[0];
-                    }
-                }
-            }
-        }
-#else
-        if (output_codec->supported_samplerates != nullptr)
-        {
-            // Go through supported sample rates and adjust if necessary
-            bool supported = false;
-
-            for (int n = 0; output_codec->supported_samplerates[n] != 0; n++)
-            {
-                if (output_codec->supported_samplerates[n] == output_codec_ctx->sample_rate)
-                {
-                    // Is supported
-                    supported = true;
+                    exact_match = true;
                     break;
                 }
             }
-
-            if (!supported)
+            if (!exact_match)
             {
-                int min_samplerate = 0;
-                int max_samplerate = INT_MAX;
-
-                // Find next lower sample rate in probably unsorted list
-                for (int n = 0; output_codec->supported_samplerates[n] != 0; n++)
+                int min_samplerate = 0, max_samplerate = INT_MAX;
+                for (int n = 0; n < num_samplerates; n++)
                 {
-                    if (min_samplerate <= output_codec->supported_samplerates[n] && output_codec_ctx->sample_rate >= output_codec->supported_samplerates[n])
-                    {
-                        min_samplerate = output_codec->supported_samplerates[n];
-                    }
+                    int s = supported_samplerates[n];
+                    if (min_samplerate <= s && output_codec_ctx->sample_rate >= s)
+                        min_samplerate = s;
                 }
 
-                // Find next higher sample rate in probably unsorted list
-                for (int n = 0; output_codec->supported_samplerates[n] != 0; n++)
+                for (int n = 0; n < num_samplerates; n++)
                 {
-                    if (max_samplerate >= output_codec->supported_samplerates[n] && output_codec_ctx->sample_rate <= output_codec->supported_samplerates[n])
-                    {
-                        max_samplerate = output_codec->supported_samplerates[n];
-                    }
+                    int s = supported_samplerates[n];
+                    if (max_samplerate >= s && output_codec_ctx->sample_rate <= s)
+                        max_samplerate = s;
                 }
 
                 if (min_samplerate != 0 && max_samplerate != INT_MAX)
                 {
-                    // set to nearest value
                     if (output_codec_ctx->sample_rate - min_samplerate < max_samplerate - output_codec_ctx->sample_rate)
-                    {
                         output_codec_ctx->sample_rate = min_samplerate;
-                    }
                     else
-                    {
                         output_codec_ctx->sample_rate = max_samplerate;
-                    }
                 }
                 else if (min_samplerate != 0)
                 {
-                    // No higher sample rate, use next lower
                     output_codec_ctx->sample_rate = min_samplerate;
                 }
                 else if (max_samplerate != INT_MAX)
                 {
-                    // No lower sample rate, use higher lower
                     output_codec_ctx->sample_rate = max_samplerate;
                 }
                 else
                 {
-                    // Should never happen... There must at least be one.
-                    Logging::error(virtname(), "The codec does not support an audio sample rate of %1.", format_samplerate(output_codec_ctx->sample_rate).c_str());
-                    return AVERROR(EINVAL);
-                }
+                    for (int n = 0; n < num_samplerates; n++)
+                        if (supported_samplerates[n] == 48000)
+                        {
+                            output_codec_ctx->sample_rate = 48000;
+                            break;
+                        }
 
-                Logging::debug(virtname(), "Because the requested value is not supported by codec, the audio sample rate was changed from %1 to %2.",
-                               format_samplerate(orig_sample_rate).c_str(),
-                               format_samplerate(output_codec_ctx->sample_rate).c_str());
+                    if (output_codec_ctx->sample_rate <= 0)
+                        output_codec_ctx->sample_rate = supported_samplerates[0];
+                }
             }
         }
-#endif
+    }
+#else
+    if (output_codec->supported_samplerates != nullptr)
+    {
+        // Go through supported sample rates and adjust if necessary
+        bool supported = false;
 
-        // If sample format not pre-defined (not AV_SAMPLE_FMT_NONE), use input file setting.
-        AVSampleFormat in_sample_format = (m_current_format->sample_format() == AV_SAMPLE_FMT_NONE) ? m_in.m_audio.m_codec_ctx->sample_fmt : m_current_format->sample_format();
-#if LAVC_USE_SUPPORTED_CFG
+        for (int n = 0; output_codec->supported_samplerates[n] != 0; n++)
         {
-            // Query supported sample formats via the new API
-            const enum AVSampleFormat *sample_fmts = nullptr;
-            int num_fmts = 0;
-            int ret_cfg = avcodec_get_supported_config(output_codec_ctx, output_codec,
-                                                       AV_CODEC_CONFIG_SAMPLE_FORMAT,
-                                                       0, (const void**)&sample_fmts,
-                                                       &num_fmts);
-            if (ret_cfg >= 0 && sample_fmts && num_fmts > 0)
+            if (output_codec->supported_samplerates[n] == output_codec_ctx->sample_rate)
             {
-                AVSampleFormat input_fmt_planar = av_get_planar_sample_fmt(in_sample_format);
-                for (int i = 0; i < num_fmts; i++)
+                // Is supported
+                supported = true;
+                break;
+            }
+        }
+
+        if (!supported)
+        {
+            int min_samplerate = 0;
+            int max_samplerate = INT_MAX;
+
+            // Find next lower sample rate in probably unsorted list
+            for (int n = 0; output_codec->supported_samplerates[n] != 0; n++)
+            {
+                if (min_samplerate <= output_codec->supported_samplerates[n] && output_codec_ctx->sample_rate >= output_codec->supported_samplerates[n])
                 {
-                    AVSampleFormat output_fmt_planar = av_get_planar_sample_fmt(sample_fmts[i]);
-                    if (sample_fmts[i] == in_sample_format ||
-                            (input_fmt_planar != AV_SAMPLE_FMT_NONE && input_fmt_planar == output_fmt_planar))
-                    {
-                        output_codec_ctx->sample_fmt = sample_fmts[i];
-                        break;
-                    }
+                    min_samplerate = output_codec->supported_samplerates[n];
                 }
-                if (output_codec_ctx->sample_fmt == AV_SAMPLE_FMT_NONE)
+            }
+
+            // Find next higher sample rate in probably unsorted list
+            for (int n = 0; output_codec->supported_samplerates[n] != 0; n++)
+            {
+                if (max_samplerate >= output_codec->supported_samplerates[n] && output_codec_ctx->sample_rate <= output_codec->supported_samplerates[n])
                 {
-                    // Fallback: first supported format
-                    output_codec_ctx->sample_fmt = sample_fmts[0];
+                    max_samplerate = output_codec->supported_samplerates[n];
                 }
+            }
+
+            if (min_samplerate != 0 && max_samplerate != INT_MAX)
+            {
+                // set to nearest value
+                if (output_codec_ctx->sample_rate - min_samplerate < max_samplerate - output_codec_ctx->sample_rate)
+                {
+                    output_codec_ctx->sample_rate = min_samplerate;
+                }
+                else
+                {
+                    output_codec_ctx->sample_rate = max_samplerate;
+                }
+            }
+            else if (min_samplerate != 0)
+            {
+                // No higher sample rate, use next lower
+                output_codec_ctx->sample_rate = min_samplerate;
+            }
+            else if (max_samplerate != INT_MAX)
+            {
+                // No lower sample rate, use higher lower
+                output_codec_ctx->sample_rate = max_samplerate;
             }
             else
             {
-                // If supported sample formats are unknown simply take input format
-                output_codec_ctx->sample_fmt = in_sample_format;
+                // Should never happen... There must at least be one.
+                Logging::error(virtname(), "The codec does not support an audio sample rate of %1.", format_samplerate(output_codec_ctx->sample_rate).c_str());
+                return AVERROR(EINVAL);
             }
+
+            Logging::debug(virtname(), "Because the requested value is not supported by codec, the audio sample rate was changed from %1 to %2.",
+                           format_samplerate(orig_sample_rate).c_str(),
+                           format_samplerate(output_codec_ctx->sample_rate).c_str());
         }
-#else
-        if (output_codec->sample_fmts != nullptr)
+    }
+#endif
+
+    // If sample format not pre-defined (not AV_SAMPLE_FMT_NONE), use input file setting.
+    AVSampleFormat in_sample_format = (m_current_format->sample_format() == AV_SAMPLE_FMT_NONE) ? m_in.m_audio.m_codec_ctx->sample_fmt : m_current_format->sample_format();
+#if LAVC_USE_SUPPORTED_CFG
+    {
+        // Query supported sample formats via the new API
+        const enum AVSampleFormat *sample_fmts = nullptr;
+        int num_fmts = 0;
+        int ret_cfg = avcodec_get_supported_config(output_codec_ctx, output_codec,
+                                                   AV_CODEC_CONFIG_SAMPLE_FORMAT,
+                                                   0, (const void**)&sample_fmts,
+                                                   &num_fmts);
+        if (ret_cfg >= 0 && sample_fmts && num_fmts > 0)
         {
-            // Check if input sample format is supported and if so, use it (avoiding resampling)
             AVSampleFormat input_fmt_planar = av_get_planar_sample_fmt(in_sample_format);
-
-            output_codec_ctx->sample_fmt        = AV_SAMPLE_FMT_NONE;
-
-            for (const AVSampleFormat *sample_fmt = output_codec->sample_fmts; *sample_fmt != -1; sample_fmt++)
+            for (int i = 0; i < num_fmts; i++)
             {
-                AVSampleFormat output_fmt_planar = av_get_planar_sample_fmt(*sample_fmt);
-
-                if (*sample_fmt == in_sample_format ||
-                        (input_fmt_planar != AV_SAMPLE_FMT_NONE &&
-                         input_fmt_planar == output_fmt_planar))
+                AVSampleFormat output_fmt_planar = av_get_planar_sample_fmt(sample_fmts[i]);
+                if (sample_fmts[i] == in_sample_format ||
+                        (input_fmt_planar != AV_SAMPLE_FMT_NONE && input_fmt_planar == output_fmt_planar))
                 {
-                    output_codec_ctx->sample_fmt    = *sample_fmt;
+                    output_codec_ctx->sample_fmt = sample_fmts[i];
                     break;
                 }
             }
-
-            // If none of the supported formats match use the first supported
             if (output_codec_ctx->sample_fmt == AV_SAMPLE_FMT_NONE)
             {
-                output_codec_ctx->sample_fmt    = output_codec->sample_fmts[0];
+                // Fallback: first supported format
+                output_codec_ctx->sample_fmt = sample_fmts[0];
             }
         }
         else
         {
-            // If supported sample formats are unknown simply take input format and cross our fingers it'll work...
-            output_codec_ctx->sample_fmt        = in_sample_format;
+            // If supported sample formats are unknown simply take input format
+            output_codec_ctx->sample_fmt = in_sample_format;
         }
-#endif
-        // Set the sample rate for the container.
-        output_stream->time_base.den            = output_codec_ctx->sample_rate;
-        output_stream->time_base.num            = 1;
-        output_codec_ctx->time_base             = output_stream->time_base;
-
-        // set -strict -2 for aac (required for FFmpeg 2)
-        dict_set_with_check(opt.address(), "strict", "-2", 0);
-
-        // Allow the use of the experimental AAC encoder
-        output_codec_ctx->strict_std_compliance = FF_COMPLIANCE_EXPERIMENTAL;
-
-        // Set duration as hint for muxer
-        if (m_in.m_audio.m_stream->duration != AV_NOPTS_VALUE)
-        {
-            output_stream->duration             = ffmpeg_rescale_q(m_in.m_audio.m_stream->duration, m_in.m_audio.m_stream->time_base, output_stream->time_base);
-        }
-        else if (m_in.m_format_ctx->duration != AV_NOPTS_VALUE)
-        {
-            output_stream->duration             = ffmpeg_rescale_q(m_in.m_format_ctx->duration, av_get_time_base_q(), output_stream->time_base);
-        }
-
-        //av_dict_set_int(&output_stream->metadata, "DURATION", output_stream->duration, AV_DICT_IGNORE_SUFFIX);
-
-        // Save the encoder context for easier access later.
-        m_out.m_audio.set_codec_ctx(output_codec_ctx);
-        // Save the stream index
-        m_out.m_audio.m_stream_idx              = output_stream->index;
-        // Save output audio stream for faster reference
-        m_out.m_audio.m_stream                  = output_stream;
-
-        // Update input to output stream map, this is rather boring because currently we only have a single audio stream
-        add_stream_map(m_in.m_audio.m_stream_idx, m_out.m_audio.m_stream_idx);
-        break;
     }
-    case AVMEDIA_TYPE_VIDEO:
+#else
+    if (output_codec->sample_fmts != nullptr)
     {
-        BITRATE orig_bit_rate;
+        // Check if input sample format is supported and if so, use it (avoiding resampling)
+        AVSampleFormat input_fmt_planar = av_get_planar_sample_fmt(in_sample_format);
 
-        if (m_hwaccel_enable_enc_buffering && m_hwaccel_enc_device_ctx != nullptr)
+        output_codec_ctx->sample_fmt        = AV_SAMPLE_FMT_NONE;
+
+        for (const AVSampleFormat *sample_fmt = output_codec->sample_fmts; *sample_fmt != -1; sample_fmt++)
         {
-            Logging::debug(virtname(), "Hardware encoder init: Creating a new hardware frame context for the encoder.", get_hwaccel_API_text(params.m_hwaccel_enc_API).c_str());
+            AVSampleFormat output_fmt_planar = av_get_planar_sample_fmt(*sample_fmt);
 
-            m_enc_hw_pix_fmt = get_hw_pix_fmt(output_codec, params.m_hwaccel_enc_device_type, false);
-
-            ret = hwframe_ctx_set(output_codec_ctx, m_in.m_video.m_codec_ctx.get(), m_hwaccel_enc_device_ctx);
-            if (ret < 0)
+            if (*sample_fmt == in_sample_format ||
+                    (input_fmt_planar != AV_SAMPLE_FMT_NONE &&
+                     input_fmt_planar == output_fmt_planar))
             {
-                return ret;
+                output_codec_ctx->sample_fmt    = *sample_fmt;
+                break;
             }
         }
 
-        output_codec_ctx->codec_id = codec_id;
-
-        // Set the basic encoder parameters
-        orig_bit_rate = (m_in.m_video.m_stream->codecpar->bit_rate != 0) ? m_in.m_video.m_stream->codecpar->bit_rate : m_in.m_format_ctx->bit_rate;
-        if (get_output_bit_rate(orig_bit_rate, params.m_videobitrate, &output_codec_ctx->bit_rate))
+        // If none of the supported formats match use the first supported
+        if (output_codec_ctx->sample_fmt == AV_SAMPLE_FMT_NONE)
         {
-            // Limit sample rate
-            Logging::trace(virtname(), "Limiting video bit rate from %1 to %2.",
-                           format_bitrate(orig_bit_rate).c_str(),
-                           format_bitrate(output_codec_ctx->bit_rate).c_str());
+            output_codec_ctx->sample_fmt    = output_codec->sample_fmts[0];
         }
-
-        // output_codec_ctx->rc_min_rate = output_codec_ctx->bit_rate * 75 / 100;
-        // output_codec_ctx->rc_max_rate = output_codec_ctx->bit_rate * 125 / 100;
-
-        // output_codec_ctx->qmin = 1;
-        // output_codec_ctx->qmax = 31;
-
-        int width = 0;
-        int height = 0;
-        if (get_video_size(&width, &height))
-        {
-            Logging::trace(virtname(), "Changing video size from %1/%2 to %3/%4.", output_codec_ctx->width, output_codec_ctx->height, width, height);
-            output_codec_ctx->width             = width;
-            output_codec_ctx->height            = height;
-        }
-        else
-        {
-            output_codec_ctx->width             = m_in.m_video.m_stream->codecpar->width;
-            output_codec_ctx->height            = m_in.m_video.m_stream->codecpar->height;
-        }
-
-        video_stream_setup(output_codec_ctx, output_stream, m_in.m_video.m_codec_ctx.get(), m_in.m_video.m_stream->avg_frame_rate, m_enc_hw_pix_fmt);
-
-        if (!m_hwaccel_enable_enc_buffering && output_codec_ctx->codec_id == AV_CODEC_ID_H264 && m_out.m_filetype == FILETYPE::HLS && output_codec_ctx->pix_fmt != AV_PIX_FMT_YUV420P)
-        {
-            Logging::info(virtname(), "Forcing HLS/H.264 output pixel format from %1 to yuv420p for browser-compatible 8-bit output.", get_pix_fmt_name(output_codec_ctx->pix_fmt).c_str());
-            output_codec_ctx->pix_fmt = AV_PIX_FMT_YUV420P;
-        }
-
-        AVRational sample_aspect_ratio                      = m_in.m_video.m_stream->codecpar->sample_aspect_ratio;
-
-        if (output_codec_ctx->codec_id != AV_CODEC_ID_VP9 && m_out.m_filetype != FILETYPE::MKV)
-        {
-            output_codec_ctx->sample_aspect_ratio           = sample_aspect_ratio;
-            output_stream->codecpar->sample_aspect_ratio    = sample_aspect_ratio;
-        }
-
-        else
-        {
-            // WebM and MKV do not respect the aspect ratio and always use 1:1 so we need to rescale "manually".
-            /**
-             * @todo FFmpeg actually *can* transcode while presevering the SAR.
-             * FFmpegfs rescales to fix that problem.
-             * Need to find out what I am doing wrong here...
-             */
-
-            output_codec_ctx->sample_aspect_ratio           = { 1, 1 };
-            output_stream->codecpar->sample_aspect_ratio    = { 1, 1 };
-
-            // Make sure we do not zero width
-            if (sample_aspect_ratio.num && sample_aspect_ratio.den)
-            {
-                output_codec_ctx->width                       = output_codec_ctx->width * sample_aspect_ratio.num / sample_aspect_ratio.den;
-            }
-            //output_codec_ctx->height                        *= sample_aspect_ratio.den;
-        }
-
-        // Set up optimisations
-        switch (output_codec_ctx->codec_id)
-        {
-        case AV_CODEC_ID_H264:
-        {
-            ret = prepare_codec(output_codec_ctx->priv_data, m_out.m_filetype);
-            if (ret < 0)
-            {
-                Logging::error(virtname(), "Could not set profile for %1 output codec %2 (error '%3').", get_media_type_string(output_codec->type), get_codec_name(codec_id), ffmpeg_geterror(ret).c_str());
-                return ret;
-            }
-
-            if (m_hwaccel_enable_enc_buffering)
-            {
-                // For hardware encoding only
-
-                // Defaults to 20. Set to 40 to create slightly smaller results (the bigger, the smaller the files).
-                // Values seem to range between 1 and 51.
-                // Must be non-zero, otherwise hardware encoding my fail with:
-                // "Driver does not support any RC mode compatible with selected options (supported modes: CQP)."
-                output_codec_ctx->global_quality = 40;
-            }
-
-            //#define EXPERIMENTAL
-#ifdef EXPERIMENTAL
-            if (m_hwaccel_enable_enc_buffering)
-            {
-                // For hardware encoding only
-#if 0
-                // From libavcodec/vaapi_encode.c:
-                //
-                // Rate control mode selection:
-                // * If the user has set a mode explicitly with the rc_mode option,
-                //   use it and fail if it is not available.
-                // * If an explicit QP option has been set, use CQP.
-                // * If the codec is CQ-only, use CQP.
-                // * If the QSCALE avcodec option is set, use CQP.
-                // * If bitrate and quality are both set, try QVBR.
-                // * If quality is set, try ICQ, then CQP.
-                // * If bitrate and maxrate are set and have the same value, try CBR.
-                // * If a bitrate is set, try AVBR, then VBR, then CBR.
-                // * If no bitrate is set, try ICQ, then CQP.
-                ret = av_opt_set(output_codec_ctx->priv_data, "rc_mode", "CQP", AV_OPT_SEARCH_CHILDREN);
-                if (ret < 0)
-                {
-                    Logging::error(virtname(), "Could not set 'rc_mode=CQP' for %1 output codec %2 (error '%3').", get_media_type_string(output_codec->type), get_codec_name(codec_id), ffmpeg_geterror(ret).c_str());
-                    return ret;
-                }
-
-                // The range of the CRF scale is 0–51, where 0 is lossless (for 8 bit only, for 10 bit use -qp 0),
-                // 23 is the default, and 51 is worst quality possible. A lower value generally leads to higher
-                // quality, and a subjectively sane range is 17–28. Consider 17 or 18 to be visually lossless or
-                // nearly so; it should look the same or nearly the same as the input but it isn't technically lossless.
-                // See https://trac.ffmpeg.org/wiki/Encode/H.264
-                ret = av_opt_set(output_codec_ctx->priv_data, "qp", "30", AV_OPT_SEARCH_CHILDREN);
-                if (ret < 0)
-                {
-                    Logging::error(virtname(), "Could not set 'qp' for %1 output codec %2 (error '%3').", get_media_type_string(output_codec->type), get_codec_name(codec_id), ffmpeg_geterror(ret).c_str());
-                    return ret;
-                }
+    }
+    else
+    {
+        // If supported sample formats are unknown simply take input format and cross our fingers it'll work...
+        output_codec_ctx->sample_fmt        = in_sample_format;
+    }
 #endif
-            }
-            else
-            {
-                // Software encoding
-#if 0
-                // Affects hard- and software encoding
-                //
-                // The range of the CRF scale is 0–51, where 0 is lossless (for 8 bit only, for 10 bit use -qp 0),
-                // 23 is the default, and 51 is worst quality possible. A lower value generally leads to higher
-                // quality, and a subjectively sane range is 17–28. Consider 17 or 18 to be visually lossless or
-                // nearly so; it should look the same or nearly the same as the input but it isn't technically lossless.
-                // See https://trac.ffmpeg.org/wiki/Encode/H.264
-                ret = av_opt_set(output_codec_ctx->priv_data, "qp", "30", AV_OPT_SEARCH_CHILDREN);
-                if (ret < 0)
-                {
-                    Logging::error(virtname(), "Could not set 'qp' for %1 output codec %2 (error '%3').", get_media_type_string(output_codec->type), get_codec_name(codec_id), ffmpeg_geterror(ret).c_str());
-                    return ret;
-                }
-#endif
+    // Set the sample rate for the container.
+    output_stream->time_base.den            = output_codec_ctx->sample_rate;
+    output_stream->time_base.num            = 1;
+    output_codec_ctx->time_base             = output_stream->time_base;
 
-#if 0
-                // Set constant rate factor to avoid getting huge result files
-                // The default is 23, but values between 30..40 create properly sized results.
-                // Possible values are 0 (lossless) to 51 (very small but ugly results).
-                ret = av_opt_set(output_codec_ctx->priv_data, "crf", "30", AV_OPT_SEARCH_CHILDREN);
-                if (ret < 0)
-                {
-                    Logging::error(virtname(), "Could not set 'crf' for %1 output codec %2 (error '%3').", get_media_type_string(output_codec->type), get_codec_name(codec_id), ffmpeg_geterror(ret).c_str());
-                    return ret;
-                }
-#endif
-            }
-#endif // EXPERIMENTAL
+    // set -strict -2 for aac (required for FFmpeg 2)
+    dict_set_with_check(opt.address(), "strict", "-2", 0);
 
-            // Avoid mismatches for H264 and profile
-            uint8_t   *out_val;
-            ret = av_opt_get(output_codec_ctx->priv_data, "profile", 0, &out_val);
-            if (!ret)
-            {
-                if (!strcasecmp(reinterpret_cast<const char *>(out_val), "high"))
-                {
-                    switch (output_codec_ctx->pix_fmt)
-                    {
-                    case AV_PIX_FMT_YUV420P9BE:
-                    case AV_PIX_FMT_YUV420P9LE:
-                    case AV_PIX_FMT_YUV420P10BE:
-                    case AV_PIX_FMT_YUV420P10LE:
-                    {
-                        ret = av_opt_set(output_codec_ctx->priv_data, "profile", "high10", 0);
-                        if (ret < 0)
-                        {
-                            Logging::error(virtname(), "Could not set profile=high10 for %1 output codec %2 (error '%3').", get_media_type_string(output_codec->type), get_codec_name(codec_id), ffmpeg_geterror(ret).c_str());
-                            return ret;
-                        }
-                        break;
-                    }
-                    case AV_PIX_FMT_YUYV422:
-                    case AV_PIX_FMT_YUV422P:
-                    case AV_PIX_FMT_YUVJ422P:
-                    case AV_PIX_FMT_UYVY422:
-                    case AV_PIX_FMT_YUV422P16LE:
-                    case AV_PIX_FMT_YUV422P16BE:
-                    case AV_PIX_FMT_YUV422P10BE:
-                    case AV_PIX_FMT_YUV422P10LE:
-                    case AV_PIX_FMT_YUV422P9BE:
-                    case AV_PIX_FMT_YUV422P9LE:
-                    case AV_PIX_FMT_YUVA422P9BE:
-                    case AV_PIX_FMT_YUVA422P9LE:
-                    case AV_PIX_FMT_YUVA422P10BE:
-                    case AV_PIX_FMT_YUVA422P10LE:
-                    case AV_PIX_FMT_YUVA422P16BE:
-                    case AV_PIX_FMT_YUVA422P16LE:
-                    case AV_PIX_FMT_NV16:
-                    case AV_PIX_FMT_NV20LE:
-                    case AV_PIX_FMT_NV20BE:
-                    case AV_PIX_FMT_YVYU422:
-                    case AV_PIX_FMT_YUVA422P:
-                    case AV_PIX_FMT_YUV422P12BE:
-                    case AV_PIX_FMT_YUV422P12LE:
-                    case AV_PIX_FMT_YUV422P14BE:
-                    case AV_PIX_FMT_YUV422P14LE:
-                    {
-                        ret = av_opt_set(output_codec_ctx->priv_data, "profile", "high422", 0);
-                        if (ret < 0)
-                        {
-                            Logging::error(virtname(), "Could not set profile=high422 for %1 output codec %2 (error '%3').", get_media_type_string(output_codec->type), get_codec_name(codec_id), ffmpeg_geterror(ret).c_str());
-                            return ret;
-                        }
-                        break;
-                    }
-                    case AV_PIX_FMT_YUV444P:
-                    case AV_PIX_FMT_YUVJ444P:
-                    case AV_PIX_FMT_YUV444P16LE:
-                    case AV_PIX_FMT_YUV444P16BE:
-                    case AV_PIX_FMT_RGB444LE:
-                    case AV_PIX_FMT_RGB444BE:
-                    case AV_PIX_FMT_BGR444LE:
-                    case AV_PIX_FMT_BGR444BE:
-                    case AV_PIX_FMT_YUV444P9BE:
-                    case AV_PIX_FMT_YUV444P9LE:
-                    case AV_PIX_FMT_YUV444P10BE:
-                    case AV_PIX_FMT_YUV444P10LE:
-                    case AV_PIX_FMT_GBRP:
-                    case AV_PIX_FMT_GBRP9BE:
-                    case AV_PIX_FMT_GBRP9LE:
-                    case AV_PIX_FMT_GBRP10BE:
-                    case AV_PIX_FMT_GBRP10LE:
-                    case AV_PIX_FMT_GBRP16BE:
-                    case AV_PIX_FMT_GBRP16LE:
-                    case AV_PIX_FMT_YUVA444P9BE:
-                    case AV_PIX_FMT_YUVA444P9LE:
-                    case AV_PIX_FMT_YUVA444P10BE:
-                    case AV_PIX_FMT_YUVA444P10LE:
-                    case AV_PIX_FMT_YUVA444P16BE:
-                    case AV_PIX_FMT_YUVA444P16LE:
-                    case AV_PIX_FMT_XYZ12LE:
-                    case AV_PIX_FMT_XYZ12BE:
-                    case AV_PIX_FMT_YUVA444P:
-                    case AV_PIX_FMT_GBRAP:
-                    case AV_PIX_FMT_GBRAP16BE:
-                    case AV_PIX_FMT_GBRAP16LE:
-                    case AV_PIX_FMT_YUV444P12BE:
-                    case AV_PIX_FMT_YUV444P12LE:
-                    case AV_PIX_FMT_YUV444P14BE:
-                    case AV_PIX_FMT_YUV444P14LE:
-                    case AV_PIX_FMT_GBRP12BE:
-                    case AV_PIX_FMT_GBRP12LE:
-                    case AV_PIX_FMT_GBRP14BE:
-                    case AV_PIX_FMT_GBRP14LE:
-                    case AV_PIX_FMT_AYUV64LE:
-                    case AV_PIX_FMT_AYUV64BE:
-                    {
-                        ret = av_opt_set(output_codec_ctx->priv_data, "profile", "high444", 0);
-                        if (ret < 0)
-                        {
-                            Logging::error(virtname(), "Could not set profile=high444 for %1 output codec %2 (error '%3').", get_media_type_string(output_codec->type), get_codec_name(codec_id), ffmpeg_geterror(ret).c_str());
-                            return ret;
-                        }
-                        break;
-                    }
-                    default:
-                    {
-                        break;
-                    }
-                    }
-                }
-                av_free(out_val);
-            }
-            break;
-        }
-        case AV_CODEC_ID_VP9:
-        {
-            ret = prepare_codec(output_codec_ctx->priv_data, FILETYPE::WEBM);
-            if (ret < 0)
-            {
-                Logging::error(virtname(), "Could not set profile for %1 output codec %2 (error '%3').", get_media_type_string(output_codec->type), get_codec_name(codec_id), ffmpeg_geterror(ret).c_str());
-                return ret;
-            }
-            break;
-        }
-        case AV_CODEC_ID_PRORES:
-        {
-            ret = prepare_codec(output_codec_ctx->priv_data, FILETYPE::PRORES);
-            if (ret < 0)
-            {
-                Logging::error(virtname(), "Could not set profile for %1 output codec %2 (error '%3').", get_media_type_string(output_codec->type), get_codec_name(codec_id), ffmpeg_geterror(ret).c_str());
-                return ret;
-            }
+    // Allow the use of the experimental AAC encoder
+    output_codec_ctx->strict_std_compliance = FF_COMPLIANCE_EXPERIMENTAL;
 
-            // 0 = ‘proxy’,
-            // 1 = ‘lt’,
-            // 2 = ‘standard’,
-            // 3 = ‘hq’
-            output_codec_ctx->profile = static_cast<int>(params.m_level);
-            break;
-        }
-        case AV_CODEC_ID_ALAC:
-        {
-            ret = prepare_codec(output_codec_ctx->priv_data, FILETYPE::ALAC);
-            if (ret < 0)
-            {
-                Logging::error(virtname(), "Could not set profile for %1 output codec %2 (error '%3').", get_media_type_string(output_codec->type), get_codec_name(codec_id), ffmpeg_geterror(ret).c_str());
-                return ret;
-            }
-            break;
-        }
-        default:
-        {
-            break;
-        }
-        }
+    // Set duration as hint for muxer
+    if (m_in.m_audio.m_stream->duration != AV_NOPTS_VALUE)
+    {
+        output_stream->duration             = ffmpeg_rescale_q(m_in.m_audio.m_stream->duration, m_in.m_audio.m_stream->time_base, output_stream->time_base);
+    }
+    else if (m_in.m_format_ctx->duration != AV_NOPTS_VALUE)
+    {
+        output_stream->duration             = ffmpeg_rescale_q(m_in.m_format_ctx->duration, av_get_time_base_q(), output_stream->time_base);
+    }
 
-        // Initialise pixel format conversion and rescaling if necessary
-        get_pix_formats(&m_in.m_pix_fmt, &m_out.m_pix_fmt, output_codec_ctx);
+    //av_dict_set_int(&output_stream->metadata, "DURATION", output_stream->duration, AV_DICT_IGNORE_SUFFIX);
 
-        ret = init_rescaler(m_in.m_pix_fmt, m_in.m_video.m_stream->codecpar->width, m_in.m_video.m_stream->codecpar->height, m_out.m_pix_fmt, output_codec_ctx->width, output_codec_ctx->height);
+    // Save the encoder context for easier access later.
+    m_out.m_audio.set_codec_ctx(output_codec_ctx);
+    // Save the stream index
+    m_out.m_audio.m_stream_idx              = output_stream->index;
+    // Save output audio stream for faster reference
+    m_out.m_audio.m_stream                  = output_stream;
+
+    // Update input to output stream map, this is rather boring because currently we only have a single audio stream
+    add_stream_map(m_in.m_audio.m_stream_idx, m_out.m_audio.m_stream_idx);
+
+    return 0;
+}
+
+#if IF_DECLARED_CONST
+int FFmpeg_Transcoder::configure_video_output_stream(AVCodecID codec_id, const AVCodec *output_codec, AVCodecContext *output_codec_ctx, AVStream *output_stream, FFmpeg_Dictionary &opt)
+#else // !IF_DECLARED_CONST
+int FFmpeg_Transcoder::configure_video_output_stream(AVCodecID codec_id, AVCodec *output_codec, AVCodecContext *output_codec_ctx, AVStream *output_stream, FFmpeg_Dictionary &opt)
+#endif // !IF_DECLARED_CONST
+{
+    int ret = 0;
+
+    BITRATE orig_bit_rate;
+
+    if (m_hwaccel_enable_enc_buffering && m_hwaccel_enc_device_ctx != nullptr)
+    {
+        Logging::debug(virtname(), "Hardware encoder init: Creating a new hardware frame context for the encoder.", get_hwaccel_API_text(params.m_hwaccel_enc_API).c_str());
+
+        m_enc_hw_pix_fmt = get_hw_pix_fmt(output_codec, params.m_hwaccel_enc_device_type, false);
+
+        ret = hwframe_ctx_set(output_codec_ctx, m_in.m_video.m_codec_ctx.get(), m_hwaccel_enc_device_ctx);
         if (ret < 0)
         {
             return ret;
         }
+    }
 
-        // set -strict -2 for aac (required for FFmpeg 2)
-        dict_set_with_check(opt.address(), "strict", "-2", 0);
+    output_codec_ctx->codec_id = codec_id;
 
-        // Allow the use of the experimental AAC encoder
-        output_codec_ctx->strict_std_compliance = FF_COMPLIANCE_EXPERIMENTAL;
+    // Set the basic encoder parameters
+    orig_bit_rate = (m_in.m_video.m_stream->codecpar->bit_rate != 0) ? m_in.m_video.m_stream->codecpar->bit_rate : m_in.m_format_ctx->bit_rate;
+    if (get_output_bit_rate(orig_bit_rate, params.m_videobitrate, &output_codec_ctx->bit_rate))
+    {
+        // Limit sample rate
+        Logging::trace(virtname(), "Limiting video bit rate from %1 to %2.",
+                       format_bitrate(orig_bit_rate).c_str(),
+                       format_bitrate(output_codec_ctx->bit_rate).c_str());
+    }
 
-#ifdef _DEBUG
-        print_stream_info(output_stream);
-#endif // _DEBUG
+    // output_codec_ctx->rc_min_rate = output_codec_ctx->bit_rate * 75 / 100;
+    // output_codec_ctx->rc_max_rate = output_codec_ctx->bit_rate * 125 / 100;
 
-        // Set duration as hint for muxer
-        if (m_in.m_video.m_stream->duration != AV_NOPTS_VALUE)
+    // output_codec_ctx->qmin = 1;
+    // output_codec_ctx->qmax = 31;
+
+    int width = 0;
+    int height = 0;
+    if (get_video_size(&width, &height))
+    {
+        Logging::trace(virtname(), "Changing video size from %1/%2 to %3/%4.", output_codec_ctx->width, output_codec_ctx->height, width, height);
+        output_codec_ctx->width             = width;
+        output_codec_ctx->height            = height;
+    }
+    else
+    {
+        output_codec_ctx->width             = m_in.m_video.m_stream->codecpar->width;
+        output_codec_ctx->height            = m_in.m_video.m_stream->codecpar->height;
+    }
+
+    video_stream_setup(output_codec_ctx, output_stream, m_in.m_video.m_codec_ctx.get(), m_in.m_video.m_stream->avg_frame_rate, m_enc_hw_pix_fmt);
+
+    if (!m_hwaccel_enable_enc_buffering && output_codec_ctx->codec_id == AV_CODEC_ID_H264 && m_out.m_filetype == FILETYPE::HLS && output_codec_ctx->pix_fmt != AV_PIX_FMT_YUV420P)
+    {
+        Logging::info(virtname(), "Forcing HLS/H.264 output pixel format from %1 to yuv420p for browser-compatible 8-bit output.", get_pix_fmt_name(output_codec_ctx->pix_fmt).c_str());
+        output_codec_ctx->pix_fmt = AV_PIX_FMT_YUV420P;
+    }
+
+    AVRational sample_aspect_ratio                      = m_in.m_video.m_stream->codecpar->sample_aspect_ratio;
+
+    if (output_codec_ctx->codec_id != AV_CODEC_ID_VP9 && m_out.m_filetype != FILETYPE::MKV)
+    {
+        output_codec_ctx->sample_aspect_ratio           = sample_aspect_ratio;
+        output_stream->codecpar->sample_aspect_ratio    = sample_aspect_ratio;
+    }
+
+    else
+    {
+        // WebM and MKV do not respect the aspect ratio and always use 1:1 so we need to rescale "manually".
+        /**
+         * @todo FFmpeg actually *can* transcode while presevering the SAR.
+         * FFmpegfs rescales to fix that problem.
+         * Need to find out what I am doing wrong here...
+         */
+
+        output_codec_ctx->sample_aspect_ratio           = { 1, 1 };
+        output_stream->codecpar->sample_aspect_ratio    = { 1, 1 };
+
+        // Make sure we do not zero width
+        if (sample_aspect_ratio.num && sample_aspect_ratio.den)
         {
-            output_stream->duration             = ffmpeg_rescale_q(m_in.m_video.m_stream->duration, m_in.m_video.m_stream->time_base, output_stream->time_base);
+            output_codec_ctx->width                       = output_codec_ctx->width * sample_aspect_ratio.num / sample_aspect_ratio.den;
         }
-        else if (m_in.m_format_ctx->duration != AV_NOPTS_VALUE)
+        //output_codec_ctx->height                        *= sample_aspect_ratio.den;
+    }
+
+    // Set up optimisations
+    switch (output_codec_ctx->codec_id)
+    {
+    case AV_CODEC_ID_H264:
+    {
+        ret = prepare_codec(output_codec_ctx->priv_data, m_out.m_filetype);
+        if (ret < 0)
         {
-            output_stream->duration             = ffmpeg_rescale_q(m_in.m_format_ctx->duration, av_get_time_base_q(), output_stream->time_base);
+            Logging::error(virtname(), "Could not set profile for %1 output codec %2 (error '%3').", get_media_type_string(output_codec->type), get_codec_name(codec_id), ffmpeg_geterror(ret).c_str());
+            return ret;
         }
 
-        //av_dict_set_int(&output_stream->metadata, "DURATION", output_stream->duration, AV_DICT_IGNORE_SUFFIX);
+        if (m_hwaccel_enable_enc_buffering)
+        {
+            // For hardware encoding only
 
-        // Save the encoder context for easier access later.
-        m_out.m_video.set_codec_ctx(output_codec_ctx);
-        // Save the stream index
-        m_out.m_video.m_stream_idx              = output_stream->index;
-        // Save output video stream for faster reference
-        m_out.m_video.m_stream                  = output_stream;
+            // Defaults to 20. Set to 40 to create slightly smaller results (the bigger, the smaller the files).
+            // Values seem to range between 1 and 51.
+            // Must be non-zero, otherwise hardware encoding my fail with:
+            // "Driver does not support any RC mode compatible with selected options (supported modes: CQP)."
+            output_codec_ctx->global_quality = 40;
+        }
 
-        // Update input to output stream map, this is rather boring because currently we only have a single video stream
-        add_stream_map(m_in.m_video.m_stream_idx, m_out.m_video.m_stream_idx);
+        //#define EXPERIMENTAL
+#ifdef EXPERIMENTAL
+        if (m_hwaccel_enable_enc_buffering)
+        {
+            // For hardware encoding only
+#if 0
+            // From libavcodec/vaapi_encode.c:
+            //
+            // Rate control mode selection:
+            // * If the user has set a mode explicitly with the rc_mode option,
+            //   use it and fail if it is not available.
+            // * If an explicit QP option has been set, use CQP.
+            // * If the codec is CQ-only, use CQP.
+            // * If the QSCALE avcodec option is set, use CQP.
+            // * If bitrate and quality are both set, try QVBR.
+            // * If quality is set, try ICQ, then CQP.
+            // * If bitrate and maxrate are set and have the same value, try CBR.
+            // * If a bitrate is set, try AVBR, then VBR, then CBR.
+            // * If no bitrate is set, try ICQ, then CQP.
+            ret = av_opt_set(output_codec_ctx->priv_data, "rc_mode", "CQP", AV_OPT_SEARCH_CHILDREN);
+            if (ret < 0)
+            {
+                Logging::error(virtname(), "Could not set 'rc_mode=CQP' for %1 output codec %2 (error '%3').", get_media_type_string(output_codec->type), get_codec_name(codec_id), ffmpeg_geterror(ret).c_str());
+                return ret;
+            }
+
+            // The range of the CRF scale is 0–51, where 0 is lossless (for 8 bit only, for 10 bit use -qp 0),
+            // 23 is the default, and 51 is worst quality possible. A lower value generally leads to higher
+            // quality, and a subjectively sane range is 17–28. Consider 17 or 18 to be visually lossless or
+            // nearly so; it should look the same or nearly the same as the input but it isn't technically lossless.
+            // See https://trac.ffmpeg.org/wiki/Encode/H.264
+            ret = av_opt_set(output_codec_ctx->priv_data, "qp", "30", AV_OPT_SEARCH_CHILDREN);
+            if (ret < 0)
+            {
+                Logging::error(virtname(), "Could not set 'qp' for %1 output codec %2 (error '%3').", get_media_type_string(output_codec->type), get_codec_name(codec_id), ffmpeg_geterror(ret).c_str());
+                return ret;
+            }
+#endif
+        }
+        else
+        {
+            // Software encoding
+#if 0
+            // Affects hard- and software encoding
+            //
+            // The range of the CRF scale is 0–51, where 0 is lossless (for 8 bit only, for 10 bit use -qp 0),
+            // 23 is the default, and 51 is worst quality possible. A lower value generally leads to higher
+            // quality, and a subjectively sane range is 17–28. Consider 17 or 18 to be visually lossless or
+            // nearly so; it should look the same or nearly the same as the input but it isn't technically lossless.
+            // See https://trac.ffmpeg.org/wiki/Encode/H.264
+            ret = av_opt_set(output_codec_ctx->priv_data, "qp", "30", AV_OPT_SEARCH_CHILDREN);
+            if (ret < 0)
+            {
+                Logging::error(virtname(), "Could not set 'qp' for %1 output codec %2 (error '%3').", get_media_type_string(output_codec->type), get_codec_name(codec_id), ffmpeg_geterror(ret).c_str());
+                return ret;
+            }
+#endif
+
+#if 0
+            // Set constant rate factor to avoid getting huge result files
+            // The default is 23, but values between 30..40 create properly sized results.
+            // Possible values are 0 (lossless) to 51 (very small but ugly results).
+            ret = av_opt_set(output_codec_ctx->priv_data, "crf", "30", AV_OPT_SEARCH_CHILDREN);
+            if (ret < 0)
+            {
+                Logging::error(virtname(), "Could not set 'crf' for %1 output codec %2 (error '%3').", get_media_type_string(output_codec->type), get_codec_name(codec_id), ffmpeg_geterror(ret).c_str());
+                return ret;
+            }
+#endif
+        }
+#endif // EXPERIMENTAL
+
+        // Avoid mismatches for H264 and profile
+        uint8_t   *out_val;
+        ret = av_opt_get(output_codec_ctx->priv_data, "profile", 0, &out_val);
+        if (!ret)
+        {
+            if (!strcasecmp(reinterpret_cast<const char *>(out_val), "high"))
+            {
+                switch (output_codec_ctx->pix_fmt)
+                {
+                case AV_PIX_FMT_YUV420P9BE:
+                case AV_PIX_FMT_YUV420P9LE:
+                case AV_PIX_FMT_YUV420P10BE:
+                case AV_PIX_FMT_YUV420P10LE:
+                {
+                    ret = av_opt_set(output_codec_ctx->priv_data, "profile", "high10", 0);
+                    if (ret < 0)
+                    {
+                        Logging::error(virtname(), "Could not set profile=high10 for %1 output codec %2 (error '%3').", get_media_type_string(output_codec->type), get_codec_name(codec_id), ffmpeg_geterror(ret).c_str());
+                        return ret;
+                    }
+                    break;
+                }
+                case AV_PIX_FMT_YUYV422:
+                case AV_PIX_FMT_YUV422P:
+                case AV_PIX_FMT_YUVJ422P:
+                case AV_PIX_FMT_UYVY422:
+                case AV_PIX_FMT_YUV422P16LE:
+                case AV_PIX_FMT_YUV422P16BE:
+                case AV_PIX_FMT_YUV422P10BE:
+                case AV_PIX_FMT_YUV422P10LE:
+                case AV_PIX_FMT_YUV422P9BE:
+                case AV_PIX_FMT_YUV422P9LE:
+                case AV_PIX_FMT_YUVA422P9BE:
+                case AV_PIX_FMT_YUVA422P9LE:
+                case AV_PIX_FMT_YUVA422P10BE:
+                case AV_PIX_FMT_YUVA422P10LE:
+                case AV_PIX_FMT_YUVA422P16BE:
+                case AV_PIX_FMT_YUVA422P16LE:
+                case AV_PIX_FMT_NV16:
+                case AV_PIX_FMT_NV20LE:
+                case AV_PIX_FMT_NV20BE:
+                case AV_PIX_FMT_YVYU422:
+                case AV_PIX_FMT_YUVA422P:
+                case AV_PIX_FMT_YUV422P12BE:
+                case AV_PIX_FMT_YUV422P12LE:
+                case AV_PIX_FMT_YUV422P14BE:
+                case AV_PIX_FMT_YUV422P14LE:
+                {
+                    ret = av_opt_set(output_codec_ctx->priv_data, "profile", "high422", 0);
+                    if (ret < 0)
+                    {
+                        Logging::error(virtname(), "Could not set profile=high422 for %1 output codec %2 (error '%3').", get_media_type_string(output_codec->type), get_codec_name(codec_id), ffmpeg_geterror(ret).c_str());
+                        return ret;
+                    }
+                    break;
+                }
+                case AV_PIX_FMT_YUV444P:
+                case AV_PIX_FMT_YUVJ444P:
+                case AV_PIX_FMT_YUV444P16LE:
+                case AV_PIX_FMT_YUV444P16BE:
+                case AV_PIX_FMT_RGB444LE:
+                case AV_PIX_FMT_RGB444BE:
+                case AV_PIX_FMT_BGR444LE:
+                case AV_PIX_FMT_BGR444BE:
+                case AV_PIX_FMT_YUV444P9BE:
+                case AV_PIX_FMT_YUV444P9LE:
+                case AV_PIX_FMT_YUV444P10BE:
+                case AV_PIX_FMT_YUV444P10LE:
+                case AV_PIX_FMT_GBRP:
+                case AV_PIX_FMT_GBRP9BE:
+                case AV_PIX_FMT_GBRP9LE:
+                case AV_PIX_FMT_GBRP10BE:
+                case AV_PIX_FMT_GBRP10LE:
+                case AV_PIX_FMT_GBRP16BE:
+                case AV_PIX_FMT_GBRP16LE:
+                case AV_PIX_FMT_YUVA444P9BE:
+                case AV_PIX_FMT_YUVA444P9LE:
+                case AV_PIX_FMT_YUVA444P10BE:
+                case AV_PIX_FMT_YUVA444P10LE:
+                case AV_PIX_FMT_YUVA444P16BE:
+                case AV_PIX_FMT_YUVA444P16LE:
+                case AV_PIX_FMT_XYZ12LE:
+                case AV_PIX_FMT_XYZ12BE:
+                case AV_PIX_FMT_YUVA444P:
+                case AV_PIX_FMT_GBRAP:
+                case AV_PIX_FMT_GBRAP16BE:
+                case AV_PIX_FMT_GBRAP16LE:
+                case AV_PIX_FMT_YUV444P12BE:
+                case AV_PIX_FMT_YUV444P12LE:
+                case AV_PIX_FMT_YUV444P14BE:
+                case AV_PIX_FMT_YUV444P14LE:
+                case AV_PIX_FMT_GBRP12BE:
+                case AV_PIX_FMT_GBRP12LE:
+                case AV_PIX_FMT_GBRP14BE:
+                case AV_PIX_FMT_GBRP14LE:
+                case AV_PIX_FMT_AYUV64LE:
+                case AV_PIX_FMT_AYUV64BE:
+                {
+                    ret = av_opt_set(output_codec_ctx->priv_data, "profile", "high444", 0);
+                    if (ret < 0)
+                    {
+                        Logging::error(virtname(), "Could not set profile=high444 for %1 output codec %2 (error '%3').", get_media_type_string(output_codec->type), get_codec_name(codec_id), ffmpeg_geterror(ret).c_str());
+                        return ret;
+                    }
+                    break;
+                }
+                default:
+                {
+                    break;
+                }
+                }
+            }
+            av_free(out_val);
+        }
+        break;
+    }
+    case AV_CODEC_ID_VP9:
+    {
+        ret = prepare_codec(output_codec_ctx->priv_data, FILETYPE::WEBM);
+        if (ret < 0)
+        {
+            Logging::error(virtname(), "Could not set profile for %1 output codec %2 (error '%3').", get_media_type_string(output_codec->type), get_codec_name(codec_id), ffmpeg_geterror(ret).c_str());
+            return ret;
+        }
+        break;
+    }
+    case AV_CODEC_ID_PRORES:
+    {
+        ret = prepare_codec(output_codec_ctx->priv_data, FILETYPE::PRORES);
+        if (ret < 0)
+        {
+            Logging::error(virtname(), "Could not set profile for %1 output codec %2 (error '%3').", get_media_type_string(output_codec->type), get_codec_name(codec_id), ffmpeg_geterror(ret).c_str());
+            return ret;
+        }
+
+        // 0 = ‘proxy’,
+        // 1 = ‘lt’,
+        // 2 = ‘standard’,
+        // 3 = ‘hq’
+        output_codec_ctx->profile = static_cast<int>(params.m_level);
+        break;
+    }
+    case AV_CODEC_ID_ALAC:
+    {
+        ret = prepare_codec(output_codec_ctx->priv_data, FILETYPE::ALAC);
+        if (ret < 0)
+        {
+            Logging::error(virtname(), "Could not set profile for %1 output codec %2 (error '%3').", get_media_type_string(output_codec->type), get_codec_name(codec_id), ffmpeg_geterror(ret).c_str());
+            return ret;
+        }
         break;
     }
     default:
+    {
         break;
     }
+    }
 
+    // Initialise pixel format conversion and rescaling if necessary
+    get_pix_formats(&m_in.m_pix_fmt, &m_out.m_pix_fmt, output_codec_ctx);
+
+    ret = init_rescaler(m_in.m_pix_fmt, m_in.m_video.m_stream->codecpar->width, m_in.m_video.m_stream->codecpar->height, m_out.m_pix_fmt, output_codec_ctx->width, output_codec_ctx->height);
+    if (ret < 0)
+    {
+        return ret;
+    }
+
+    // set -strict -2 for aac (required for FFmpeg 2)
+    dict_set_with_check(opt.address(), "strict", "-2", 0);
+
+    // Allow the use of the experimental AAC encoder
+    output_codec_ctx->strict_std_compliance = FF_COMPLIANCE_EXPERIMENTAL;
+
+#ifdef _DEBUG
+    print_stream_info(output_stream);
+#endif // _DEBUG
+
+    // Set duration as hint for muxer
+    if (m_in.m_video.m_stream->duration != AV_NOPTS_VALUE)
+    {
+        output_stream->duration             = ffmpeg_rescale_q(m_in.m_video.m_stream->duration, m_in.m_video.m_stream->time_base, output_stream->time_base);
+    }
+    else if (m_in.m_format_ctx->duration != AV_NOPTS_VALUE)
+    {
+        output_stream->duration             = ffmpeg_rescale_q(m_in.m_format_ctx->duration, av_get_time_base_q(), output_stream->time_base);
+    }
+
+    //av_dict_set_int(&output_stream->metadata, "DURATION", output_stream->duration, AV_DICT_IGNORE_SUFFIX);
+
+    // Save the encoder context for easier access later.
+    m_out.m_video.set_codec_ctx(output_codec_ctx);
+    // Save the stream index
+    m_out.m_video.m_stream_idx              = output_stream->index;
+    // Save output video stream for faster reference
+    m_out.m_video.m_stream                  = output_stream;
+
+    // Update input to output stream map, this is rather boring because currently we only have a single video stream
+    add_stream_map(m_in.m_video.m_stream_idx, m_out.m_video.m_stream_idx);
+
+    return 0;
+}
+
+void FFmpeg_Transcoder::set_output_format_duration_metadata()
+{
     // Although docs state this is "Demuxing only", this is actually used by encoders like Matroska/WebM, so we need to set this here.
     m_out.m_format_ctx->duration = m_in.m_format_ctx->duration;
     if (m_virtualfile->m_flags & VIRTUALFLAG_CUESHEET)
@@ -2504,7 +2583,14 @@ int FFmpeg_Transcoder::add_stream(AVCodecID codec_id)
     {
         av_dict_set_int(&m_out.m_format_ctx->metadata, "DURATION", m_out.m_format_ctx->duration, AV_DICT_IGNORE_SUFFIX);
     }
+}
 
+#if IF_DECLARED_CONST
+int FFmpeg_Transcoder::open_output_encoder(AVCodecID codec_id, const AVCodec *output_codec, AVCodecContext *output_codec_ctx, AVStream *output_stream, FFmpeg_Dictionary &opt)
+#else // !IF_DECLARED_CONST
+int FFmpeg_Transcoder::open_output_encoder(AVCodecID codec_id, AVCodec *output_codec, AVCodecContext *output_codec_ctx, AVStream *output_stream, FFmpeg_Dictionary &opt)
+#endif // !IF_DECLARED_CONST
+{
     // Some formats want stream headers to be separate.
     if (m_out.m_format_ctx->oformat->flags & AVFMT_GLOBALHEADER)
     {
@@ -2518,7 +2604,7 @@ int FFmpeg_Transcoder::add_stream(AVCodecID codec_id)
     }
 
     // Open the encoder for the stream to use it later.
-    ret = avcodec_open2(output_codec_ctx, output_codec, opt.address());
+    int ret = avcodec_open2(output_codec_ctx, output_codec, opt.address());
     if (ret < 0)
     {
         Logging::error(virtname(), "Could not open %1 output codec %2 for stream #%3 (error '%4').", get_media_type_string(output_codec->type), get_codec_name(codec_id), output_stream->index, ffmpeg_geterror(ret).c_str());
@@ -2534,8 +2620,78 @@ int FFmpeg_Transcoder::add_stream(AVCodecID codec_id)
         return ret;
     }
 
+    return 0;
+}
+
+int FFmpeg_Transcoder::add_stream(AVCodecID codec_id)
+{
+    AVCodecContext *output_codec_ctx    = nullptr;
+    AVStream *      output_stream       = nullptr;
+#if IF_DECLARED_CONST
+    const AVCodec * output_codec        = nullptr;
+#else // !IF_DECLARED_CONST
+    AVCodec * output_codec              = nullptr;
+#endif // !IF_DECLARED_CONST
+    FFmpeg_Dictionary opt;
+
+    int ret = find_output_encoder(codec_id, &output_codec);
+    if (ret < 0)
+    {
+        return ret;
+    }
+
+    ret = allocate_output_stream_and_context(codec_id, output_codec, &output_stream, &output_codec_ctx);
+    if (ret < 0)
+    {
+        return ret;
+    }
+
+    std::unique_ptr<AVCodecContext, void (*)(AVCodecContext *)> output_codec_ctx_guard(
+        output_codec_ctx,
+        [](AVCodecContext *ctx)
+        {
+            avcodec_free_context(&ctx);
+        });
+
+    switch (output_codec->type)
+    {
+    case AVMEDIA_TYPE_AUDIO:
+    {
+        ret = configure_audio_output_stream(codec_id, output_codec, output_codec_ctx, output_stream, opt);
+        break;
+    }
+    case AVMEDIA_TYPE_VIDEO:
+    {
+        ret = configure_video_output_stream(codec_id, output_codec, output_codec_ctx, output_stream, opt);
+        break;
+    }
+    default:
+    {
+        Logging::error(virtname(), "Unsupported output codec type '%1' for codec %2.", get_media_type_string(output_codec->type), get_codec_name(codec_id));
+        ret = AVERROR(EINVAL);
+        break;
+    }
+    }
+
+    if (ret < 0)
+    {
+        return ret;
+    }
+
+    // configure_*_output_stream() transfers the encoder context to m_out.
+    output_codec_ctx_guard.release();
+
+    set_output_format_duration_metadata();
+
+    ret = open_output_encoder(codec_id, output_codec, output_codec_ctx, output_stream, opt);
+    if (ret < 0)
+    {
+        return ret;
+    }
+
     return (output_stream->index);
 }
+
 
 int FFmpeg_Transcoder::add_subtitle_stream(AVCodecID codec_id, StreamRef & input_streamref, const std::optional<std::string> & language)
 {
@@ -2572,6 +2728,13 @@ int FFmpeg_Transcoder::add_subtitle_stream(AVCodecID codec_id, StreamRef & input
         Logging::error(virtname(), "Could not allocate an encoding context for encoder '%1'.", avcodec_get_name(codec_id));
         return AVERROR(ENOMEM);
     }
+
+    std::unique_ptr<AVCodecContext, void (*)(AVCodecContext *)> output_codec_ctx_guard(
+        output_codec_ctx,
+        [](AVCodecContext *ctx)
+        {
+            avcodec_free_context(&ctx);
+        });
 
     output_stream->time_base                = input_streamref.m_stream->time_base;
     output_codec_ctx->time_base             = output_stream->time_base;
@@ -2663,7 +2826,7 @@ int FFmpeg_Transcoder::add_subtitle_stream(AVCodecID codec_id, StreamRef & input
     // Save the encoder context for easier access later.
     StreamRef output_streamref;
 
-    output_streamref.set_codec_ctx(output_codec_ctx);
+    output_streamref.set_codec_ctx(output_codec_ctx_guard.release());
     // Save the stream index
     output_streamref.m_stream_idx              = output_stream->index;
     // Save output audio stream for faster reference
@@ -2677,78 +2840,121 @@ int FFmpeg_Transcoder::add_subtitle_stream(AVCodecID codec_id, StreamRef & input
     return output_streamref.m_stream_idx;
 }
 
-int FFmpeg_Transcoder::add_stream_copy(AVCodecID codec_id, AVMediaType codec_type)
+int FFmpeg_Transcoder::allocate_stream_copy(AVCodecID codec_id, AVStream **output_stream)
 {
-    AVStream *      output_stream       = nullptr;
-    int ret;
-
-    output_stream = avformat_new_stream(m_out.m_format_ctx, nullptr);
-    if (output_stream == nullptr)
+    *output_stream = avformat_new_stream(m_out.m_format_ctx, nullptr);
+    if (*output_stream == nullptr)
     {
         Logging::error(virtname(), "Could not allocate stream for encoder '%1'.",  avcodec_get_name(codec_id));
         return AVERROR(ENOMEM);
     }
-    output_stream->id = static_cast<int>(m_out.m_format_ctx->nb_streams - 1);
+    (*output_stream)->id = static_cast<int>(m_out.m_format_ctx->nb_streams - 1);
+
+    return 0;
+}
+
+int FFmpeg_Transcoder::configure_audio_stream_copy(AVStream *output_stream)
+{
+    int ret = 0;
+
+    ret = avcodec_parameters_copy(output_stream->codecpar, m_in.m_audio.m_stream->codecpar);
+    if (ret < 0)
+    {
+        Logging::error(virtname(), "Could not allocate an encoding context (error '%2').", ffmpeg_geterror(ret).c_str());
+        return ret;
+    }
+
+    // Set the sample rate for the container.
+    output_stream->time_base                = m_in.m_audio.m_stream->time_base;
+
+    // Set duration as hint for muxer
+    if (m_in.m_audio.m_stream->duration != AV_NOPTS_VALUE)
+    {
+        output_stream->duration             = ffmpeg_rescale_q(m_in.m_audio.m_stream->duration, m_in.m_audio.m_stream->time_base, output_stream->time_base);
+    }
+
+    // Save the encoder context for easier access later.
+    m_out.m_audio.set_codec_ctx(nullptr);
+    // Save the stream index
+    m_out.m_audio.m_stream_idx              = output_stream->index;
+    // Save output audio stream for faster reference
+    m_out.m_audio.m_stream                  = output_stream;
+
+    // Update input to output stream map, this is rather boring because currently we only have a single audio stream
+    add_stream_map(m_in.m_audio.m_stream_idx, m_out.m_audio.m_stream_idx);
+
+    return 0;
+}
+
+int FFmpeg_Transcoder::configure_video_stream_copy(AVStream *output_stream)
+{
+    int ret = 0;
+
+    ret = avcodec_parameters_copy(output_stream->codecpar, m_in.m_video.m_stream->codecpar);
+    if (ret < 0)
+    {
+        Logging::error(virtname(), "Could not allocate an encoding context (error '%2').", ffmpeg_geterror(ret).c_str());
+        return ret;
+    }
+
+    output_stream->time_base                = m_in.m_video.m_stream->time_base;
+
+#ifdef _DEBUG
+    print_stream_info(output_stream);
+#endif // _DEBUG
+
+    // Set duration as hint for muxer
+    if (m_in.m_video.m_stream->duration != AV_NOPTS_VALUE)
+    {
+        output_stream->duration             = ffmpeg_rescale_q(m_in.m_video.m_stream->duration, m_in.m_video.m_stream->time_base, output_stream->time_base);
+    }
+
+    // Save the encoder context for easier access later.
+    m_out.m_video.set_codec_ctx(nullptr);
+    // Save the stream index
+    m_out.m_video.m_stream_idx              = output_stream->index;
+    // Save output video stream for faster reference
+    m_out.m_video.m_stream                  = output_stream;
+
+    // Update input to output stream map, this is rather boring because currently we only have a single video stream
+    add_stream_map(m_in.m_video.m_stream_idx, m_out.m_video.m_stream_idx);
+
+    return 0;
+}
+
+int FFmpeg_Transcoder::add_stream_copy(AVCodecID codec_id, AVMediaType codec_type)
+{
+    AVStream *output_stream = nullptr;
+
+    int ret = allocate_stream_copy(codec_id, &output_stream);
+    if (ret < 0)
+    {
+        return ret;
+    }
 
     switch (codec_type)
     {
     case AVMEDIA_TYPE_AUDIO:
     {
-        ret = avcodec_parameters_copy(output_stream->codecpar, m_in.m_audio.m_stream->codecpar);
-        if (ret < 0)
-        {
-            Logging::error(virtname(), "Could not allocate an encoding context (error '%2').", ffmpeg_geterror(ret).c_str());
-            return ret;
-        }
-
-        // Set the sample rate for the container.
-        output_stream->time_base                = m_in.m_audio.m_stream->time_base;
-
-        // Set duration as hint for muxer
-        output_stream->duration                 = ffmpeg_rescale_q(m_in.m_audio.m_stream->duration, m_in.m_audio.m_stream->time_base, output_stream->time_base);
-
-        // Save the encoder context for easier access later.
-        m_out.m_audio.set_codec_ctx(nullptr);
-        // Save the stream index
-        m_out.m_audio.m_stream_idx              = output_stream->index;
-        // Save output audio stream for faster reference
-        m_out.m_audio.m_stream                  = output_stream;
-
-        // Update input to output stream map, this is rather boring because currently we only have a single audio stream
-        add_stream_map(m_in.m_audio.m_stream_idx, m_out.m_audio.m_stream_idx);
+        ret = configure_audio_stream_copy(output_stream);
         break;
     }
     case AVMEDIA_TYPE_VIDEO:
     {
-        ret = avcodec_parameters_copy(output_stream->codecpar, m_in.m_video.m_stream->codecpar);
-        if (ret < 0)
-        {
-            Logging::error(virtname(), "Could not allocate an encoding context (error '%2').", ffmpeg_geterror(ret).c_str());
-            return ret;
-        }
-
-        output_stream->time_base                = m_in.m_video.m_stream->time_base;
-
-#ifdef _DEBUG
-        print_stream_info(output_stream);
-#endif // _DEBUG
-
-        // Set duration as hint for muxer
-        output_stream->duration                 = ffmpeg_rescale_q(m_in.m_video.m_stream->duration, m_in.m_video.m_stream->time_base, output_stream->time_base);
-
-        // Save the encoder context for easier access later.
-        m_out.m_video.set_codec_ctx(nullptr);
-        // Save the stream index
-        m_out.m_video.m_stream_idx              = output_stream->index;
-        // Save output video stream for faster reference
-        m_out.m_video.m_stream                  = output_stream;
-
-        // Update input to output stream map, this is rather boring because currently we only have a single video stream
-        add_stream_map(m_in.m_video.m_stream_idx, m_out.m_video.m_stream_idx);
+        ret = configure_video_stream_copy(output_stream);
         break;
     }
     default:
+    {
+        Logging::error(virtname(), "Unsupported stream-copy media type '%1' for codec %2.", get_media_type_string(codec_type), get_codec_name(codec_id));
+        ret = AVERROR(EINVAL);
         break;
+    }
+    }
+
+    if (ret < 0)
+    {
+        return ret;
     }
 
     output_stream->codecpar->codec_tag = 0;
@@ -2756,34 +2962,41 @@ int FFmpeg_Transcoder::add_stream_copy(AVCodecID codec_id, AVMediaType codec_typ
     return 0;
 }
 
+
 int FFmpeg_Transcoder::add_albumart_stream(const AVCodecContext * input_codec_ctx)
 {
     AVCodecContext * output_codec_ctx   = nullptr;
     AVStream * output_stream            = nullptr;
-    const AVCodec * input_codec         = input_codec_ctx->codec;
+    if (input_codec_ctx == nullptr)
+    {
+        Logging::error(virtname(), "Cannot add album art stream without an input codec context.");
+        return AVERROR(EINVAL);
+    }
+
+    const AVCodecID input_codec_id      = input_codec_ctx->codec_id;
     const AVCodec * output_codec        = nullptr;
     FFmpeg_Dictionary opt;
     int ret;
 
     // find the encoder
-    output_codec = avcodec_find_encoder(input_codec->id);
+    output_codec = avcodec_find_encoder(input_codec_id);
     if (output_codec == nullptr)
     {
-        Logging::error(virtname(), "'%1' encoder could not be found.", avcodec_get_name(input_codec->id));
+        Logging::error(virtname(), "'%1' encoder could not be found.", avcodec_get_name(input_codec_id));
         return AVERROR(EINVAL);
     }
 
     // Must be a video codec
     if (output_codec->type != AVMEDIA_TYPE_VIDEO)
     {
-        Logging::error(virtname(), "INTERNAL TROUBLE! Encoder '%1' is not a video codec.", avcodec_get_name(input_codec->id));
+        Logging::error(virtname(), "INTERNAL TROUBLE! Encoder '%1' is not a video codec.", avcodec_get_name(input_codec_id));
         return AVERROR(EINVAL);
     }
 
     output_stream = avformat_new_stream(m_out.m_format_ctx, output_codec);
     if (output_stream == nullptr)
     {
-        Logging::error(virtname(), "Could not allocate stream for encoder '%1'.", avcodec_get_name(input_codec->id));
+        Logging::error(virtname(), "Could not allocate stream for encoder '%1'.", avcodec_get_name(input_codec_id));
         return AVERROR(ENOMEM);
     }
     output_stream->id = static_cast<int>(m_out.m_format_ctx->nb_streams - 1);
@@ -2794,6 +3007,13 @@ int FFmpeg_Transcoder::add_albumart_stream(const AVCodecContext * input_codec_ct
         Logging::error(virtname(), "Could not allocate an encoding context.");
         return AVERROR(ENOMEM);
     }
+
+    std::unique_ptr<AVCodecContext, void (*)(AVCodecContext *)> output_codec_ctx_guard(
+        output_codec_ctx,
+        [](AVCodecContext *ctx)
+        {
+            avcodec_free_context(&ctx);
+        });
 
     // Ignore missing width/height when adding album arts
 #if !IF_DECLARED_CONST
@@ -2818,7 +3038,7 @@ int FFmpeg_Transcoder::add_albumart_stream(const AVCodecContext * input_codec_ct
     output_stream->disposition = AV_DISPOSITION_ATTACHED_PIC;
 
     // copy estimated duration as a hint to the muxer
-    if (output_stream->duration <= 0 && m_in.m_audio.m_stream->duration > 0)
+    if (output_stream->duration <= 0 && m_in.m_audio.m_stream != nullptr && m_in.m_audio.m_stream->duration > 0)
     {
         output_stream->duration = ffmpeg_rescale_q(m_in.m_audio.m_stream->duration, m_in.m_audio.m_stream->time_base, output_stream->time_base);
     }
@@ -2840,11 +3060,11 @@ int FFmpeg_Transcoder::add_albumart_stream(const AVCodecContext * input_codec_ct
     ret = avcodec_open2(output_codec_ctx, output_codec, opt.address());
     if (ret < 0)
     {
-        Logging::error(virtname(), "Could not open %1 output codec %2 for stream #%3 (error '%4').", get_media_type_string(output_codec->type), get_codec_name(input_codec->id), output_stream->index, ffmpeg_geterror(ret).c_str());
+        Logging::error(virtname(), "Could not open %1 output codec %2 for stream #%3 (error '%4').", get_media_type_string(output_codec->type), get_codec_name(input_codec_id), output_stream->index, ffmpeg_geterror(ret).c_str());
         return ret;
     }
 
-    Logging::debug(virtname(), "Opened album art output codec %1 for stream #%2 (dimensions %3x%4).", get_codec_name(input_codec->id, true), output_stream->index, output_codec_ctx->width, output_codec_ctx->height);
+    Logging::debug(virtname(), "Opened album art output codec %1 for stream #%2 (dimensions %3x%4).", get_codec_name(input_codec_id, true), output_stream->index, output_codec_ctx->width, output_codec_ctx->height);
 
     ret = avcodec_parameters_from_context(output_stream->codecpar, output_codec_ctx);
     if (ret < 0)
@@ -2855,7 +3075,7 @@ int FFmpeg_Transcoder::add_albumart_stream(const AVCodecContext * input_codec_ct
 
     StreamRef streamref;
 
-    streamref.set_codec_ctx(output_codec_ctx);
+    streamref.set_codec_ctx(output_codec_ctx_guard.release());
     streamref.m_stream        = output_stream;
     streamref.m_stream_idx    = output_stream->index;
 
@@ -5857,6 +6077,76 @@ int FFmpeg_Transcoder::seek_frame()
     return 0;
 }
 
+bool FFmpeg_Transcoder::discard_hls_seek_near_beginning(uint32_t segment_no) const
+{
+    // No check if m_segment_duration == 0, values <= 0 not accepted.
+    // Cast is OK here, the result will always be small enough for an int32.
+    const uint32_t min_seek_segments = static_cast<uint32_t>(params.m_min_seek_time_diff / params.m_segment_duration);
+    const uint32_t prebuffer_segments = static_cast<uint32_t>(params.m_prebuffer_time * AV_TIME_BASE / params.m_segment_duration);
+
+    if (min_seek_segments && segment_no <= min_seek_segments + prebuffer_segments + 1)
+    {
+        if (segment_no > 1)
+        {
+            Logging::info(virtname(), "Discarding seek request to HLS segment no. %1, less than %2 seconds (%3 segments) from the beginning; starting from segment no. 1 instead.", segment_no, params.m_min_seek_time_diff / AV_TIME_BASE, min_seek_segments + prebuffer_segments);
+        }
+        return true;
+    }
+
+    return false;
+}
+
+int FFmpeg_Transcoder::seek_hls_segment(uint32_t segment_no, bool require_output_streams)
+{
+    int ret = 0;
+    const int64_t pos = (segment_no - 1) * params.m_segment_duration;
+
+    m_reset_pts    = FFMPEGFS_AUDIO | FFMPEGFS_VIDEO;
+    m_have_seeked   = true;
+
+    Logging::info(virtname(), "Performing seek request to HLS segment no. %1.", segment_no);
+
+    const bool can_seek_video = require_output_streams
+        ? (m_in.m_video.m_stream_idx && stream_exists(m_out.m_video.m_stream_idx) && m_in.m_video.m_stream != nullptr)
+        : (stream_exists(m_in.m_video.m_stream_idx) && m_in.m_video.m_stream != nullptr);
+    const bool can_seek_audio = require_output_streams
+        ? (m_in.m_audio.m_stream_idx && stream_exists(m_out.m_audio.m_stream_idx) && m_in.m_audio.m_stream != nullptr)
+        : (stream_exists(m_in.m_audio.m_stream_idx) && m_in.m_audio.m_stream != nullptr);
+
+    if (can_seek_video)
+    {
+        int64_t vstream_pts = ffmpeg_rescale_q(pos, av_get_time_base_q(), m_in.m_video.m_stream->time_base);
+
+        if (m_in.m_video.m_stream->start_time != AV_NOPTS_VALUE)
+        {
+            vstream_pts += m_in.m_video.m_stream->start_time;
+        }
+
+        ret = av_seek_frame(m_in.m_format_ctx, m_in.m_video.m_stream_idx, vstream_pts, AVSEEK_FLAG_BACKWARD);
+    }
+    else if (can_seek_audio)
+    {
+        int64_t astream_pts = ffmpeg_rescale_q(pos, av_get_time_base_q(), m_in.m_audio.m_stream->time_base);
+
+        if (m_in.m_audio.m_stream->start_time != AV_NOPTS_VALUE)
+        {
+            astream_pts += m_in.m_audio.m_stream->start_time;
+        }
+
+        ret = av_seek_frame(m_in.m_format_ctx, m_in.m_audio.m_stream_idx, astream_pts, AVSEEK_FLAG_BACKWARD);
+    }
+
+    if (ret < 0)
+    {
+        Logging::error(virtname(), "Seek failed on input file (error '%1').", ffmpeg_geterror(ret).c_str());
+        return ret;
+    }
+
+    flush_buffers();
+
+    return 0;
+}
+
 int FFmpeg_Transcoder::start_new_segment()
 {
     bool opened = false;
@@ -5867,24 +6157,19 @@ int FFmpeg_Transcoder::start_new_segment()
     uint32_t next_segment = m_current_segment + 1;
 
     // ...or process any stacked seek requests.
-    // No check if m_segment_duration == 0, values <= 0 not accepted
+    // No check if m_segment_duration == 0, values <= 0 not accepted.
     // Cast is OK here, the result will always be small enough for an int32.
     const uint32_t min_seek_segments = static_cast<uint32_t>(params.m_min_seek_time_diff / params.m_segment_duration);
-	const uint32_t prebuffer_segements = static_cast<uint32_t>(params.m_prebuffer_time * AV_TIME_BASE / params.m_segment_duration);
 
     while (!m_seek_to_fifo.empty())
     {
         uint32_t segment_no = m_seek_to_fifo.front();
         m_seek_to_fifo.pop();
 
-		if (min_seek_segments && segment_no <= min_seek_segments + prebuffer_segements + 1)
-		{
-			if (segment_no > 1)
-			{
-		    	Logging::info(virtname(), "Discarding seek request to HLS segment no. %1, less than %2 seconds (%3 segments) from the beginning; starting from segment no. 1 instead.", segment_no, params.m_min_seek_time_diff / AV_TIME_BASE, min_seek_segments + prebuffer_segements);
-			}
-		    continue;
-		}
+        if (discard_hls_seek_near_beginning(segment_no))
+        {
+            continue;
+        }
 
         if (min_seek_segments && segment_no >= next_segment && segment_no <= next_segment + min_seek_segments)
         {
@@ -5894,45 +6179,11 @@ int FFmpeg_Transcoder::start_new_segment()
 
         if (!m_buffer->segment_exists(segment_no) || !m_buffer->tell(segment_no)) // NOT EXIST or NO DATA YET
         {
-            int ret = 0;
-
-            m_reset_pts    = FFMPEGFS_AUDIO | FFMPEGFS_VIDEO;   // Note that we have to reset audio/video pts to the new position
-            m_have_seeked   = true;                             // Note that we have seeked, thus skipped frames. We need to start transcoding over to fill any gaps.
-
-            Logging::info(virtname(), "Performing seek request to HLS segment no. %1.", segment_no);
-
-            int64_t pos = (segment_no - 1) * params.m_segment_duration;
-
-            if (m_in.m_video.m_stream_idx && stream_exists(m_out.m_video.m_stream_idx) && m_in.m_video.m_stream != nullptr)
-            {
-                int64_t vstream_pts = ffmpeg_rescale_q(pos, av_get_time_base_q(), m_in.m_video.m_stream->time_base);
-
-                if (m_in.m_video.m_stream->start_time != AV_NOPTS_VALUE)
-                {
-                    vstream_pts += m_in.m_video.m_stream->start_time;
-                }
-
-                ret = av_seek_frame(m_in.m_format_ctx, m_in.m_video.m_stream_idx, vstream_pts, AVSEEK_FLAG_BACKWARD);
-            }
-            else if (m_in.m_audio.m_stream_idx && stream_exists(m_out.m_audio.m_stream_idx) && m_in.m_audio.m_stream != nullptr)
-            {
-                int64_t astream_pts = ffmpeg_rescale_q(pos, av_get_time_base_q(), m_in.m_audio.m_stream->time_base);
-
-                if (m_in.m_audio.m_stream->start_time != AV_NOPTS_VALUE)
-                {
-                    astream_pts += m_in.m_audio.m_stream->start_time;
-                }
-
-                ret = av_seek_frame(m_in.m_format_ctx, m_in.m_audio.m_stream_idx, astream_pts, AVSEEK_FLAG_BACKWARD);
-            }
-
+            int ret = seek_hls_segment(segment_no, true);
             if (ret < 0)
             {
-                Logging::error(virtname(), "Seek failed on input file (error '%1').", ffmpeg_geterror(ret).c_str());
                 return ret;
             }
-
-            flush_buffers();
 
             close_output_file();
 

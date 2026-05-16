@@ -55,6 +55,7 @@
 #include <utility>
 
 class Buffer;
+class FFmpeg_Dictionary;
 struct AVFilterContext;
 struct AVFilterGraph;
 struct AVCodecContext;
@@ -502,6 +503,117 @@ protected:
      * @param[in] codec_id - Codec for this stream.
      * @return On success, returns index of new stream [0...n]; On error, negative AVERROR value.
      */
+#if IF_DECLARED_CONST
+    /**
+     * @brief Find the encoder for an output stream, including hardware encoder selection.
+     * @param[in] codec_id Requested output codec ID.
+     * @param[out] output_codec Receives the selected encoder.
+     * @return 0 on success, or a negative AVERROR code on failure.
+     */
+    int                         find_output_encoder(AVCodecID codec_id, const AVCodec **output_codec);
+#else // !IF_DECLARED_CONST
+    /**
+     * @brief Find the encoder for an output stream, including hardware encoder selection.
+     * @param[in] codec_id Requested output codec ID.
+     * @param[out] output_codec Receives the selected encoder.
+     * @return 0 on success, or a negative AVERROR code on failure.
+     */
+    int                         find_output_encoder(AVCodecID codec_id, AVCodec **output_codec);
+#endif // !IF_DECLARED_CONST
+#if IF_DECLARED_CONST
+    /**
+     * @brief Allocate an output stream and encoder context for a newly encoded stream.
+     * @param[in] codec_id Requested output codec ID, used for diagnostics.
+     * @param[in] output_codec Selected encoder.
+     * @param[out] output_stream Receives the newly allocated output stream.
+     * @param[out] output_codec_ctx Receives the newly allocated encoder context.
+     * @return 0 on success, or a negative AVERROR code on failure.
+     */
+    int                         allocate_output_stream_and_context(AVCodecID codec_id, const AVCodec *output_codec, AVStream **output_stream, AVCodecContext **output_codec_ctx);
+#else // !IF_DECLARED_CONST
+    /**
+     * @brief Allocate an output stream and encoder context for a newly encoded stream.
+     * @param[in] codec_id Requested output codec ID, used for diagnostics.
+     * @param[in] output_codec Selected encoder.
+     * @param[out] output_stream Receives the newly allocated output stream.
+     * @param[out] output_codec_ctx Receives the newly allocated encoder context.
+     * @return 0 on success, or a negative AVERROR code on failure.
+     */
+    int                         allocate_output_stream_and_context(AVCodecID codec_id, AVCodec *output_codec, AVStream **output_stream, AVCodecContext **output_codec_ctx);
+#endif // !IF_DECLARED_CONST
+#if IF_DECLARED_CONST
+    /**
+     * @brief Configure an encoded audio output stream and its encoder context.
+     * @param[in] codec_id Requested output codec ID.
+     * @param[in] output_codec Selected encoder.
+     * @param[in,out] output_codec_ctx Encoder context to configure.
+     * @param[in,out] output_stream Output stream to configure.
+     * @param[in,out] opt Encoder option dictionary.
+     * @return 0 on success, or a negative AVERROR code on failure.
+     */
+    int                         configure_audio_output_stream(AVCodecID codec_id, const AVCodec *output_codec, AVCodecContext *output_codec_ctx, AVStream *output_stream, FFmpeg_Dictionary &opt);
+#else // !IF_DECLARED_CONST
+    /**
+     * @brief Configure an encoded audio output stream and its encoder context.
+     * @param[in] codec_id Requested output codec ID.
+     * @param[in] output_codec Selected encoder.
+     * @param[in,out] output_codec_ctx Encoder context to configure.
+     * @param[in,out] output_stream Output stream to configure.
+     * @param[in,out] opt Encoder option dictionary.
+     * @return 0 on success, or a negative AVERROR code on failure.
+     */
+    int                         configure_audio_output_stream(AVCodecID codec_id, AVCodec *output_codec, AVCodecContext *output_codec_ctx, AVStream *output_stream, FFmpeg_Dictionary &opt);
+#endif // !IF_DECLARED_CONST
+#if IF_DECLARED_CONST
+    /**
+     * @brief Configure an encoded video output stream and its encoder context.
+     * @param[in] codec_id Requested output codec ID.
+     * @param[in] output_codec Selected encoder.
+     * @param[in,out] output_codec_ctx Encoder context to configure.
+     * @param[in,out] output_stream Output stream to configure.
+     * @param[in,out] opt Encoder option dictionary.
+     * @return 0 on success, or a negative AVERROR code on failure.
+     */
+    int                         configure_video_output_stream(AVCodecID codec_id, const AVCodec *output_codec, AVCodecContext *output_codec_ctx, AVStream *output_stream, FFmpeg_Dictionary &opt);
+#else // !IF_DECLARED_CONST
+    /**
+     * @brief Configure an encoded video output stream and its encoder context.
+     * @param[in] codec_id Requested output codec ID.
+     * @param[in] output_codec Selected encoder.
+     * @param[in,out] output_codec_ctx Encoder context to configure.
+     * @param[in,out] output_stream Output stream to configure.
+     * @param[in,out] opt Encoder option dictionary.
+     * @return 0 on success, or a negative AVERROR code on failure.
+     */
+    int                         configure_video_output_stream(AVCodecID codec_id, AVCodec *output_codec, AVCodecContext *output_codec_ctx, AVStream *output_stream, FFmpeg_Dictionary &opt);
+#endif // !IF_DECLARED_CONST
+    /**
+     * @brief Store output duration metadata on the output format context.
+     */
+    void                        set_output_format_duration_metadata();
+#if IF_DECLARED_CONST
+    /**
+     * @brief Open an output encoder and copy its parameters back to the output stream.
+     * @param[in] codec_id Requested output codec ID.
+     * @param[in] output_codec Selected encoder.
+     * @param[in,out] output_codec_ctx Encoder context to open.
+     * @param[in,out] output_stream Output stream receiving codec parameters.
+     * @param[in,out] opt Encoder option dictionary.
+     * @return 0 on success, or a negative AVERROR code on failure.
+     */
+    int                         open_output_encoder(AVCodecID codec_id, const AVCodec *output_codec, AVCodecContext *output_codec_ctx, AVStream *output_stream, FFmpeg_Dictionary &opt);
+#else // !IF_DECLARED_CONST
+    /**
+     * @brief Open an output encoder and copy its parameters back to the output stream.
+     * @param[in] codec_id Requested output codec ID.
+     * @param[in] output_codec Selected encoder.
+     * @param[in,out] output_codec_ctx Encoder context to open.
+     * @param[in,out] output_stream Output stream receiving codec parameters.
+     * @param[in,out] opt Encoder option dictionary.
+     * @return 0 on success, or a negative AVERROR code on failure.
+     */
+    int                         open_output_encoder(AVCodecID codec_id, AVCodec *output_codec, AVCodecContext *output_codec_ctx, AVStream *output_stream, FFmpeg_Dictionary &opt);
+#endif // !IF_DECLARED_CONST
     int                         add_stream(AVCodecID codec_id);
     /**
      * @brief Add new subtitle stream to output file.
@@ -511,6 +623,25 @@ protected:
      * @return On success, returns index of new stream [0...n]; On error, negative AVERROR value.
      */
     int                         add_subtitle_stream(AVCodecID codec_id, StreamRef & input_streamref, const std::optional<std::string> &language = std::nullopt);
+    /**
+     * @brief Allocate an output stream for stream-copy output.
+     * @param[in] codec_id Codec ID, used for diagnostics.
+     * @param[out] output_stream Receives the newly allocated output stream.
+     * @return 0 on success, or a negative AVERROR code on failure.
+     */
+    int                         allocate_stream_copy(AVCodecID codec_id, AVStream **output_stream);
+    /**
+     * @brief Configure an audio output stream for stream-copy output.
+     * @param[in,out] output_stream Output stream to configure.
+     * @return 0 on success, or a negative AVERROR code on failure.
+     */
+    int                         configure_audio_stream_copy(AVStream *output_stream);
+    /**
+     * @brief Configure a video output stream for stream-copy output.
+     * @param[in,out] output_stream Output stream to configure.
+     * @return 0 on success, or a negative AVERROR code on failure.
+     */
+    int                         configure_video_stream_copy(AVStream *output_stream);
     /**
      * @brief Add new stream copy to output file.
      * @param[in] codec_id - Codec for this stream.
@@ -1193,6 +1324,22 @@ protected:
     int                         seek_frame();
 
     /**
+     * @brief HLS only: discard seek requests too close to the beginning.
+     * @param[in] segment_no Requested HLS segment number.
+     * @return true if the request was discarded, false otherwise.
+     */
+    bool                        discard_hls_seek_near_beginning(uint32_t segment_no) const;
+
+    /**
+     * @brief HLS only: seek the input file to the requested segment.
+     * @param[in] segment_no Requested HLS segment number.
+     * @param[in] require_output_streams Also require matching output streams,
+     *                                  preserving the mid-stream seek checks.
+     * @return 0 on success, a negative AVERROR code on failure.
+     */
+    int                         seek_hls_segment(uint32_t segment_no, bool require_output_streams);
+
+    /**
      * @brief HLS only: start a new HLS segment.
      * @return 0 on success, a negative AVERROR code on failure.
      */
@@ -1228,6 +1375,100 @@ protected:
      */
     int                         foreach_subtitle_file(const std::string& search_path, const std::regex& regex, int depth, const std::function<int (const std::string &, const std::optional<std::string> &)> & f);
 
+    /**
+     * @brief Prepare the active HLS output segment before opening the output format.
+     *
+     * This handles the special first HLS output open, including any pending
+     * initial seek request, and selects the physical cache file for the active
+     * HLS segment via Buffer::set_segment().
+     *
+     * For non-HLS output, or if video output has already produced timestamps,
+     * this function does nothing.
+     *
+     * @param buffer Output cache buffer used for selecting the active HLS segment.
+     * @return 0 on success, or a negative AVERROR code on failure.
+     */
+    int initialise_hls_output_segment(Buffer *buffer);
+
+    /**
+     * @brief Open the output file streams, falling back from hardware to software encoding if required.
+     *
+     * This wraps open_output_filestreams() and preserves the existing hardware
+     * encoder fallback behaviour. If hardware output initialisation fails while
+     * hardware encoding is enabled, the hardware encoder state is reset and the
+     * output is opened again using software encoding.
+     *
+     * @param buffer Output cache buffer, or nullptr to continue using the existing buffer.
+     * @return 0 on success, or a negative AVERROR code on failure.
+     */
+    int open_output_with_hwaccel_fallback(Buffer *buffer);
+
+    /**
+     * @brief Log output audio information and initialise the audio FIFO if required.
+     *
+     * If an output audio stream exists and audio is being encoded rather than
+     * copied, this initialises the audio FIFO used to buffer samples before
+     * encoding.
+     *
+     * @return 0 on success, or a negative AVERROR code on failure.
+     */
+    int initialise_output_audio();
+
+    /**
+     * @brief Log output video and subtitle stream information.
+     *
+     * Logs video output information if a video output stream exists and logs
+     * all subtitle output streams.
+     */
+    void log_output_video_and_subtitle_info();
+
+    /**
+     * @brief Open the regular output cache file for non-HLS output.
+     *
+     * HLS uses one physical cache file per segment and must not reopen segment
+     * 0 here. For all non-HLS formats this opens the regular cache file for
+     * read/write access and pre-allocates the predicted output size.
+     *
+     * @param buffer Output cache buffer.
+     * @return 0 on success, or a negative AVERROR code on failure.
+     */
+    int open_regular_output_cache_file(Buffer *buffer);
+
+    /**
+     * @brief Initialise the output audio stream start time after writing the output header.
+     *
+     * process_output() writes the output header and FFmpeg may adjust stream
+     * time bases during that step. This function therefore recalculates the
+     * audio output start time afterwards using the final stream time base.
+     */
+    void initialise_audio_output_start_time();
+
+    /**
+     * @brief Initialise the output video stream start time after writing the output header.
+     *
+     * process_output() writes the output header and FFmpeg may adjust stream
+     * time bases during that step. This function therefore recalculates the
+     * video output start time afterwards using the final stream time base.
+     */
+    void initialise_video_output_start_time();
+
+    /**
+     * @brief Initialise subtitle output stream start times after writing the output header.
+     *
+     * Recalculates subtitle output start times using the final output stream
+     * time bases after process_output() has written the output header.
+     */
+    void initialise_subtitle_output_start_times();
+
+    /**
+     * @brief Initialise cached output timestamps after writing the output header.
+     *
+     * Recalculates audio, video, and subtitle output start times using the final
+     * stream time bases, then initialises the current output PTS and mux DTS
+     * tracking state.
+     */
+    void initialise_output_start_times();
+	
 private:
     std::shared_ptr<FileIO>     m_fileio;                       /**< @brief FileIO object of input file */
     time_t                      m_mtime;                        /**< @brief Modified time of input file */

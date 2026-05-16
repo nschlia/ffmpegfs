@@ -62,6 +62,16 @@ Important changes in 2.19 (2026-XX-XX):
   log files.
 * Bugfix: Fixed distclean/distcheck failures caused by incorrectly named HLS
   test log files being left behind in the test build directory.
+* Refactored transcoder stream and output initialisation into smaller helper
+  functions, keeping high-level setup flow easier to follow.
+* Improved AVCodecContext ownership handling during stream, output, and
+  frame-set setup so partially failed initialisation paths no longer leak
+  codec contexts.
+* Hardened output/cache setup with additional validation and null checks to
+  avoid partially initialised stream state and clearer error handling on
+  invalid setup conditions.
+* Improved duration metadata handling for stream-copy and album-art output so
+  invalid or missing input timing information is no longer used.
 
 Important changes in 2.18 (2026-04-10):
 

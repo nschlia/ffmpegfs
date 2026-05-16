@@ -62,6 +62,10 @@ To see what's been done so far, checkout the [windows](https://github.com/nschli
 - Added an HLS cache regression test that pre-populates the cache, re-reads all generated segments, and verifies that cached segment output remains stable across repeated reads.
 - **Bugfix:** Fixed HLS cache test log naming so wrapper scripts which already contain the `_hls` suffix no longer generate duplicate `_hls_hls` builtin log files.
 - **Bugfix:** Fixed `distclean`/`distcheck` failures caused by incorrectly named HLS test log files being left behind in the test build directory.
+- Refactored transcoder stream and output initialisation into smaller helper functions, making the setup flow easier to maintain.
+- Improved `AVCodecContext` ownership handling during stream, output, and frame-set setup so failed initialisation paths no longer leak codec contexts.
+- Hardened output/cache setup with additional validation and null checks to avoid partially initialised stream state and provide clearer error handling.
+- Improved duration metadata handling for stream-copy and album-art output so invalid or missing input timing information is no longer used.
 
 ### New in 2.18 (2026-04-10):
 

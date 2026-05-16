@@ -1,0 +1,49 @@
+#!/bin/bash
+#set -euo pipefail
+
+ADDOPT=""
+
+if [ "$1" == "hls" ]
+then
+   EXT=ts
+   FILES="*.${EXT}"
+else
+   EXT="$1"
+   FILES="00000[0-9].${EXT}"
+fi
+
+. "${BASH_SOURCE%/*}/funcs.sh" "$1"
+
+if [ "$1" == "hls" ]
+then
+   XDIRNAME="${DIRNAME}/snowboard.mp4"
+else
+   XDIRNAME="${DIRNAME}/frame_test_pal.mp4"
+fi
+REFPATH="${TMPPATH}/first"
+CACHEPATH="${TMPPATH}/second"
+
+rm -rf "${REFPATH}" "${CACHEPATH}"
+mkdir -p "${REFPATH}" "${CACHEPATH}"
+
+echo "First pass: generate/fill cache"
+cp -vpf "${XDIRNAME}"/${FILES} "${REFPATH}/"
+
+echo "Second pass: read from cache"
+cp -vpf "${XDIRNAME}"/${FILES} "${CACHEPATH}/"
+
+echo "Create hash lists"
+(
+    cd "${REFPATH}"
+    sha256sum ${FILES} | sort -k2 > "${TMPPATH}/first.sha256"
+)
+
+(
+    cd "${CACHEPATH}"
+    sha256sum ${FILES} | sort -k2 > "${TMPPATH}/second.sha256"
+)
+
+echo "Compare hashes"
+diff -u "${TMPPATH}/first.sha256" "${TMPPATH}/second.sha256"
+
+echo "OK"

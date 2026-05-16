@@ -101,10 +101,13 @@ if [ -z "${EXTRANAME}" ];
 then
     EXTRANAME=$DESTTYPE
 fi
-if [ "${EXTRANAME}" == "hls" ];
-then
+
+TESTNAME="${0##*/}"
+
+if [ "${EXTRANAME}" = "hls" ] && [[ "${TESTNAME}" == *_hls ]]; then
     EXTRANAME=
 fi
+
 if [ ! -z "${EXTRANAME}" ];
 then
     EXTRANAME=_$EXTRANAME

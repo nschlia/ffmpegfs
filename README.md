@@ -59,6 +59,9 @@ To see what's been done so far, checkout the [windows](https://github.com/nschli
 - **Bugfix:** Fixed HLS segment availability checks so incomplete cache entries no longer make segments appear available when those segments were never actually produced.
 - Added additional safeguards for stale decoder state to avoid leaving cache entries permanently marked as decoding when no active worker is available to repair them.
 - **Bugfix:** Ignored HLS seek requests that are too close to the beginning of a stream so transcoding starts at segment 1 instead of creating an avoidable partial cache set.
+- Added an HLS cache regression test that pre-populates the cache, re-reads all generated segments, and verifies that cached segment output remains stable across repeated reads.
+- **Bugfix:** Fixed HLS cache test log naming so wrapper scripts which already contain the `_hls` suffix no longer generate duplicate `_hls_hls` builtin log files.
+- **Bugfix:** Fixed `distclean`/`distcheck` failures caused by incorrectly named HLS test log files being left behind in the test build directory.
 
 ### New in 2.18 (2026-04-10):
 

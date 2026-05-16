@@ -11,6 +11,10 @@ test_audio_prores \
 test_audio_ts \
 test_audio_wav \
 test_audio_webm \
+test_cache_hls \
+test_cache_bmp \
+test_cache_jpg \
+test_cache_png \
 test_cuesheet_file \
 test_cuesheet_embedded \
 test_filecount_hls \
@@ -65,7 +69,7 @@ test_video_hw_dec_vaapi \
 test_video_hw_enc_omx \
 test_video_hw_enc_vaapi
 
-EXTRA_DIST = $(TESTS) funcs.sh srcdir test_filenames test_tags test_audio test_filesize test_frameset test_filesize_video test_video_hw test_cuesheet
+EXTRA_DIST = $(TESTS) funcs.sh srcdir test_cache test_filenames test_tags test_audio test_filesize test_frameset test_filesize_video test_video_hw test_cuesheet
 EXTRA_DIST += $(wildcard tags/*)
 # NOT IN RELEASE 1.0! Add later: test_picture
 

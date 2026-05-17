@@ -7191,6 +7191,7 @@ int FFmpeg_Transcoder::init_deinterlace_filters(AVCodecContext *codec_ctx, AVPix
         // args "null"      passthrough (dummy) filter for audio
 
         // --- Deinterlace-Filterkette
+		// Deinterlace using the Bob Weaver Filter
         const char * filters = "bwdif=mode=send_frame:parity=auto:deint=all";
 
         ret = avfilter_graph_parse_ptr(m_filter_graph, filters, &inputs, &outputs, nullptr);

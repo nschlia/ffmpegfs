@@ -107,7 +107,7 @@ bool Buffer::open_file(uint32_t segment_no, uint32_t flags, size_t defaultsize)
     }
     else
     {
-        Logging::debug(ci.m_cachefile, "Reading from cache file.");
+        Logging::info(ci.m_cachefile, "Reading from cache file.");
     }
 
     size_t filesize     = 0;

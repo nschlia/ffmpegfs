@@ -805,7 +805,7 @@ Cache_Entry* transcoder_new(LPVIRTUALFILE virtualfile, bool begin_transcode)
         }
         else if (begin_transcode)
         {
-            Logging::trace(cache_entry->virtname(), "Reading file from cache.");
+            Logging::info(cache_entry->virtname(), "Reading file from cache.");
         }
 
         cache_entry->unlock();

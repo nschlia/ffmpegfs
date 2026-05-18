@@ -999,11 +999,11 @@ protected:
      * @brief Initialise video filters
      * @param[in] codec_ctx - AVCodecContext object of output video.
      * @param[in] pix_fmt - Output stream pixel format.
-     * @param[in] avg_frame_rate - Average output stream frame rate.
+     * @param[in] framerate - Output stream frame rate.
      * @param[in] time_base - Output stream time base.
      * @return Returns 0 if OK, or negative AVERROR value.
      */
-    int                         init_deinterlace_filters(AVCodecContext *codec_ctx, AVPixelFormat pix_fmt, const AVRational &avg_frame_rate, const AVRational &time_base);
+    int                         init_deinterlace_filters(AVCodecContext *codec_ctx, AVPixelFormat pix_fmt, const AVRational &framerate, const AVRational &time_base);
     /**
      * @brief Send video frame to the filters.
      * @param[inout] srcframe - On input video frame to process, on output video frame that was filtered.

@@ -7067,7 +7067,7 @@ const char *FFmpeg_Transcoder::virtname() const
 }
 
 // create
-int FFmpeg_Transcoder::init_deinterlace_filters(AVCodecContext *codec_ctx, AVPixelFormat pix_fmt, const AVRational & avg_frame_rate, const AVRational & time_base)
+int FFmpeg_Transcoder::init_deinterlace_filters(AVCodecContext *codec_ctx, AVPixelFormat pix_fmt, const AVRational & framerate, const AVRational & time_base)
 {
     // Defensive cleanup: this function may be called again when the output
     // pipeline is rebuilt, for example after an HLS seek.  Do not overwrite the
@@ -7083,7 +7083,7 @@ int FFmpeg_Transcoder::init_deinterlace_filters(AVCodecContext *codec_ctx, AVPix
 
     try
     {
-        if (!avg_frame_rate.den && !avg_frame_rate.num)
+        if (!framerate.den && !framerate.num)
         {
             // No framerate, so this video "stream" has only one picture
             throw static_cast<int>(AVERROR(EINVAL)); // Einzelbild-"Stream"

@@ -1,6 +1,6 @@
 FFmpegfs NEWS
 
-Important changes in 2.19 (2026-XX-XX):
+Important changes in 2.50 (2026-06-12):
 
 * Bugfix: Fixed audio/video synchronization issues during transcoding.
 * Bugfix: Fixed HLS playback stopping unexpectedly, especially near the final

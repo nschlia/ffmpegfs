@@ -35,7 +35,7 @@ To see what's been done so far, checkout the [windows](https://github.com/nschli
 
 ---
 
-### Version 2.19 under development:
+### New in 2.50 (2026-06-12):
 
 - **Bugfix:** Fixed audio/video synchronization issues during transcoding.
 - **Bugfix:** Fixed HLS playback stopping unexpectedly, especially near the final segment.

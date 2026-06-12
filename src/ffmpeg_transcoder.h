@@ -498,11 +498,6 @@ protected:
      * @return On success, returns 0; on error, a negative AVERROR value.
      */
     int                         prepare_codec(void *opt, FILETYPE filetype) const;
-    /**
-     * @brief Add new stream to output file.
-     * @param[in] codec_id - Codec for this stream.
-     * @return On success, returns index of new stream [0...n]; On error, negative AVERROR value.
-     */
 #if IF_DECLARED_CONST
     /**
      * @brief Find the encoder for an output stream, including hardware encoder selection.
@@ -614,6 +609,17 @@ protected:
      */
     int                         open_output_encoder(AVCodecID codec_id, AVCodec *output_codec, AVCodecContext *output_codec_ctx, AVStream *output_stream, FFmpeg_Dictionary &opt);
 #endif // !IF_DECLARED_CONST
+    /**
+     * @brief Add a newly encoded audio or video stream to the output file.
+     *
+     * Finds the selected encoder, allocates an output stream and codec context,
+     * configures the stream according to the media type, opens the encoder, and
+     * transfers the codec parameters back to the output stream.
+     *
+     * @param[in] codec_id Codec for the new output stream.
+     * @return On success, returns the index of the new stream. On error, returns
+     *         a negative AVERROR value.
+     */
     int                         add_stream(AVCodecID codec_id);
     /**
      * @brief Add new subtitle stream to output file.

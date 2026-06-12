@@ -280,8 +280,14 @@ void            init_fuse_ops();
 #endif
 
 /**
- * @brief Get transcoder cache path.
- * @param[out] path - Path to transcoder cache.
+ * @brief Build the base directory used for the transcoder cache.
+ *
+ * Uses the configured cache path when one was supplied. Otherwise root uses
+ * `/var/cache`, while regular users use `$XDG_CACHE_HOME` or `~/.cache`.
+ * The package name is appended and the returned path always ends with a path
+ * separator.
+ *
+ * @param[out] path Receives the complete transcoder cache directory path.
  */
 void            transcoder_cache_path(std::string *path);
 /**

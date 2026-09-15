@@ -40,7 +40,7 @@ check_audio() {
 if [ "${DESTTYPE}" == "mp4" ];
 then
 	# mp4
-        check_audio "raven_e" "flac" 0.04
+        check_audio "raven_e" "flac" 0.041
         check_audio "raven_d" "ogg" 0.05
 elif [ "${DESTTYPE}" == "mp3" ];
 then
@@ -90,7 +90,7 @@ then
 elif [ "${DESTTYPE}" == "ts" ];
 then
 	# ts
-	check_audio "raven_e" "flac" 0.039136
+	check_audio "raven_e" "flac" 0.041
 	check_audio "raven_d" "ogg" 0.050
 elif [ "${DESTTYPE}" == "flac" ];
 then

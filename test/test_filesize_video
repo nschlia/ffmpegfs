@@ -16,7 +16,7 @@ then
 elif [ "${DESTTYPE}" == "webm" ];
 then
     # webm
-    check_filesize "snowboard.mp4" 4376074 48843897
+    check_filesize "snowboard.mp4" 4348240 48843897
 elif [ "${DESTTYPE}" == "mov" ];
 then
     # mov

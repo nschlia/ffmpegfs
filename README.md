@@ -35,6 +35,11 @@ To see what's been done so far, checkout the [windows](https://github.com/nschli
 
 ---
 
+### Version 2.51 under development:
+
+- Added checks for FFmpeg 8.1+
+- **Bugfix:** Issue [#174](https://github.com/nschlia/ffmpegfs/issues/174): * Fixed stuttering when transcoding video at fractional frame rates such as 23.976 fps by correcting video timestamp and duration time-base conversions. 
+
 ### New in 2.50 (2026-06-12):
 
 - **Bugfix:** Fixed audio/video synchronization issues during transcoding.
@@ -68,24 +73,6 @@ To see what's been done so far, checkout the [windows](https://github.com/nschli
 - Improved duration metadata handling for stream-copy and album-art output so invalid or missing input timing information is no longer used.
 - Improved test cleanup by using explicit ffmpegfs-owned temporary directory names and guarded removal logic, avoiding stale anonymous `/tmp` directories after interrupted or parallel test runs.
 - Improved deinterlacing quality by replacing `yadif` with `bwdif` while keeping one output frame per input frame. This improves playback smoothness for interlaced sources without changing the output frame rate or requiring changes to timestamp, FPS, or HLS segment timing logic.
-
-### New in 2.18 (2026-04-10):
-
-- **Feature:** Added ALAC profile for iTunes (`--desttype=ALAC --profile=ITUNES`). Playback of the file will not commence until it is fully recoded; however, it can be played in iTunes.
-- **Feature:** Implemented a validation check for the combination of TYPE and PROFILE in `--desttype=TYPE --profile=PROFILE`.
-- Updated Dockerfile to include FUSE 3.
-- **Bugfix:** Fix error with new FFmpeg API: *"Option 'pix_fmts' is not a runtime option and so cannot be set after the object has been initialized"*.
-- **Fixed deprecation:** Replace `avcodec_get_supported_config()`.
-- **Fixed deprecation:** Remove `avcodec_close()`.
-- **Fixed deprecation:** Remove `av_format_inject_global_side_data()`.
-- **Fixed deprecation:** Replace `std::codecvt` with `iconv` in `read_file`.
-- **Bugfix:** `reserve()` only guarantees capacity, not size → writing via `.data()` is undefined behaviour. Using `resize()` makes the memory usable.
-- As `strerror()` is not thread-safe, use `strerror_r()` where available.
-- `strncpy` likes to copy without NUL → terminate explicitly.
-- **Bugfix:** Issue [#173](https://github.com/nschlia/ffmpegfs/issues/173): Fixed output directory no showing complete list of files under Debian 13.
-- **Bugfix:** Updated Dockerfile for Trixie
-- **Bugfix:** Closes [#1115015](https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=1115015): Fix build with FFmpeg 8 (already applied in Debian via NMU)
-- **Bugfix:** Closes [#1119414](https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=1119414) Changed configure.ac and makefile.am to preserve the default build flags
 
 📜 See [HISTORY.md](HISTORY.md) for the complete changelog.
 

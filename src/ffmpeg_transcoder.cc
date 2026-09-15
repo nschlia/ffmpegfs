@@ -4032,15 +4032,27 @@ int FFmpeg_Transcoder::decode_video_frame(AVPacket *pkt, int *decoded)
                 {
                     if (m_in.m_video.m_stream->time_base.den != m_out.m_video.m_stream->time_base.den || m_in.m_video.m_stream->time_base.num != m_out.m_video.m_stream->time_base.num)
                     {
-                        frame->pts = ffmpeg_rescale_q_rnd(frame->pts, m_in.m_video.m_stream->time_base, m_out.m_video.m_stream->time_base);
-                        video_start_time = ffmpeg_rescale_q_rnd(video_start_time, m_in.m_video.m_stream->time_base, m_out.m_video.m_stream->time_base);
+                        frame->pts = ffmpeg_rescale_q(frame->pts, m_in.m_video.m_stream->time_base, m_out.m_video.m_stream->time_base);
+                        video_start_time = ffmpeg_rescale_q(video_start_time, m_in.m_video.m_stream->time_base, m_out.m_video.m_stream->time_base);
+#if LAVU_DEP_PKT_DURATION
+                        if (frame->duration > 0)
+                        {
+                            frame->duration = ffmpeg_rescale_q(frame->duration, m_in.m_video.m_stream->time_base, m_out.m_video.m_stream->time_base);
+                        }
+#endif
                     }
 
                     // Fix for issue #46: bitrate too high.
                     // Solution found here https://stackoverflow.com/questions/11466184/setting-video-bit-rate-through-ffmpeg-api-is-ignored-for-libx264-codec
                     // This is permanently used in the current ffmpeg.c code (see commit: e3fb9af6f1353f30855eaa1cbd5befaf06e303b8 Date:Wed Jan 22 15:52:10 2020 +0100)
-                    frame->pts = ffmpeg_rescale_q_rnd(frame->pts, m_out.m_video.m_stream->time_base, m_out.m_video.m_codec_ctx->time_base);
-                    video_start_time = ffmpeg_rescale_q_rnd(video_start_time, m_out.m_video.m_stream->time_base, m_out.m_video.m_codec_ctx->time_base);
+                    frame->pts = ffmpeg_rescale_q(frame->pts, m_out.m_video.m_stream->time_base, m_out.m_video.m_codec_ctx->time_base);
+                    video_start_time = ffmpeg_rescale_q(video_start_time, m_out.m_video.m_stream->time_base, m_out.m_video.m_codec_ctx->time_base);
+#if LAVU_DEP_PKT_DURATION
+                    if (frame->duration > 0)
+                    {
+                        frame->duration = ffmpeg_rescale_q(frame->duration, m_out.m_video.m_stream->time_base, m_out.m_video.m_codec_ctx->time_base);
+                    }
+#endif
                 }
 
                 frame->quality      = m_out.m_video.m_codec_ctx->global_quality;
@@ -5166,9 +5178,13 @@ int FFmpeg_Transcoder::encode_video_frame(const AVFrame *frame, int *data_presen
                 if (frame != nullptr && !pkt->duration)
                 {
 #if !LAVU_DEP_PKT_DURATION
-                    pkt->duration = frame->pkt_duration;
+                    pkt->duration = ffmpeg_rescale_q(frame->pkt_duration,
+                                                     m_in.m_video.m_stream->time_base,
+                                                     m_out.m_video.m_stream->time_base);
 #else
-                    pkt->duration = frame->duration;
+                    pkt->duration = ffmpeg_rescale_q(frame->duration,
+                                                     m_out.m_video.m_codec_ctx->time_base,
+                                                     m_out.m_video.m_stream->time_base);
 #endif
                 }
 

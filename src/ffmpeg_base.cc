@@ -120,7 +120,7 @@ void FFmpeg_Base::video_stream_setup(AVCodecContext *output_codec_ctx, AVStream*
 
     // fps
     output_stream->avg_frame_rate               = framerate;
-    // output_codec_ctx->framerate                 = framerate;
+    output_codec_ctx->framerate                 = framerate;
 
     if (enc_hw_pix_fmt == AV_PIX_FMT_NONE)
     {

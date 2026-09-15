@@ -1,5 +1,12 @@
 FFmpegfs NEWS
 
+Important changes in 2.51 (2026-XX-XX):
+
+* Added checks for FFmpeg 8.1+
+* Bugfix: Issue #174: Fixed stuttering when transcoding video at fractional
+  frame rates such as 23.976 fps by correcting video timestamp and duration
+  time-base conversions.
+
 Important changes in 2.50 (2026-06-12):
 
 * Bugfix: Fixed audio/video synchronization issues during transcoding.
